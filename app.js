@@ -37,6 +37,11 @@ function addGa(html) {
 }
 
 function googleAnalyticsMiddleware(data) {
+    // Performance optimization: skip stream transformation if Google Analytics ID is not set
+    if (!google_analytics_id) {
+        return;
+    }
+
     if (data.contentType == 'text/html') {
 
         // https://nodejs.org/api/stream.html#stream_transform
