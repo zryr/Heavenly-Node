@@ -30,4 +30,12 @@ describe('index.html accessibility and ARIA attributes', function() {
     it('should set aria-label attribute on history delete button', function() {
         assert.ok(html.includes('aria-label\', \'Remove item from history\''), 'history delete button should set aria-label');
     });
+
+    it('should configure history cards with keyboard navigation and ARIA attributes', function() {
+        assert.ok(html.includes('card.setAttribute(\'role\', \'button\')'), 'history card should have role="button"');
+        assert.ok(html.includes('card.setAttribute(\'tabindex\', \'0\')'), 'history card should have tabindex="0"');
+        assert.ok(html.includes('card.setAttribute(\'aria-label\''), 'history card should have aria-label set');
+        assert.ok(html.includes('card.onkeydown'), 'history card should handle keyboard event onkeydown');
+        assert.ok(html.includes('.history-card:focus-visible'), 'CSS should include .history-card:focus-visible rule');
+    });
 });
