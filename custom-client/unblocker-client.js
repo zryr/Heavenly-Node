@@ -623,6 +623,7 @@
         '.heavenly-widget.minimized .mini-icon { display: flex !important; }',
         '.mini-icon { display: none; align-items: center; justify-content: center; width: 100%; height: 100%; }',
         '.widget-content { display: flex; align-items: center; gap: 8px; }',
+        '.heavenly-widget.left-mode .widget-content { flex-direction: row-reverse; }',
         '.drag-handle { display: flex; align-items: center; gap: 6px; white-space: nowrap; color: #e0f2fe; font-weight: 600; }',
         '.btn-close-widget { background: none; border: none; color: #94a3b8; font-size: 13px; font-weight: 700; cursor: pointer; padding: 2px 6px; border-radius: 6px; }',
         '.btn-close-widget:hover { color: #ef4444; background: rgba(239, 68, 68, 0.15); }',
@@ -659,7 +660,20 @@
       function attachWidgetBehaviors(container, widgetElement, storageKey, defaultTop, defaultRight) {
         var isMinimized = false;
         var inactivityTimer = null;
-        var expandDir = settings.expandDirection || 'left';
+
+        function updateWidgetMode() {
+          var rect = container.getBoundingClientRect();
+          var winW = window.innerWidth || document.documentElement.clientWidth || 800;
+          var widgetW = container.offsetWidth || 40;
+          var centerX = rect.left + widgetW / 2;
+          var isLeft = centerX < (winW / 2);
+          if (isLeft) {
+            widgetElement.classList.add('left-mode');
+          } else {
+            widgetElement.classList.remove('left-mode');
+          }
+          return isLeft;
+        }
 
         function enforceBoundaries() {
           var currentRect = container.getBoundingClientRect();
@@ -678,6 +692,7 @@
           container.style.bottom = 'auto';
           container.style.left = clampedLeft + 'px';
           container.style.top = clampedTop + 'px';
+          updateWidgetMode();
           return { left: clampedLeft, top: clampedTop };
         }
 
@@ -716,14 +731,15 @@
 
         function minimize() {
           if (isMinimized) return;
+          var isLeft = updateWidgetMode();
           var expandedW = container.offsetWidth || 200;
           var rect = container.getBoundingClientRect();
           isMinimized = true;
           widgetElement.classList.add('minimized');
 
           var miniW = 38; // size of circle widget
-          if (expandDir === 'left') {
-            // Circle appears on right side where close button was
+          if (!isLeft) {
+            // Right mode: circle appears on right side where close button was
             var newLeft = rect.left + (expandedW - miniW);
             container.style.left = newLeft + 'px';
           }
@@ -732,12 +748,14 @@
 
         function expand() {
           if (!isMinimized) return;
+          var isLeft = updateWidgetMode();
           var miniW = container.offsetWidth || 38;
           var rect = container.getBoundingClientRect();
           isMinimized = false;
           widgetElement.classList.remove('minimized');
 
-          if (expandDir === 'left') {
+          if (!isLeft) {
+            // Right mode: expand leftwards from right-side circle
             var expandedW = container.offsetWidth || 200;
             var newLeft = rect.left - (expandedW - miniW);
             container.style.left = newLeft + 'px';
@@ -823,6 +841,7 @@
 
           container.style.left = newLeft + 'px';
           container.style.top = newTop + 'px';
+          updateWidgetMode();
         };
 
         var onEnd = function (e) {
