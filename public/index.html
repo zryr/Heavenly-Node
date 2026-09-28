@@ -585,8 +585,8 @@
     var favEl = document.querySelector("link[rel*='icon']");
     if (favEl) originalFavicon = favEl.href;
 
-    function applyLandingCloak(isCloaked) {
-      var settings = loadSettings();
+    function applyLandingCloak(isCloaked, settings) {
+      if (!settings) settings = loadSettings();
       var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
       var preset = allPresets[settings.selectedPreset] || DEFAULT_PRESETS.classroom;
 
@@ -596,7 +596,7 @@
         link.type = 'image/x-icon';
         link.rel = 'shortcut icon';
         link.href = preset.icon;
-        document.getElementsByTagName('head')[0].appendChild(link);
+        if (!link.parentNode) (document.head || document.getElementsByTagName('head')[0]).appendChild(link);
       } else {
         document.title = originalTitle;
         if (originalFavicon) {
@@ -609,11 +609,11 @@
     function syncLandingCloak() {
       var settings = loadSettings();
       if (settings.persistentCloak) {
-        applyLandingCloak(true);
+        applyLandingCloak(true, settings);
       } else if (settings.autoCloak && document.hidden) {
-        applyLandingCloak(true);
+        applyLandingCloak(true, settings);
       } else {
-        applyLandingCloak(false);
+        applyLandingCloak(false, settings);
       }
     }
 

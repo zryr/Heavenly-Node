@@ -645,8 +645,8 @@
     var favEl = document.querySelector("link[rel*='icon']");
     if (favEl) originalFavicon = favEl.href;
 
-    function applyCloak(isCloaked) {
-      var settings = loadSettings();
+    function applyCloak(isCloaked, settings) {
+      if (!settings) settings = loadSettings();
       var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
       var preset = allPresets[settings.selectedPreset] || DEFAULT_PRESETS.classroom;
 
@@ -656,7 +656,7 @@
         link.type = 'image/x-icon';
         link.rel = 'shortcut icon';
         link.href = preset.icon;
-        document.getElementsByTagName('head')[0].appendChild(link);
+        if (!link.parentNode) (document.head || document.getElementsByTagName('head')[0]).appendChild(link);
       } else {
         document.title = originalTitle;
         if (originalFavicon) {
@@ -669,11 +669,11 @@
     function syncCloak() {
       var settings = loadSettings();
       if (settings.persistentCloak) {
-        applyCloak(true);
+        applyCloak(true, settings);
       } else if (settings.autoCloak && document.hidden) {
-        applyCloak(true);
+        applyCloak(true, settings);
       } else {
-        applyCloak(false);
+        applyCloak(false, settings);
       }
     }
 
