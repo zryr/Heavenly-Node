@@ -39,12 +39,14 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('id="set-show-scroll-lock"'), 'set-show-scroll-lock checkbox should exist');
         assert.ok(html.includes('id="set-show-magnifier"'), 'set-show-magnifier checkbox should exist');
         assert.ok(html.includes('id="set-use-widget-dock"'), 'set-use-widget-dock checkbox should exist');
+        assert.ok(html.includes('id="set-expand-direction"'), 'set-expand-direction dropdown should exist');
         assert.ok(html.includes('id="reset-widget-pos-btn"'), 'reset-widget-pos-btn should exist');
     });
 
     it('should associate labels with form inputs using for attributes in settings.html', function() {
         assert.ok(html.includes('for="set-panic-key"'), 'label for set-panic-key should exist');
         assert.ok(html.includes('for="set-dock-position"'), 'label for set-dock-position should exist');
+        assert.ok(html.includes('for="set-expand-direction"'), 'label for set-expand-direction should exist');
     });
 
     it('should have accessible aria-labels on settings form controls', function() {

@@ -465,6 +465,18 @@
 
         <div class="cards-grid">
 
+          <!-- Hero Card: Expand Direction -->
+          <div class="hero-card">
+            <div style="margin-bottom: 4px;">
+              <label for="set-expand-direction" class="hero-card-title" style="margin-bottom: 4px; display: block;">Widget Expand Direction</label>
+              <p class="hero-card-desc">Choose which direction floating widgets open when un-minimized from their circle state.</p>
+            </div>
+            <select id="set-expand-direction" aria-label="Widget expand direction" style="width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 12px; color: #f8fafc; font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer;">
+              <option value="left">Expand Left (Default - Circle on right near close button)</option>
+              <option value="right">Expand Right (Circle on left)</option>
+            </select>
+          </div>
+
           <!-- Hero Card: Scroll Lock -->
           <div class="hero-card">
             <div class="hero-card-header">
@@ -581,6 +593,7 @@
         panicKey: saved.panicKey || '`',
         touchPanic: saved.touchPanic || false,
         panicUrl: saved.panicUrl || 'https://classroom.google.com',
+        expandDirection: saved.expandDirection || 'left',
         showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
         showMagnifier: saved.showMagnifier !== undefined ? saved.showMagnifier : true,
         showNavSearch: saved.showNavSearch !== undefined ? saved.showNavSearch : true,
@@ -604,6 +617,7 @@
       $('set-panic-key').value = settings.panicKey;
       $('set-touch-panic').checked = settings.touchPanic;
       $('set-panic-url').value = settings.panicUrl;
+      $('set-expand-direction').value = settings.expandDirection;
       $('set-show-scroll-lock').checked = settings.showScrollLock;
       $('set-show-magnifier').checked = settings.showMagnifier;
       $('set-show-nav-search').checked = settings.showNavSearch;
@@ -681,6 +695,7 @@
         settings.panicKey = $('set-panic-key').value.trim();
         settings.touchPanic = $('set-touch-panic').checked;
         settings.panicUrl = $('set-panic-url').value.trim() || 'https://classroom.google.com';
+        settings.expandDirection = $('set-expand-direction').value;
         settings.showScrollLock = $('set-show-scroll-lock').checked;
         settings.showMagnifier = $('set-show-magnifier').checked;
         settings.showNavSearch = $('set-show-nav-search').checked;
@@ -692,7 +707,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-dock-position', 'preset-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-panic-key-enable', 'set-touch-panic', 'set-expand-direction', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-dock-position', 'preset-select'].forEach(function (id) {
         $(id).onchange = updateHandler;
       });
 
