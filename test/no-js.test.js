@@ -74,4 +74,52 @@ describe('GET /no-js', function() {
             .expect('Location', '/proxy/https://www.google.com/search?q=javascript%3Aalert(1)')
             .end(done);
     });
+
+    it('should handle array query parameters by picking the first url', function(done) {
+        request(app)
+            .get('/no-js?url=http://example.com&url=http://other.com')
+            .expect(302)
+            .expect('Location', '/proxy/http://example.com')
+            .end(done);
+    });
+
+    it('should redirect to / when url parameter contains only whitespace', function(done) {
+        request(app)
+            .get('/no-js?url=%20%20%20')
+            .expect(302)
+            .expect('Location', '/')
+            .end(done);
+    });
+
+    it('should redirect to / when url parameter contains only invalid characters or dots', function(done) {
+        request(app)
+            .get('/no-js?url=...')
+            .expect(302)
+            .expect('Location', '/')
+            .end(done);
+    });
+
+    it('should strip leading dots from domain name', function(done) {
+        request(app)
+            .get('/no-js?url=.example.com')
+            .expect(302)
+            .expect('Location', '/proxy/https://example.com')
+            .end(done);
+    });
+
+    it('should redirect unsupported protocols like ftp:// to google search', function(done) {
+        request(app)
+            .get('/no-js?url=ftp://files.example.com')
+            .expect(302)
+            .expect('Location', '/proxy/https://www.google.com/search?q=ftp%3A%2F%2Ffiles.example.com')
+            .end(done);
+    });
+
+    it('should preserve http:// scheme when provided', function(done) {
+        request(app)
+            .get('/no-js?url=http://http-site.com')
+            .expect(302)
+            .expect('Location', '/proxy/http://http-site.com')
+            .end(done);
+    });
 });
