@@ -24,10 +24,31 @@
     }
     urlStr = urlStr.toString();
 
+    var prefix = config.prefix;
+    var prefixLen = prefix.length;
+
+    // Early fast-path: check if URL is already proxied (root-relative)
+    if (urlStr.substr(0, prefixLen) === prefix) {
+      return urlStr;
+    }
+
+    // Early fast-path: non-HTTP/HTTPS schemes that should not be proxied
+    // Avoids expensive new URL() parsing overhead for common data, script, or anchor URIs
+    if (
+      urlStr.substr(0, 11) === "javascript:" ||
+      urlStr.substr(0, 5) === "data:" ||
+      urlStr.substr(0, 6) === "about:" ||
+      urlStr.substr(0, 5) === "blob:" ||
+      urlStr.substr(0, 7) === "mailto:" ||
+      urlStr.substr(0, 4) === "tel:"
+    ) {
+      return urlStr;
+    }
+
     var currentRemoteHref;
-    if (location.pathname.substr(0, config.prefix.length) === config.prefix) {
+    if (location.pathname.substr(0, prefixLen) === prefix) {
       currentRemoteHref =
-        location.pathname.substr(config.prefix.length) +
+        location.pathname.substr(prefixLen) +
         location.search +
         location.hash;
     } else {
@@ -35,17 +56,12 @@
       currentRemoteHref = config.url;
     }
 
-    // check if it's already proxied (root-relative)
-    if (urlStr.substr(0, config.prefix.length) === config.prefix) {
-      return urlStr;
-    }
-
     var url = new URL(urlStr, currentRemoteHref);
 
     // check if it's already proxied (absolute)
     if (
       url.origin === location.origin &&
-      url.pathname.substr(0, config.prefix.length) === config.prefix
+      url.pathname.substr(0, prefixLen) === prefix
     ) {
       return urlStr;
     }
@@ -66,7 +82,7 @@
       url.protocol = currentRemoteUrl.protocol;
       // todo: handle websocket protocols
     }
-    return config.prefix + url.href;
+    return prefix + url.href;
   }
 
   function initXMLHttpRequest(config, window) {
