@@ -31,7 +31,13 @@ function addGa(html) {
             "  gtag('config', '" + google_analytics_id + "');",
             "</script>"
             ].join("\n");
-        html = html.replace("</body>", ga + "\n\n</body>");
+        if (/<\/body>/i.test(html)) {
+            html = html.replace(/<\/body>/i, function(match) {
+                return ga + "\n\n" + match;
+            });
+        } else {
+            html = html + "\n\n" + ga;
+        }
     }
     return html;
 }
