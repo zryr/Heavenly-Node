@@ -187,7 +187,8 @@
       margin-bottom: 0;
     }
 
-    .history-card:hover {
+    .history-card:hover,
+    .history-card:focus-visible {
       background: rgba(30, 41, 59, 0.85);
       border-color: rgba(56, 189, 248, 0.4);
       transform: translateX(2px);
@@ -665,6 +666,9 @@
       filtered.forEach(function (item) {
         var card = document.createElement('div');
         card.className = 'history-card';
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', 'Select history item: ' + (item.title || item.url));
 
         var info = document.createElement('div');
         info.className = 'history-info';
@@ -698,9 +702,17 @@
           }
         };
 
-        card.onclick = function () {
+        var selectCard = function () {
           $('url').value = item.url;
           dropdown.classList.remove('active');
+        };
+
+        card.onclick = selectCard;
+        card.onkeydown = function (e) {
+          if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+            e.preventDefault();
+            selectCard();
+          }
         };
 
         card.appendChild(info);
