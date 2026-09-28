@@ -604,9 +604,11 @@
         '}',
         '.heavenly-widget.minimized .widget-content { display: none !important; }',
         '.heavenly-widget.minimized .mini-icon { display: flex !important; }',
-        '.mini-icon { display: none; align-items: center; justify-content: center; }',
+        '.mini-icon { display: none; align-items: center; justify-content: center; width: 100%; height: 100%; }',
         '.widget-content { display: flex; align-items: center; gap: 8px; }',
         '.drag-handle { display: flex; align-items: center; gap: 6px; white-space: nowrap; color: #e0f2fe; font-weight: 600; }',
+        '.btn-close-widget { background: none; border: none; color: #94a3b8; font-size: 13px; font-weight: 700; cursor: pointer; padding: 2px 6px; border-radius: 6px; }',
+        '.btn-close-widget:hover { color: #ef4444; background: rgba(239, 68, 68, 0.15); }',
         '.title-icon {',
         '  width: 16px; height: 16px; fill: none; stroke: #38bdf8; stroke-width: 2;',
         '  stroke-linecap: round; stroke-linejoin: round;',
@@ -681,13 +683,14 @@
           resetInactivityTimer();
         }
 
-        // Click on minimized widget expands it
-        widgetElement.addEventListener('click', function (e) {
-          if (isMinimized) {
+        // Attach 'X' button handler inside widget if present
+        var closeBtn = widgetElement.querySelector('.btn-close-widget');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', function (e) {
             e.stopPropagation();
-            expand();
-          }
-        });
+            minimize();
+          });
+        }
 
         // Interaction listeners to reset timer
         ['mouseenter', 'mousemove', 'mousedown', 'touchstart'].forEach(function (evt) {
@@ -696,20 +699,25 @@
           });
         });
 
-        // Click-and-drag logic
+        // Click-and-drag logic for both expanded widget and collapsed circle
         var isDragging = false;
+        var hasMoved = false;
         var startX = 0, startY = 0;
         var startLeft = 0, startTop = 0;
 
-        var onMouseDown = function (e) {
-          if (isMinimized) return; // Expand handled by click
+        var onStart = function (e) {
           var target = e.target;
-          if (target && (target.tagName === 'BUTTON' || target.closest('button') || target.tagName === 'INPUT')) {
+          if (!isMinimized && target && (target.tagName === 'BUTTON' || (target.closest && target.closest('button')) || target.tagName === 'INPUT')) {
             return;
           }
+
+          var touch = e.touches ? e.touches[0] : e;
+          if (!touch) return;
+
           isDragging = true;
-          startX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-          startY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+          hasMoved = false;
+          startX = touch.clientX;
+          startY = touch.clientY;
 
           var rect = container.getBoundingClientRect();
           startLeft = rect.left;
@@ -720,24 +728,32 @@
           container.style.left = startLeft + 'px';
           container.style.top = startTop + 'px';
 
-          window.addEventListener('mousemove', onMouseMove, true);
-          window.addEventListener('mouseup', onMouseUp, true);
-          window.addEventListener('touchmove', onMouseMove, true);
-          window.addEventListener('touchend', onMouseUp, true);
+          window.addEventListener('mousemove', onMove, { passive: false, capture: true });
+          window.addEventListener('mouseup', onEnd, { capture: true });
+          window.addEventListener('touchmove', onMove, { passive: false, capture: true });
+          window.addEventListener('touchend', onEnd, { capture: true });
         };
 
-        var onMouseMove = function (e) {
+        var onMove = function (e) {
           if (!isDragging) return;
-          var currentX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-          var currentY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+          var touch = e.touches ? e.touches[0] : e;
+          if (!touch) return;
+
+          var currentX = touch.clientX;
+          var currentY = touch.clientY;
           var dx = currentX - startX;
           var dy = currentY - startY;
+
+          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+            hasMoved = true;
+            if (e.cancelable) e.preventDefault();
+          }
 
           var newLeft = startLeft + dx;
           var newTop = startTop + dy;
 
-          var maxLeft = (window.innerWidth || 800) - container.offsetWidth;
-          var maxTop = (window.innerHeight || 600) - container.offsetHeight;
+          var maxLeft = (window.innerWidth || 800) - (container.offsetWidth || 40);
+          var maxTop = (window.innerHeight || 600) - (container.offsetHeight || 40);
 
           newLeft = Math.max(0, Math.min(newLeft, maxLeft));
           newTop = Math.max(0, Math.min(newTop, maxTop));
@@ -746,23 +762,26 @@
           container.style.top = newTop + 'px';
         };
 
-        var onMouseUp = function () {
+        var onEnd = function (e) {
           if (isDragging) {
             isDragging = false;
-            // Save position to localStorage
             try {
               var rect = container.getBoundingClientRect();
               localStorage.setItem(storageKey, JSON.stringify({ left: rect.left, top: rect.top }));
-            } catch (e) {}
+            } catch (err) {}
+
+            if (isMinimized && !hasMoved) {
+              expand();
+            }
           }
-          window.removeEventListener('mousemove', onMouseMove, true);
-          window.removeEventListener('mouseup', onMouseUp, true);
-          window.removeEventListener('touchmove', onMouseMove, true);
-          window.removeEventListener('touchend', onMouseUp, true);
+          window.removeEventListener('mousemove', onMove, { capture: true });
+          window.removeEventListener('mouseup', onEnd, { capture: true });
+          window.removeEventListener('touchmove', onMove, { capture: true });
+          window.removeEventListener('touchend', onEnd, { capture: true });
         };
 
-        widgetElement.addEventListener('mousedown', onMouseDown);
-        widgetElement.addEventListener('touchstart', onMouseDown);
+        widgetElement.addEventListener('mousedown', onStart);
+        widgetElement.addEventListener('touchstart', onStart, { passive: false });
 
         resetInactivityTimer();
         return { minimize: minimize, expand: expand, resetTimer: resetInactivityTimer };
@@ -899,7 +918,7 @@
             var homeBtn = dockBar.querySelector('#dock-home-btn');
             if (homeBtn) homeBtn.addEventListener('click', function (e) {
               e.stopPropagation();
-              window.location.href = 'https://heavenly-node.vercel.app/';
+              (window.top || window).location.href = 'https://heavenly-node.vercel.app/';
             });
           }
 
@@ -1029,6 +1048,7 @@
             '    <span>Scroll Lock</span>',
             '  </div>',
             '  <button type="button" class="btn-toggle" id="toggle-btn"><span>🔓 OFF</span></button>',
+            '  <button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>',
             '</div>'
           ].join('\n');
 
@@ -1125,6 +1145,7 @@
             '  <span id="zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span>',
             '  <button type="button" class="btn-ctrl" id="zoom-in-btn" title="Zoom In">+</button>',
             '  <button type="button" class="btn-ctrl" id="size-btn" title="Lens Size">Size</button>',
+            '  <button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>',
             '</div>'
           ].join('\n');
 
@@ -1265,18 +1286,25 @@
           var startX = 0, startY = 0;
           var startLeft = 0, startTop = 0;
 
-          headerEl.addEventListener('mousedown', function (e) {
+          var onLensDragStart = function (e) {
             if (e.target.tagName === 'BUTTON') return;
+            var touch = e.touches ? e.touches[0] : e;
+            if (!touch) return;
+
             isDraggingLens = true;
-            startX = e.clientX || 0;
-            startY = e.clientY || 0;
+            startX = touch.clientX;
+            startY = touch.clientY;
             startLeft = lensPos.left;
             startTop = lensPos.top;
 
             var onMove = function (me) {
               if (!isDraggingLens) return;
-              var dx = (me.clientX || 0) - startX;
-              var dy = (me.clientY || 0) - startY;
+              var touchMove = me.touches ? me.touches[0] : me;
+              if (!touchMove) return;
+
+              if (me.cancelable && me.touches) me.preventDefault();
+              var dx = touchMove.clientX - startX;
+              var dy = touchMove.clientY - startY;
               lensPos.left = Math.max(0, Math.min(startLeft + dx, (window.innerWidth || 800) - lensWidth));
               lensPos.top = Math.max(0, Math.min(startTop + dy, (window.innerHeight || 600) - lensHeight));
               lensFrame.style.left = lensPos.left + 'px';
@@ -1288,31 +1316,45 @@
               isDraggingLens = false;
               window.removeEventListener('mousemove', onMove, true);
               window.removeEventListener('mouseup', onUp, true);
+              window.removeEventListener('touchmove', onMove, true);
+              window.removeEventListener('touchend', onUp, true);
               saveLensState();
             };
 
-            window.addEventListener('mousemove', onMove, true);
-            window.addEventListener('mouseup', onUp, true);
-          });
+            window.addEventListener('mousemove', onMove, { passive: false, capture: true });
+            window.addEventListener('mouseup', onUp, { capture: true });
+            window.addEventListener('touchmove', onMove, { passive: false, capture: true });
+            window.addEventListener('touchend', onUp, { capture: true });
+          };
+
+          headerEl.addEventListener('mousedown', onLensDragStart);
+          headerEl.addEventListener('touchstart', onLensDragStart, { passive: false });
 
           // Resizing Handles Logic (Edges & Corners)
           var handles = lensFrame.querySelectorAll('.resize-handle');
           for (var hIdx = 0; hIdx < handles.length; hIdx++) {
             (function (hEl) {
-              hEl.addEventListener('mousedown', function (e) {
+              var onResizeStart = function (e) {
                 e.stopPropagation();
-                e.preventDefault();
+                if (e.cancelable) e.preventDefault();
                 var handleType = hEl.getAttribute('data-handle');
-                var rStartX = e.clientX;
-                var rStartY = e.clientY;
+                var touch = e.touches ? e.touches[0] : e;
+                if (!touch) return;
+
+                var rStartX = touch.clientX;
+                var rStartY = touch.clientY;
                 var startW = lensWidth;
                 var startH = lensHeight;
                 var startL = lensPos.left;
                 var startT = lensPos.top;
 
                 var onResizing = function (me) {
-                  var dx = me.clientX - rStartX;
-                  var dy = me.clientY - rStartY;
+                  var touchMove = me.touches ? me.touches[0] : me;
+                  if (!touchMove) return;
+                  if (me.cancelable && me.touches) me.preventDefault();
+
+                  var dx = touchMove.clientX - rStartX;
+                  var dy = touchMove.clientY - rStartY;
 
                   var newW = startW;
                   var newH = startH;
@@ -1356,12 +1398,19 @@
                 var onResizeEnd = function () {
                   window.removeEventListener('mousemove', onResizing, true);
                   window.removeEventListener('mouseup', onResizeEnd, true);
+                  window.removeEventListener('touchmove', onResizing, true);
+                  window.removeEventListener('touchend', onResizeEnd, true);
                   saveLensState();
                 };
 
-                window.addEventListener('mousemove', onResizing, true);
-                window.addEventListener('mouseup', onResizeEnd, true);
-              });
+                window.addEventListener('mousemove', onResizing, { passive: false, capture: true });
+                window.addEventListener('mouseup', onResizeEnd, { capture: true });
+                window.addEventListener('touchmove', onResizing, { passive: false, capture: true });
+                window.addEventListener('touchend', onResizeEnd, { capture: true });
+              };
+
+              hEl.addEventListener('mousedown', onResizeStart);
+              hEl.addEventListener('touchstart', onResizeStart, { passive: false });
             })(handles[hIdx]);
           }
         }
@@ -1419,14 +1468,22 @@
 
         magShadow.querySelector('#size-btn').addEventListener('click', function (e) {
           e.stopPropagation();
-          if (lensSize === 160) lensSize = 220;
-          else if (lensSize === 220) lensSize = 300;
-          else lensSize = 160;
+          if (lensWidth <= 200) {
+            lensWidth = 320;
+            lensHeight = 260;
+          } else if (lensWidth <= 320) {
+            lensWidth = 450;
+            lensHeight = 350;
+          } else {
+            lensWidth = 200;
+            lensHeight = 160;
+          }
 
           if (lensFrame) {
-            lensFrame.style.width = lensSize + 'px';
-            lensFrame.style.height = lensSize + 'px';
+            lensFrame.style.width = lensWidth + 'px';
+            lensFrame.style.height = lensHeight + 'px';
             updateMirrorPosition();
+            saveLensState();
           }
         });
 
@@ -1468,6 +1525,7 @@
             navHtml.push('<button type="button" class="btn-ctrl" id="nav-home-btn" title="Go to Homepage">🏠 Home</button>');
           }
 
+          navHtml.push('<button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>');
           navHtml.push('</div>');
           navWidget.innerHTML = navHtml.join('\n');
 
@@ -1507,7 +1565,7 @@
             var homeBtn = navWidget.querySelector('#nav-home-btn') || (navShadow.querySelector ? navShadow.querySelector('#nav-home-btn') : null);
             if (homeBtn) homeBtn.addEventListener('click', function (e) {
               e.stopPropagation();
-              window.location.href = 'https://heavenly-node.vercel.app/';
+              (window.top || window).location.href = 'https://heavenly-node.vercel.app/';
             });
           }
 
