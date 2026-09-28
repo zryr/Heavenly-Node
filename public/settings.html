@@ -612,27 +612,59 @@
 
     // --- Tab Cloaking ---
     var originalTitle = document.title;
-    var originalFavicon = null;
-    var favEl = document.querySelector("link[rel*='icon']");
-    if (favEl) originalFavicon = favEl.href;
 
     function applyCloak(isCloaked, settings) {
       if (!settings) settings = loadSettings();
       var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
       var preset = allPresets[settings.selectedPreset] || DEFAULT_PRESETS.classroom;
+      var head = document.head || document.getElementsByTagName('head')[0];
 
       if (isCloaked) {
+        if (document.title && document.title !== preset.title) {
+          originalTitle = document.title;
+        }
         document.title = preset.title;
-        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = 'image/x-icon';
-        link.rel = 'shortcut icon';
-        link.href = preset.icon;
-        if (!link.parentNode) (document.head || document.getElementsByTagName('head')[0]).appendChild(link);
+
+        if (head) {
+          var iconLinks = document.querySelectorAll("link[rel*='icon']");
+          for (var i = 0; i < iconLinks.length; i++) {
+            var l = iconLinks[i];
+            if (l.id !== 'heavenly-cloak-icon') {
+              if (!l.hasAttribute('data-heavenly-rel')) {
+                l.setAttribute('data-heavenly-rel', l.getAttribute('rel') || 'icon');
+              }
+              l.setAttribute('rel', 'disabled-icon');
+            }
+          }
+
+          var cloakLink = document.getElementById('heavenly-cloak-icon');
+          if (!cloakLink) {
+            cloakLink = document.createElement('link');
+            cloakLink.id = 'heavenly-cloak-icon';
+            head.appendChild(cloakLink);
+          }
+          cloakLink.type = 'image/x-icon';
+          cloakLink.rel = 'shortcut icon';
+          cloakLink.href = preset.icon;
+        }
       } else {
-        document.title = originalTitle;
-        if (originalFavicon) {
-          var link2 = document.querySelector("link[rel*='icon']");
-          if (link2) link2.href = originalFavicon;
+        if (originalTitle) {
+          document.title = originalTitle;
+        }
+
+        var cloakLink2 = document.getElementById('heavenly-cloak-icon');
+        if (cloakLink2 && cloakLink2.parentNode) {
+          cloakLink2.parentNode.removeChild(cloakLink2);
+        }
+
+        var disabledLinks = document.querySelectorAll("link[data-heavenly-rel]");
+        for (var j = 0; j < disabledLinks.length; j++) {
+          var dl = disabledLinks[j];
+          var origRel = dl.getAttribute('data-heavenly-rel');
+          if (origRel) {
+            dl.setAttribute('rel', origRel);
+            dl.removeAttribute('data-heavenly-rel');
+          }
         }
       }
     }
@@ -652,6 +684,12 @@
       syncCloak();
       document.addEventListener('visibilitychange', function () {
         syncCloak();
+      });
+      window.addEventListener('storage', function (e) {
+        if (e.key === 'heavenly_settings') {
+          syncSettingsToUI();
+          syncCloak();
+        }
       });
     }
 
