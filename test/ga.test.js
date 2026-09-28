@@ -30,6 +30,22 @@ describe('Google Analytics support', function() {
         assert.ok(result.includes('</body>'));
     });
 
+    it('should handle uppercase </BODY> tag and missing body tag when injecting GA snippet', function() {
+        process.env.GA_ID = 'G-TEST12345';
+        delete require.cache[require.resolve('../app')];
+        var app = require('../app');
+
+        var htmlUpper = '<html><head></head><BODY><h1>Hello World</h1></BODY></html>';
+        var resultUpper = app.addGa(htmlUpper);
+        assert.ok(resultUpper.includes('gtag'));
+        assert.ok(resultUpper.includes('</BODY>'));
+
+        var htmlNoBody = '<h1>Hello World</h1>';
+        var resultNoBody = app.addGa(htmlNoBody);
+        assert.ok(resultNoBody.includes('gtag'));
+        assert.ok(resultNoBody.startsWith('<h1>Hello World</h1>'));
+    });
+
     it('should not modify HTML when GA_ID is not set', function() {
         delete process.env.GA_ID;
         delete require.cache[require.resolve('../app')];
