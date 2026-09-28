@@ -641,6 +641,22 @@
 
       var scrollLockEnabled = false;
 
+      function toggleLockState() {
+        scrollLockEnabled = !scrollLockEnabled;
+        return scrollLockEnabled;
+      }
+
+      function updateLockUI(btn, isEnabled) {
+        if (!btn) return;
+        if (isEnabled) {
+          btn.classList.add('active');
+          btn.innerHTML = '<span>🔒 ON</span>';
+        } else {
+          btn.classList.remove('active');
+          btn.innerHTML = '<span>🔓 OFF</span>';
+        }
+      }
+
       // Intercept keydown during capture phase to prevent browser scrolling when lock is ON
       window.addEventListener('keydown', function (e) {
         if (!scrollLockEnabled) return;
@@ -1112,22 +1128,6 @@
               e.stopPropagation();
               if (e.key === 'Enter') handleNav();
             });
-          }
-
-          function updateLockUI(btn, isEnabled) {
-            if (!btn) return;
-            if (isEnabled) {
-              btn.classList.add('active');
-              btn.innerHTML = '<span>🔒 ON</span>';
-            } else {
-              btn.classList.remove('active');
-              btn.innerHTML = '<span>🔓 OFF</span>';
-            }
-          }
-
-          function toggleLockState() {
-            scrollLockEnabled = !scrollLockEnabled;
-            return scrollLockEnabled;
           }
 
           // Wire up Scroll Lock
