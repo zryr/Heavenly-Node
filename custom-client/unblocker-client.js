@@ -264,7 +264,8 @@
       showNavSearch: saved.showNavSearch !== undefined ? saved.showNavSearch : true,
       showNavHome: saved.showNavHome !== undefined ? saved.showNavHome : true,
       useWidgetDock: saved.useWidgetDock || false,
-      dockPosition: saved.dockPosition || 'bottom'
+      dockPosition: saved.dockPosition || 'bottom',
+      expandDirection: saved.expandDirection || 'left'
     };
   }
 
@@ -638,10 +639,31 @@
         '}'
       ].join('\n');
 
-      // Helper to make a container draggable and auto-minimize
+      // Helper to make a container draggable and auto-minimize with boundary clamping & expand direction
       function attachWidgetBehaviors(container, widgetElement, storageKey, defaultTop, defaultRight) {
         var isMinimized = false;
         var inactivityTimer = null;
+        var expandDir = settings.expandDirection || 'left';
+
+        function enforceBoundaries() {
+          var currentRect = container.getBoundingClientRect();
+          var winW = window.innerWidth || document.documentElement.clientWidth || 800;
+          var winH = window.innerHeight || document.documentElement.clientHeight || 600;
+          var maxLeft = Math.max(0, winW - container.offsetWidth);
+          var maxTop = Math.max(0, winH - container.offsetHeight);
+
+          var curLeft = currentRect.left;
+          var curTop = currentRect.top;
+
+          var clampedLeft = Math.max(0, Math.min(curLeft, maxLeft));
+          var clampedTop = Math.max(0, Math.min(curTop, maxTop));
+
+          container.style.right = 'auto';
+          container.style.bottom = 'auto';
+          container.style.left = clampedLeft + 'px';
+          container.style.top = clampedTop + 'px';
+          return { left: clampedLeft, top: clampedTop };
+        }
 
         // Restore position from localStorage
         try {
@@ -649,18 +671,22 @@
           if (savedPos) {
             var pos = JSON.parse(savedPos);
             if (typeof pos.left === 'number' && typeof pos.top === 'number') {
-              var maxLeft = (window.innerWidth || 800) - 50;
-              var maxTop = (window.innerHeight || 600) - 50;
               container.style.right = 'auto';
               container.style.bottom = 'auto';
-              container.style.left = Math.max(0, Math.min(pos.left, maxLeft)) + 'px';
-              container.style.top = Math.max(0, Math.min(pos.top, maxTop)) + 'px';
+              container.style.left = pos.left + 'px';
+              container.style.top = pos.top + 'px';
             }
           } else {
             container.style.top = defaultTop + 'px';
             container.style.right = defaultRight + 'px';
           }
         } catch (e) {}
+
+        // Clamp on initial load
+        setTimeout(enforceBoundaries, 0);
+
+        // Re-clamp on window resize
+        window.addEventListener('resize', enforceBoundaries);
 
         // Auto-minimize timer (10s)
         function resetInactivityTimer() {
@@ -673,13 +699,34 @@
         }
 
         function minimize() {
+          if (isMinimized) return;
+          var expandedW = container.offsetWidth || 200;
+          var rect = container.getBoundingClientRect();
           isMinimized = true;
           widgetElement.classList.add('minimized');
+
+          var miniW = 38; // size of circle widget
+          if (expandDir === 'left') {
+            // Circle appears on right side where close button was
+            var newLeft = rect.left + (expandedW - miniW);
+            container.style.left = newLeft + 'px';
+          }
+          enforceBoundaries();
         }
 
         function expand() {
+          if (!isMinimized) return;
+          var miniW = container.offsetWidth || 38;
+          var rect = container.getBoundingClientRect();
           isMinimized = false;
           widgetElement.classList.remove('minimized');
+
+          if (expandDir === 'left') {
+            var expandedW = container.offsetWidth || 200;
+            var newLeft = rect.left - (expandedW - miniW);
+            container.style.left = newLeft + 'px';
+          }
+          enforceBoundaries();
           resetInactivityTimer();
         }
 

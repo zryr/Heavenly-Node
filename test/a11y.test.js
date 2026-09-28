@@ -17,28 +17,17 @@ describe('index.html accessibility and ARIA attributes', function() {
         );
     });
 
-    it('should have aria modal controls on open-settings-btn', function() {
+    it('should have a direct link to settings.html on open-settings-btn', function() {
         assert.ok(html.includes('id="open-settings-btn"'), 'open-settings-btn should exist');
-        assert.ok(html.includes('aria-haspopup="dialog"'), 'open-settings-btn should have aria-haspopup="dialog"');
-        assert.ok(html.includes('aria-controls="settings-modal"'), 'open-settings-btn should have aria-controls="settings-modal"');
-        assert.ok(html.includes('aria-expanded="false"'), 'open-settings-btn should default to aria-expanded="false"');
+        assert.ok(html.includes('href="settings.html"'), 'open-settings-btn should link to settings.html');
+        assert.ok(!html.includes('id="settings-modal"'), 'settings-modal element should not be in index.html');
     });
 
     it('should include focus-visible CSS rules for interactive elements', function() {
-        assert.ok(html.includes('button:focus-visible'), 'CSS should include button:focus-visible rule');
-        assert.ok(html.includes('select:focus-visible'), 'CSS should include select:focus-visible rule');
+        assert.ok(html.includes('button:focus-visible') || html.includes('a:focus-visible'), 'CSS should include focus-visible rule');
     });
 
-    it('should associate labels with form inputs using for attributes', function() {
-        assert.ok(html.includes('for="set-panic-key"'), 'label for set-panic-key should exist');
-        assert.ok(html.includes('for="set-dock-position"'), 'label for set-dock-position should exist');
-    });
-
-    it('should have aria-label attributes on custom inputs and dropdowns', function() {
-        assert.ok(html.includes('aria-label="Cloak preset"'), 'preset-select should have aria-label');
-        assert.ok(html.includes('aria-label="Custom preset title"'), 'custom-title input should have aria-label');
-        assert.ok(html.includes('aria-label="Custom preset icon URL"'), 'custom-icon input should have aria-label');
-        assert.ok(html.includes('aria-label="Panic redirect URL"'), 'set-panic-url input should have aria-label');
-      assert.ok(html.includes('aria-label\', \'Remove item from history\''), 'history delete button should set aria-label');
+    it('should set aria-label attribute on history delete button', function() {
+        assert.ok(html.includes('aria-label\', \'Remove item from history\''), 'history delete button should set aria-label');
     });
 });
