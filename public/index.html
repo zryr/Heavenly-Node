@@ -34,6 +34,16 @@
       overflow-x: hidden;
     }
 
+    @keyframes floatOrb {
+      0%, 100% { transform: translate(-50%, 0) scale(1); }
+      50% { transform: translate(-50%, 20px) scale(1.08); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 0.9; }
+    }
+
     /* Ambient heavenly background glow */
     .glow-orb {
       position: fixed;
@@ -49,7 +59,8 @@
       transform: translateX(-50%);
       width: 500px;
       height: 300px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(99, 102, 241, 0.1) 60%, transparent 100%);
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.28) 0%, rgba(99, 102, 241, 0.12) 60%, transparent 100%);
+      animation: floatOrb 12s ease-in-out infinite;
     }
 
     .glow-orb-2 {
@@ -57,7 +68,8 @@
       right: 10%;
       width: 400px;
       height: 300px;
-      background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.18) 0%, transparent 70%);
+      animation: pulseGlow 8s ease-in-out infinite;
     }
 
     .container {
@@ -65,17 +77,26 @@
       z-index: 1;
       width: 100%;
       max-width: 680px;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(56, 189, 248, 0.2);
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 28px;
       box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-        0 25px 60px -15px rgba(0, 0, 0, 0.7),
-        0 0 40px -10px rgba(56, 189, 248, 0.25);
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 25px 60px -15px rgba(0, 0, 0, 0.8),
+        0 0 50px -10px rgba(56, 189, 248, 0.3);
       padding: 44px 36px 36px 36px;
       margin: auto;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .container:hover {
+      border-color: rgba(56, 189, 248, 0.38);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+        0 30px 70px -15px rgba(0, 0, 0, 0.85),
+        0 0 60px -8px rgba(56, 189, 248, 0.4);
     }
 
     .brand-header {
@@ -330,6 +351,15 @@
       font-size: 0.82rem;
       color: #cbd5e1;
       font-weight: 500;
+      transition: all 0.25s ease;
+    }
+
+    .badge:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
     }
 
     /* Google Ad wrapper - collapse height when ad is empty or unrendered */

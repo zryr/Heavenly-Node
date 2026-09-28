@@ -33,6 +33,16 @@
       overflow-x: hidden;
     }
 
+    @keyframes floatOrb {
+      0%, 100% { transform: translate(-50%, 0) scale(1); }
+      50% { transform: translate(-50%, 20px) scale(1.08); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 0.9; }
+    }
+
     /* Ambient heavenly background glow */
     .glow-orb {
       position: fixed;
@@ -48,7 +58,8 @@
       transform: translateX(-50%);
       width: 500px;
       height: 300px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(99, 102, 241, 0.1) 60%, transparent 100%);
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.28) 0%, rgba(99, 102, 241, 0.12) 60%, transparent 100%);
+      animation: floatOrb 12s ease-in-out infinite;
     }
 
     .glow-orb-2 {
@@ -56,7 +67,8 @@
       right: 10%;
       width: 400px;
       height: 300px;
-      background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.18) 0%, transparent 70%);
+      animation: pulseGlow 8s ease-in-out infinite;
     }
 
     .settings-container {
@@ -287,6 +299,77 @@
       outline-offset: 2px;
     }
 
+    /* Live Browser Tab Mockup Styling */
+    .browser-mockup {
+      background: #0f172a;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 14px;
+      padding: 8px 12px 12px 12px;
+      margin-top: 6px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .browser-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background-color: #ef4444; }
+    .dot-yellow { background-color: #f59e0b; }
+    .dot-green { background-color: #10b981; }
+
+    .tab-preview {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1e293b;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      padding: 6px 14px;
+      max-width: 260px;
+      overflow: hidden;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .tab-icon-img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+      flex-shrink: 0;
+      border-radius: 2px;
+    }
+
+    .tab-title-text {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #f1f5f9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    .tab-close-x {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-left: 4px;
+      cursor: default;
+    }
+
     @media (max-width: 640px) {
       .settings-container {
         padding: 24px 18px;
@@ -389,6 +472,30 @@
               <div style="display: flex; gap: 8px; margin-top: 10px;">
                 <button id="save-custom-preset-btn" type="button" style="padding: 10px 16px; background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%); border: none; border-radius: 10px; color: #030712; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Save Custom Preset</button>
                 <button id="delete-custom-preset-btn" type="button" style="padding: 10px 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 10px; color: #fca5a5; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Delete Selected</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Card: Live Tab Cloak Preview -->
+          <div class="hero-card" style="background: rgba(15, 23, 42, 0.65); border-color: rgba(56, 189, 248, 0.3);">
+            <div class="hero-card-header">
+              <span class="hero-card-title">👁️ Live Tab Cloak Preview</span>
+              <span style="font-size: 0.75rem; padding: 3px 9px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; color: #38bdf8; font-weight: 600; letter-spacing: 0.02em;">Live Sync</span>
+            </div>
+            <p class="hero-card-desc">Real-time mockup of how your active browser tab title & favicon appear when cloaked:</p>
+
+            <div class="browser-mockup">
+              <div class="browser-header">
+                <div class="browser-dots">
+                  <span class="dot dot-red"></span>
+                  <span class="dot dot-yellow"></span>
+                  <span class="dot dot-green"></span>
+                </div>
+                <div class="tab-preview">
+                  <img id="preview-tab-icon" src="https://ssl.gstatic.com/classroom/favicon.png" alt="Icon" class="tab-icon-img" onError="this.src='https://ssl.gstatic.com/classroom/favicon.png'" />
+                  <span id="preview-tab-title" class="tab-title-text">Google Classroom</span>
+                  <span class="tab-close-x">×</span>
+                </div>
               </div>
             </div>
           </div>
@@ -581,6 +688,25 @@
       } catch (e) {}
     }
 
+    function updateLivePreview() {
+      var settings = loadSettings();
+      var selected = $('preset-select').value;
+      var customTitle = $('custom-title').value.trim();
+      var customIcon = $('custom-icon').value.trim();
+
+      var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
+      var preset = allPresets[selected] || DEFAULT_PRESETS.classroom;
+
+      var previewTitle = customTitle || preset.title;
+      var previewIcon = customIcon || preset.icon;
+
+      var titleEl = $('preview-tab-title');
+      var iconEl = $('preview-tab-icon');
+
+      if (titleEl) titleEl.textContent = previewTitle;
+      if (iconEl) iconEl.src = previewIcon;
+    }
+
     function syncSettingsToUI() {
       var settings = loadSettings();
       $('set-auto-cloak').checked = settings.autoCloak;
@@ -608,6 +734,8 @@
         if (key === settings.selectedPreset) opt.selected = true;
         select.appendChild(opt);
       }
+
+      updateLivePreview();
     }
 
     // --- Tab Cloaking ---
@@ -716,11 +844,18 @@
       };
 
       ['set-auto-cloak', 'set-persistent-cloak', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-dock-position', 'preset-select'].forEach(function (id) {
-        $(id).onchange = updateHandler;
+        $(id).onchange = function () {
+          updateHandler();
+          updateLivePreview();
+        };
       });
 
       ['set-panic-key', 'set-panic-url'].forEach(function (id) {
         $(id).oninput = updateHandler;
+      });
+
+      ['custom-title', 'custom-icon'].forEach(function (id) {
+        $(id).oninput = updateLivePreview;
       });
 
       // Custom preset save
