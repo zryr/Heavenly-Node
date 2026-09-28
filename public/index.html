@@ -546,6 +546,14 @@
       background-color: #ffffff;
     }
 
+    button:focus-visible,
+    select:focus-visible,
+    input[type="submit"]:focus-visible,
+    .switch-toggle input:focus-visible + .slider-knob {
+      outline: 2px solid #38bdf8;
+      outline-offset: 2px;
+    }
+
     @media (max-width: 640px) {
       .container {
         padding: 28px 20px 24px 20px;
@@ -595,7 +603,7 @@
 
     <form action="no-js" method="get" id="unblocker-form" class="search-form">
       <div class="input-wrapper">
-        <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autofocus="autofocus" autocomplete="off" />
+        <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autofocus="autofocus" autocomplete="off" aria-label="URL or search query" />
         <div id="history-dropdown" class="history-dropdown"></div>
       </div>
       <input type="submit" value="Go" />
@@ -624,7 +632,7 @@
     </div>
 
     <div style="text-align: center; margin-top: 18px;">
-      <button type="button" id="open-settings-btn" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); color: #e0f2fe; padding: 10px 20px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.25s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+      <button type="button" id="open-settings-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="settings-modal" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); color: #e0f2fe; padding: 10px 20px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.25s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
         <svg style="width: 18px; height: 18px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
         <span>Settings & Cloaking</span>
       </button>
@@ -690,7 +698,7 @@
                 <span class="hero-card-title" style="margin-bottom: 4px;">Cloak Preset</span>
                 <p class="hero-card-desc">Select an app identity to mimic in your browser tab.</p>
               </div>
-              <select id="preset-select" style="width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 12px; color: #f8fafc; font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer;">
+              <select id="preset-select" aria-label="Cloak preset" style="width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 12px; color: #f8fafc; font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer;">
                 <option value="classroom">Google Classroom (Default)</option>
                 <option value="drive">Google Drive</option>
                 <option value="canvas">Canvas LMS</option>
@@ -701,8 +709,8 @@
               <div style="border-top: 1px solid rgba(148, 163, 184, 0.12); padding-top: 12px; margin-top: 10px;">
                 <span style="font-size: 0.88rem; color: #cbd5e1; font-weight: 600; display: block; margin-bottom: 6px;">Custom Cloak Preset</span>
                 <div style="display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
-                  <input type="text" id="custom-title" placeholder="Title (e.g. Classes)" style="flex: 1; min-width: 140px; padding: 8px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #fff; font-size: 0.85rem;">
-                  <input type="text" id="custom-icon" placeholder="Icon URL (.ico/.png)" style="flex: 1; min-width: 140px; padding: 8px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #fff; font-size: 0.85rem;">
+                  <input type="text" id="custom-title" placeholder="Title (e.g. Classes)" aria-label="Custom preset title" style="flex: 1; min-width: 140px; padding: 8px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #fff; font-size: 0.85rem;">
+                  <input type="text" id="custom-icon" placeholder="Icon URL (.ico/.png)" aria-label="Custom preset icon URL" style="flex: 1; min-width: 140px; padding: 8px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #fff; font-size: 0.85rem;">
                 </div>
                 <div style="display: flex; gap: 8px; margin-top: 10px;">
                   <button id="save-custom-preset-btn" type="button" style="padding: 8px 14px; background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%); border: none; border-radius: 10px; color: #030712; font-weight: 600; font-size: 0.83rem; cursor: pointer;">Save Custom Preset</button>
@@ -733,7 +741,7 @@
               </div>
               <p class="hero-card-desc">Instantly redirects your active session to a safe educational website when a key is pressed.</p>
               <div style="display: flex; gap: 10px; align-items: center; margin-top: 6px;">
-                <label style="font-size: 0.85rem; color: #cbd5e1;">Panic Key:</label>
+                <label for="set-panic-key" style="font-size: 0.85rem; color: #cbd5e1;">Panic Key:</label>
                 <input type="text" id="set-panic-key" value="`" maxlength="10" style="width: 80px; text-align: center; padding: 6px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #38bdf8; font-weight: 700; font-size: 0.95rem;">
               </div>
             </div>
@@ -754,7 +762,7 @@
             <div class="hero-card">
               <span class="hero-card-title" style="margin-bottom: 2px;">Panic Redirect URL</span>
               <p class="hero-card-desc" style="margin-bottom: 8px;">Target URL to redirect to when panic controls are triggered.</p>
-              <input type="text" id="set-panic-url" value="https://classroom.google.com" style="width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 12px; color: #f8fafc; font-family: inherit; font-size: 0.88rem;">
+              <input type="text" id="set-panic-url" value="https://classroom.google.com" aria-label="Panic redirect URL" style="width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 12px; color: #f8fafc; font-family: inherit; font-size: 0.88rem;">
             </div>
 
           </div>
@@ -827,7 +835,7 @@
               </div>
               <p class="hero-card-desc">Docks all active widgets inside a collapsible bar on the screen edge with a blue arrow pull tab.</p>
               <div style="display: flex; gap: 10px; align-items: center; margin-top: 6px;">
-                <label style="font-size: 0.85rem; color: #cbd5e1;">Dock Position:</label>
+                <label for="set-dock-position" style="font-size: 0.85rem; color: #cbd5e1;">Dock Position:</label>
                 <select id="set-dock-position" style="flex: 1; padding: 6px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #f8fafc; font-family: inherit; font-size: 0.88rem; outline: none; cursor: pointer;">
                   <option value="bottom">Bottom Edge (Default)</option>
                   <option value="top">Top Edge</option>
@@ -1019,12 +1027,14 @@
 
     function closeSettingsModal() {
       $('settings-modal').classList.remove('active');
+      $('open-settings-btn').setAttribute('aria-expanded', 'false');
       $('open-settings-btn').focus();
     }
 
     function bindSettingsEvents() {
       $('open-settings-btn').onclick = function () {
         syncSettingsToUI();
+        $('open-settings-btn').setAttribute('aria-expanded', 'true');
         $('settings-modal').classList.add('active');
         $('close-settings-btn').focus();
       };
@@ -1178,6 +1188,7 @@
         deleteBtn.type = 'button';
         deleteBtn.className = 'history-delete-btn';
         deleteBtn.title = 'Remove item from history';
+        deleteBtn.setAttribute('aria-label', 'Remove item from history');
         deleteBtn.textContent = '✕';
 
         deleteBtn.onclick = function (e) {
