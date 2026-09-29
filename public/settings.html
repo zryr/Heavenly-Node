@@ -473,6 +473,7 @@
                 <button id="save-custom-preset-btn" type="button" style="padding: 10px 16px; background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%); border: none; border-radius: 10px; color: #030712; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Save Custom Preset</button>
                 <button id="delete-custom-preset-btn" type="button" style="padding: 10px 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 10px; color: #fca5a5; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Delete Selected</button>
               </div>
+              <div id="preset-status-msg" aria-live="polite" role="status" style="margin-top: 8px; font-size: 0.82rem; min-height: 1.2em; transition: all 0.2s ease;"></div>
             </div>
           </div>
 
@@ -858,11 +859,21 @@
         $(id).oninput = updateLivePreview;
       });
 
+      function showStatusMessage(msg, isError) {
+        var statusEl = $('preset-status-msg');
+        if (!statusEl) return;
+        statusEl.textContent = msg;
+        statusEl.style.color = isError ? '#fca5a5' : '#38bdf8';
+      }
+
       // Custom preset save
       $('save-custom-preset-btn').onclick = function () {
         var title = $('custom-title').value.trim();
         var icon = $('custom-icon').value.trim();
-        if (!title) return alert('Please enter a preset title.');
+        if (!title) {
+          showStatusMessage('Please enter a preset title.', true);
+          return;
+        }
 
         var settings = loadSettings();
         var customId = 'custom_' + Date.now();
@@ -873,6 +884,7 @@
         syncCloak();
         $('custom-title').value = '';
         $('custom-icon').value = '';
+        showStatusMessage('Custom preset "' + title + '" saved successfully!', false);
       };
 
       // Custom preset delete
@@ -880,13 +892,15 @@
         var settings = loadSettings();
         var current = $('preset-select').value;
         if (DEFAULT_PRESETS[current]) {
-          return alert('Cannot delete built-in presets.');
+          showStatusMessage('Cannot delete built-in presets.', true);
+          return;
         }
         delete settings.customPresets[current];
         settings.selectedPreset = 'classroom';
         saveSettings(settings);
         syncSettingsToUI();
         syncCloak();
+        showStatusMessage('Custom preset deleted.', false);
       };
 
       // Reset positions to middle of screen
@@ -899,7 +913,7 @@
         localStorage.setItem('heavenly_nav_pos', JSON.stringify({ left: midX, top: midY + 60 }));
         localStorage.setItem('heavenly_lens_pos', JSON.stringify({ left: midX, top: midY }));
 
-        alert('Widget positions reset to middle of screen!');
+        showStatusMessage('Widget positions reset to middle of screen!', false);
       };
     }
 
