@@ -35,6 +35,38 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
     });
   });
 
+  describe('XMLHttpRequest & Fetch proxying', function () {
+    it('should wrap window.XMLHttpRequest while preserving prototype and static constants', function () {
+      let openedUrl = '';
+      function FakeXHR() {}
+      FakeXHR.prototype.open = function (method, targetUrl) {
+        openedUrl = targetUrl;
+      };
+      FakeXHR.DONE = 4;
+      FakeXHR.UNSENT = 0;
+
+      const mockWindow = {
+        location: location,
+        XMLHttpRequest: FakeXHR,
+        addEventListener: function () {},
+        document: {
+          readyState: 'complete',
+          documentElement: { addEventListener: function () {} }
+        },
+        localStorage: { getItem: function () { return '{}'; } }
+      };
+
+      initForWindow(config, mockWindow);
+
+      assert.strictEqual(mockWindow.XMLHttpRequest.DONE, 4);
+      assert.strictEqual(mockWindow.XMLHttpRequest.prototype, FakeXHR.prototype);
+
+      const xhr = new mockWindow.XMLHttpRequest();
+      xhr.open('GET', '/portal/games/load_more?page=2');
+      assert.strictEqual(openedUrl, '/proxy/https://www.newgrounds.com/portal/games/load_more?page=2');
+    });
+  });
+
   describe('DOM element prototype getter/setter & click interception', function () {
     it('should proxy href getter and setAttribute for anchors', function () {
       let capturedHref = '';
