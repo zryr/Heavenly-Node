@@ -164,7 +164,7 @@
       window.Element.prototype.setAttribute = function (name, value) {
         if (typeof name === "string") {
           var lowerName = name.toLowerCase();
-          if (lowerName === "src" || lowerName === "href" || lowerName === "poster" || lowerName === "data-src" || lowerName === "data-href") {
+          if (lowerName === "src" || lowerName === "href" || lowerName === "poster" || lowerName === "data-src" || lowerName === "data-href" || lowerName === "data-url") {
             value = fixUrl(value, config, window.location);
           } else if (lowerName === "srcset" || lowerName === "data-srcset") {
             value = fixSrcset(value, config, window.location);
@@ -206,6 +206,13 @@
             try { el.setAttribute("data-src", fixedDataSrc); } catch (e) {}
           }
         }
+        var dataUrl = el.getAttribute("data-url");
+        if (dataUrl) {
+          var fixedDataUrl = fixUrl(dataUrl, config, window.location);
+          if (fixedDataUrl !== dataUrl) {
+            try { el.setAttribute("data-url", fixedDataUrl); } catch (e) {}
+          }
+        }
         var srcset = el.getAttribute("srcset");
         if (srcset) {
           var fixedSrcset = fixSrcset(srcset, config, window.location);
@@ -219,6 +226,20 @@
           var fixedHref = fixUrl(href, config, window.location);
           if (fixedHref !== href) {
             try { el.setAttribute("href", fixedHref); } catch (e) {}
+          }
+        }
+        var dataHref = el.getAttribute("data-href");
+        if (dataHref) {
+          var fixedDataHref = fixUrl(dataHref, config, window.location);
+          if (fixedDataHref !== dataHref) {
+            try { el.setAttribute("data-href", fixedDataHref); } catch (e) {}
+          }
+        }
+        var dataUrl2 = el.getAttribute("data-url");
+        if (dataUrl2) {
+          var fixedDataUrl2 = fixUrl(dataUrl2, config, window.location);
+          if (fixedDataUrl2 !== dataUrl2) {
+            try { el.setAttribute("data-url", fixedDataUrl2); } catch (e) {}
           }
         }
       }
@@ -243,7 +264,7 @@
             }
           } else if (mut.type === "attributes" && mut.target && mut.target.nodeType === 1) {
             var attrName = mut.attributeName ? mut.attributeName.toLowerCase() : "";
-            if (attrName === "src" || attrName === "href" || attrName === "data-src") {
+            if (attrName === "src" || attrName === "href" || attrName === "data-src" || attrName === "data-href" || attrName === "data-url") {
               var val = mut.target.getAttribute(mut.attributeName);
               if (val) {
                 var fixedVal = fixUrl(val, config, window.location);
@@ -297,16 +318,27 @@
   function initXMLHttpRequest(config, window) {
     if (!window.XMLHttpRequest) return;
     var _XMLHttpRequest = window.XMLHttpRequest;
+    var _open = _XMLHttpRequest.prototype ? _XMLHttpRequest.prototype.open : null;
+
+    if (_open) {
+      _XMLHttpRequest.prototype.open = function () {
+        var args = Array.prototype.slice.call(arguments);
+        if (args[1]) {
+          args[1] = fixUrl(args[1], config, window.location);
+        }
+        return _open.apply(this, args);
+      };
+    }
 
     function ProxyXMLHttpRequest(opts) {
       var xhr = new _XMLHttpRequest(opts);
-      var _open = xhr.open;
+      var instanceOpen = xhr.open;
       xhr.open = function () {
         var args = Array.prototype.slice.call(arguments);
         if (args[1]) {
           args[1] = fixUrl(args[1], config, window.location);
         }
-        return _open.apply(xhr, args);
+        return instanceOpen.apply(xhr, args);
       };
       return xhr;
     }
@@ -332,26 +364,32 @@
     var _fetch = window.fetch;
 
     window.fetch = function (resource, init) {
-      if (resource && typeof resource === "object" && resource.url) {
-        var proxiedUrl = fixUrl(resource.url, config, window.location);
-        var isRequest =
-          (typeof Request !== "undefined" && resource instanceof Request) ||
-          (resource.constructor && resource.constructor.name === "Request");
-        if (isRequest) {
-          resource = new Request(proxiedUrl, resource);
-        } else {
-          try {
-            resource.url = proxiedUrl;
-          } catch (e) {
-            if (typeof Request !== "undefined") {
-              resource = new Request(proxiedUrl, resource);
+      if (resource && typeof resource === "object") {
+        if (resource.url) {
+          var proxiedUrl = fixUrl(resource.url, config, window.location);
+          var isRequest =
+            (typeof Request !== "undefined" && resource instanceof Request) ||
+            (resource.constructor && resource.constructor.name === "Request");
+          if (isRequest) {
+            resource = new Request(proxiedUrl, resource);
+          } else {
+            try {
+              resource.url = proxiedUrl;
+            } catch (e) {
+              if (typeof Request !== "undefined") {
+                resource = new Request(proxiedUrl, resource);
+              }
             }
           }
+        } else if (typeof URL !== "undefined" && resource instanceof URL) {
+          resource = fixUrl(resource.href, config, window.location);
+        } else if (typeof resource.toString === "function") {
+          resource = fixUrl(resource.toString(), config, window.location);
         }
       } else if (resource !== null && resource !== undefined) {
         resource = fixUrl(resource.toString(), config, window.location);
       }
-      return _fetch(resource, init);
+      return _fetch.call(window, resource, init);
     };
   }
 

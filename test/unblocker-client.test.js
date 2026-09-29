@@ -64,6 +64,34 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       const xhr = new mockWindow.XMLHttpRequest();
       xhr.open('GET', '/portal/games/load_more?page=2');
       assert.strictEqual(openedUrl, '/proxy/https://www.newgrounds.com/portal/games/load_more?page=2');
+
+      // Test calling prototype open directly
+      openedUrl = '';
+      FakeXHR.prototype.open.call(xhr, 'GET', '/portal/games/load_more?page=3');
+      assert.strictEqual(openedUrl, '/proxy/https://www.newgrounds.com/portal/games/load_more?page=3');
+    });
+
+    it('should proxy fetch calls accepting URL objects', function () {
+      let fetchedUrl = '';
+      const mockWindow = {
+        location: location,
+        fetch: function (resource) {
+          fetchedUrl = resource;
+          return Promise.resolve();
+        },
+        addEventListener: function () {},
+        document: {
+          readyState: 'complete',
+          documentElement: { addEventListener: function () {} }
+        },
+        localStorage: { getItem: function () { return '{}'; } }
+      };
+
+      initForWindow(config, mockWindow);
+
+      const targetUrlObj = new (require('url').URL)('https://www.newgrounds.com/games/load_more?page=4');
+      mockWindow.fetch(targetUrlObj);
+      assert.strictEqual(fetchedUrl, '/proxy/https://www.newgrounds.com/games/load_more?page=4');
     });
   });
 
