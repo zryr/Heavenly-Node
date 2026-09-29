@@ -24,14 +24,50 @@
     }
     srcsetStr = srcsetStr.toString();
     var candidates = srcsetStr.split(",");
-    var fixedCandidates = candidates.map(function (candidate) {
-      var trimmed = candidate.trim();
-      if (!trimmed) return candidate;
+    var fixedCandidates = [];
+    for (var i = 0; i < candidates.length; i++) {
+      var candidate = candidates[i];
+      var trimmed = candidate.replace(/^\s+|\s+$/g, "");
+      if (!trimmed) {
+        fixedCandidates.push(candidate);
+        continue;
+      }
       var parts = trimmed.split(/\s+/);
       parts[0] = fixUrl(parts[0], config, location);
-      return parts.join(" ");
-    });
+      fixedCandidates.push(parts.join(" "));
+    }
     return fixedCandidates.join(", ");
+  }
+
+  function rewriteHtmlUrls(htmlStr, config, location) {
+    if (typeof htmlStr !== "string" || !htmlStr) {
+      return htmlStr;
+    }
+    // Pattern matches src, href, srcset, poster, data-src, data-href, data-srcset attributes
+    var attrRegex = /(?:^|\s)(src|href|srcset|poster|data-src|data-href|data-srcset)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
+    return htmlStr.replace(attrRegex, function (match, attrName, valDouble, valSingle, valUnquoted) {
+      var attrLower = attrName.toLowerCase();
+      var rawVal = valDouble !== undefined ? valDouble : (valSingle !== undefined ? valSingle : valUnquoted);
+      var quote = valDouble !== undefined ? '"' : (valSingle !== undefined ? "'" : '');
+      if (rawVal === undefined || rawVal === null) {
+        return match;
+      }
+
+      var fixedVal;
+      if (attrLower === "srcset" || attrLower === "data-srcset") {
+        fixedVal = fixSrcset(rawVal, config, location);
+      } else {
+        fixedVal = fixUrl(rawVal, config, location);
+      }
+
+      // Preserve spaces around attrName if present
+      var prefix = match.match(/^\s*/)[0];
+      if (quote) {
+        return prefix + attrName + '=' + quote + fixedVal + quote;
+      } else {
+        return prefix + attrName + '=' + fixedVal;
+      }
+    });
   }
 
   function fixUrl(urlStr, config, location) {
@@ -113,7 +149,17 @@
       var nativeSet = desc.set;
       var nativeGet = desc.get;
       Object.defineProperty(proto, prop, {
-        get: nativeGet,
+        get: function () {
+          var val = nativeGet.call(this);
+          if (typeof val === "string" && val) {
+            var fixed = fixFn(val, config, window.location);
+            if (fixed !== val && nativeSet) {
+              try { nativeSet.call(this, fixed); } catch (e) {}
+            }
+            return fixed;
+          }
+          return val;
+        },
         set: function (val) {
           return nativeSet.call(this, fixFn(val, config, window.location));
         },
@@ -142,20 +188,217 @@
       wrapProperty(window.HTMLLinkElement.prototype, "href", fixUrl);
     }
 
-    if (window.Element && window.Element.prototype && window.Element.prototype.setAttribute) {
-      var _setAttribute = window.Element.prototype.setAttribute;
-      window.Element.prototype.setAttribute = function (name, value) {
-        if (typeof name === "string") {
-          var lowerName = name.toLowerCase();
-          if (lowerName === "src" || lowerName === "href" || lowerName === "poster") {
-            value = fixUrl(value, config, window.location);
-          } else if (lowerName === "srcset") {
-            value = fixSrcset(value, config, window.location);
+    if (window.Element && window.Element.prototype) {
+      if (window.Element.prototype.setAttribute) {
+        var _setAttribute = window.Element.prototype.setAttribute;
+        window.Element.prototype.setAttribute = function (name, value) {
+          if (typeof name === "string") {
+            var lowerName = name.toLowerCase();
+            if (lowerName === "src" || lowerName === "href" || lowerName === "poster" || lowerName === "data-src" || lowerName === "data-href") {
+              value = fixUrl(value, config, window.location);
+            } else if (lowerName === "srcset" || lowerName === "data-srcset") {
+              value = fixSrcset(value, config, window.location);
+            }
           }
+          return _setAttribute.call(this, name, value);
+        };
+      }
+
+      // Intercept innerHTML property descriptor on Element.prototype or HTMLElement.prototype
+      var elemProto = window.Element.prototype;
+      var innerHtmlDesc = Object.getOwnPropertyDescriptor(elemProto, "innerHTML") ||
+                          (window.HTMLElement && Object.getOwnPropertyDescriptor(window.HTMLElement.prototype, "innerHTML"));
+      if (innerHtmlDesc && innerHtmlDesc.set) {
+        var nativeInnerHtmlSet = innerHtmlDesc.set;
+        var nativeInnerHtmlGet = innerHtmlDesc.get;
+        Object.defineProperty(innerHtmlDesc.set === elemProto ? elemProto : (window.HTMLElement ? window.HTMLElement.prototype : elemProto), "innerHTML", {
+          get: nativeInnerHtmlGet,
+          set: function (html) {
+            return nativeInnerHtmlSet.call(this, rewriteHtmlUrls(html, config, window.location));
+          },
+          configurable: true,
+          enumerable: innerHtmlDesc.enumerable
+        });
+      }
+
+      var outerHtmlDesc = Object.getOwnPropertyDescriptor(elemProto, "outerHTML") ||
+                          (window.HTMLElement && Object.getOwnPropertyDescriptor(window.HTMLElement.prototype, "outerHTML"));
+      if (outerHtmlDesc && outerHtmlDesc.set) {
+        var nativeOuterHtmlSet = outerHtmlDesc.set;
+        var nativeOuterHtmlGet = outerHtmlDesc.get;
+        Object.defineProperty(outerHtmlDesc.set === elemProto ? elemProto : (window.HTMLElement ? window.HTMLElement.prototype : elemProto), "outerHTML", {
+          get: nativeOuterHtmlGet,
+          set: function (html) {
+            return nativeOuterHtmlSet.call(this, rewriteHtmlUrls(html, config, window.location));
+          },
+          configurable: true,
+          enumerable: outerHtmlDesc.enumerable
+        });
+      }
+
+      if (elemProto.insertAdjacentHTML) {
+        var _insertAdjacentHTML = elemProto.insertAdjacentHTML;
+        elemProto.insertAdjacentHTML = function (position, text) {
+          return _insertAdjacentHTML.call(this, position, rewriteHtmlUrls(text, config, window.location));
+        };
+      }
+    }
+
+    if (window.DOMParser && window.DOMParser.prototype && window.DOMParser.prototype.parseFromString) {
+      var _parseFromString = window.DOMParser.prototype.parseFromString;
+      window.DOMParser.prototype.parseFromString = function (str, type) {
+        if (typeof str === "string") {
+          str = rewriteHtmlUrls(str, config, window.location);
         }
-        return _setAttribute.call(this, name, value);
+        return _parseFromString.call(this, str, type);
       };
     }
+
+    if (window.document) {
+      if (window.document.write) {
+        var _docWrite = window.document.write;
+        window.document.write = function () {
+          var args = Array.prototype.slice.call(arguments);
+          for (var i = 0; i < args.length; i++) {
+            if (typeof args[i] === "string") {
+              args[i] = rewriteHtmlUrls(args[i], config, window.location);
+            }
+          }
+          return _docWrite.apply(window.document, args);
+        };
+      }
+      if (window.document.writeln) {
+        var _docWriteln = window.document.writeln;
+        window.document.writeln = function () {
+          var args = Array.prototype.slice.call(arguments);
+          for (var i = 0; i < args.length; i++) {
+            if (typeof args[i] === "string") {
+              args[i] = rewriteHtmlUrls(args[i], config, window.location);
+            }
+          }
+          return _docWriteln.apply(window.document, args);
+        };
+      }
+    }
+
+    if (window.open) {
+      var _winOpen = window.open;
+      window.open = function (url) {
+        var args = Array.prototype.slice.call(arguments);
+        if (args[0]) {
+          args[0] = fixUrl(args[0], config, window.location);
+        }
+        return _winOpen.apply(window, args);
+      };
+    }
+  }
+
+  function initMutationObserverAndClicks(config, window) {
+    function processElementNode(el) {
+      if (!el || el.nodeType !== 1) return;
+
+      var tagName = el.tagName ? el.tagName.toLowerCase() : "";
+      if (tagName === "img" || tagName === "script" || tagName === "iframe" || tagName === "video" || tagName === "audio") {
+        var src = el.getAttribute("src");
+        if (src) {
+          var fixedSrc = fixUrl(src, config, window.location);
+          if (fixedSrc !== src) {
+            try { el.setAttribute("src", fixedSrc); } catch (e) {}
+          }
+        }
+        var dataSrc = el.getAttribute("data-src");
+        if (dataSrc) {
+          var fixedDataSrc = fixUrl(dataSrc, config, window.location);
+          if (fixedDataSrc !== dataSrc) {
+            try { el.setAttribute("data-src", fixedDataSrc); } catch (e) {}
+          }
+        }
+        var srcset = el.getAttribute("srcset");
+        if (srcset) {
+          var fixedSrcset = fixSrcset(srcset, config, window.location);
+          if (fixedSrcset !== srcset) {
+            try { el.setAttribute("srcset", fixedSrcset); } catch (e) {}
+          }
+        }
+      } else if (tagName === "a" || tagName === "link") {
+        var href = el.getAttribute("href");
+        if (href) {
+          var fixedHref = fixUrl(href, config, window.location);
+          if (fixedHref !== href) {
+            try { el.setAttribute("href", fixedHref); } catch (e) {}
+          }
+        }
+      }
+
+      if (el.children && el.children.length) {
+        for (var i = 0; i < el.children.length; i++) {
+          processElementNode(el.children[i]);
+        }
+      }
+    }
+
+    if (typeof window.MutationObserver !== "undefined" && window.document && window.document.documentElement) {
+      var observer = new window.MutationObserver(function (mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          var mut = mutations[i];
+          if (mut.type === "childList" && mut.addedNodes) {
+            for (var j = 0; j < mut.addedNodes.length; j++) {
+              var node = mut.addedNodes[j];
+              if (node.nodeType === 1) {
+                processElementNode(node);
+              }
+            }
+          } else if (mut.type === "attributes" && mut.target && mut.target.nodeType === 1) {
+            var attrName = mut.attributeName ? mut.attributeName.toLowerCase() : "";
+            if (attrName === "src" || attrName === "href" || attrName === "data-src") {
+              var val = mut.target.getAttribute(mut.attributeName);
+              if (val) {
+                var fixedVal = fixUrl(val, config, window.location);
+                if (fixedVal !== val) {
+                  try { mut.target.setAttribute(mut.attributeName, fixedVal); } catch (e) {}
+                }
+              }
+            } else if (attrName === "srcset") {
+              var srcsetVal = mut.target.getAttribute("srcset");
+              if (srcsetVal) {
+                var fixedSrcsetVal = fixSrcset(srcsetVal, config, window.location);
+                if (fixedSrcsetVal !== srcsetVal) {
+                  try { mut.target.setAttribute("srcset", fixedSrcsetVal); } catch (e) {}
+                }
+              }
+            }
+          }
+        }
+      });
+
+      observer.observe(window.document.documentElement, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["src", "href", "srcset", "data-src"]
+      });
+    }
+
+    // Global capture-phase click and auxclick event listener to enforce proxied href on anchor clicks
+    function handleLinkClick(e) {
+      var target = e.target;
+      while (target && target !== window.document) {
+        if (target.tagName && target.tagName.toLowerCase() === "a") {
+          var rawHref = target.getAttribute("href");
+          if (rawHref) {
+            var proxiedHref = fixUrl(rawHref, config, window.location);
+            if (proxiedHref !== rawHref) {
+              try { target.setAttribute("href", proxiedHref); } catch (err) {}
+            }
+          }
+          break;
+        }
+        target = target.parentNode;
+      }
+    }
+
+    window.addEventListener("click", handleLinkClick, true);
+    window.addEventListener("auxclick", handleLinkClick, true);
   }
 
   function initXMLHttpRequest(config, window) {
@@ -1846,6 +2089,7 @@
   function initForWindow(config, window) {
     console.log("begin unblocker client scripts", config, window);
     initElementPrototypes(config, window);
+    initMutationObserverAndClicks(config, window);
     initXMLHttpRequest(config, window);
     initFetch(config, window);
     initCreateElement(config, window);
@@ -1880,6 +2124,8 @@
     module.exports = {
       initForWindow: initForWindow,
       fixUrl: fixUrl,
+      fixSrcset: fixSrcset,
+      rewriteHtmlUrls: rewriteHtmlUrls,
     };
   }
 })(this); // window in a browser, global in node.js
