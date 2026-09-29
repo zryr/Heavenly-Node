@@ -53,4 +53,10 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('aria-label="Custom preset icon URL"'), 'custom-icon input should have aria-label');
         assert.ok(html.includes('aria-label="Panic redirect URL"'), 'set-panic-url input should have aria-label');
     });
+
+    it('should include accessible aria-live status notification element in settings.html', function() {
+        assert.ok(html.includes('id="preset-status-msg"'), 'preset-status-msg element should exist');
+        assert.ok(html.includes('aria-live="polite"'), 'status element should have aria-live="polite"');
+        assert.ok(html.includes('role="status"'), 'status element should have role="status"');
+    });
 });
