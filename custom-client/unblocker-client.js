@@ -127,11 +127,7 @@
         get: function () {
           var val = nativeGet.call(this);
           if (typeof val === "string" && val) {
-            var fixed = fixFn(val, config, window.location);
-            if (fixed !== val && nativeSet) {
-              try { nativeSet.call(this, fixed); } catch (e) {}
-            }
-            return fixed;
+            return fixFn(val, config, window.location);
           }
           return val;
         },
@@ -302,16 +298,33 @@
     if (!window.XMLHttpRequest) return;
     var _XMLHttpRequest = window.XMLHttpRequest;
 
-    window.XMLHttpRequest = function (opts) {
+    function ProxyXMLHttpRequest(opts) {
       var xhr = new _XMLHttpRequest(opts);
       var _open = xhr.open;
       xhr.open = function () {
         var args = Array.prototype.slice.call(arguments);
-        args[1] = fixUrl(args[1], config, window.location);
+        if (args[1]) {
+          args[1] = fixUrl(args[1], config, window.location);
+        }
         return _open.apply(xhr, args);
       };
       return xhr;
-    };
+    }
+
+    ProxyXMLHttpRequest.prototype = _XMLHttpRequest.prototype;
+
+    for (var key in _XMLHttpRequest) {
+      if (Object.prototype.hasOwnProperty.call(_XMLHttpRequest, key)) {
+        ProxyXMLHttpRequest[key] = _XMLHttpRequest[key];
+      }
+    }
+    ProxyXMLHttpRequest.UNSENT = _XMLHttpRequest.UNSENT || 0;
+    ProxyXMLHttpRequest.OPENED = _XMLHttpRequest.OPENED || 1;
+    ProxyXMLHttpRequest.HEADERS_RECEIVED = _XMLHttpRequest.HEADERS_RECEIVED || 2;
+    ProxyXMLHttpRequest.LOADING = _XMLHttpRequest.LOADING || 3;
+    ProxyXMLHttpRequest.DONE = _XMLHttpRequest.DONE || 4;
+
+    window.XMLHttpRequest = ProxyXMLHttpRequest;
   }
 
   function initFetch(config, window) {
