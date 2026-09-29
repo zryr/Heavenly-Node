@@ -61,6 +61,8 @@
       return urlStr;
     }
 
+    urlStr = urlStr.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+
     var currentRemoteHref;
     if (location.pathname.substr(0, prefixLen) === prefix) {
       currentRemoteHref =
@@ -70,6 +72,10 @@
     } else {
       // in case sites (such as youtube) manage to bypass our history wrapper
       currentRemoteHref = config.url;
+    }
+
+    if (currentRemoteHref) {
+      currentRemoteHref = currentRemoteHref.replace(/^(https?:\/)([^\/])/i, "$1/$2");
     }
 
     var url = new URL(urlStr, currentRemoteHref);

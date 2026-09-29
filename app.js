@@ -17,6 +17,7 @@ var Transform = require('stream').Transform;
 var youtube = require('unblocker/examples/youtube/youtube.js')
 
 var app = express();
+app.set('trust proxy', true);
 
 var google_analytics_id = process.env.GA_ID || null;
 
@@ -75,6 +76,58 @@ function googleAnalyticsMiddleware(data) {
     }
 }
 
+function headersMiddleware(data) {
+    if (!data.url) return;
+    try {
+        var targetUri = data.uri || new URL(data.url);
+
+        // Clean & normalize Referer header if present
+        if (data.headers && data.headers.referer) {
+            var ref = data.headers.referer;
+            ref = ref.replace(/^(https?:\/)([^\/])/i, '$1/$2');
+            var proxyPrefixIndex = ref.indexOf(unblockerConfig.prefix);
+            if (proxyPrefixIndex !== -1) {
+                ref = ref.substring(proxyPrefixIndex + unblockerConfig.prefix.length);
+                ref = ref.replace(/^(https?:\/)([^\/])/i, '$1/$2');
+            }
+            data.headers.referer = ref;
+        }
+
+        // Rewrite Origin header to target origin if set to proxy domain
+        if (data.headers && data.headers.origin && targetUri.origin) {
+            data.headers.origin = targetUri.origin;
+        }
+    } catch (e) {
+        // ignore invalid URL
+    }
+}
+
+function responseLinkHeaderMiddleware(data) {
+    if (data.headers && data.headers['link']) {
+        var link = data.headers['link'];
+        var prefix = unblockerConfig.prefix;
+        var dataUrl = data.url;
+
+        var rewriteLink = function(str) {
+            return str.replace(/<([^>]+)>/g, function(match, target) {
+                if (target.indexOf(prefix) === 0) return match;
+                try {
+                    var absolute = new URL(target, dataUrl).href;
+                    return "<" + prefix + absolute + ">";
+                } catch (e) {
+                    return match;
+                }
+            });
+        };
+
+        if (Array.isArray(link)) {
+            data.headers['link'] = link.map(rewriteLink);
+        } else if (typeof link === 'string') {
+            data.headers['link'] = rewriteLink(link);
+        }
+    }
+}
+
 function newgroundsMiddleware(data) {
     if (!data.url) return;
     try {
@@ -92,10 +145,12 @@ function newgroundsMiddleware(data) {
 var unblockerConfig = {
     prefix: '/proxy/',
     requestMiddleware: [
+        headersMiddleware,
         newgroundsMiddleware,
         youtube.processRequest
     ],
     responseMiddleware: [
+        responseLinkHeaderMiddleware,
         googleAnalyticsMiddleware
     ]
 };
@@ -103,6 +158,14 @@ var unblockerConfig = {
 // Serve our updated unblocker-client script before unblocker handles it
 app.get('/proxy/client/unblocker-client.js', function(req, res) {
     res.sendFile(__dirname + '/custom-client/unblocker-client.js');
+});
+
+// Middleware to normalize collapsed single-slash proxy URLs (e.g., /proxy/https:/ -> /proxy/https://)
+app.use(function normalizeProxyUrl(req, res, next) {
+    if (req.url && req.url.indexOf('/proxy/') === 0) {
+        req.url = req.url.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+    }
+    next();
 });
 
 var unblocker = new Unblocker(unblockerConfig);
@@ -169,6 +232,8 @@ app.get("/no-js", function(req, res) {
 
 app.addGa = addGa;
 app.googleAnalyticsMiddleware = googleAnalyticsMiddleware;
+app.headersMiddleware = headersMiddleware;
+app.responseLinkHeaderMiddleware = responseLinkHeaderMiddleware;
 app.newgroundsMiddleware = newgroundsMiddleware;
 
 module.exports = app;
