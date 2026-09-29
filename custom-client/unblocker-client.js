@@ -18,6 +18,22 @@
   // call() and apply() on `this || original_thing`
   // prevent a failure in one initializer from stopping subsequent initializers
 
+  function fixSrcset(srcsetStr, config, location) {
+    if (srcsetStr === null || srcsetStr === undefined) {
+      return srcsetStr;
+    }
+    srcsetStr = srcsetStr.toString();
+    var candidates = srcsetStr.split(",");
+    var fixedCandidates = candidates.map(function (candidate) {
+      var trimmed = candidate.trim();
+      if (!trimmed) return candidate;
+      var parts = trimmed.split(/\s+/);
+      parts[0] = fixUrl(parts[0], config, location);
+      return parts.join(" ");
+    });
+    return fixedCandidates.join(", ");
+  }
+
   function fixUrl(urlStr, config, location) {
     if (urlStr === null || urlStr === undefined) {
       return urlStr;
@@ -85,6 +101,63 @@
     return prefix + url.href;
   }
 
+  function initElementPrototypes(config, window) {
+    function wrapProperty(proto, prop, fixFn) {
+      if (!proto) return;
+      var desc;
+      var p = proto;
+      while (p && !(desc = Object.getOwnPropertyDescriptor(p, prop))) {
+        p = Object.getPrototypeOf(p);
+      }
+      if (!desc || !desc.set) return;
+      var nativeSet = desc.set;
+      var nativeGet = desc.get;
+      Object.defineProperty(proto, prop, {
+        get: nativeGet,
+        set: function (val) {
+          return nativeSet.call(this, fixFn(val, config, window.location));
+        },
+        configurable: true,
+        enumerable: desc.enumerable,
+      });
+    }
+
+    if (window.HTMLImageElement && window.HTMLImageElement.prototype) {
+      wrapProperty(window.HTMLImageElement.prototype, "src", fixUrl);
+      wrapProperty(window.HTMLImageElement.prototype, "srcset", fixSrcset);
+    }
+    if (window.HTMLScriptElement && window.HTMLScriptElement.prototype) {
+      wrapProperty(window.HTMLScriptElement.prototype, "src", fixUrl);
+    }
+    if (window.HTMLIFrameElement && window.HTMLIFrameElement.prototype) {
+      wrapProperty(window.HTMLIFrameElement.prototype, "src", fixUrl);
+    }
+    if (window.HTMLMediaElement && window.HTMLMediaElement.prototype) {
+      wrapProperty(window.HTMLMediaElement.prototype, "src", fixUrl);
+    }
+    if (window.HTMLAnchorElement && window.HTMLAnchorElement.prototype) {
+      wrapProperty(window.HTMLAnchorElement.prototype, "href", fixUrl);
+    }
+    if (window.HTMLLinkElement && window.HTMLLinkElement.prototype) {
+      wrapProperty(window.HTMLLinkElement.prototype, "href", fixUrl);
+    }
+
+    if (window.Element && window.Element.prototype && window.Element.prototype.setAttribute) {
+      var _setAttribute = window.Element.prototype.setAttribute;
+      window.Element.prototype.setAttribute = function (name, value) {
+        if (typeof name === "string") {
+          var lowerName = name.toLowerCase();
+          if (lowerName === "src" || lowerName === "href" || lowerName === "poster") {
+            value = fixUrl(value, config, window.location);
+          } else if (lowerName === "srcset") {
+            value = fixSrcset(value, config, window.location);
+          }
+        }
+        return _setAttribute.call(this, name, value);
+      };
+    }
+  }
+
   function initXMLHttpRequest(config, window) {
     if (!window.XMLHttpRequest) return;
     var _XMLHttpRequest = window.XMLHttpRequest;
@@ -139,24 +212,7 @@
       if (tagName.toLowerCase() === "iframe") {
         initAppendBodyIframe(config, window);
       }
-      var element = _createElement.call(window.document, tagName, options);
-      Object.defineProperty(element, "src", {
-        set: function (src) {
-          delete element.src; // remove this setter so we don't get stuck in an infinite loop
-          element.src = fixUrl(src, config, window.location);
-        },
-        configurable: true,
-      });
-      // todo: let a DOM mutation observer handle href attributes when they're added to the document
-      Object.defineProperty(element, "href", {
-        set: function (href) {
-          delete element.href; // remove this setter so we don't get stuck in an infinite loop
-          element.href = fixUrl(href, config, window.location);
-        },
-        configurable: true,
-      });
-      // todo: consider restoring the setter in case the client js changes the value later (does that happen?)
-      return element;
+      return _createElement.call(window.document, tagName, options);
     };
   }
 
@@ -1789,6 +1845,7 @@
 
   function initForWindow(config, window) {
     console.log("begin unblocker client scripts", config, window);
+    initElementPrototypes(config, window);
     initXMLHttpRequest(config, window);
     initFetch(config, window);
     initCreateElement(config, window);
