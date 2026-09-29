@@ -75,9 +75,24 @@ function googleAnalyticsMiddleware(data) {
     }
 }
 
+function newgroundsMiddleware(data) {
+    if (!data.url) return;
+    try {
+        var parsed = data.uri || new URL(data.url);
+        var hostname = parsed.hostname || parsed.host;
+        if (hostname && /(^|\.)(newgrounds\.com|ngfiles\.com|ungrounded\.net)$/i.test(hostname)) {
+            data.headers['referer'] = 'https://www.newgrounds.com/';
+            data.headers['origin'] = 'https://www.newgrounds.com';
+        }
+    } catch (e) {
+        // ignore invalid URL
+    }
+}
+
 var unblockerConfig = {
     prefix: '/proxy/',
     requestMiddleware: [
+        newgroundsMiddleware,
         youtube.processRequest
     ],
     responseMiddleware: [
@@ -154,6 +169,7 @@ app.get("/no-js", function(req, res) {
 
 app.addGa = addGa;
 app.googleAnalyticsMiddleware = googleAnalyticsMiddleware;
+app.newgroundsMiddleware = newgroundsMiddleware;
 
 module.exports = app;
 
