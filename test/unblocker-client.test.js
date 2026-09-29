@@ -1,7 +1,7 @@
 const assert = require('assert');
-const { fixUrl, rewriteHtmlUrls, initForWindow } = require('../custom-client/unblocker-client.js');
+const { fixUrl, fixSrcset, initForWindow } = require('../custom-client/unblocker-client.js');
 
-describe('unblocker-client.js HTML rewriting and dynamic content interception', function () {
+describe('unblocker-client.js DOM element rewriting & click interception', function () {
   const config = {
     prefix: '/proxy/',
     url: 'https://www.newgrounds.com/games/popular'
@@ -14,40 +14,24 @@ describe('unblocker-client.js HTML rewriting and dynamic content interception', 
     hash: ''
   };
 
-  describe('rewriteHtmlUrls', function () {
-    it('should rewrite src and href attributes in raw HTML string', function () {
-      const html = '<div class="card"><a href="https://www.newgrounds.com/portal/view/1000"><img src="https://picon.ngfiles.com/card.webp" data-src="https://picon.ngfiles.com/card.webp" /></a></div>';
-      const rewritten = rewriteHtmlUrls(html, config, location);
-
+  describe('fixUrl & fixSrcset', function () {
+    it('should correctly proxy relative and absolute URLs', function () {
       assert.strictEqual(
-        rewritten.includes('href="/proxy/https://www.newgrounds.com/portal/view/1000"'),
-        true,
-        'href should be proxied'
+        fixUrl('https://picon.ngfiles.com/card.webp', config, location),
+        '/proxy/https://picon.ngfiles.com/card.webp'
       );
       assert.strictEqual(
-        rewritten.includes('src="/proxy/https://picon.ngfiles.com/card.webp"'),
-        true,
-        'src should be proxied'
-      );
-      assert.strictEqual(
-        rewritten.includes('data-src="/proxy/https://picon.ngfiles.com/card.webp"'),
-        true,
-        'data-src should be proxied'
+        fixUrl('/portal/view/1000', config, location),
+        '/proxy/https://www.newgrounds.com/portal/view/1000'
       );
     });
 
-    it('should rewrite srcset and data-srcset attributes in raw HTML string', function () {
-      const html = '<img srcset="https://picon.ngfiles.com/a.webp 1x, https://picon.ngfiles.com/b.webp 2x" />';
-      const rewritten = rewriteHtmlUrls(html, config, location);
+    it('should correctly proxy srcset candidates', function () {
+      const srcset = 'https://picon.ngfiles.com/a.webp 1x, https://picon.ngfiles.com/b.webp 2x';
+      const fixed = fixSrcset(srcset, config, location);
 
-      assert.strictEqual(
-        rewritten.includes('/proxy/https://picon.ngfiles.com/a.webp 1x'),
-        true
-      );
-      assert.strictEqual(
-        rewritten.includes('/proxy/https://picon.ngfiles.com/b.webp 2x'),
-        true
-      );
+      assert.strictEqual(fixed.includes('/proxy/https://picon.ngfiles.com/a.webp 1x'), true);
+      assert.strictEqual(fixed.includes('/proxy/https://picon.ngfiles.com/b.webp 2x'), true);
     });
   });
 
@@ -86,7 +70,6 @@ describe('unblocker-client.js HTML rewriting and dynamic content interception', 
         localStorage: { getItem: function () { return '{}'; } }
       };
 
-      // Define property descriptor for href
       Object.defineProperty(mockWindow.HTMLAnchorElement.prototype, 'href', {
         get: function () { return capturedHref; },
         set: function (val) { capturedHref = val; },

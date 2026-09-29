@@ -39,37 +39,6 @@
     return fixedCandidates.join(", ");
   }
 
-  function rewriteHtmlUrls(htmlStr, config, location) {
-    if (typeof htmlStr !== "string" || !htmlStr) {
-      return htmlStr;
-    }
-    // Pattern matches src, href, srcset, poster, data-src, data-href, data-srcset attributes
-    var attrRegex = /(?:^|\s)(src|href|srcset|poster|data-src|data-href|data-srcset)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
-    return htmlStr.replace(attrRegex, function (match, attrName, valDouble, valSingle, valUnquoted) {
-      var attrLower = attrName.toLowerCase();
-      var rawVal = valDouble !== undefined ? valDouble : (valSingle !== undefined ? valSingle : valUnquoted);
-      var quote = valDouble !== undefined ? '"' : (valSingle !== undefined ? "'" : '');
-      if (rawVal === undefined || rawVal === null) {
-        return match;
-      }
-
-      var fixedVal;
-      if (attrLower === "srcset" || attrLower === "data-srcset") {
-        fixedVal = fixSrcset(rawVal, config, location);
-      } else {
-        fixedVal = fixUrl(rawVal, config, location);
-      }
-
-      // Preserve spaces around attrName if present
-      var prefix = match.match(/^\s*/)[0];
-      if (quote) {
-        return prefix + attrName + '=' + quote + fixedVal + quote;
-      } else {
-        return prefix + attrName + '=' + fixedVal;
-      }
-    });
-  }
-
   function fixUrl(urlStr, config, location) {
     if (urlStr === null || urlStr === undefined) {
       return urlStr;
@@ -188,97 +157,19 @@
       wrapProperty(window.HTMLLinkElement.prototype, "href", fixUrl);
     }
 
-    if (window.Element && window.Element.prototype) {
-      if (window.Element.prototype.setAttribute) {
-        var _setAttribute = window.Element.prototype.setAttribute;
-        window.Element.prototype.setAttribute = function (name, value) {
-          if (typeof name === "string") {
-            var lowerName = name.toLowerCase();
-            if (lowerName === "src" || lowerName === "href" || lowerName === "poster" || lowerName === "data-src" || lowerName === "data-href") {
-              value = fixUrl(value, config, window.location);
-            } else if (lowerName === "srcset" || lowerName === "data-srcset") {
-              value = fixSrcset(value, config, window.location);
-            }
+    if (window.Element && window.Element.prototype && window.Element.prototype.setAttribute) {
+      var _setAttribute = window.Element.prototype.setAttribute;
+      window.Element.prototype.setAttribute = function (name, value) {
+        if (typeof name === "string") {
+          var lowerName = name.toLowerCase();
+          if (lowerName === "src" || lowerName === "href" || lowerName === "poster" || lowerName === "data-src" || lowerName === "data-href") {
+            value = fixUrl(value, config, window.location);
+          } else if (lowerName === "srcset" || lowerName === "data-srcset") {
+            value = fixSrcset(value, config, window.location);
           }
-          return _setAttribute.call(this, name, value);
-        };
-      }
-
-      // Intercept innerHTML property descriptor on Element.prototype or HTMLElement.prototype
-      var elemProto = window.Element.prototype;
-      var innerHtmlDesc = Object.getOwnPropertyDescriptor(elemProto, "innerHTML") ||
-                          (window.HTMLElement && Object.getOwnPropertyDescriptor(window.HTMLElement.prototype, "innerHTML"));
-      if (innerHtmlDesc && innerHtmlDesc.set) {
-        var nativeInnerHtmlSet = innerHtmlDesc.set;
-        var nativeInnerHtmlGet = innerHtmlDesc.get;
-        Object.defineProperty(innerHtmlDesc.set === elemProto ? elemProto : (window.HTMLElement ? window.HTMLElement.prototype : elemProto), "innerHTML", {
-          get: nativeInnerHtmlGet,
-          set: function (html) {
-            return nativeInnerHtmlSet.call(this, rewriteHtmlUrls(html, config, window.location));
-          },
-          configurable: true,
-          enumerable: innerHtmlDesc.enumerable
-        });
-      }
-
-      var outerHtmlDesc = Object.getOwnPropertyDescriptor(elemProto, "outerHTML") ||
-                          (window.HTMLElement && Object.getOwnPropertyDescriptor(window.HTMLElement.prototype, "outerHTML"));
-      if (outerHtmlDesc && outerHtmlDesc.set) {
-        var nativeOuterHtmlSet = outerHtmlDesc.set;
-        var nativeOuterHtmlGet = outerHtmlDesc.get;
-        Object.defineProperty(outerHtmlDesc.set === elemProto ? elemProto : (window.HTMLElement ? window.HTMLElement.prototype : elemProto), "outerHTML", {
-          get: nativeOuterHtmlGet,
-          set: function (html) {
-            return nativeOuterHtmlSet.call(this, rewriteHtmlUrls(html, config, window.location));
-          },
-          configurable: true,
-          enumerable: outerHtmlDesc.enumerable
-        });
-      }
-
-      if (elemProto.insertAdjacentHTML) {
-        var _insertAdjacentHTML = elemProto.insertAdjacentHTML;
-        elemProto.insertAdjacentHTML = function (position, text) {
-          return _insertAdjacentHTML.call(this, position, rewriteHtmlUrls(text, config, window.location));
-        };
-      }
-    }
-
-    if (window.DOMParser && window.DOMParser.prototype && window.DOMParser.prototype.parseFromString) {
-      var _parseFromString = window.DOMParser.prototype.parseFromString;
-      window.DOMParser.prototype.parseFromString = function (str, type) {
-        if (typeof str === "string") {
-          str = rewriteHtmlUrls(str, config, window.location);
         }
-        return _parseFromString.call(this, str, type);
+        return _setAttribute.call(this, name, value);
       };
-    }
-
-    if (window.document) {
-      if (window.document.write) {
-        var _docWrite = window.document.write;
-        window.document.write = function () {
-          var args = Array.prototype.slice.call(arguments);
-          for (var i = 0; i < args.length; i++) {
-            if (typeof args[i] === "string") {
-              args[i] = rewriteHtmlUrls(args[i], config, window.location);
-            }
-          }
-          return _docWrite.apply(window.document, args);
-        };
-      }
-      if (window.document.writeln) {
-        var _docWriteln = window.document.writeln;
-        window.document.writeln = function () {
-          var args = Array.prototype.slice.call(arguments);
-          for (var i = 0; i < args.length; i++) {
-            if (typeof args[i] === "string") {
-              args[i] = rewriteHtmlUrls(args[i], config, window.location);
-            }
-          }
-          return _docWriteln.apply(window.document, args);
-        };
-      }
     }
 
     if (window.open) {
@@ -2125,7 +2016,6 @@
       initForWindow: initForWindow,
       fixUrl: fixUrl,
       fixSrcset: fixSrcset,
-      rewriteHtmlUrls: rewriteHtmlUrls,
     };
   }
 })(this); // window in a browser, global in node.js
