@@ -20,24 +20,38 @@ var app = express();
 
 var google_analytics_id = process.env.GA_ID || null;
 
-function addGa(html) {
-    if (google_analytics_id) {
-        var ga = [
-            "<script async src=\"https://www.googletagmanager.com/gtag/js?id=" + google_analytics_id + "\"></script>",
+// Caching GA snippet string to avoid string array creation & join on every stream chunk
+var cachedGaId = null;
+var cachedGaSnippet = null;
+var cachedGaReplacement = null;
+
+function getGaSnippet(id) {
+    if (cachedGaId !== id) {
+        cachedGaId = id;
+        cachedGaSnippet = [
+            "<script async src=\"https://www.googletagmanager.com/gtag/js?id=" + id + "\"></script>",
             "<script>",
             "  window.dataLayer = window.dataLayer || [];",
             "  function gtag(){dataLayer.push(arguments);}",
             "  gtag('js', new Date());",
-            "  gtag('config', '" + google_analytics_id + "');",
+            "  gtag('config', '" + id + "');",
             "</script>"
             ].join("\n");
-        if (/<\/body>/i.test(html)) {
-            html = html.replace(/<\/body>/i, function(match) {
-                return ga + "\n\n" + match;
-            });
-        } else {
-            html = html + "\n\n" + ga;
+        cachedGaReplacement = cachedGaSnippet + "\n\n$&";
+    }
+    return cachedGaSnippet;
+}
+
+function addGa(html) {
+    if (google_analytics_id) {
+        getGaSnippet(google_analytics_id);
+        // Performance optimization: single-pass regex replacement avoiding duplicate .test() search
+        // and avoiding function closure allocation per stream chunk.
+        var replaced = html.replace(/<\/body>/i, cachedGaReplacement);
+        if (replaced !== html) {
+            return replaced;
         }
+        return html + "\n\n" + cachedGaSnippet;
     }
     return html;
 }
