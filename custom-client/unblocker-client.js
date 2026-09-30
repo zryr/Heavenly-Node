@@ -548,10 +548,21 @@
     return presetTitles.indexOf(title) !== -1;
   }
 
+  function getStorage(window) {
+    try {
+      if (window && window.localStorage) return window.localStorage;
+    } catch (e) {}
+    try {
+      if (typeof localStorage !== 'undefined') return localStorage;
+    } catch (e) {}
+    return null;
+  }
+
   function loadHeavenlySettings(window) {
     var saved = {};
     try {
-      saved = JSON.parse((window.localStorage || localStorage).getItem('heavenly_settings') || '{}');
+      var storage = getStorage(window);
+      saved = JSON.parse((storage ? storage.getItem('heavenly_settings') : null) || '{}');
     } catch (e) {}
 
     return {
@@ -2056,16 +2067,19 @@
 
       var path = window.location.pathname;
       var prefix = config.prefix || '/proxy/';
-      if (!path.startsWith(prefix)) return;
+      if (path.indexOf(prefix) !== 0) return;
 
       var targetUrl = path.substr(prefix.length) + window.location.search + window.location.hash;
-      if (!targetUrl || targetUrl.startsWith('about:') || targetUrl.startsWith('data:')) return;
+      if (!targetUrl || targetUrl.indexOf('about:') === 0 || targetUrl.indexOf('data:') === 0) return;
 
       var settings = loadHeavenlySettings(window);
       var rawTitle = window.__heavenlyOriginalTitle || window.document.title || targetUrl;
       var title = isPresetTitle(rawTitle, settings) ? targetUrl : rawTitle;
 
-      var current = JSON.parse(localStorage.getItem('heavenly_history') || '[]');
+      var storage = getStorage(window);
+      if (!storage) return;
+
+      var current = JSON.parse(storage.getItem('heavenly_history') || '[]');
 
       // Filter out existing duplicates of this url
       current = current.filter(function (item) {
@@ -2083,7 +2097,7 @@
         current = current.slice(0, 20);
       }
 
-      localStorage.setItem('heavenly_history', JSON.stringify(current));
+      storage.setItem('heavenly_history', JSON.stringify(current));
     } catch (e) {}
   }
 
