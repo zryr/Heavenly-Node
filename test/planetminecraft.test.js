@@ -1,8 +1,8 @@
 const assert = require('assert');
 const app = require('../app.js');
 
-describe('PlanetMinecraft & Redirect Response Middleware', function () {
-  describe('planetminecraftMiddleware', function () {
+describe('Cloudflare & Redirect Response Middleware', function () {
+  describe('cloudflareMiddleware', function () {
     it('should inject referer and origin headers for planetminecraft.com URLs', function () {
       const data = {
         url: 'https://www.planetminecraft.com/mods/tag/java/',
@@ -10,7 +10,7 @@ describe('PlanetMinecraft & Redirect Response Middleware', function () {
         headers: {}
       };
 
-      app.planetminecraftMiddleware(data);
+      app.cloudflareMiddleware(data);
 
       assert.strictEqual(data.headers['referer'], 'https://www.planetminecraft.com/');
       assert.strictEqual(data.headers['origin'], 'https://www.planetminecraft.com');
@@ -25,13 +25,26 @@ describe('PlanetMinecraft & Redirect Response Middleware', function () {
         }
       };
 
-      app.planetminecraftMiddleware(data);
+      app.cloudflareMiddleware(data);
 
       assert.strictEqual(data.headers['referer'], 'https://www.planetminecraft.com/mods/tag/java/');
       assert.strictEqual(data.headers['origin'], 'https://www.planetminecraft.com');
     });
 
-    it('should normalize sec-fetch-site header for planetminecraft.com requests', function () {
+    it('should inject referer and origin for generic Cloudflare /cdn-cgi/ requests', function () {
+      const data = {
+        url: 'https://example.com/cdn-cgi/challenge-platform/scripts/jsd/main.js',
+        uri: new URL('https://example.com/cdn-cgi/challenge-platform/scripts/jsd/main.js'),
+        headers: {}
+      };
+
+      app.cloudflareMiddleware(data);
+
+      assert.strictEqual(data.headers['referer'], 'https://example.com/');
+      assert.strictEqual(data.headers['origin'], 'https://example.com');
+    });
+
+    it('should normalize sec-fetch-site header for Cloudflare requests', function () {
       const data = {
         url: 'https://www.planetminecraft.com/cdn-cgi/challenge-platform/scripts/jsd/main.js',
         uri: new URL('https://www.planetminecraft.com/cdn-cgi/challenge-platform/scripts/jsd/main.js'),
@@ -40,19 +53,19 @@ describe('PlanetMinecraft & Redirect Response Middleware', function () {
         }
       };
 
-      app.planetminecraftMiddleware(data);
+      app.cloudflareMiddleware(data);
 
       assert.strictEqual(data.headers['sec-fetch-site'], 'same-origin');
     });
 
-    it('should not modify headers for non-PlanetMinecraft URLs', function () {
+    it('should not modify headers for non-Cloudflare URLs', function () {
       const data = {
         url: 'https://example.com/api',
         uri: new URL('https://example.com/api'),
         headers: {}
       };
 
-      app.planetminecraftMiddleware(data);
+      app.cloudflareMiddleware(data);
 
       assert.strictEqual(data.headers['referer'], undefined);
       assert.strictEqual(data.headers['origin'], undefined);
