@@ -134,8 +134,12 @@ function newgroundsMiddleware(data) {
         var parsed = data.uri || new URL(data.url);
         var hostname = parsed.hostname || parsed.host;
         if (hostname && /(^|\.)(newgrounds\.com|ngfiles\.com|ungrounded\.net)$/i.test(hostname)) {
-            data.headers['referer'] = 'https://www.newgrounds.com/';
-            data.headers['origin'] = 'https://www.newgrounds.com';
+            if (!data.headers['referer'] || !/(^|\.)newgrounds\.com/i.test(data.headers['referer'])) {
+                data.headers['referer'] = 'https://www.newgrounds.com/';
+            }
+            if (!data.headers['origin']) {
+                data.headers['origin'] = 'https://www.newgrounds.com';
+            }
         }
     } catch (e) {
         // ignore invalid URL

@@ -15,6 +15,19 @@ describe('Newgrounds request middleware', function() {
         done();
     });
 
+    it('should preserve existing newgrounds.com page referer when set', function(done) {
+        var data = {
+            url: 'https://www.newgrounds.com/games/load_more',
+            uri: new (require('url').URL)('https://www.newgrounds.com/games/load_more'),
+            headers: { 'referer': 'https://www.newgrounds.com/games' }
+        };
+
+        app.newgroundsMiddleware(data);
+        assert.strictEqual(data.headers['referer'], 'https://www.newgrounds.com/games');
+        assert.strictEqual(data.headers['origin'], 'https://www.newgrounds.com');
+        done();
+    });
+
     it('should inject referer and origin headers for ngfiles.com CDN URLs', function(done) {
         var data = {
             url: 'https://js.ngfiles.com/legacy.CSs1F7tQ.js',
