@@ -153,17 +153,21 @@ function newgroundsMiddleware(data) {
     }
 }
 
-function planetminecraftMiddleware(data) {
+function cloudflareMiddleware(data) {
     if (!data.url) return;
     try {
         var parsed = data.uri || new URL(data.url);
         var hostname = parsed.hostname || parsed.host;
-        if (hostname && /(^|\.)planetminecraft\.com$/i.test(hostname)) {
-            if (!data.headers['referer'] || !/(^|\.)planetminecraft\.com/i.test(data.headers['referer'])) {
-                data.headers['referer'] = 'https://www.planetminecraft.com/';
+        var pathname = parsed.pathname || '';
+        var isCdnCgi = pathname.indexOf('/cdn-cgi/') !== -1;
+
+        if (isCdnCgi) {
+            var targetOrigin = parsed.origin || (parsed.protocol + '//' + (hostname || ''));
+            if (!data.headers['referer']) {
+                data.headers['referer'] = targetOrigin + '/';
             }
             if (!data.headers['origin']) {
-                data.headers['origin'] = 'https://www.planetminecraft.com';
+                data.headers['origin'] = targetOrigin;
             }
             if (data.headers['sec-fetch-site']) {
                 data.headers['sec-fetch-site'] = 'same-origin';
@@ -200,7 +204,7 @@ var unblockerConfig = {
     requestMiddleware: [
         headersMiddleware,
         newgroundsMiddleware,
-        planetminecraftMiddleware,
+        cloudflareMiddleware,
         youtube.processRequest
     ],
     responseMiddleware: [
@@ -290,7 +294,7 @@ app.googleAnalyticsMiddleware = googleAnalyticsMiddleware;
 app.headersMiddleware = headersMiddleware;
 app.responseLinkHeaderMiddleware = responseLinkHeaderMiddleware;
 app.newgroundsMiddleware = newgroundsMiddleware;
-app.planetminecraftMiddleware = planetminecraftMiddleware;
+app.cloudflareMiddleware = cloudflareMiddleware;
 app.responseRedirectMiddleware = responseRedirectMiddleware;
 
 module.exports = app;
