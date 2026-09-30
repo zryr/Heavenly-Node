@@ -534,6 +534,20 @@
     };
   }
 
+  function getStorage(win) {
+    try {
+      if (win && win.localStorage) {
+        return win.localStorage;
+      }
+    } catch (e) {}
+    try {
+      if (typeof localStorage !== "undefined" && localStorage) {
+        return localStorage;
+      }
+    } catch (e) {}
+    return null;
+  }
+
   function isPresetTitle(title, settings) {
     if (!title) return false;
     var presetTitles = [
@@ -555,7 +569,10 @@
   function loadHeavenlySettings(window) {
     var saved = {};
     try {
-      saved = JSON.parse((window.localStorage || localStorage).getItem('heavenly_settings') || '{}');
+      var storage = getStorage(window);
+      if (storage) {
+        saved = JSON.parse(storage.getItem('heavenly_settings') || '{}');
+      }
     } catch (e) {}
 
     return {
@@ -754,7 +771,8 @@
 
           // Restore position from localStorage
           try {
-            var savedPanicPos = localStorage.getItem('heavenly_panic_pos');
+            var storage = getStorage(window);
+            var savedPanicPos = storage ? storage.getItem('heavenly_panic_pos') : null;
             if (savedPanicPos) {
               var pos = JSON.parse(savedPanicPos);
               if (typeof pos.left === 'number' && typeof pos.top === 'number') {
@@ -909,7 +927,10 @@
               btn.classList.remove('dragging');
               try {
                 var rect = pContainer.getBoundingClientRect();
-                localStorage.setItem('heavenly_panic_pos', JSON.stringify({ left: rect.left, top: rect.top }));
+                  var storage = getStorage(window);
+                  if (storage) {
+                    storage.setItem('heavenly_panic_pos', JSON.stringify({ left: rect.left, top: rect.top }));
+                  }
               } catch (e) {}
             } else if (!isDragging) {
               // Tap/click triggers panic directly regardless of minimized circle state
@@ -1102,7 +1123,8 @@
 
         // Restore position from localStorage
         try {
-          var savedPos = localStorage.getItem(storageKey);
+          var storage = getStorage(window);
+          var savedPos = storage ? storage.getItem(storageKey) : null;
           if (savedPos) {
             var pos = JSON.parse(savedPos);
             if (typeof pos.left === 'number' && typeof pos.top === 'number') {
@@ -1253,7 +1275,10 @@
             isDragging = false;
             try {
               var rect = container.getBoundingClientRect();
-              localStorage.setItem(storageKey, JSON.stringify({ left: rect.left, top: rect.top }));
+                var storage = getStorage(window);
+                if (storage) {
+                  storage.setItem(storageKey, JSON.stringify({ left: rect.left, top: rect.top }));
+                }
             } catch (err) {}
 
             if (isMinimized && !hasMoved) {
@@ -1634,7 +1659,8 @@
         var lensPos = { left: Math.max(50, Math.floor((window.innerWidth || 800) / 2 - 130)), top: Math.max(50, Math.floor((window.innerHeight || 600) / 2 - 110)) };
 
         try {
-          var savedLens = localStorage.getItem('heavenly_lens_pos');
+          var storage = getStorage(window);
+          var savedLens = storage ? storage.getItem('heavenly_lens_pos') : null;
           if (savedLens) {
             var lp = JSON.parse(savedLens);
             if (typeof lp.left === 'number') lensPos.left = lp.left;
@@ -1651,13 +1677,16 @@
 
         function saveLensState() {
           try {
-            localStorage.setItem('heavenly_lens_pos', JSON.stringify({
-              left: lensPos.left,
-              top: lensPos.top,
-              width: lensWidth,
-              height: lensHeight,
-              zoom: zoomLevel
-            }));
+            var storage = getStorage(window);
+            if (storage) {
+              storage.setItem('heavenly_lens_pos', JSON.stringify({
+                left: lensPos.left,
+                top: lensPos.top,
+                width: lensWidth,
+                height: lensHeight,
+                zoom: zoomLevel
+              }));
+            }
           } catch (e) {}
         }
 
@@ -2069,7 +2098,7 @@
       var rawTitle = window.__heavenlyOriginalTitle || window.document.title || targetUrl;
       var title = isPresetTitle(rawTitle, settings) ? targetUrl : rawTitle;
 
-      var storage = window.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      var storage = getStorage(window);
       if (!storage) return;
 
       var current = JSON.parse(storage.getItem('heavenly_history') || '[]');

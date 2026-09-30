@@ -180,6 +180,27 @@ function cloudflareMiddleware(data) {
     }
 }
 
+function duckmathMiddleware(data) {
+    if (!data.url) return;
+    try {
+        var parsed = data.uri || new URL(data.url);
+        var hostname = parsed.hostname || parsed.host;
+        if (hostname && /(^|\.)duckmath\.org$/i.test(hostname)) {
+            if (!data.headers['referer'] || !/(^|\.)duckmath\.org/i.test(data.headers['referer'])) {
+                data.headers['referer'] = 'https://duckmath.org/';
+            }
+            if (!data.headers['origin']) {
+                data.headers['origin'] = 'https://duckmath.org';
+            }
+            if (data.headers['sec-fetch-site']) {
+                data.headers['sec-fetch-site'] = 'same-origin';
+            }
+        }
+    } catch (e) {
+        // ignore invalid URL
+    }
+}
+
 function responseRedirectMiddleware(data) {
     if (!data.headers || !data.headers['location']) return;
     var loc = data.headers['location'];
@@ -219,6 +240,7 @@ var unblockerConfig = {
         headersMiddleware,
         newgroundsMiddleware,
         cloudflareMiddleware,
+        duckmathMiddleware,
         youtube.processRequest
     ],
     responseMiddleware: [
@@ -235,8 +257,9 @@ app.get('/proxy/client/unblocker-client.js', function(req, res) {
 
 // Middleware to normalize collapsed single-slash proxy URLs (e.g., /proxy/https:/ -> /proxy/https://)
 app.use(function normalizeProxyUrl(req, res, next) {
-    if (req.url && req.url.indexOf('/proxy/') === 0) {
-        var urlStr = req.url;
+    var targetUrl = req.originalUrl || req.url;
+    if (targetUrl && targetUrl.indexOf('/proxy/') === 0) {
+        var urlStr = targetUrl;
         while (urlStr.indexOf('/proxy/', 7) !== -1) {
             var secondProxy = urlStr.indexOf('/proxy/', 7);
             urlStr = '/proxy/' + urlStr.substring(secondProxy + 7).replace(/^(https?:\/)([^\/])/i, '$1/$2');
@@ -315,6 +338,7 @@ app.headersMiddleware = headersMiddleware;
 app.responseLinkHeaderMiddleware = responseLinkHeaderMiddleware;
 app.newgroundsMiddleware = newgroundsMiddleware;
 app.cloudflareMiddleware = cloudflareMiddleware;
+app.duckmathMiddleware = duckmathMiddleware;
 app.responseRedirectMiddleware = responseRedirectMiddleware;
 
 module.exports = app;
