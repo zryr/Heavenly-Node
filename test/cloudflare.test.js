@@ -118,5 +118,25 @@ describe('Cloudflare & Redirect Response Middleware', function () {
 
       assert.strictEqual(data.headers['location'], undefined);
     });
+
+    it('should strip duplicate nested proxy prefixes from absolute or relative Location headers', function () {
+      const data1 = {
+        url: 'https://heavenly-node.vercel.app/proxy/https://www.newgrounds.com/games',
+        headers: {
+          location: 'https://heavenly-node.vercel.app/proxy/https:/www.newgrounds.com/games'
+        }
+      };
+      app.responseRedirectMiddleware(data1);
+      assert.strictEqual(data1.headers['location'], '/proxy/https://www.newgrounds.com/games');
+
+      const data2 = {
+        url: 'https://www.newgrounds.com/games',
+        headers: {
+          location: '/proxy/https:/heavenly-node.vercel.app/proxy/https:/www.newgrounds.com/games'
+        }
+      };
+      app.responseRedirectMiddleware(data2);
+      assert.strictEqual(data2.headers['location'], '/proxy/https://www.newgrounds.com/games');
+    });
   });
 });
