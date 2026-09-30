@@ -153,14 +153,58 @@ function newgroundsMiddleware(data) {
     }
 }
 
+function planetminecraftMiddleware(data) {
+    if (!data.url) return;
+    try {
+        var parsed = data.uri || new URL(data.url);
+        var hostname = parsed.hostname || parsed.host;
+        if (hostname && /(^|\.)planetminecraft\.com$/i.test(hostname)) {
+            if (!data.headers['referer'] || !/(^|\.)planetminecraft\.com/i.test(data.headers['referer'])) {
+                data.headers['referer'] = 'https://www.planetminecraft.com/';
+            }
+            if (!data.headers['origin']) {
+                data.headers['origin'] = 'https://www.planetminecraft.com';
+            }
+            if (data.headers['sec-fetch-site']) {
+                data.headers['sec-fetch-site'] = 'same-origin';
+            }
+        }
+    } catch (e) {
+        // ignore invalid URL
+    }
+}
+
+function responseRedirectMiddleware(data) {
+    if (!data.headers || !data.headers['location']) return;
+    var loc = data.headers['location'];
+    if (typeof loc !== 'string' || !loc) return;
+
+    var prefix = unblockerConfig.prefix;
+
+    if (loc.indexOf(prefix) === 0) {
+        data.headers['location'] = loc.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+        return;
+    }
+
+    try {
+        var base = data.url;
+        var absoluteTarget = new URL(loc, base).href;
+        data.headers['location'] = prefix + absoluteTarget;
+    } catch (e) {
+        // ignore invalid URL
+    }
+}
+
 var unblockerConfig = {
     prefix: '/proxy/',
     requestMiddleware: [
         headersMiddleware,
         newgroundsMiddleware,
+        planetminecraftMiddleware,
         youtube.processRequest
     ],
     responseMiddleware: [
+        responseRedirectMiddleware,
         responseLinkHeaderMiddleware,
         googleAnalyticsMiddleware
     ]
@@ -246,6 +290,8 @@ app.googleAnalyticsMiddleware = googleAnalyticsMiddleware;
 app.headersMiddleware = headersMiddleware;
 app.responseLinkHeaderMiddleware = responseLinkHeaderMiddleware;
 app.newgroundsMiddleware = newgroundsMiddleware;
+app.planetminecraftMiddleware = planetminecraftMiddleware;
+app.responseRedirectMiddleware = responseRedirectMiddleware;
 
 module.exports = app;
 
