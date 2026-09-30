@@ -140,6 +140,13 @@ function newgroundsMiddleware(data) {
             if (!data.headers['origin']) {
                 data.headers['origin'] = 'https://www.newgrounds.com';
             }
+            if (data.headers['sec-fetch-site']) {
+                data.headers['sec-fetch-site'] = 'same-origin';
+            }
+            var search = parsed.search || '';
+            if (search.indexOf('inner=') !== -1 || search.indexOf('offset=') !== -1 || (data.headers['x-requested-with'] && data.headers['x-requested-with'].toLowerCase() === 'xmlhttprequest')) {
+                data.headers['x-requested-with'] = 'XMLHttpRequest';
+            }
         }
     } catch (e) {
         // ignore invalid URL

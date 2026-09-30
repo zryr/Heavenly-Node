@@ -157,4 +157,79 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       assert.strictEqual(capturedHref, '/proxy/https://www.newgrounds.com/portal/view/3000');
     });
   });
+
+  describe('Newgrounds pagination widget', function () {
+    it('should inject Newgrounds pagination bar when browsing newgrounds.com', function () {
+      let appendedNode = null;
+      const mockDocument = {
+        readyState: 'complete',
+        getElementById: function (id) {
+          if (id === 'heavenly-ng-pagination-root' && appendedNode) return appendedNode;
+          return null;
+        },
+        createElement: function (tag) {
+          const element = {
+            tagName: tag,
+            children: [],
+            appendChild: function (child) {
+              element.children.push(child);
+              return child;
+            }
+          };
+          if (tag === 'div') {
+            element.attachShadow = function () {
+              const shadow = {
+                children: [],
+                appendChild: function (c) {
+                  shadow.children.push(c);
+                  return c;
+                }
+              };
+              element.shadowRoot = shadow;
+              return shadow;
+            };
+          }
+          return element;
+        },
+        body: {
+          appendChild: function (node) {
+            appendedNode = node;
+            return node;
+          }
+        },
+        documentElement: { addEventListener: function () {} }
+      };
+
+      const mockWindow = {
+        location: location,
+        addEventListener: function () {},
+        document: mockDocument,
+        localStorage: { getItem: function () { return '{}'; } }
+      };
+      mockWindow.top = mockWindow;
+
+      const ngConfig = {
+        prefix: '/proxy/',
+        url: 'https://www.newgrounds.com/games/featured?offset=20'
+      };
+
+      initForWindow(ngConfig, mockWindow);
+
+      assert.notStrictEqual(appendedNode, null);
+      assert.strictEqual(appendedNode.id, 'heavenly-ng-pagination-root');
+      const shadow = appendedNode.shadowRoot;
+      assert.notStrictEqual(shadow, null);
+      const bar = shadow.children.find(c => c.className === 'ng-pag-bar');
+      assert.notStrictEqual(bar, undefined);
+
+      const pageLabel = bar.children.find(c => c.className === 'ng-page-info');
+      assert.strictEqual(pageLabel.textContent, 'Page 2');
+
+      const prevLink = bar.children.find(c => c.innerHTML && c.innerHTML.includes('Prev Page'));
+      assert.strictEqual(prevLink.href, '/proxy/https://www.newgrounds.com/games/featured');
+
+      const nextLink = bar.children.find(c => c.innerHTML && c.innerHTML.includes('Next Page'));
+      assert.strictEqual(nextLink.href, '/proxy/https://www.newgrounds.com/games/featured?offset=40');
+    });
+  });
 });
