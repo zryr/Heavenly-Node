@@ -5,3 +5,7 @@
 ## 2026-10-02 - Custom Dropdown Card Accessibility & Keyboard UX
 **Learning:** Custom interactive dropdown cards (like dynamically rendered history items) that rely solely on `onclick` handlers on `<div>` elements are completely skipped by keyboard Tab navigation and screen readers.
 **Action:** Always assign `role="button"`, `tabindex="0"`, descriptive `aria-label`, an `onkeydown` handler for `Enter` and `Space` keys, and `:focus-visible` CSS focus indicators when turning `<div>` elements into interactive controls.
+
+## 2026-10-05 - Search Autocomplete Dropdown Combobox Accessibility
+**Learning:** Custom input autocomplete/history dropdowns without `aria-expanded` and `aria-controls` fail to communicate their state to screen readers, and lacking an `Escape` key listener prevents keyboard users from dismissing the overlay without losing focus.
+**Action:** Link custom input overlays with `aria-controls` and `aria-expanded="true|false"`, and attach an `Escape` key listener to dismiss the overlay and sync state.
