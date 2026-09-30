@@ -153,14 +153,80 @@ function newgroundsMiddleware(data) {
     }
 }
 
+function planetminecraftMiddleware(data) {
+    if (!data.url) return;
+    try {
+        var parsed = data.uri || new URL(data.url);
+        var hostname = parsed.hostname || parsed.host;
+        if (hostname && /(^|\.)planetminecraft\.com$/i.test(hostname)) {
+            if (!data.headers['referer'] || !/(^|\.)planetminecraft\.com/i.test(data.headers['referer'])) {
+                data.headers['referer'] = 'https://www.planetminecraft.com/';
+            }
+            if (!data.headers['origin']) {
+                data.headers['origin'] = 'https://www.planetminecraft.com';
+            }
+            if (data.headers['sec-fetch-site']) {
+                data.headers['sec-fetch-site'] = 'same-origin';
+            }
+        }
+    } catch (e) {
+        // ignore invalid URL
+    }
+}
+
+function duckmathMiddleware(data) {
+    if (!data.url) return;
+    try {
+        var parsed = data.uri || new URL(data.url);
+        var hostname = parsed.hostname || parsed.host;
+        if (hostname && /(^|\.)duckmath\.org$/i.test(hostname)) {
+            if (!data.headers['referer'] || !/(^|\.)duckmath\.org/i.test(data.headers['referer'])) {
+                data.headers['referer'] = 'https://duckmath.org/';
+            }
+            if (!data.headers['origin']) {
+                data.headers['origin'] = 'https://duckmath.org';
+            }
+            if (data.headers['sec-fetch-site']) {
+                data.headers['sec-fetch-site'] = 'same-origin';
+            }
+        }
+    } catch (e) {
+        // ignore invalid URL
+    }
+}
+
+function responseRedirectMiddleware(data) {
+    if (!data.headers || !data.headers['location']) return;
+    var loc = data.headers['location'];
+    if (typeof loc !== 'string' || !loc) return;
+
+    var prefix = unblockerConfig.prefix;
+
+    if (loc.indexOf(prefix) === 0) {
+        data.headers['location'] = loc.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+        return;
+    }
+
+    try {
+        var base = data.url;
+        var absoluteTarget = new URL(loc, base).href;
+        data.headers['location'] = prefix + absoluteTarget;
+    } catch (e) {
+        // ignore invalid URL
+    }
+}
+
 var unblockerConfig = {
     prefix: '/proxy/',
     requestMiddleware: [
         headersMiddleware,
         newgroundsMiddleware,
+        planetminecraftMiddleware,
+        duckmathMiddleware,
         youtube.processRequest
     ],
     responseMiddleware: [
+        responseRedirectMiddleware,
         responseLinkHeaderMiddleware,
         googleAnalyticsMiddleware
     ]
@@ -173,8 +239,9 @@ app.get('/proxy/client/unblocker-client.js', function(req, res) {
 
 // Middleware to normalize collapsed single-slash proxy URLs (e.g., /proxy/https:/ -> /proxy/https://)
 app.use(function normalizeProxyUrl(req, res, next) {
-    if (req.url && req.url.indexOf('/proxy/') === 0) {
-        req.url = req.url.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+    var targetUrl = req.originalUrl || req.url;
+    if (targetUrl && targetUrl.indexOf('/proxy/') === 0) {
+        req.url = targetUrl.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
     }
     next();
 });
@@ -246,6 +313,9 @@ app.googleAnalyticsMiddleware = googleAnalyticsMiddleware;
 app.headersMiddleware = headersMiddleware;
 app.responseLinkHeaderMiddleware = responseLinkHeaderMiddleware;
 app.newgroundsMiddleware = newgroundsMiddleware;
+app.planetminecraftMiddleware = planetminecraftMiddleware;
+app.responseRedirectMiddleware = responseRedirectMiddleware;
+app.duckmathMiddleware = duckmathMiddleware;
 
 module.exports = app;
 

@@ -548,10 +548,21 @@
     return presetTitles.indexOf(title) !== -1;
   }
 
+  function getStorage(window) {
+    try {
+      if (window && window.localStorage) return window.localStorage;
+    } catch (e) {}
+    try {
+      if (typeof localStorage !== 'undefined') return localStorage;
+    } catch (e) {}
+    return null;
+  }
+
   function loadHeavenlySettings(window) {
     var saved = {};
     try {
-      saved = JSON.parse((window.localStorage || localStorage).getItem('heavenly_settings') || '{}');
+      var storage = getStorage(window);
+      saved = JSON.parse((storage ? storage.getItem('heavenly_settings') : null) || '{}');
     } catch (e) {}
 
     return {
@@ -2065,7 +2076,10 @@
       var rawTitle = window.__heavenlyOriginalTitle || window.document.title || targetUrl;
       var title = isPresetTitle(rawTitle, settings) ? targetUrl : rawTitle;
 
-      var current = JSON.parse(localStorage.getItem('heavenly_history') || '[]');
+      var storage = getStorage(window);
+      if (!storage) return;
+
+      var current = JSON.parse(storage.getItem('heavenly_history') || '[]');
 
       // Filter out existing duplicates of this url
       current = current.filter(function (item) {
@@ -2083,7 +2097,147 @@
         current = current.slice(0, 20);
       }
 
-      localStorage.setItem('heavenly_history', JSON.stringify(current));
+      storage.setItem('heavenly_history', JSON.stringify(current));
+    } catch (e) {}
+  }
+
+  function initNewgroundsPagination(config, window) {
+    try {
+      if (window !== window.top) return;
+      var targetUrl = (config && config.url) ? config.url : '';
+      if (!targetUrl && window.location) targetUrl = window.location.href;
+
+      if (!/(^|\.)newgrounds\.com/i.test(targetUrl)) return;
+
+      function setupPagination() {
+        if (!window.document || !window.document.body) return;
+        if (window.document.getElementById('heavenly-ng-pagination-root')) return;
+
+        var urlObj;
+        try {
+          urlObj = new URL(targetUrl);
+        } catch (e) {
+          return;
+        }
+
+        var offset = parseInt(urlObj.searchParams.get('offset') || '0', 10);
+        if (isNaN(offset) || offset < 0) offset = 0;
+        var currentPage = Math.floor(offset / 20) + 1;
+
+        var nextObj = new URL(urlObj.href);
+        nextObj.searchParams.set('offset', offset + 20);
+        nextObj.searchParams.delete('inner');
+        var nextProxiedUrl = fixUrl(nextObj.href, config, window.location);
+
+        var prevProxiedUrl = null;
+        if (offset >= 20) {
+          var prevObj = new URL(urlObj.href);
+          if (offset - 20 > 0) {
+            prevObj.searchParams.set('offset', offset - 20);
+          } else {
+            prevObj.searchParams.delete('offset');
+          }
+          prevObj.searchParams.delete('inner');
+          prevProxiedUrl = fixUrl(prevObj.href, config, window.location);
+        }
+
+        var navContainer = window.document.createElement('div');
+        navContainer.id = 'heavenly-ng-pagination-root';
+
+        var shadow = navContainer.attachShadow ? navContainer.attachShadow({ mode: 'open' }) : navContainer;
+
+        var style = window.document.createElement('style');
+        style.textContent = [
+          '.ng-pag-bar {',
+          '  position: fixed;',
+          '  bottom: 24px;',
+          '  left: 50%;',
+          '  transform: translateX(-50%);',
+          '  z-index: 2147483647;',
+          '  display: flex;',
+          '  align-items: center;',
+          '  gap: 12px;',
+          '  background: rgba(15, 23, 42, 0.92);',
+          '  backdrop-filter: blur(16px);',
+          '  border: 1px solid rgba(56, 189, 248, 0.35);',
+          '  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.25);',
+          '  padding: 8px 18px;',
+          '  border-radius: 9999px;',
+          '  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;',
+          '  color: #f8fafc;',
+          '  font-size: 14px;',
+          '  user-select: none;',
+          '}',
+          '.ng-btn {',
+          '  background: rgba(56, 189, 248, 0.15);',
+          '  color: #38bdf8;',
+          '  border: 1px solid rgba(56, 189, 248, 0.4);',
+          '  padding: 6px 14px;',
+          '  border-radius: 9999px;',
+          '  cursor: pointer;',
+          '  text-decoration: none;',
+          '  font-weight: 600;',
+          '  font-size: 13px;',
+          '  transition: all 0.2s ease;',
+          '  display: inline-flex;',
+          '  align-items: center;',
+          '  gap: 6px;',
+          '}',
+          '.ng-btn:hover {',
+          '  background: rgba(56, 189, 248, 0.35);',
+          '  color: #ffffff;',
+          '  border-color: #38bdf8;',
+          '  transform: translateY(-1px);',
+          '}',
+          '.ng-btn.disabled {',
+          '  opacity: 0.4;',
+          '  cursor: not-allowed;',
+          '  pointer-events: none;',
+          '}',
+          '.ng-page-info {',
+          '  font-weight: 600;',
+          '  color: #e2e8f0;',
+          '  padding: 0 6px;',
+          '}'
+        ].join('\n');
+
+        var bar = window.document.createElement('div');
+        bar.className = 'ng-pag-bar';
+
+        if (prevProxiedUrl) {
+          var prevLink = window.document.createElement('a');
+          prevLink.className = 'ng-btn';
+          prevLink.href = prevProxiedUrl;
+          prevLink.innerHTML = '← Prev Page';
+          bar.appendChild(prevLink);
+        } else {
+          var prevBtnDisabled = window.document.createElement('span');
+          prevBtnDisabled.className = 'ng-btn disabled';
+          prevBtnDisabled.innerHTML = '← Prev Page';
+          bar.appendChild(prevBtnDisabled);
+        }
+
+        var pageLabel = window.document.createElement('span');
+        pageLabel.className = 'ng-page-info';
+        pageLabel.textContent = 'Page ' + currentPage;
+        bar.appendChild(pageLabel);
+
+        var nextLink = window.document.createElement('a');
+        nextLink.className = 'ng-btn';
+        nextLink.href = nextProxiedUrl;
+        nextLink.innerHTML = 'Next Page →';
+        bar.appendChild(nextLink);
+
+        shadow.appendChild(style);
+        shadow.appendChild(bar);
+        window.document.body.appendChild(navContainer);
+      }
+
+      if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {
+        setupPagination();
+      } else if (window.document) {
+        window.document.addEventListener('DOMContentLoaded', setupPagination);
+      }
     } catch (e) {}
   }
 
@@ -2100,6 +2254,7 @@
     var settings = loadHeavenlySettings(window);
     initHeavenlyCloakAndPanic(window, settings, config);
     initHeavenlyWidgets(window, settings);
+    initNewgroundsPagination(config, window);
 
     if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {
       saveToHeavenlyHistory(window, config);
