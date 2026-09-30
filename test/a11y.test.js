@@ -39,6 +39,19 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('.history-card:focus-visible'), 'CSS should include .history-card:focus-visible rule');
     });
 
+    it('should configure search bar input arrow key and delete key navigation for history', function() {
+        assert.ok(html.includes('ArrowDown'), 'input should handle ArrowDown for history navigation');
+        assert.ok(html.includes('ArrowUp'), 'input should handle ArrowUp for history navigation');
+        assert.ok(html.includes('Delete'), 'input should handle Delete key for deleting history items');
+        assert.ok(html.includes('navigateAndSubmit'), 'should trigger navigation and submission on selection');
+    });
+
+    it('should include custom scrollbar styling for history dropdown matching Heavenly theme', function() {
+        assert.ok(html.includes('.history-dropdown::-webkit-scrollbar'), 'should style webkit scrollbar');
+        assert.ok(html.includes('.history-dropdown::-webkit-scrollbar-thumb'), 'should style scrollbar thumb');
+        assert.ok(html.includes('scrollbar-color'), 'should include Firefox scrollbar-color rule');
+    });
+
     it('should configure url input with aria-expanded, aria-controls, and handle Escape key to close history dropdown', function() {
         assert.ok(html.includes('aria-expanded="false"'), 'url input should have initial aria-expanded="false"');
         assert.ok(html.includes('aria-controls="history-dropdown"'), 'url input should specify aria-controls="history-dropdown"');

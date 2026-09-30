@@ -183,8 +183,32 @@
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.2);
       padding: 10px;
       z-index: 100;
-      max-height: 320px;
+      max-height: 300px;
       overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(56, 189, 248, 0.6) rgba(15, 23, 42, 0.8);
+    }
+
+    /* Custom Webkit Scrollbar Styling for Dropdown */
+    .history-dropdown::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .history-dropdown::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 10px;
+      margin: 6px 0;
+    }
+
+    .history-dropdown::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.4);
+      border-radius: 10px;
+      border: 2px solid rgba(15, 23, 42, 0.8);
+      transition: background 0.2s ease;
+    }
+
+    .history-dropdown::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.8);
     }
 
     .history-dropdown.active {
@@ -209,7 +233,8 @@
     }
 
     .history-card:hover,
-    .history-card:focus-visible {
+    .history-card:focus-visible,
+    .history-card.highlighted {
       background: rgba(30, 41, 59, 0.85);
       border-color: rgba(56, 189, 248, 0.4);
       transform: translateX(2px);
@@ -706,7 +731,20 @@
       } catch (e) {}
     }
 
-    function renderHistoryDropdown(filterText) {
+    var historyHighlightIndex = -1;
+    var originalInputValue = '';
+
+    function navigateAndSubmit(url) {
+      var input = $('url');
+      if (input) input.value = url;
+      var form = $('unblocker-form');
+      if (form) {
+        if (form.onsubmit && form.onsubmit() === false) return;
+        form.submit();
+      }
+    }
+
+    function renderHistoryDropdown(filterText, keepHighlightIndex) {
       var history = loadHistory();
       var dropdown = $('history-dropdown');
       if (!dropdown) return;
@@ -722,6 +760,7 @@
       dropdown.innerHTML = '';
 
       if (filtered.length === 0) {
+        historyHighlightIndex = -1;
         var emptyEl = document.createElement('div');
         emptyEl.className = 'history-empty';
         emptyEl.textContent = filter ? 'No matching history found' : 'No browsing history yet';
@@ -729,12 +768,19 @@
         return;
       }
 
+      if (keepHighlightIndex !== true) {
+        historyHighlightIndex = -1;
+      } else if (historyHighlightIndex >= filtered.length) {
+        historyHighlightIndex = filtered.length - 1;
+      }
+
       var listContainer = document.createElement('div');
-      filtered.forEach(function (item) {
+      filtered.forEach(function (item, idx) {
         var card = document.createElement('div');
-        card.className = 'history-card';
+        card.className = 'history-card' + (idx === historyHighlightIndex ? ' highlighted' : '');
         card.setAttribute('role', 'button');
         card.setAttribute('tabindex', '0');
+        card.setAttribute('data-index', idx);
         card.setAttribute('aria-label', 'Select history item: ' + (item.title || item.url));
 
         var info = document.createElement('div');
@@ -765,14 +811,12 @@
           if (realIndex > -1) {
             current.splice(realIndex, 1);
             saveHistory(current);
-            renderHistoryDropdown($('url').value);
+            renderHistoryDropdown($('url').value, true);
           }
         };
 
         var selectCard = function () {
-          $('url').value = item.url;
-          dropdown.classList.remove('active');
-          $('url').setAttribute('aria-expanded', 'false');
+          navigateAndSubmit(item.url);
         };
 
         card.onclick = selectCard;
@@ -811,17 +855,100 @@
       var hideDropdown = function () {
         dropdown.classList.remove('active');
         input.setAttribute('aria-expanded', 'false');
+        historyHighlightIndex = -1;
       };
 
-      var showDropdown = function () {
-        renderHistoryDropdown(input.value);
+      var showDropdown = function (preserveInputValue) {
+        if (!preserveInputValue) {
+          originalInputValue = input.value;
+        }
+        renderHistoryDropdown(originalInputValue);
         dropdown.classList.add('active');
         input.setAttribute('aria-expanded', 'true');
       };
 
-      input.onfocus = showDropdown;
-      input.onclick = showDropdown;
-      input.oninput = showDropdown;
+      input.onfocus = function () { showDropdown(false); };
+      input.onclick = function () { showDropdown(false); };
+      input.oninput = function () {
+        originalInputValue = input.value;
+        showDropdown(true);
+      };
+
+      function updateHighlight(cards) {
+        for (var i = 0; i < cards.length; i++) {
+          if (i === historyHighlightIndex) {
+            cards[i].classList.add('highlighted');
+            cards[i].scrollIntoView({ block: 'nearest' });
+          } else {
+            cards[i].classList.remove('highlighted');
+          }
+        }
+
+        if (historyHighlightIndex >= 0 && historyHighlightIndex < cards.length) {
+          var highlightedCard = cards[historyHighlightIndex];
+          var urlEl = highlightedCard.querySelector('.history-url');
+          if (urlEl) {
+            input.value = urlEl.textContent;
+          }
+        } else {
+          input.value = originalInputValue;
+        }
+      }
+
+      input.addEventListener('keydown', function (e) {
+        if (!dropdown.classList.contains('active')) return;
+
+        var cards = dropdown.querySelectorAll('.history-card');
+        if (cards.length === 0) return;
+
+        if (e.key === 'ArrowDown' || e.keyCode === 40) {
+          e.preventDefault();
+          if (historyHighlightIndex < cards.length - 1) {
+            historyHighlightIndex++;
+          } else {
+            historyHighlightIndex = 0;
+          }
+          updateHighlight(cards);
+        } else if (e.key === 'ArrowUp' || e.keyCode === 38) {
+          e.preventDefault();
+          if (historyHighlightIndex > 0) {
+            historyHighlightIndex--;
+            updateHighlight(cards);
+          } else if (historyHighlightIndex === 0) {
+            historyHighlightIndex = -1;
+            updateHighlight(cards);
+          } else {
+            historyHighlightIndex = cards.length - 1;
+            updateHighlight(cards);
+          }
+        } else if (e.key === 'Enter' || e.keyCode === 13) {
+          if (historyHighlightIndex >= 0 && historyHighlightIndex < cards.length) {
+            e.preventDefault();
+            var highlightedCard = cards[historyHighlightIndex];
+            var urlEl = highlightedCard.querySelector('.history-url');
+            if (urlEl) {
+              navigateAndSubmit(urlEl.textContent);
+            }
+          }
+        } else if (e.key === 'Delete' || (e.shiftKey && e.key === 'Delete')) {
+          if (historyHighlightIndex >= 0 && historyHighlightIndex < cards.length) {
+            e.preventDefault();
+            var cardToDelete = cards[historyHighlightIndex];
+            var delBtn = cardToDelete.querySelector('.history-delete-btn');
+            if (delBtn) delBtn.click();
+            var newCards = dropdown.querySelectorAll('.history-card');
+            if (newCards.length > 0) {
+              if (historyHighlightIndex >= newCards.length) {
+                historyHighlightIndex = newCards.length - 1;
+              }
+              updateHighlight(newCards);
+            } else {
+              historyHighlightIndex = -1;
+              input.value = originalInputValue;
+            }
+          }
+        }
+      });
 
       // Hide dropdown when clicking outside
       document.addEventListener('click', function (e) {
