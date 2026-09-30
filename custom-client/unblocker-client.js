@@ -2065,7 +2065,10 @@
       var rawTitle = window.__heavenlyOriginalTitle || window.document.title || targetUrl;
       var title = isPresetTitle(rawTitle, settings) ? targetUrl : rawTitle;
 
-      var current = JSON.parse(localStorage.getItem('heavenly_history') || '[]');
+      var storage = window.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (!storage) return;
+
+      var current = JSON.parse(storage.getItem('heavenly_history') || '[]');
 
       // Filter out existing duplicates of this url
       current = current.filter(function (item) {
@@ -2083,7 +2086,7 @@
         current = current.slice(0, 20);
       }
 
-      localStorage.setItem('heavenly_history', JSON.stringify(current));
+      storage.setItem('heavenly_history', JSON.stringify(current));
     } catch (e) {}
   }
 
