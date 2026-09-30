@@ -66,24 +66,47 @@
       return urlStr;
     }
 
-    urlStr = urlStr.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+    // Performance optimization: Fast-path check single-slash malformed URLs (e.g., https:/example.com)
+    // avoids regex execution for standard absolute and relative URLs
+    if (urlStr.indexOf(":/") !== -1 && urlStr.indexOf("://") === -1) {
+      urlStr = urlStr.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+    }
+
+    var isAbsoluteHttp =
+      urlStr.substr(0, 7) === "http://" || urlStr.substr(0, 8) === "https://";
 
     var currentRemoteHref;
-    if (location.pathname.substr(0, prefixLen) === prefix) {
-      currentRemoteHref =
-        location.pathname.substr(prefixLen) +
-        location.search +
-        location.hash;
+    function getCurrentRemoteHref() {
+      if (currentRemoteHref !== undefined) return currentRemoteHref;
+      if (location.pathname.substr(0, prefixLen) === prefix) {
+        currentRemoteHref =
+          location.pathname.substr(prefixLen) +
+          location.search +
+          location.hash;
+      } else {
+        // in case sites (such as youtube) manage to bypass our history wrapper
+        currentRemoteHref = config.url;
+      }
+      if (
+        currentRemoteHref &&
+        currentRemoteHref.indexOf(":/") !== -1 &&
+        currentRemoteHref.indexOf("://") === -1
+      ) {
+        currentRemoteHref = currentRemoteHref.replace(
+          /^(https?:\/)([^\/])/i,
+          "$1/$2"
+        );
+      }
+      return currentRemoteHref;
+    }
+
+    // Performance optimization: Lazily pass base URL only for relative URLs
+    var url;
+    if (isAbsoluteHttp) {
+      url = new URL(urlStr);
     } else {
-      // in case sites (such as youtube) manage to bypass our history wrapper
-      currentRemoteHref = config.url;
+      url = new URL(urlStr, getCurrentRemoteHref());
     }
-
-    if (currentRemoteHref) {
-      currentRemoteHref = currentRemoteHref.replace(/^(https?:\/)([^\/])/i, "$1/$2");
-    }
-
-    var url = new URL(urlStr, currentRemoteHref);
 
     // check if it's already proxied (absolute)
     if (
@@ -102,7 +125,7 @@
     // sometimes websites are tricky and use the current host or hostname + a relative url
     // check hostname (ignoring port)
     if (url.hostname === location.hostname) {
-      var currentRemoteUrl = new URL(currentRemoteHref);
+      var currentRemoteUrl = new URL(getCurrentRemoteHref());
       // set host (including port)
       url.host = currentRemoteUrl.host;
       // also keep the remote site's current protocol
