@@ -145,7 +145,8 @@ function newgroundsMiddleware(data) {
                 data.headers['sec-fetch-site'] = 'same-origin';
             }
             var search = parsed.search || '';
-            if (search.indexOf('inner=') !== -1 || search.indexOf('offset=') !== -1 || (data.headers['x-requested-with'] && data.headers['x-requested-with'].toLowerCase() === 'xmlhttprequest')) {
+            var isXmlHttpRequest = (data.headers['x-requested-with'] && data.headers['x-requested-with'].toLowerCase() === 'xmlhttprequest') || search.indexOf('inner=') !== -1;
+            if (isXmlHttpRequest) {
                 data.headers['x-requested-with'] = 'XMLHttpRequest';
             }
         }

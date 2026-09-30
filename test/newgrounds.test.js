@@ -67,7 +67,7 @@ describe('Newgrounds request middleware', function() {
         done();
     });
 
-    it('should inject x-requested-with and normalize sec-fetch-site for inner/offset pagination requests', function(done) {
+    it('should inject x-requested-with and normalize sec-fetch-site for inner pagination requests', function(done) {
         var data = {
             url: 'https://www.newgrounds.com/games/featured?offset=60&inner=1',
             uri: new (require('url').URL)('https://www.newgrounds.com/games/featured?offset=60&inner=1'),
@@ -82,6 +82,24 @@ describe('Newgrounds request middleware', function() {
         assert.strictEqual(data.headers['origin'], 'https://www.newgrounds.com');
         assert.strictEqual(data.headers['sec-fetch-site'], 'same-origin');
         assert.strictEqual(data.headers['x-requested-with'], 'XMLHttpRequest');
+        done();
+    });
+
+    it('should NOT inject x-requested-with for top-level document navigations with offset parameter', function(done) {
+        var data = {
+            url: 'https://www.newgrounds.com/games/featured?offset=20',
+            uri: new (require('url').URL)('https://www.newgrounds.com/games/featured?offset=20'),
+            headers: {
+                'referer': 'https://www.newgrounds.com/games/featured',
+                'sec-fetch-site': 'same-origin'
+            }
+        };
+
+        app.newgroundsMiddleware(data);
+        assert.strictEqual(data.headers['referer'], 'https://www.newgrounds.com/games/featured');
+        assert.strictEqual(data.headers['origin'], 'https://www.newgrounds.com');
+        assert.strictEqual(data.headers['sec-fetch-site'], 'same-origin');
+        assert.strictEqual(data.headers['x-requested-with'], undefined);
         done();
     });
 });
