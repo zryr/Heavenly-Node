@@ -86,9 +86,10 @@ function headersMiddleware(data) {
             var ref = data.headers.referer;
             ref = ref.replace(/^(https?:\/)([^\/])/i, '$1/$2');
             var proxyPrefixIndex = ref.indexOf(unblockerConfig.prefix);
-            if (proxyPrefixIndex !== -1) {
+            while (proxyPrefixIndex !== -1) {
                 ref = ref.substring(proxyPrefixIndex + unblockerConfig.prefix.length);
                 ref = ref.replace(/^(https?:\/)([^\/])/i, '$1/$2');
+                proxyPrefixIndex = ref.indexOf(unblockerConfig.prefix);
             }
             data.headers.referer = ref;
         }
@@ -186,13 +187,25 @@ function responseRedirectMiddleware(data) {
     var prefix = unblockerConfig.prefix;
 
     if (loc.indexOf(prefix) === 0) {
-        data.headers['location'] = loc.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+        loc = loc.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+        while (loc.indexOf(prefix, prefix.length) !== -1) {
+            var secondIdx = loc.indexOf(prefix, prefix.length);
+            loc = prefix + loc.substring(secondIdx + prefix.length).replace(/^(https?:\/)([^\/])/i, '$1/$2');
+        }
+        data.headers['location'] = loc;
         return;
     }
 
     try {
         var base = data.url;
         var absoluteTarget = new URL(loc, base).href;
+
+        var proxyIndex = absoluteTarget.indexOf(prefix);
+        while (proxyIndex !== -1) {
+            absoluteTarget = absoluteTarget.substring(proxyIndex + prefix.length).replace(/^(https?:\/)([^\/])/i, '$1/$2');
+            proxyIndex = absoluteTarget.indexOf(prefix);
+        }
+
         data.headers['location'] = prefix + absoluteTarget;
     } catch (e) {
         // ignore invalid URL
@@ -222,7 +235,13 @@ app.get('/proxy/client/unblocker-client.js', function(req, res) {
 // Middleware to normalize collapsed single-slash proxy URLs (e.g., /proxy/https:/ -> /proxy/https://)
 app.use(function normalizeProxyUrl(req, res, next) {
     if (req.url && req.url.indexOf('/proxy/') === 0) {
-        req.url = req.url.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+        var urlStr = req.url;
+        while (urlStr.indexOf('/proxy/', 7) !== -1) {
+            var secondProxy = urlStr.indexOf('/proxy/', 7);
+            urlStr = '/proxy/' + urlStr.substring(secondProxy + 7).replace(/^(https?:\/)([^\/])/i, '$1/$2');
+        }
+        urlStr = urlStr.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+        req.url = urlStr;
     }
     next();
 });

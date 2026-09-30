@@ -87,6 +87,10 @@
         // in case sites (such as youtube) manage to bypass our history wrapper
         currentRemoteHref = config.url;
       }
+      while (currentRemoteHref && currentRemoteHref.indexOf(prefix) !== -1) {
+        var idx = currentRemoteHref.indexOf(prefix);
+        currentRemoteHref = currentRemoteHref.substring(idx + prefixLen);
+      }
       if (
         currentRemoteHref &&
         currentRemoteHref.indexOf(":/") !== -1 &&
