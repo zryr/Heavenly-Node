@@ -157,4 +157,50 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       assert.strictEqual(capturedHref, '/proxy/https://www.newgrounds.com/portal/view/3000');
     });
   });
+
+  describe('Heavenly Browsing History', function () {
+    it('should save history up to 20 items and filter out cloaked preset titles', function () {
+      let savedData = '';
+      const mockWindow = {
+        location: {
+          pathname: '/proxy/https://www.newgrounds.com/',
+          search: '',
+          hash: ''
+        },
+        document: {
+          title: 'Google Classroom',
+          readyState: 'complete',
+          head: {
+            appendChild: function () {}
+          },
+          getElementById: function () { return null; },
+          getElementsByTagName: function () { return []; },
+          querySelectorAll: function () { return []; },
+          documentElement: { addEventListener: function () {} }
+        },
+        __heavenlyOriginalTitle: 'Newgrounds: Everything by Everyone',
+        addEventListener: function () {},
+        localStorage: {
+          getItem: function (key) {
+            if (key === 'heavenly_settings') {
+              return JSON.stringify({ autoCloak: true, selectedPreset: 'classroom' });
+            }
+            return '[]';
+          },
+          setItem: function (key, val) {
+            if (key === 'heavenly_history') savedData = val;
+          }
+        }
+      };
+      mockWindow.top = mockWindow;
+
+      initForWindow(config, mockWindow);
+
+      assert.ok(savedData, 'savedData should not be empty');
+      const parsed = JSON.parse(savedData);
+      assert.strictEqual(parsed.length, 1);
+      assert.strictEqual(parsed[0].url, 'https://www.newgrounds.com/');
+      assert.strictEqual(parsed[0].title, 'Newgrounds: Everything by Everyone');
+    });
+  });
 });
