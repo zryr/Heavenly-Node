@@ -159,15 +159,12 @@ function cloudflareMiddleware(data) {
         var parsed = data.uri || new URL(data.url);
         var hostname = parsed.hostname || parsed.host;
         var pathname = parsed.pathname || '';
-        var isPlanetMinecraft = hostname && /(^|\.)planetminecraft\.com$/i.test(hostname);
         var isCdnCgi = pathname.indexOf('/cdn-cgi/') !== -1;
 
-        if (isPlanetMinecraft || isCdnCgi) {
+        if (isCdnCgi) {
             var targetOrigin = parsed.origin || (parsed.protocol + '//' + (hostname || ''));
             if (!data.headers['referer']) {
                 data.headers['referer'] = targetOrigin + '/';
-            } else if (isPlanetMinecraft && !/(^|\.)planetminecraft\.com/i.test(data.headers['referer'])) {
-                data.headers['referer'] = 'https://www.planetminecraft.com/';
             }
             if (!data.headers['origin']) {
                 data.headers['origin'] = targetOrigin;
@@ -298,7 +295,6 @@ app.headersMiddleware = headersMiddleware;
 app.responseLinkHeaderMiddleware = responseLinkHeaderMiddleware;
 app.newgroundsMiddleware = newgroundsMiddleware;
 app.cloudflareMiddleware = cloudflareMiddleware;
-app.planetminecraftMiddleware = cloudflareMiddleware;
 app.responseRedirectMiddleware = responseRedirectMiddleware;
 
 module.exports = app;
