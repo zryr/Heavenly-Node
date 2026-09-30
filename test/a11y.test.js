@@ -38,4 +38,12 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('card.onkeydown'), 'history card should handle keyboard event onkeydown');
         assert.ok(html.includes('.history-card:focus-visible'), 'CSS should include .history-card:focus-visible rule');
     });
+
+    it('should configure url input with aria-expanded, aria-controls, and handle Escape key to close history dropdown', function() {
+        assert.ok(html.includes('aria-expanded="false"'), 'url input should have initial aria-expanded="false"');
+        assert.ok(html.includes('aria-controls="history-dropdown"'), 'url input should specify aria-controls="history-dropdown"');
+        assert.ok(html.includes('input.setAttribute(\'aria-expanded\', \'true\')'), 'showDropdown should set aria-expanded="true"');
+        assert.ok(html.includes('input.setAttribute(\'aria-expanded\', \'false\')'), 'hideDropdown should set aria-expanded="false"');
+        assert.ok(html.includes('e.key === \'Escape\'') || html.includes('e.keyCode === 27'), 'keydown listener should handle Escape key');
+    });
 });

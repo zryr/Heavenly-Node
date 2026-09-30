@@ -495,7 +495,7 @@
 
     <form action="no-js" method="get" id="unblocker-form" class="search-form">
       <div class="input-wrapper">
-        <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autofocus="autofocus" autocomplete="off" aria-label="URL or search query" />
+        <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autofocus="autofocus" autocomplete="off" aria-label="URL or search query" aria-expanded="false" aria-controls="history-dropdown" />
         <div id="history-dropdown" class="history-dropdown"></div>
       </div>
       <input type="submit" value="Go" />
@@ -772,6 +772,7 @@
         var selectCard = function () {
           $('url').value = item.url;
           dropdown.classList.remove('active');
+          $('url').setAttribute('aria-expanded', 'false');
         };
 
         card.onclick = selectCard;
@@ -807,9 +808,15 @@
       var dropdown = $('history-dropdown');
       if (!input || !dropdown) return;
 
+      var hideDropdown = function () {
+        dropdown.classList.remove('active');
+        input.setAttribute('aria-expanded', 'false');
+      };
+
       var showDropdown = function () {
         renderHistoryDropdown(input.value);
         dropdown.classList.add('active');
+        input.setAttribute('aria-expanded', 'true');
       };
 
       input.onfocus = showDropdown;
@@ -819,7 +826,16 @@
       // Hide dropdown when clicking outside
       document.addEventListener('click', function (e) {
         if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-          dropdown.classList.remove('active');
+          hideDropdown();
+        }
+      });
+
+      // Hide dropdown on Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' || e.keyCode === 27) {
+          if (dropdown.classList.contains('active')) {
+            hideDropdown();
+          }
         }
       });
     }
