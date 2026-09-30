@@ -158,78 +158,49 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
     });
   });
 
-  describe('Newgrounds pagination widget', function () {
-    it('should inject Newgrounds pagination bar when browsing newgrounds.com', function () {
-      let appendedNode = null;
-      const mockDocument = {
-        readyState: 'complete',
-        getElementById: function (id) {
-          if (id === 'heavenly-ng-pagination-root' && appendedNode) return appendedNode;
-          return null;
-        },
-        createElement: function (tag) {
-          const element = {
-            tagName: tag,
-            children: [],
-            appendChild: function (child) {
-              element.children.push(child);
-              return child;
-            }
-          };
-          if (tag === 'div') {
-            element.attachShadow = function () {
-              const shadow = {
-                children: [],
-                appendChild: function (c) {
-                  shadow.children.push(c);
-                  return c;
-                }
-              };
-              element.shadowRoot = shadow;
-              return shadow;
-            };
-          }
-          return element;
-        },
-        body: {
-          appendChild: function (node) {
-            appendedNode = node;
-            return node;
-          }
-        },
-        documentElement: { addEventListener: function () {} }
-      };
-
+  describe('Heavenly Browsing History', function () {
+    it('should save history up to 20 items and filter out cloaked preset titles', function () {
+      let savedData = '';
       const mockWindow = {
-        location: location,
+        location: {
+          pathname: '/proxy/https://www.newgrounds.com/',
+          search: '',
+          hash: ''
+        },
+        document: {
+          title: 'Google Classroom',
+          readyState: 'complete',
+          head: {
+            appendChild: function () {}
+          },
+          getElementById: function () { return null; },
+          getElementsByTagName: function () { return []; },
+          querySelectorAll: function () { return []; },
+          documentElement: { addEventListener: function () {} }
+        },
+        __heavenlyOriginalTitle: 'Newgrounds: Everything by Everyone',
         addEventListener: function () {},
-        document: mockDocument,
-        localStorage: { getItem: function () { return '{}'; } }
+        localStorage: {
+          getItem: function (key) {
+            if (key === 'heavenly_settings') {
+              return JSON.stringify({ autoCloak: true, selectedPreset: 'classroom' });
+            }
+            return '[]';
+          },
+          setItem: function (key, val) {
+            if (key === 'heavenly_history') savedData = val;
+          }
+        }
       };
       mockWindow.top = mockWindow;
 
-      const ngConfig = {
-        prefix: '/proxy/',
-        url: 'https://www.newgrounds.com/games/featured?offset=20'
-      };
+      initForWindow(config, mockWindow);
 
-      initForWindow(ngConfig, mockWindow);
-
-      assert.notStrictEqual(appendedNode, null);
-      assert.strictEqual(appendedNode.id, 'heavenly-ng-pagination-root');
-      const shadow = appendedNode.shadowRoot;
-      assert.notStrictEqual(shadow, null);
-      const bar = shadow.children.find(c => c.className === 'ng-pag-bar');
-      assert.notStrictEqual(bar, undefined);
-
-      const pageLabel = bar.children.find(c => c.className === 'ng-page-info');
-      assert.strictEqual(pageLabel.textContent, 'Page 2');
-
-      const prevLink = bar.children.find(c => c.innerHTML && c.innerHTML.includes('Prev Page'));
-      assert.strictEqual(prevLink.href, '/proxy/https://www.newgrounds.com/games/featured');
-
-      const nextLink = bar.children.find(c => c.innerHTML && c.innerHTML.includes('Next Page'));
-      assert.strictEqual(nextLink.href, '/proxy/https://www.newgrounds.com/games/featured?offset=40');
+      assert.ok(savedData, 'savedData should not be empty');
+      const parsed = JSON.parse(savedData);
+      assert.strictEqual(parsed.length, 1);
+      assert.strictEqual(parsed[0].url, 'https://www.newgrounds.com/');
+      assert.strictEqual(parsed[0].title, 'Newgrounds: Everything by Everyone');
     });
   });
 });

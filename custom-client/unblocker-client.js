@@ -530,6 +530,24 @@
     };
   }
 
+  function isPresetTitle(title, settings) {
+    if (!title) return false;
+    var presetTitles = [
+      "Google Classroom",
+      "My Drive - Google Drive",
+      "Dashboard",
+      "Dashboard | Khan Academy"
+    ];
+    if (settings && settings.customPresets) {
+      for (var k in settings.customPresets) {
+        if (settings.customPresets[k] && settings.customPresets[k].title) {
+          presetTitles.push(settings.customPresets[k].title);
+        }
+      }
+    }
+    return presetTitles.indexOf(title) !== -1;
+  }
+
   function loadHeavenlySettings(window) {
     var saved = {};
     try {
@@ -555,7 +573,7 @@
     };
   }
 
-  function initHeavenlyCloakAndPanic(window, settings) {
+  function initHeavenlyCloakAndPanic(window, settings, config) {
     try {
       if (window !== window.top) return;
 
@@ -572,6 +590,9 @@
 
       var currentlyCloaked = false;
       var latestOriginalTitle = window.document ? window.document.title : '';
+      if (window.document && window.document.title && !isPresetTitle(window.document.title, settings)) {
+        window.__heavenlyOriginalTitle = window.document.title;
+      }
 
       function getPresetData() {
         var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
@@ -585,8 +606,9 @@
         var head = window.document.head || window.document.getElementsByTagName('head')[0];
 
         if (isCloaked) {
-          if (window.document.title && window.document.title !== preset.title) {
+          if (window.document.title && !isPresetTitle(window.document.title, settings)) {
             latestOriginalTitle = window.document.title;
+            window.__heavenlyOriginalTitle = latestOriginalTitle;
           }
           window.document.title = preset.title;
 
@@ -674,7 +696,11 @@
           if (currentlyCloaked) {
             var preset = getPresetData();
             if (window.document.title !== preset.title) {
-              latestOriginalTitle = window.document.title;
+              if (!isPresetTitle(window.document.title, settings)) {
+                latestOriginalTitle = window.document.title;
+                window.__heavenlyOriginalTitle = latestOriginalTitle;
+                if (config) saveToHeavenlyHistory(window, config);
+              }
               window.document.title = preset.title;
             }
             var iconLinks = window.document.querySelectorAll("link[rel*='icon']");
@@ -688,8 +714,10 @@
               }
             }
           } else {
-            if (window.document.title) {
+            if (window.document.title && !isPresetTitle(window.document.title, settings)) {
               latestOriginalTitle = window.document.title;
+              window.__heavenlyOriginalTitle = latestOriginalTitle;
+              if (config) saveToHeavenlyHistory(window, config);
             }
           }
         });
@@ -2033,7 +2061,9 @@
       var targetUrl = path.substr(prefix.length) + window.location.search + window.location.hash;
       if (!targetUrl || targetUrl.startsWith('about:') || targetUrl.startsWith('data:')) return;
 
-      var title = window.document.title || targetUrl;
+      var settings = loadHeavenlySettings(window);
+      var rawTitle = window.__heavenlyOriginalTitle || window.document.title || targetUrl;
+      var title = isPresetTitle(rawTitle, settings) ? targetUrl : rawTitle;
 
       var current = JSON.parse(localStorage.getItem('heavenly_history') || '[]');
 
@@ -2048,9 +2078,9 @@
         title: title
       });
 
-      // Limit to 10 items
-      if (current.length > 10) {
-        current = current.slice(0, 10);
+      // Limit to 20 items
+      if (current.length > 20) {
+        current = current.slice(0, 20);
       }
 
       localStorage.setItem('heavenly_history', JSON.stringify(current));
@@ -2208,7 +2238,7 @@
     initWebSockets(config, window);
     initPushState(config, window);
     var settings = loadHeavenlySettings(window);
-    initHeavenlyCloakAndPanic(window, settings);
+    initHeavenlyCloakAndPanic(window, settings, config);
     initHeavenlyWidgets(window, settings);
     initNewgroundsPagination(config, window);
 
