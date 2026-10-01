@@ -582,11 +582,22 @@
     }
 
     .section-card.dragging, .bookmark-card.dragging {
-      opacity: 0.9;
-      transform: scale(1.03) translateY(-4px);
-      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.75), 0 0 25px rgba(56, 189, 248, 0.6) !important;
-      border-color: #38bdf8 !important;
-      z-index: 1000 !important;
+      opacity: 0.3 !important;
+    }
+
+    .drag-popout-avatar {
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      transform: scale(1.06) rotate(1.5deg);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.85), 0 0 35px rgba(56, 189, 248, 0.75) !important;
+      border: 2px solid #38bdf8 !important;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.95) !important;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: transform 0.05s ease-out;
+      margin: 0 !important;
     }
 
     .bookmark-drag-ghost {
@@ -1682,6 +1693,58 @@
     // Selected item state for bottom action bar
     var selectedItemState = null; // { type: 'category'|'bookmark', id: string, title: string, categoryId?: string }
 
+    // --- Pop-Out Floating Drag Avatar Manager ---
+    var activePopoutAvatar = null;
+
+    function createPopoutAvatar(sourceEl, mouseX, mouseY) {
+      removePopoutAvatar();
+      if (!sourceEl) return;
+
+      var clone = sourceEl.cloneNode(true);
+      clone.id = 'heavenly-drag-avatar';
+      clone.className += ' drag-popout-avatar';
+
+      var rect = sourceEl.getBoundingClientRect();
+      clone.style.width = rect.width + 'px';
+      clone.style.left = (mouseX - rect.width / 2) + 'px';
+      clone.style.top = (mouseY - 20) + 'px';
+
+      document.body.appendChild(clone);
+      activePopoutAvatar = clone;
+    }
+
+    function updatePopoutAvatar(mouseX, mouseY) {
+      if (!activePopoutAvatar) return;
+      var w = parseFloat(activePopoutAvatar.style.width) || 200;
+      activePopoutAvatar.style.left = (mouseX - w / 2) + 'px';
+      activePopoutAvatar.style.top = (mouseY - 20) + 'px';
+    }
+
+    function removePopoutAvatar() {
+      if (activePopoutAvatar && activePopoutAvatar.parentNode) {
+        activePopoutAvatar.parentNode.removeChild(activePopoutAvatar);
+      }
+      activePopoutAvatar = null;
+      var existing = document.getElementById('heavenly-drag-avatar');
+      if (existing && existing.parentNode) {
+        existing.parentNode.removeChild(existing);
+      }
+    }
+
+    document.addEventListener('dragover', function (e) {
+      if (activePopoutAvatar) {
+        updatePopoutAvatar(e.clientX, e.clientY);
+      }
+    });
+
+    document.addEventListener('dragend', function () {
+      removePopoutAvatar();
+    });
+
+    document.addEventListener('drop', function () {
+      removePopoutAvatar();
+    });
+
     function openReorderBar(item) {
       selectedItemState = item;
       var bar = $('reorder-bar');
@@ -1811,8 +1874,13 @@
           if (Math.abs(touch.clientX - startX) > 8 || Math.abs(touch.clientY - startY) > 8) {
             if (pressTimer) clearTimeout(pressTimer);
             if (e.touches) {
-              isTouchDraggingCat = true;
-              card.classList.add('dragging');
+              if (!isTouchDraggingCat) {
+                isTouchDraggingCat = true;
+                card.classList.add('dragging');
+                createPopoutAvatar(card, touch.clientX, touch.clientY);
+              } else {
+                updatePopoutAvatar(touch.clientX, touch.clientY);
+              }
 
               // Dynamic touch ghost rendering across section cards & columns
               var target = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -1838,6 +1906,7 @@
 
         var endHandle = function (e) {
           if (pressTimer) clearTimeout(pressTimer);
+          removePopoutAvatar();
           document.querySelectorAll('.section-drag-ghost').forEach(function (el) { el.remove(); });
           if (isTouchDraggingCat && e.changedTouches) {
             card.classList.remove('dragging');
@@ -2012,12 +2081,14 @@
           bmCard.ondragstart = function (e) {
             e.stopPropagation();
             bmCard.classList.add('dragging');
+            createPopoutAvatar(bmCard, e.clientX, e.clientY);
             e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }));
             e.dataTransfer.effectAllowed = 'move';
           };
 
           bmCard.ondragend = function () {
             bmCard.classList.remove('dragging');
+            removePopoutAvatar();
             document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
             document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
           };
@@ -2153,8 +2224,13 @@
             if (Math.abs(touch.clientX - bmSX) > 8 || Math.abs(touch.clientY - bmSY) > 8) {
               if (bmTimer) clearTimeout(bmTimer);
               if (e.touches) {
-                isTouchDraggingBm = true;
-                bmCard.classList.add('dragging');
+                if (!isTouchDraggingBm) {
+                  isTouchDraggingBm = true;
+                  bmCard.classList.add('dragging');
+                  createPopoutAvatar(bmCard, touch.clientX, touch.clientY);
+                } else {
+                  updatePopoutAvatar(touch.clientX, touch.clientY);
+                }
 
                 var target = document.elementFromPoint(touch.clientX, touch.clientY);
                 if (target) {
@@ -2180,6 +2256,7 @@
 
           var endBmHandle = function (e) {
             if (bmTimer) clearTimeout(bmTimer);
+            removePopoutAvatar();
             document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
             if (isTouchDraggingBm && e.changedTouches) {
               bmCard.classList.remove('dragging');
