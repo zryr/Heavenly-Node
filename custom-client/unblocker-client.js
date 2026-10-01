@@ -1761,7 +1761,12 @@
             '.resize-handle-nw { top: -4px; left: -4px; width: 12px; height: 12px; cursor: nwse-resize; }',
             '.resize-handle-ne { top: -4px; right: -4px; width: 12px; height: 12px; cursor: nesw-resize; }',
             '.resize-handle-sw { bottom: -4px; left: -4px; width: 12px; height: 12px; cursor: nesw-resize; }',
-            '.resize-handle-se { bottom: -4px; right: -4px; width: 12px; height: 12px; cursor: nwse-resize; }'
+            '.resize-handle-se {',
+            '  bottom: 2px; right: 2px; width: 14px; height: 14px; cursor: nwse-resize; z-index: 25;',
+            '  background: linear-gradient(135deg, transparent 40%, rgba(56, 189, 248, 0.7) 40%, rgba(56, 189, 248, 0.7) 50%, transparent 50%, transparent 65%, rgba(56, 189, 248, 0.7) 65%, rgba(56, 189, 248, 0.7) 75%, transparent 75%);',
+            '  border-bottom-right-radius: 6px; transition: opacity 0.2s ease;',
+            '}',
+            '.resize-handle-se:hover { opacity: 1; filter: drop-shadow(0 0 4px #38bdf8); }'
           ].join('\n');
 
           var magWidget = window.document.createElement('div');

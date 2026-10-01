@@ -574,18 +574,46 @@
     }
 
     .section-card.dragging, .bookmark-card.dragging {
-      opacity: 0.4;
+      opacity: 0.9;
+      transform: scale(1.03) translateY(-4px);
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.75), 0 0 25px rgba(56, 189, 248, 0.6) !important;
+      border-color: #38bdf8 !important;
+      z-index: 1000 !important;
     }
 
     .bookmark-drag-ghost {
       height: 38px;
-      border: 2px dashed rgba(56, 189, 248, 0.7);
-      background: rgba(56, 189, 248, 0.12);
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+      border: 2px dashed rgba(56, 189, 248, 0.85);
+      background: rgba(56, 189, 248, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.35) inset, 0 0 15px rgba(56, 189, 248, 0.2);
       margin: 4px 0;
       transition: all 0.15s ease;
       pointer-events: none;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      color: rgba(56, 189, 248, 0.8);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .section-drag-ghost {
+      min-height: 120px;
+      border: 2px dashed rgba(56, 189, 248, 0.85);
+      background: rgba(56, 189, 248, 0.1);
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.25) inset;
+      margin: 12px 0;
+      transition: all 0.15s ease;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(56, 189, 248, 0.7);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
     }
 
     /* 4 Transparent Dots Drag Handle :: */
@@ -1728,14 +1756,14 @@
         card.ondragstart = function (e) {
           e.stopPropagation();
           card.classList.add('dragging');
-          e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'category', id: cat.id }));
+          e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'category', id: cat.id, title: cat.title }));
           e.dataTransfer.effectAllowed = 'move';
         };
 
         card.ondragend = function () {
           card.classList.remove('dragging');
           document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
-          document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+          document.querySelectorAll('.bookmark-drag-ghost, .section-drag-ghost').forEach(function (el) { el.remove(); });
         };
 
         // Header
@@ -1862,13 +1890,28 @@
           e.dataTransfer.dropEffect = 'move';
           card.classList.add('drag-over');
 
-          // Render ghost placeholder if a bookmark is being dragged
-          var listEl = card.querySelector('.bookmarks-list');
-          if (listEl && !listEl.querySelector('.bookmark-drag-ghost')) {
-            document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
-            var ghost = document.createElement('div');
-            ghost.className = 'bookmark-drag-ghost';
-            listEl.appendChild(ghost);
+          var isCategoryDrag = document.querySelector('.section-card.dragging');
+          if (isCategoryDrag && isCategoryDrag !== card) {
+            var col = card.parentNode;
+            if (col) {
+              var ghostCat = document.querySelector('.section-drag-ghost');
+              if (!ghostCat) {
+                ghostCat = document.createElement('div');
+                ghostCat.className = 'section-drag-ghost';
+                ghostCat.textContent = '📁 Move Section Here';
+              }
+              col.insertBefore(ghostCat, card);
+            }
+          } else {
+            // Render ghost placeholder if a bookmark is being dragged
+            var listEl = card.querySelector('.bookmarks-list');
+            if (listEl && !listEl.querySelector('.bookmark-drag-ghost')) {
+              document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+              var ghost = document.createElement('div');
+              ghost.className = 'bookmark-drag-ghost';
+              ghost.textContent = '📌 Move Bookmark Here';
+              listEl.appendChild(ghost);
+            }
           }
         };
 
@@ -1885,7 +1928,7 @@
           e.preventDefault();
           e.stopPropagation();
           card.classList.remove('drag-over');
-          document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+          document.querySelectorAll('.bookmark-drag-ghost, .section-drag-ghost').forEach(function (el) { el.remove(); });
           try {
             var raw = e.dataTransfer.getData('text/plain');
             if (!raw) return;
@@ -1941,7 +1984,7 @@
           bmCard.ondragstart = function (e) {
             e.stopPropagation();
             bmCard.classList.add('dragging');
-            e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'bookmark', id: bm.id, categoryId: cat.id }));
+            e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }));
             e.dataTransfer.effectAllowed = 'move';
           };
 
@@ -1957,14 +2000,14 @@
             e.dataTransfer.dropEffect = 'move';
             bmCard.classList.add('drag-over');
 
-            // Insert ghost placeholder before target bookmark
+            // Insert ghost preview card before target bookmark
             var parentList = bmWrapper.parentNode;
             if (parentList) {
-              var existingGhost = parentList.querySelector('.bookmark-drag-ghost');
+              var existingGhost = document.querySelector('.bookmark-drag-ghost');
               if (!existingGhost) {
-                document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
                 existingGhost = document.createElement('div');
                 existingGhost.className = 'bookmark-drag-ghost';
+                existingGhost.textContent = '📌 Move Bookmark Here';
               }
               parentList.insertBefore(existingGhost, bmWrapper);
             }
@@ -2460,15 +2503,31 @@
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
         containerEl.classList.add('drag-over');
+
+        var isCategoryDrag = document.querySelector('.section-card.dragging');
+        if (isCategoryDrag && !containerEl.querySelector('.section-drag-ghost')) {
+          var ghostCat = document.querySelector('.section-drag-ghost');
+          if (!ghostCat) {
+            ghostCat = document.createElement('div');
+            ghostCat.className = 'section-drag-ghost';
+            ghostCat.textContent = '📁 Move Section Here';
+          }
+          containerEl.appendChild(ghostCat);
+        }
       };
 
-      containerEl.ondragleave = function () {
+      containerEl.ondragleave = function (e) {
         containerEl.classList.remove('drag-over');
+        var ghost = containerEl.querySelector('.section-drag-ghost');
+        if (ghost && !containerEl.contains(e.relatedTarget)) {
+          ghost.remove();
+        }
       };
 
       containerEl.ondrop = function (e) {
         e.preventDefault();
         containerEl.classList.remove('drag-over');
+        document.querySelectorAll('.section-drag-ghost').forEach(function (el) { el.remove(); });
         try {
           var raw = e.dataTransfer.getData('text/plain');
           if (!raw) return;
