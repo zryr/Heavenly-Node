@@ -934,9 +934,41 @@
     }
   }
 
+  function getDirectRemoteUrl(window, config) {
+    try {
+      var prefix = (config && config.prefix) || '/proxy/';
+      var prefixLen = prefix.length;
+      var loc = window.location;
+      var urlStr = '';
+
+      if (loc.pathname.substr(0, prefixLen) === prefix) {
+        urlStr = loc.pathname.substr(prefixLen) + loc.search + loc.hash;
+      } else if (config && config.url) {
+        urlStr = config.url;
+      }
+
+      while (urlStr && urlStr.indexOf(prefix) !== -1) {
+        var idx = urlStr.indexOf(prefix);
+        urlStr = urlStr.substring(idx + prefixLen);
+      }
+
+      if (urlStr && urlStr.indexOf(":/") !== -1 && urlStr.indexOf("://") === -1) {
+        urlStr = urlStr.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+      }
+
+      if (urlStr && !urlStr.startsWith('http://') && !urlStr.startsWith('https://')) {
+        urlStr = 'https://' + urlStr;
+      }
+
+      return urlStr;
+    } catch (e) {
+      return (config && config.url) || '';
+    }
+  }
+
   function openDirectSitePreview(window, directUrl) {
     try {
-      if (!directUrl || directUrl === 'undefined') {
+      if (!directUrl || directUrl === 'undefined' || directUrl === 'https://' || directUrl === 'http://') {
         alert('Could not determine original website URL.');
         return;
       }
@@ -1647,7 +1679,7 @@
           if (directDockBtn) {
             directDockBtn.addEventListener('click', function (e) {
               e.stopPropagation();
-              openDirectSitePreview(window, getCurrentRemoteHref());
+              openDirectSitePreview(window, getDirectRemoteUrl(window, config));
             });
           }
 
@@ -2315,7 +2347,7 @@
           if (floatDirectBtn) {
             floatDirectBtn.addEventListener('click', function (e) {
               e.stopPropagation();
-              openDirectSitePreview(window, getCurrentRemoteHref());
+              openDirectSitePreview(window, getDirectRemoteUrl(window, config));
             });
           }
 
