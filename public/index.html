@@ -587,16 +587,17 @@
 
     .drag-popout-avatar {
       position: fixed;
+      top: 0;
+      left: 0;
       z-index: 9999;
       pointer-events: none;
-      transform: scale(1.06) rotate(1.5deg);
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.85), 0 0 35px rgba(56, 189, 248, 0.75) !important;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.7) !important;
       border: 2px solid #38bdf8 !important;
       border-radius: 16px;
       background: rgba(15, 23, 42, 0.95) !important;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      transition: transform 0.05s ease-out;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      will-change: transform;
       margin: 0 !important;
     }
 
@@ -1695,6 +1696,9 @@
 
     // --- Pop-Out Floating Drag Avatar Manager ---
     var activePopoutAvatar = null;
+    var avatarX = 0, avatarY = 0;
+    var avatarWidth = 200;
+    var avatarRafPending = false;
 
     function createPopoutAvatar(sourceEl, mouseX, mouseY) {
       removePopoutAvatar();
@@ -1705,9 +1709,12 @@
       clone.className += ' drag-popout-avatar';
 
       var rect = sourceEl.getBoundingClientRect();
-      clone.style.width = rect.width + 'px';
-      clone.style.left = (mouseX - rect.width / 2) + 'px';
-      clone.style.top = (mouseY - 20) + 'px';
+      avatarWidth = rect.width;
+      clone.style.width = avatarWidth + 'px';
+
+      avatarX = mouseX - avatarWidth / 2;
+      avatarY = mouseY - 20;
+      clone.style.transform = 'translate3d(' + avatarX + 'px, ' + avatarY + 'px, 0px) scale(1.05) rotate(1.5deg)';
 
       document.body.appendChild(clone);
       activePopoutAvatar = clone;
@@ -1715,9 +1722,18 @@
 
     function updatePopoutAvatar(mouseX, mouseY) {
       if (!activePopoutAvatar) return;
-      var w = parseFloat(activePopoutAvatar.style.width) || 200;
-      activePopoutAvatar.style.left = (mouseX - w / 2) + 'px';
-      activePopoutAvatar.style.top = (mouseY - 20) + 'px';
+      avatarX = mouseX - avatarWidth / 2;
+      avatarY = mouseY - 20;
+
+      if (!avatarRafPending) {
+        avatarRafPending = true;
+        requestAnimationFrame(function () {
+          if (activePopoutAvatar) {
+            activePopoutAvatar.style.transform = 'translate3d(' + avatarX + 'px, ' + avatarY + 'px, 0px) scale(1.05) rotate(1.5deg)';
+          }
+          avatarRafPending = false;
+        });
+      }
     }
 
     function removePopoutAvatar() {
@@ -1725,6 +1741,7 @@
         activePopoutAvatar.parentNode.removeChild(activePopoutAvatar);
       }
       activePopoutAvatar = null;
+      avatarRafPending = false;
       var existing = document.getElementById('heavenly-drag-avatar');
       if (existing && existing.parentNode) {
         existing.parentNode.removeChild(existing);
@@ -1895,7 +1912,15 @@
 
                 if (targetCard && targetCard !== card) {
                   var p = targetCard.parentNode;
-                  if (p) p.insertBefore(ghostCat, targetCard);
+                  if (p) {
+                    var rect = targetCard.getBoundingClientRect();
+                    var isLowerHalf = (touch.clientY - rect.top) > (rect.height / 2);
+                    if (isLowerHalf) {
+                      p.insertBefore(ghostCat, targetCard.nextSibling);
+                    } else {
+                      p.insertBefore(ghostCat, targetCard);
+                    }
+                  }
                 } else if (targetCol) {
                   targetCol.appendChild(ghostCat);
                 }
@@ -1923,8 +1948,16 @@
                 var destCat = data.categories.find(function (c) { return c.id === targetCatId; });
                 if (sourceCat && destCat) {
                   sourceCat.side = destCat.side;
+                  var rect = targetCard.getBoundingClientRect();
+                  var isLowerHalf = (endTouch.clientY - rect.top) > (rect.height / 2);
                   data.categories = data.categories.filter(function (c) { return c.id !== sourceCat.id; });
+
                   var destIndex = data.categories.findIndex(function (c) { return c.id === destCat.id; });
+                  if (destIndex !== -1 && isLowerHalf) {
+                    destIndex += 1;
+                  }
+                  if (destIndex === -1) destIndex = data.categories.length;
+
                   data.categories.splice(destIndex, 0, sourceCat);
                   data.categories.forEach(function (c, idx) { c.order = idx; });
                   saveBookmarkData(data);
@@ -1991,13 +2024,18 @@
           if (isCategoryDrag && isCategoryDrag !== card) {
             var col = card.parentNode;
             if (col) {
-              var ghostCat = document.querySelector('.section-drag-ghost');
-              if (!ghostCat) {
-                ghostCat = document.createElement('div');
-                ghostCat.className = 'section-drag-ghost';
-                ghostCat.textContent = '📁 Move Section Here';
+              document.querySelectorAll('.section-drag-ghost').forEach(function (el) { el.remove(); });
+              var ghostCat = document.createElement('div');
+              ghostCat.className = 'section-drag-ghost';
+              ghostCat.textContent = '📁 Move Section Here';
+
+              var rect = card.getBoundingClientRect();
+              var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
+              if (isLowerHalf) {
+                col.insertBefore(ghostCat, card.nextSibling);
+              } else {
+                col.insertBefore(ghostCat, card);
               }
-              col.insertBefore(ghostCat, card);
             }
           } else {
             // Render ghost placeholder if a bookmark is being dragged
@@ -2037,8 +2075,16 @@
               var targetCat = allData.categories.find(function (c) { return c.id === cat.id; });
               if (sourceCat && targetCat) {
                 sourceCat.side = targetCat.side;
+                var rect = card.getBoundingClientRect();
+                var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
+
                 allData.categories = allData.categories.filter(function (c) { return c.id !== sourceCat.id; });
                 var targetIdx = allData.categories.findIndex(function (c) { return c.id === targetCat.id; });
+                if (targetIdx !== -1 && isLowerHalf) {
+                  targetIdx += 1;
+                }
+                if (targetIdx === -1) targetIdx = allData.categories.length;
+
                 allData.categories.splice(targetIdx, 0, sourceCat);
                 allData.categories.forEach(function (c, idx) { c.order = idx; });
                 saveBookmarkData(allData);
@@ -2099,16 +2145,20 @@
             e.dataTransfer.dropEffect = 'move';
             bmCard.classList.add('drag-over');
 
-            // Insert ghost preview card before target bookmark
             var parentList = bmWrapper.parentNode;
             if (parentList) {
-              var existingGhost = document.querySelector('.bookmark-drag-ghost');
-              if (!existingGhost) {
-                existingGhost = document.createElement('div');
-                existingGhost.className = 'bookmark-drag-ghost';
-                existingGhost.textContent = '📌 Move Bookmark Here';
+              document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+              var ghostBm = document.createElement('div');
+              ghostBm.className = 'bookmark-drag-ghost';
+              ghostBm.textContent = '📌 Move Bookmark Here';
+
+              var rect = bmCard.getBoundingClientRect();
+              var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
+              if (isLowerHalf) {
+                parentList.insertBefore(ghostBm, bmWrapper.nextSibling);
+              } else {
+                parentList.insertBefore(ghostBm, bmWrapper);
               }
-              parentList.insertBefore(existingGhost, bmWrapper);
             }
           };
 
@@ -2132,8 +2182,16 @@
                 var targetBm = allData.bookmarks.find(function (b) { return b.id === bm.id; });
                 if (sourceBm && targetBm) {
                   sourceBm.categoryId = cat.id;
+                  var rect = bmCard.getBoundingClientRect();
+                  var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
+
                   allData.bookmarks = allData.bookmarks.filter(function (b) { return b.id !== sourceBm.id; });
                   var targetIdx = allData.bookmarks.findIndex(function (b) { return b.id === targetBm.id; });
+                  if (targetIdx !== -1 && isLowerHalf) {
+                    targetIdx += 1;
+                  }
+                  if (targetIdx === -1) targetIdx = allData.bookmarks.length;
+
                   allData.bookmarks.splice(targetIdx, 0, sourceBm);
                   allData.bookmarks.forEach(function (b, idx) { b.order = idx; });
                   saveBookmarkData(allData);
@@ -2244,7 +2302,15 @@
 
                   if (targetBm && targetBm !== bmCard) {
                     var p = targetBm.parentNode;
-                    if (p) p.insertBefore(ghostBm, targetBm);
+                    if (p) {
+                      var rect = targetBm.getBoundingClientRect();
+                      var isLowerHalf = (touch.clientY - rect.top) > (rect.height / 2);
+                      if (isLowerHalf) {
+                        p.insertBefore(ghostBm, targetBm.nextSibling);
+                      } else {
+                        p.insertBefore(ghostBm, targetBm);
+                      }
+                    }
                   } else if (targetCat) {
                     var listEl = targetCat.querySelector('.bookmarks-list');
                     if (listEl) listEl.appendChild(ghostBm);
@@ -2274,8 +2340,16 @@
                   var targetBm = allData.bookmarks.find(function (b) { return b.id === targetBmId; });
                   if (sourceBm && targetBm) {
                     sourceBm.categoryId = targetBm.categoryId;
+                    var rect = targetBmCard.getBoundingClientRect();
+                    var isLowerHalf = (endTouch.clientY - rect.top) > (rect.height / 2);
+
                     allData.bookmarks = allData.bookmarks.filter(function (b) { return b.id !== sourceBm.id; });
                     var targetIdx = allData.bookmarks.findIndex(function (b) { return b.id === targetBm.id; });
+                    if (targetIdx !== -1 && isLowerHalf) {
+                      targetIdx += 1;
+                    }
+                    if (targetIdx === -1) targetIdx = allData.bookmarks.length;
+
                     allData.bookmarks.splice(targetIdx, 0, sourceBm);
                     allData.bookmarks.forEach(function (b, idx) { b.order = idx; });
                     saveBookmarkData(allData);
