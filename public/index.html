@@ -577,6 +577,17 @@
       opacity: 0.4;
     }
 
+    .bookmark-drag-ghost {
+      height: 38px;
+      border: 2px dashed rgba(56, 189, 248, 0.7);
+      background: rgba(56, 189, 248, 0.12);
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+      margin: 4px 0;
+      transition: all 0.15s ease;
+      pointer-events: none;
+    }
+
     /* 4 Transparent Dots Drag Handle :: */
     .drag-dots-handle {
       display: inline-flex;
@@ -1724,6 +1735,7 @@
         card.ondragend = function () {
           card.classList.remove('dragging');
           document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
+          document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
         };
 
         // Header
@@ -1849,17 +1861,31 @@
           e.stopPropagation();
           e.dataTransfer.dropEffect = 'move';
           card.classList.add('drag-over');
+
+          // Render ghost placeholder if a bookmark is being dragged
+          var listEl = card.querySelector('.bookmarks-list');
+          if (listEl && !listEl.querySelector('.bookmark-drag-ghost')) {
+            document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+            var ghost = document.createElement('div');
+            ghost.className = 'bookmark-drag-ghost';
+            listEl.appendChild(ghost);
+          }
         };
 
         card.ondragleave = function (e) {
           e.stopPropagation();
           card.classList.remove('drag-over');
+          var ghost = card.querySelector('.bookmark-drag-ghost');
+          if (ghost && !card.contains(e.relatedTarget)) {
+            ghost.remove();
+          }
         };
 
         card.ondrop = function (e) {
           e.preventDefault();
           e.stopPropagation();
           card.classList.remove('drag-over');
+          document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
           try {
             var raw = e.dataTransfer.getData('text/plain');
             if (!raw) return;
@@ -1922,6 +1948,7 @@
           bmCard.ondragend = function () {
             bmCard.classList.remove('dragging');
             document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
+            document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
           };
 
           bmCard.ondragover = function (e) {
@@ -1929,6 +1956,18 @@
             e.stopPropagation();
             e.dataTransfer.dropEffect = 'move';
             bmCard.classList.add('drag-over');
+
+            // Insert ghost placeholder before target bookmark
+            var parentList = bmWrapper.parentNode;
+            if (parentList) {
+              var existingGhost = parentList.querySelector('.bookmark-drag-ghost');
+              if (!existingGhost) {
+                document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+                existingGhost = document.createElement('div');
+                existingGhost.className = 'bookmark-drag-ghost';
+              }
+              parentList.insertBefore(existingGhost, bmWrapper);
+            }
           };
 
           bmCard.ondragleave = function (e) {
@@ -1940,6 +1979,7 @@
             e.preventDefault();
             e.stopPropagation();
             bmCard.classList.remove('drag-over');
+            document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
             try {
               var raw = e.dataTransfer.getData('text/plain');
               if (!raw) return;
