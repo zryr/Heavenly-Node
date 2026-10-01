@@ -934,6 +934,88 @@
     }
   }
 
+  function openDirectSitePreview(window, directUrl) {
+    try {
+      if (!directUrl || directUrl === 'undefined') {
+        alert('Could not determine original website URL.');
+        return;
+      }
+      var existingModal = window.document.getElementById('heavenly-direct-preview-modal');
+      if (existingModal) existingModal.remove();
+
+      var backdrop = window.document.createElement('div');
+      backdrop.id = 'heavenly-direct-preview-modal';
+      backdrop.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:16px;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
+
+      var card = window.document.createElement('div');
+      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:540px;padding:24px;display:flex;flex-direction:column;gap:16px;color:#f8fafc;';
+
+      var header = window.document.createElement('div');
+      header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(148,163,184,0.15);padding-bottom:12px;';
+
+      var title = window.document.createElement('span');
+      title.style.cssText = 'font-size:1.15rem;font-weight:700;color:#f8fafc;display:flex;align-items:center;gap:8px;';
+      title.innerHTML = '🌐 Test Direct Site (No Proxy)';
+
+      var closeBtn = window.document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.style.cssText = 'background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;padding:4px;';
+      closeBtn.textContent = '✕';
+      closeBtn.onclick = function () { backdrop.remove(); };
+
+      header.appendChild(title);
+      header.appendChild(closeBtn);
+
+      var body = window.document.createElement('div');
+      body.style.cssText = 'display:flex;flex-direction:column;gap:12px;font-size:0.9rem;color:#cbd5e1;line-height:1.5;';
+      body.innerHTML = '<p>Check if this website is accessible directly on your current network connection without proxying:</p>' +
+        '<div style="background:rgba(30,41,59,0.7);padding:10px 14px;border-radius:12px;border:1px solid rgba(56,189,248,0.25);word-break:break-all;color:#38bdf8;font-weight:600;font-family:monospace;">' + directUrl + '</div>' +
+        '<p style="font-size:0.82rem;color:#94a3b8;">You can attempt loading the site directly in an isolated test popup or open it in a new tab.</p>';
+
+      var actions = window.document.createElement('div');
+      actions.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap;';
+
+      var openTabBtn = window.document.createElement('button');
+      openTabBtn.type = 'button';
+      openTabBtn.style.cssText = 'padding:10px 18px;border-radius:12px;background:rgba(56,189,248,0.2);border:1px solid #38bdf8;color:#38bdf8;font-weight:600;font-size:0.88rem;cursor:pointer;font-family:inherit;';
+      openTabBtn.textContent = '↗ Open in New Tab';
+      openTabBtn.onclick = function () {
+        window.open(directUrl, '_blank', 'noopener');
+        backdrop.remove();
+      };
+
+      var openPopupBtn = window.document.createElement('button');
+      openPopupBtn.type = 'button';
+      openPopupBtn.style.cssText = 'padding:10px 18px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;';
+      openPopupBtn.textContent = '🔍 Test in Popup Window';
+      openPopupBtn.onclick = function () {
+        var w = 800, h = 600;
+        var left = (window.screen.width / 2) - (w / 2);
+        var top = (window.screen.height / 2) - (h / 2);
+        window.open(directUrl, 'DirectTestPopup', 'width=' + w + ',height=' + h + ',top=' + top + ',left=' + left + ',resizable=yes,scrollbars=yes');
+        backdrop.remove();
+      };
+
+      actions.appendChild(openTabBtn);
+      actions.appendChild(openPopupBtn);
+
+      card.appendChild(header);
+      card.appendChild(body);
+      card.appendChild(actions);
+      backdrop.appendChild(card);
+
+      backdrop.onclick = function (e) {
+        if (e.target === backdrop) backdrop.remove();
+      };
+
+      var targetParent = window.document.body || window.document.documentElement;
+      if (targetParent) targetParent.appendChild(backdrop);
+    } catch (e) {
+      console.error('Error opening direct site preview:', e);
+      window.open(directUrl, '_blank', 'noopener');
+    }
+  }
+
   function promptBookmarkCurrentPage(window, config) {
     try {
       var storage = window.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
@@ -1430,6 +1512,8 @@
             items.push('<button type="button" class="btn-ctrl" id="dock-home-btn" title="Go Home">🏠 Home</button>');
           }
 
+          items.push('<button type="button" class="btn-ctrl" id="dock-direct-btn" title="Check Direct / Unproxied Site">🌐 Direct Site</button>');
+
           if (showNavBookmark) {
             items.push('<button type="button" class="btn-ctrl" id="dock-bm-btn" title="Bookmark Page">⭐ Bookmark</button>');
           }
@@ -1557,6 +1641,15 @@
               pullBtn.querySelector('span').style.transform = 'rotate(0deg)';
             }
           });
+
+          // Wire up Direct Site button
+          var directDockBtn = dockBar.querySelector('#dock-direct-btn');
+          if (directDockBtn) {
+            directDockBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              openDirectSitePreview(window, getCurrentRemoteHref());
+            });
+          }
 
           // Wire up Home button
           if (showNavHome) {
@@ -2172,6 +2265,8 @@
             navHtml.push('<button type="button" class="btn-ctrl" id="nav-home-btn" title="Go to Homepage">🏠 Home</button>');
           }
 
+          navHtml.push('<button type="button" class="btn-ctrl" id="nav-direct-btn" title="Check Direct / Unproxied Site">🌐 Direct Site</button>');
+
           navHtml.push('<button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>');
           navHtml.push('</div>');
           navWidget.innerHTML = navHtml.join('\n');
@@ -2213,6 +2308,14 @@
             if (floatBmBtn) floatBmBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               promptBookmarkCurrentPage(window, config);
+            });
+          }
+
+          var floatDirectBtn = navWidget.querySelector('#nav-direct-btn') || (navShadow.querySelector ? navShadow.querySelector('#nav-direct-btn') : null);
+          if (floatDirectBtn) {
+            floatDirectBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              openDirectSitePreview(window, getCurrentRemoteHref());
             });
           }
 
