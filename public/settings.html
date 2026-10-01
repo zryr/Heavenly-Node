@@ -370,6 +370,23 @@
       cursor: default;
     }
 
+    .bookmark-mgr-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .bookmark-mgr-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 12px;
+    }
+
     @media (max-width: 640px) {
       .settings-container {
         padding: 24px 18px;
@@ -410,7 +427,7 @@
         </div>
         <div>
           <h1>Settings & Privacy</h1>
-          <p class="page-subtitle">Customize tab cloaking, panic triggers, and proxied page widgets</p>
+          <p class="page-subtitle">Customize tab cloaking, panic triggers, bookmarks, and proxied page widgets</p>
         </div>
       </div>
     </div>
@@ -504,7 +521,22 @@
         </div>
       </div>
 
-      <!-- Section 2: Panic Features -->
+      <!-- Section 2: Bookmarks Management -->
+      <div>
+        <h2 class="section-title">
+          ⭐ Bookmark & Category Management
+        </h2>
+
+        <div class="cards-grid">
+          <div class="hero-card">
+            <span class="hero-card-title">Restore & Toggle Built-in Bookmarks</span>
+            <p class="hero-card-desc">Check or uncheck pre-made sections and built-in bookmarks to restore or hide them on your homepage.</p>
+            <div id="bookmark-mgr-container" class="bookmark-mgr-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Panic Features -->
       <div>
         <h2 class="section-title">
           🚨 Panic Controls
@@ -550,7 +582,7 @@
         </div>
       </div>
 
-      <!-- Section 3: Widget Controls & Reset -->
+      <!-- Section 4: Widget Controls & Reset -->
       <div>
         <h2 class="section-title">
           🎛️ Proxied Page Widgets
@@ -580,6 +612,18 @@
               </label>
             </div>
             <p class="hero-card-desc">Displays a interactive magnifying glass lens widget on proxied web pages.</p>
+          </div>
+
+          <!-- Hero Card: Navigation Bookmark Button -->
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-show-nav-bookmark" class="hero-card-title">Navigation Bookmark Button</label>
+              <label class="switch-toggle">
+                <input type="checkbox" id="set-show-nav-bookmark" role="switch" checked>
+                <span class="slider-knob"></span>
+              </label>
+            </div>
+            <p class="hero-card-desc">Includes a quick '⭐ Bookmark Page' button on proxied page widgets and collapsible dock bar.</p>
           </div>
 
           <!-- Hero Card: Quick Search Bar -->
@@ -659,6 +703,17 @@
       khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" }
     };
 
+    var DEFAULT_BOOKMARK_DATA = {
+      categories: [
+        { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false },
+        { id: "cat_anime", title: "Anime", side: "left", order: 1, builtIn: true, hidden: false },
+        { id: "cat_games", title: "Games", side: "right", order: 0, builtIn: true, hidden: false }
+      ],
+      bookmarks: [
+        { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 0 }
+      ]
+    };
+
     function loadSettings() {
       var saved = {};
       try {
@@ -676,6 +731,7 @@
         panicUrl: saved.panicUrl || 'https://classroom.google.com',
         showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
         showMagnifier: saved.showMagnifier !== undefined ? saved.showMagnifier : true,
+        showNavBookmark: saved.showNavBookmark !== undefined ? saved.showNavBookmark : true,
         showNavSearch: saved.showNavSearch !== undefined ? saved.showNavSearch : true,
         showNavHome: saved.showNavHome !== undefined ? saved.showNavHome : true,
         useWidgetDock: saved.useWidgetDock || false,
@@ -687,6 +743,96 @@
       try {
         localStorage.setItem('heavenly_settings', JSON.stringify(settings));
       } catch (e) {}
+    }
+
+    function loadBookmarkData() {
+      try {
+        var raw = localStorage.getItem('heavenly_bookmarks');
+        if (!raw) return DEFAULT_BOOKMARK_DATA;
+        var data = JSON.parse(raw);
+        if (!data.categories || !data.bookmarks) return DEFAULT_BOOKMARK_DATA;
+        return data;
+      } catch (e) {
+        return DEFAULT_BOOKMARK_DATA;
+      }
+    }
+
+    function saveBookmarkData(data) {
+      try {
+        localStorage.setItem('heavenly_bookmarks', JSON.stringify(data));
+      } catch (e) {}
+    }
+
+    function renderBookmarkManager() {
+      var container = $('bookmark-mgr-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      var data = loadBookmarkData();
+
+      // Render Categories Toggles
+      data.categories.forEach(function (cat) {
+        var item = document.createElement('div');
+        item.className = 'bookmark-mgr-item';
+
+        var titleLabel = document.createElement('span');
+        titleLabel.style.fontWeight = '600';
+        titleLabel.style.fontSize = '0.9rem';
+        titleLabel.textContent = '📁 ' + cat.title + (cat.builtIn ? ' (Built-in)' : ' (Custom)');
+
+        var toggleLabel = document.createElement('label');
+        toggleLabel.className = 'switch-toggle';
+
+        var input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = !cat.hidden;
+        input.onchange = function () {
+          cat.hidden = !input.checked;
+          saveBookmarkData(data);
+        };
+
+        var slider = document.createElement('span');
+        slider.className = 'slider-knob';
+
+        toggleLabel.appendChild(input);
+        toggleLabel.appendChild(slider);
+
+        item.appendChild(titleLabel);
+        item.appendChild(toggleLabel);
+        container.appendChild(item);
+      });
+
+      // Render Bookmarks Toggles
+      data.bookmarks.forEach(function (bm) {
+        var item = document.createElement('div');
+        item.className = 'bookmark-mgr-item';
+
+        var titleLabel = document.createElement('span');
+        titleLabel.style.fontWeight = '500';
+        titleLabel.style.fontSize = '0.88rem';
+        titleLabel.textContent = '⭐ ' + bm.title + (bm.builtIn ? ' (Built-in)' : '');
+
+        var toggleLabel = document.createElement('label');
+        toggleLabel.className = 'switch-toggle';
+
+        var input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = !bm.hidden;
+        input.onchange = function () {
+          bm.hidden = !input.checked;
+          saveBookmarkData(data);
+        };
+
+        var slider = document.createElement('span');
+        slider.className = 'slider-knob';
+
+        toggleLabel.appendChild(input);
+        toggleLabel.appendChild(slider);
+
+        item.appendChild(titleLabel);
+        item.appendChild(toggleLabel);
+        container.appendChild(item);
+      });
     }
 
     function updateLivePreview() {
@@ -718,6 +864,7 @@
       $('set-panic-url').value = settings.panicUrl;
       $('set-show-scroll-lock').checked = settings.showScrollLock;
       $('set-show-magnifier').checked = settings.showMagnifier;
+      $('set-show-nav-bookmark').checked = settings.showNavBookmark;
       $('set-show-nav-search').checked = settings.showNavSearch;
       $('set-show-nav-home').checked = settings.showNavHome;
       $('set-use-widget-dock').checked = settings.useWidgetDock;
@@ -745,6 +892,7 @@
         deleteBtn.style.cursor = isBuiltIn ? 'not-allowed' : 'pointer';
       }
 
+      renderBookmarkManager();
       updateLivePreview();
     }
 
@@ -844,6 +992,7 @@
         settings.panicUrl = $('set-panic-url').value.trim() || 'https://classroom.google.com';
         settings.showScrollLock = $('set-show-scroll-lock').checked;
         settings.showMagnifier = $('set-show-magnifier').checked;
+        settings.showNavBookmark = $('set-show-nav-bookmark').checked;
         settings.showNavSearch = $('set-show-nav-search').checked;
         settings.showNavHome = $('set-show-nav-home').checked;
         settings.useWidgetDock = $('set-use-widget-dock').checked;
@@ -853,7 +1002,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-dock-position', 'preset-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-dock-position', 'preset-select'].forEach(function (id) {
         $(id).onchange = function () {
           updateHandler();
           updateLivePreview();
