@@ -104,6 +104,10 @@
       display: flex;
       flex-direction: column;
       gap: 18px;
+      min-height: 200px;
+      padding: 10px;
+      border-radius: 20px;
+      transition: all 0.2s ease;
     }
 
     .bottom-section-container {
@@ -115,6 +119,10 @@
       display: flex;
       flex-direction: column;
       gap: 18px;
+      min-height: 120px;
+      padding: 10px;
+      border-radius: 20px;
+      transition: all 0.2s ease;
     }
 
     .container {
@@ -574,18 +582,58 @@
     }
 
     .section-card.dragging, .bookmark-card.dragging {
-      opacity: 0.4;
+      opacity: 0.3 !important;
+    }
+
+    .drag-popout-avatar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      pointer-events: none;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.7) !important;
+      border: 2px solid #38bdf8 !important;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.95) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      will-change: transform;
+      margin: 0 !important;
     }
 
     .bookmark-drag-ghost {
       height: 38px;
-      border: 2px dashed rgba(56, 189, 248, 0.7);
-      background: rgba(56, 189, 248, 0.12);
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+      border: 2px dashed rgba(56, 189, 248, 0.85);
+      background: rgba(56, 189, 248, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.35) inset, 0 0 15px rgba(56, 189, 248, 0.2);
       margin: 4px 0;
       transition: all 0.15s ease;
       pointer-events: none;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      color: rgba(56, 189, 248, 0.8);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .section-drag-ghost {
+      min-height: 120px;
+      border: 2px dashed rgba(56, 189, 248, 0.85);
+      background: rgba(56, 189, 248, 0.1);
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.25) inset;
+      margin: 12px 0;
+      transition: all 0.15s ease;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(56, 189, 248, 0.7);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
     }
 
     /* 4 Transparent Dots Drag Handle :: */
@@ -1646,6 +1694,100 @@
     // Selected item state for bottom action bar
     var selectedItemState = null; // { type: 'category'|'bookmark', id: string, title: string, categoryId?: string }
 
+    // --- Pop-Out Floating Drag Avatar Manager & Ghost Helpers ---
+    var activePopoutAvatar = null;
+    var avatarX = 0, avatarY = 0;
+    var avatarWidth = 200;
+    var avatarRafPending = false;
+
+    function getSectionGhost() {
+      var ghost = document.querySelector('.section-drag-ghost');
+      if (!ghost) {
+        ghost = document.createElement('div');
+        ghost.className = 'section-drag-ghost';
+        ghost.textContent = '📁 Move Section Here';
+      }
+      return ghost;
+    }
+
+    function getBookmarkGhost() {
+      var ghost = document.querySelector('.bookmark-drag-ghost');
+      if (!ghost) {
+        ghost = document.createElement('div');
+        ghost.className = 'bookmark-drag-ghost';
+        ghost.textContent = '📌 Move Bookmark Here';
+      }
+      return ghost;
+    }
+
+    function clearDragGhosts() {
+      document.querySelectorAll('.bookmark-drag-ghost, .section-drag-ghost').forEach(function (el) {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      });
+    }
+
+    function createPopoutAvatar(sourceEl, mouseX, mouseY) {
+      removePopoutAvatar();
+      if (!sourceEl) return;
+
+      var clone = sourceEl.cloneNode(true);
+      clone.id = 'heavenly-drag-avatar';
+      clone.className += ' drag-popout-avatar';
+
+      var rect = sourceEl.getBoundingClientRect();
+      avatarWidth = rect.width;
+      clone.style.width = avatarWidth + 'px';
+
+      avatarX = mouseX - avatarWidth / 2;
+      avatarY = mouseY - 20;
+      clone.style.transform = 'translate3d(' + avatarX + 'px, ' + avatarY + 'px, 0px) scale(1.05) rotate(1.5deg)';
+
+      document.body.appendChild(clone);
+      activePopoutAvatar = clone;
+    }
+
+    function updatePopoutAvatar(mouseX, mouseY) {
+      if (!activePopoutAvatar) return;
+      avatarX = mouseX - avatarWidth / 2;
+      avatarY = mouseY - 20;
+
+      if (!avatarRafPending) {
+        avatarRafPending = true;
+        requestAnimationFrame(function () {
+          if (activePopoutAvatar) {
+            activePopoutAvatar.style.transform = 'translate3d(' + avatarX + 'px, ' + avatarY + 'px, 0px) scale(1.05) rotate(1.5deg)';
+          }
+          avatarRafPending = false;
+        });
+      }
+    }
+
+    function removePopoutAvatar() {
+      if (activePopoutAvatar && activePopoutAvatar.parentNode) {
+        activePopoutAvatar.parentNode.removeChild(activePopoutAvatar);
+      }
+      activePopoutAvatar = null;
+      avatarRafPending = false;
+      var existing = document.getElementById('heavenly-drag-avatar');
+      if (existing && existing.parentNode) {
+        existing.parentNode.removeChild(existing);
+      }
+    }
+
+    document.addEventListener('dragover', function (e) {
+      if (activePopoutAvatar) {
+        updatePopoutAvatar(e.clientX, e.clientY);
+      }
+    });
+
+    document.addEventListener('dragend', function () {
+      removePopoutAvatar();
+    });
+
+    document.addEventListener('drop', function () {
+      removePopoutAvatar();
+    });
+
     function openReorderBar(item) {
       selectedItemState = item;
       var bar = $('reorder-bar');
@@ -1728,14 +1870,23 @@
         card.ondragstart = function (e) {
           e.stopPropagation();
           card.classList.add('dragging');
-          e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'category', id: cat.id }));
-          e.dataTransfer.effectAllowed = 'move';
+          if (e.dataTransfer) {
+            if (e.dataTransfer.setDragImage) {
+              var emptyImg = document.createElement('img');
+              emptyImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+              e.dataTransfer.setDragImage(emptyImg, 0, 0);
+            }
+            e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'category', id: cat.id, title: cat.title }));
+            e.dataTransfer.effectAllowed = 'move';
+          }
+          createPopoutAvatar(card, e.clientX, e.clientY);
         };
 
         card.ondragend = function () {
           card.classList.remove('dragging');
+          removePopoutAvatar();
           document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
-          document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+          clearDragGhosts();
         };
 
         // Header
@@ -1775,14 +1926,45 @@
           if (Math.abs(touch.clientX - startX) > 8 || Math.abs(touch.clientY - startY) > 8) {
             if (pressTimer) clearTimeout(pressTimer);
             if (e.touches) {
-              isTouchDraggingCat = true;
-              card.classList.add('dragging');
+              if (!isTouchDraggingCat) {
+                isTouchDraggingCat = true;
+                card.classList.add('dragging');
+                createPopoutAvatar(card, touch.clientX, touch.clientY);
+              } else {
+                updatePopoutAvatar(touch.clientX, touch.clientY);
+              }
+
+              // Dynamic touch ghost rendering across section cards & columns
+              var target = document.elementFromPoint(touch.clientX, touch.clientY);
+              if (target) {
+                var targetCard = target.closest('.section-card');
+                var targetCol = target.closest('#left-column, #right-column, #bottom-container');
+                var ghostCat = getSectionGhost();
+
+                if (targetCard && targetCard !== card) {
+                  var p = targetCard.parentNode;
+                  if (p) {
+                    var rect = targetCard.getBoundingClientRect();
+                    var isLowerHalf = (touch.clientY - rect.top) > (rect.height / 2);
+                    var targetPos = isLowerHalf ? targetCard.nextSibling : targetCard;
+                    if (ghostCat.parentNode !== p || ghostCat.nextSibling !== targetPos) {
+                      p.insertBefore(ghostCat, targetPos);
+                    }
+                  }
+                } else if (targetCol) {
+                  if (ghostCat.parentNode !== targetCol) {
+                    targetCol.appendChild(ghostCat);
+                  }
+                }
+              }
             }
           }
         };
 
         var endHandle = function (e) {
           if (pressTimer) clearTimeout(pressTimer);
+          removePopoutAvatar();
+          clearDragGhosts();
           if (isTouchDraggingCat && e.changedTouches) {
             card.classList.remove('dragging');
             isTouchDraggingCat = false;
@@ -1798,8 +1980,16 @@
                 var destCat = data.categories.find(function (c) { return c.id === targetCatId; });
                 if (sourceCat && destCat) {
                   sourceCat.side = destCat.side;
+                  var rect = targetCard.getBoundingClientRect();
+                  var isLowerHalf = (endTouch.clientY - rect.top) > (rect.height / 2);
                   data.categories = data.categories.filter(function (c) { return c.id !== sourceCat.id; });
+
                   var destIndex = data.categories.findIndex(function (c) { return c.id === destCat.id; });
+                  if (destIndex !== -1 && isLowerHalf) {
+                    destIndex += 1;
+                  }
+                  if (destIndex === -1) destIndex = data.categories.length;
+
                   data.categories.splice(destIndex, 0, sourceCat);
                   data.categories.forEach(function (c, idx) { c.order = idx; });
                   saveBookmarkData(data);
@@ -1811,7 +2001,7 @@
                 else if (targetCol.id === 'bottom-container') newSide = 'bottom';
                 var data2 = loadBookmarkData();
                 var sourceCat2 = data2.categories.find(function (c) { return c.id === cat.id; });
-                if (sourceCat2 && sourceCat2.side !== newSide) {
+                if (sourceCat2) {
                   sourceCat2.side = newSide;
                   saveBookmarkData(data2);
                   renderBookmarksUI();
@@ -1862,30 +2052,39 @@
           e.dataTransfer.dropEffect = 'move';
           card.classList.add('drag-over');
 
-          // Render ghost placeholder if a bookmark is being dragged
-          var listEl = card.querySelector('.bookmarks-list');
-          if (listEl && !listEl.querySelector('.bookmark-drag-ghost')) {
-            document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
-            var ghost = document.createElement('div');
-            ghost.className = 'bookmark-drag-ghost';
-            listEl.appendChild(ghost);
+          var isCategoryDrag = document.querySelector('.section-card.dragging');
+          if (isCategoryDrag && isCategoryDrag !== card) {
+            var col = card.parentNode;
+            if (col) {
+              var ghostCat = getSectionGhost();
+              var rect = card.getBoundingClientRect();
+              var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
+              var targetPos = isLowerHalf ? card.nextSibling : card;
+              if (ghostCat.parentNode !== col || ghostCat.nextSibling !== targetPos) {
+                col.insertBefore(ghostCat, targetPos);
+              }
+            }
+          } else if (!isCategoryDrag) {
+            var listEl = card.querySelector('.bookmarks-list');
+            if (listEl) {
+              var ghostBm = getBookmarkGhost();
+              if (ghostBm.parentNode !== listEl) {
+                listEl.appendChild(ghostBm);
+              }
+            }
           }
         };
 
         card.ondragleave = function (e) {
           e.stopPropagation();
           card.classList.remove('drag-over');
-          var ghost = card.querySelector('.bookmark-drag-ghost');
-          if (ghost && !card.contains(e.relatedTarget)) {
-            ghost.remove();
-          }
         };
 
         card.ondrop = function (e) {
           e.preventDefault();
           e.stopPropagation();
           card.classList.remove('drag-over');
-          document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+          clearDragGhosts();
           try {
             var raw = e.dataTransfer.getData('text/plain');
             if (!raw) return;
@@ -1897,8 +2096,16 @@
               var targetCat = allData.categories.find(function (c) { return c.id === cat.id; });
               if (sourceCat && targetCat) {
                 sourceCat.side = targetCat.side;
+                var rect = card.getBoundingClientRect();
+                var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
+
                 allData.categories = allData.categories.filter(function (c) { return c.id !== sourceCat.id; });
                 var targetIdx = allData.categories.findIndex(function (c) { return c.id === targetCat.id; });
+                if (targetIdx !== -1 && isLowerHalf) {
+                  targetIdx += 1;
+                }
+                if (targetIdx === -1) targetIdx = allData.categories.length;
+
                 allData.categories.splice(targetIdx, 0, sourceCat);
                 allData.categories.forEach(function (c, idx) { c.order = idx; });
                 saveBookmarkData(allData);
@@ -1941,14 +2148,23 @@
           bmCard.ondragstart = function (e) {
             e.stopPropagation();
             bmCard.classList.add('dragging');
-            e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'bookmark', id: bm.id, categoryId: cat.id }));
-            e.dataTransfer.effectAllowed = 'move';
+            if (e.dataTransfer) {
+              if (e.dataTransfer.setDragImage) {
+                var emptyImg = document.createElement('img');
+                emptyImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                e.dataTransfer.setDragImage(emptyImg, 0, 0);
+              }
+              e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }));
+              e.dataTransfer.effectAllowed = 'move';
+            }
+            createPopoutAvatar(bmCard, e.clientX, e.clientY);
           };
 
           bmCard.ondragend = function () {
             bmCard.classList.remove('dragging');
+            removePopoutAvatar();
             document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
-            document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+            clearDragGhosts();
           };
 
           bmCard.ondragover = function (e) {
@@ -1957,16 +2173,15 @@
             e.dataTransfer.dropEffect = 'move';
             bmCard.classList.add('drag-over');
 
-            // Insert ghost placeholder before target bookmark
             var parentList = bmWrapper.parentNode;
             if (parentList) {
-              var existingGhost = parentList.querySelector('.bookmark-drag-ghost');
-              if (!existingGhost) {
-                document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
-                existingGhost = document.createElement('div');
-                existingGhost.className = 'bookmark-drag-ghost';
+              var ghostBm = getBookmarkGhost();
+              var rect = bmCard.getBoundingClientRect();
+              var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
+              var targetPos = isLowerHalf ? bmWrapper.nextSibling : bmWrapper;
+              if (ghostBm.parentNode !== parentList || ghostBm.nextSibling !== targetPos) {
+                parentList.insertBefore(ghostBm, targetPos);
               }
-              parentList.insertBefore(existingGhost, bmWrapper);
             }
           };
 
@@ -1979,7 +2194,7 @@
             e.preventDefault();
             e.stopPropagation();
             bmCard.classList.remove('drag-over');
-            document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+            clearDragGhosts();
             try {
               var raw = e.dataTransfer.getData('text/plain');
               if (!raw) return;
@@ -1990,8 +2205,16 @@
                 var targetBm = allData.bookmarks.find(function (b) { return b.id === bm.id; });
                 if (sourceBm && targetBm) {
                   sourceBm.categoryId = cat.id;
+                  var rect = bmCard.getBoundingClientRect();
+                  var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
+
                   allData.bookmarks = allData.bookmarks.filter(function (b) { return b.id !== sourceBm.id; });
                   var targetIdx = allData.bookmarks.findIndex(function (b) { return b.id === targetBm.id; });
+                  if (targetIdx !== -1 && isLowerHalf) {
+                    targetIdx += 1;
+                  }
+                  if (targetIdx === -1) targetIdx = allData.bookmarks.length;
+
                   allData.bookmarks.splice(targetIdx, 0, sourceBm);
                   allData.bookmarks.forEach(function (b, idx) { b.order = idx; });
                   saveBookmarkData(allData);
@@ -2082,14 +2305,45 @@
             if (Math.abs(touch.clientX - bmSX) > 8 || Math.abs(touch.clientY - bmSY) > 8) {
               if (bmTimer) clearTimeout(bmTimer);
               if (e.touches) {
-                isTouchDraggingBm = true;
-                bmCard.classList.add('dragging');
+                if (!isTouchDraggingBm) {
+                  isTouchDraggingBm = true;
+                  bmCard.classList.add('dragging');
+                  createPopoutAvatar(bmCard, touch.clientX, touch.clientY);
+                } else {
+                  updatePopoutAvatar(touch.clientX, touch.clientY);
+                }
+
+                var target = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (target) {
+                  var targetBm = target.closest('.bookmark-card');
+                  var targetCat = target.closest('.section-card');
+                  var ghostBm = getBookmarkGhost();
+
+                  if (targetBm && targetBm !== bmCard) {
+                    var p = targetBm.parentNode;
+                    if (p) {
+                      var rect = targetBm.getBoundingClientRect();
+                      var isLowerHalf = (touch.clientY - rect.top) > (rect.height / 2);
+                      var targetPos = isLowerHalf ? targetBm.nextSibling : targetBm;
+                      if (ghostBm.parentNode !== p || ghostBm.nextSibling !== targetPos) {
+                        p.insertBefore(ghostBm, targetPos);
+                      }
+                    }
+                  } else if (targetCat) {
+                    var listEl = targetCat.querySelector('.bookmarks-list');
+                    if (listEl && ghostBm.parentNode !== listEl) {
+                      listEl.appendChild(ghostBm);
+                    }
+                  }
+                }
               }
             }
           };
 
           var endBmHandle = function (e) {
             if (bmTimer) clearTimeout(bmTimer);
+            removePopoutAvatar();
+            clearDragGhosts();
             if (isTouchDraggingBm && e.changedTouches) {
               bmCard.classList.remove('dragging');
               isTouchDraggingBm = false;
@@ -2106,8 +2360,16 @@
                   var targetBm = allData.bookmarks.find(function (b) { return b.id === targetBmId; });
                   if (sourceBm && targetBm) {
                     sourceBm.categoryId = targetBm.categoryId;
+                    var rect = targetBmCard.getBoundingClientRect();
+                    var isLowerHalf = (endTouch.clientY - rect.top) > (rect.height / 2);
+
                     allData.bookmarks = allData.bookmarks.filter(function (b) { return b.id !== sourceBm.id; });
                     var targetIdx = allData.bookmarks.findIndex(function (b) { return b.id === targetBm.id; });
+                    if (targetIdx !== -1 && isLowerHalf) {
+                      targetIdx += 1;
+                    }
+                    if (targetIdx === -1) targetIdx = allData.bookmarks.length;
+
                     allData.bookmarks.splice(targetIdx, 0, sourceBm);
                     allData.bookmarks.forEach(function (b, idx) { b.order = idx; });
                     saveBookmarkData(allData);
@@ -2460,15 +2722,31 @@
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
         containerEl.classList.add('drag-over');
+
+        var isCategoryDrag = document.querySelector('.section-card.dragging');
+        if (isCategoryDrag && !containerEl.querySelector('.section-drag-ghost')) {
+          var ghostCat = document.querySelector('.section-drag-ghost');
+          if (!ghostCat) {
+            ghostCat = document.createElement('div');
+            ghostCat.className = 'section-drag-ghost';
+            ghostCat.textContent = '📁 Move Section Here';
+          }
+          containerEl.appendChild(ghostCat);
+        }
       };
 
-      containerEl.ondragleave = function () {
+      containerEl.ondragleave = function (e) {
         containerEl.classList.remove('drag-over');
+        var ghost = containerEl.querySelector('.section-drag-ghost');
+        if (ghost && !containerEl.contains(e.relatedTarget)) {
+          ghost.remove();
+        }
       };
 
       containerEl.ondrop = function (e) {
         e.preventDefault();
         containerEl.classList.remove('drag-over');
+        document.querySelectorAll('.section-drag-ghost').forEach(function (el) { el.remove(); });
         try {
           var raw = e.dataTransfer.getData('text/plain');
           if (!raw) return;
