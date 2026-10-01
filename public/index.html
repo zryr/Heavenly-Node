@@ -29,7 +29,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       padding: 24px 16px;
       overflow-x: hidden;
     }
@@ -72,11 +72,40 @@
       animation: pulseGlow 8s ease-in-out infinite;
     }
 
+    /* Main App Layout */
+    .app-layout {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1380px;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr) 280px;
+      gap: 24px;
+      align-items: start;
+      margin: auto;
+    }
+
+    .side-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .bottom-section-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1380px;
+      margin: 24px auto 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
     .container {
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 680px;
       background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
@@ -87,7 +116,6 @@
         0 25px 60px -15px rgba(0, 0, 0, 0.8),
         0 0 50px -10px rgba(56, 189, 248, 0.3);
       padding: 44px 36px 36px 36px;
-      margin: auto;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -189,7 +217,6 @@
       scrollbar-color: rgba(56, 189, 248, 0.6) rgba(15, 23, 42, 0.8);
     }
 
-    /* Custom Webkit Scrollbar Styling for Dropdown */
     .history-dropdown::-webkit-scrollbar {
       width: 8px;
     }
@@ -356,7 +383,6 @@
       transform: translateY(0);
     }
 
-    /* Feature Badges */
     .features-list {
       display: flex;
       flex-wrap: wrap;
@@ -387,7 +413,6 @@
       box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
     }
 
-    /* Google Ad wrapper - collapse height when ad is empty or unrendered */
     #google-ad {
       text-align: center;
       margin: 0 auto;
@@ -424,7 +449,16 @@
       margin-bottom: 0;
     }
 
-    .settings-btn {
+    .header-actions-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .settings-btn, .add-category-btn {
       background: rgba(30, 41, 59, 0.6);
       border: 1px solid rgba(56, 189, 248, 0.3);
       color: #e0f2fe;
@@ -436,11 +470,13 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      cursor: pointer;
       transition: all 0.25s ease;
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      font-family: inherit;
     }
 
-    .settings-btn:hover {
+    .settings-btn:hover, .add-category-btn:hover {
       background: rgba(56, 189, 248, 0.15);
       border-color: #38bdf8;
       color: #38bdf8;
@@ -468,11 +504,393 @@
       text-decoration: underline;
     }
 
+    /* Bookmark Section Cards */
+    .section-card {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 20px;
+      padding: 18px 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.15);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+    }
+
+    .section-card:hover {
+      border-color: rgba(56, 189, 248, 0.45);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.25);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .section-header-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.01em;
+    }
+
+    /* 4 Transparent Dots Drag Handle :: */
+    .drag-dots-handle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 4px 6px;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      border-radius: 8px;
+      opacity: 0.5;
+      transition: all 0.2s ease;
+      touch-action: none;
+    }
+
+    .drag-dots-handle:hover,
+    .drag-dots-handle:active,
+    .drag-dots-handle.selected {
+      opacity: 1;
+      background: rgba(56, 189, 248, 0.18);
+    }
+
+    .dots-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 4px);
+      grid-template-rows: repeat(2, 4px);
+      gap: 3px;
+    }
+
+    .dot-node {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: #38bdf8;
+      box-shadow: 0 0 4px rgba(56, 189, 248, 0.6);
+    }
+
+    .btn-add-bm-quick {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-add-bm-quick:hover {
+      background: rgba(56, 189, 248, 0.25);
+      color: #ffffff;
+      transform: scale(1.08);
+    }
+
+    /* Bookmarks List & Cards */
+    .bookmarks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bottom-section-container .section-card .bookmarks-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .bookmark-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 12px;
+      text-decoration: none;
+      color: #f1f5f9;
+      transition: all 0.2s ease;
+      gap: 8px;
+      touch-action: none;
+    }
+
+    .bookmark-card:hover {
+      background: rgba(30, 41, 59, 0.85);
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateX(2px);
+    }
+
+    .bookmark-card-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .bookmark-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .bookmark-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #f1f5f9;
+    }
+
+    .show-more-btn {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px dashed rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .show-more-btn:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38bdf8;
+      color: #7dd3fc;
+    }
+
+    /* Bottom Floating Action Bar */
+    .reorder-action-bar {
+      position: fixed;
+      bottom: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2000;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.3);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: bottom 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      -webkit-user-select: none;
+      max-width: 90vw;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .reorder-action-bar.active {
+      bottom: 24px;
+    }
+
+    .bar-info {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #e0f2fe;
+      padding-right: 6px;
+      border-right: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .bar-btn {
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .bar-btn-primary {
+      background: rgba(56, 189, 248, 0.18);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+    }
+
+    .bar-btn-primary:hover {
+      background: rgba(56, 189, 248, 0.32);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .bar-btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .bar-btn-danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .bar-btn-close {
+      background: rgba(148, 163, 184, 0.15);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: #cbd5e1;
+    }
+
+    .bar-btn-close:hover {
+      background: rgba(148, 163, 184, 0.25);
+      color: #ffffff;
+    }
+
+    /* Modal Backdrop & Dialog */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      background: rgba(3, 7, 18, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.25);
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .modal-close-btn:hover {
+      color: #ef4444;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    .form-select, .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 12px;
+      color: #f8fafc;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .form-select:focus, .form-input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+
+    .modal-submit-btn {
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 100%);
+      color: #030712;
+      font-weight: 700;
+      font-size: 0.95rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+    }
+
+    .modal-submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+    }
+
     button:focus-visible,
     a:focus-visible,
     input[type="submit"]:focus-visible {
       outline: 2px solid #38bdf8;
       outline-offset: 2px;
+    }
+
+    @media (max-width: 1024px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side-column {
+        width: 100%;
+      }
     }
 
     @media (max-width: 640px) {
@@ -500,65 +918,143 @@
   <div class="glow-orb glow-orb-1"></div>
   <div class="glow-orb glow-orb-2"></div>
 
-  <div class="container">
+  <div class="app-layout">
 
-    <div class="brand-header">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="9"></circle>
-          <path d="M12 3a9 9 0 0 0 0 18"></path>
-          <path d="M3 12h18"></path>
-          <path d="M12 3c2.5 3 4 6.5 4 9s-1.5 6-4 9"></path>
-          <path d="M12 3c-2.5 3-4 6.5-4 9s1.5 6 4 9"></path>
-        </svg>
+    <!-- Left Side Column -->
+    <div id="left-column" class="side-column"></div>
+
+    <!-- Center Container -->
+    <div class="container">
+
+      <div class="brand-header">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 3a9 9 0 0 0 0 18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M12 3c2.5 3 4 6.5 4 9s-1.5 6-4 9"></path>
+            <path d="M12 3c-2.5 3-4 6.5-4 9s1.5 6 4 9"></path>
+          </svg>
+        </div>
+        <h1>Heavenly</h1>
+        <p class="tagline">Streamlined &bull; Seamless &bull; Ethereal Web Proxy</p>
       </div>
-      <h1>Heavenly</h1>
-      <p class="tagline">Streamlined &bull; Seamless &bull; Ethereal Web Proxy</p>
-    </div>
 
-    <div id="error"></div>
+      <div id="error"></div>
 
-    <form action="no-js" method="get" id="unblocker-form" class="search-form">
-      <div class="input-wrapper">
-        <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autofocus="autofocus" autocomplete="off" aria-label="URL or search query" aria-expanded="false" aria-controls="history-dropdown" />
-        <div id="history-dropdown" class="history-dropdown"></div>
+      <form action="no-js" method="get" id="unblocker-form" class="search-form">
+        <div class="input-wrapper">
+          <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autofocus="autofocus" autocomplete="off" aria-label="URL or search query" aria-expanded="false" aria-controls="history-dropdown" />
+          <div id="history-dropdown" class="history-dropdown"></div>
+        </div>
+        <input type="submit" value="Go" />
+      </form>
+
+      <div class="features-list">
+        <span class="badge">⚡ On-The-Fly Processing</span>
+        <span class="badge">✨ Ethereal UI</span>
+        <span class="badge">🌐 High Performance</span>
       </div>
-      <input type="submit" value="Go" />
-    </form>
 
-    <div class="features-list">
-      <span class="badge">⚡ On-The-Fly Processing</span>
-      <span class="badge">✨ Ethereal UI</span>
-      <span class="badge">🌐 High Performance</span>
+      <div id="google-ad">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Nodeunblocker.com -->
+        <ins class="adsbygoogle" style="display:inline-block;width:336px;height:280px"
+          data-ad-client="ca-pub-9477050254721722" data-ad-slot="3464697570"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+
+      <div class="info-section">
+        <h3>About Heavenly</h3>
+        <p>Heavenly is a fast, streamlined web proxy built to provide smooth web browsing and uninterrupted data streaming.</p>
+        <p>It processes web responses dynamically in real time without buffering whole pages, preserving original relative URLs and site speed.</p>
+      </div>
+
+      <div class="header-actions-group">
+        <button id="open-add-modal-btn" type="button" class="add-category-btn">
+          <span>+ Add Bookmark / Category</span>
+        </button>
+        <a href="settings.html" id="open-settings-btn" class="settings-btn" aria-label="Settings and privacy controls page">
+          <svg style="width: 18px; height: 18px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Settings & Cloaking</span>
+        </a>
+      </div>
+
+      <div class="footer">
+        <p>Originally created by <a href="http://www.nfriedly.com/" target="_blank" rel="noopener">Nathan Friedly</a> &bull; Improved by <strong>Syshi</strong></p>
+      </div>
+
     </div>
 
-    <div id="google-ad">
-      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-      <!-- Nodeunblocker.com -->
-      <ins class="adsbygoogle" style="display:inline-block;width:336px;height:280px"
-        data-ad-client="ca-pub-9477050254721722" data-ad-slot="3464697570"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
-    </div>
+    <!-- Right Side Column -->
+    <div id="right-column" class="side-column"></div>
 
-    <div class="info-section">
-      <h3>About Heavenly</h3>
-      <p>Heavenly is a fast, streamlined web proxy built to provide smooth web browsing and uninterrupted data streaming.</p>
-      <p>It processes web responses dynamically in real time without buffering whole pages, preserving original relative URLs and site speed.</p>
-    </div>
+  </div>
 
-    <div style="text-align: center; margin-top: 18px;">
-      <a href="settings.html" id="open-settings-btn" class="settings-btn" aria-label="Settings and privacy controls page">
-        <svg style="width: 18px; height: 18px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-        <span>Settings & Cloaking</span>
-      </a>
-    </div>
+  <!-- Bottom Side Container (for overflow / horizontal layout sections) -->
+  <div id="bottom-container" class="bottom-section-container"></div>
 
-    <div class="footer">
-      <p>Originally created by <a href="http://www.nfriedly.com/" target="_blank" rel="noopener">Nathan Friedly</a> &bull; Improved by <strong>Syshi</strong></p>
-    </div>
+  <!-- Reorder Bottom Floating Action Bar -->
+  <div id="reorder-bar" class="reorder-action-bar">
+    <div id="bar-target-info" class="bar-info">Selected Item</div>
+    <button id="bar-move-top" type="button" class="bar-btn bar-btn-primary">⬆️ Bring to Top</button>
+    <button id="bar-move-bottom" type="button" class="bar-btn bar-btn-primary">⬇️ Bring to Bottom</button>
+    <button id="bar-move-side" type="button" class="bar-btn bar-btn-primary">↔️ Switch Side</button>
+    <button id="bar-delete" type="button" class="bar-btn bar-btn-danger">🗑️ Delete</button>
+    <button id="bar-close" type="button" class="bar-btn bar-btn-close">✕ Close</button>
+  </div>
 
+  <!-- Add Bookmark / Category Modal -->
+  <div id="add-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title" id="modal-title">Add Bookmark</span>
+        <button id="close-modal-btn" type="button" class="modal-close-btn">✕</button>
+      </div>
+
+      <!-- Tab selection between Add Bookmark & Add Category -->
+      <div style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
+        <button id="tab-add-bm" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600; cursor: pointer;">Add Bookmark</button>
+        <button id="tab-add-cat" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">Add Category</button>
+      </div>
+
+      <!-- Add Bookmark Form -->
+      <form id="form-add-bm" style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="form-group">
+          <label class="form-label" for="bm-title">Title</label>
+          <input type="text" id="bm-title" class="form-input" placeholder="e.g. Newgrounds" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="bm-url">URL</label>
+          <input type="text" id="bm-url" class="form-input" placeholder="https://example.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="bm-category">Category Section</label>
+          <select id="bm-category" class="form-select"></select>
+        </div>
+        <button type="submit" class="modal-submit-btn">Save Bookmark</button>
+      </form>
+
+      <!-- Add Category Form -->
+      <form id="form-add-cat" style="display: none; flex-direction: column; gap: 12px;">
+        <div class="form-group">
+          <label class="form-label" for="cat-title">Category Name</label>
+          <input type="text" id="cat-title" class="form-input" placeholder="e.g. Favorites" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cat-side">Display Position</label>
+          <select id="cat-side" class="form-select">
+            <option value="left">Left Side</option>
+            <option value="right">Right Side</option>
+            <option value="bottom">Bottom Row</option>
+          </select>
+        </div>
+        <button type="submit" class="modal-submit-btn">Create Category</button>
+      </form>
+
+    </div>
   </div>
 
   <script>
@@ -967,9 +1463,487 @@
       });
     }
 
+    // --- HEAVENLY BOOKMARKS MANAGER ---
+    var DEFAULT_BOOKMARK_DATA = {
+      categories: [
+        { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false },
+        { id: "cat_anime", title: "Anime", side: "left", order: 1, builtIn: true, hidden: false },
+        { id: "cat_games", title: "Games", side: "right", order: 0, builtIn: true, hidden: false }
+      ],
+      bookmarks: [
+        { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 0 }
+      ]
+    };
+
+    var expandedCategories = {};
+
+    function loadBookmarkData() {
+      try {
+        var raw = localStorage.getItem('heavenly_bookmarks');
+        if (!raw) return DEFAULT_BOOKMARK_DATA;
+        var data = JSON.parse(raw);
+        if (!data.categories || !data.bookmarks) return DEFAULT_BOOKMARK_DATA;
+        return data;
+      } catch (e) {
+        return DEFAULT_BOOKMARK_DATA;
+      }
+    }
+
+    function saveBookmarkData(data) {
+      try {
+        localStorage.setItem('heavenly_bookmarks', JSON.stringify(data));
+      } catch (e) {}
+    }
+
+    function getFavicon(url, customIcon) {
+      if (customIcon) return customIcon;
+      try {
+        var u = url.startsWith('http') ? url : 'https://' + url;
+        var parsed = new URL(u);
+        return 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(parsed.hostname) + '&sz=64';
+      } catch (e) {
+        return 'https://ssl.gstatic.com/classroom/favicon.png';
+      }
+    }
+
+    // Selected item state for bottom action bar
+    var selectedItemState = null; // { type: 'category'|'bookmark', id: string, title: string, categoryId?: string }
+
+    function openReorderBar(item) {
+      selectedItemState = item;
+      var bar = $('reorder-bar');
+      var info = $('bar-target-info');
+      var sideBtn = $('bar-move-side');
+
+      if (info) info.textContent = (item.type === 'category' ? '📁 ' : '⭐ ') + item.title;
+      if (sideBtn) {
+        sideBtn.style.display = item.type === 'category' ? 'inline-flex' : 'none';
+      }
+      if (bar) bar.classList.add('active');
+    }
+
+    function closeReorderBar() {
+      selectedItemState = null;
+      var bar = $('reorder-bar');
+      if (bar) bar.classList.remove('active');
+      document.querySelectorAll('.drag-dots-handle.selected').forEach(function (el) {
+        el.classList.remove('selected');
+      });
+    }
+
+    function renderBookmarksUI() {
+      var data = loadBookmarkData();
+      var leftCol = $('left-column');
+      var rightCol = $('right-column');
+      var bottomCol = $('bottom-container');
+
+      if (!leftCol || !rightCol || !bottomCol) return;
+
+      leftCol.innerHTML = '';
+      rightCol.innerHTML = '';
+      bottomCol.innerHTML = '';
+
+      var cats = data.categories.filter(function (c) { return !c.hidden; });
+      cats.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+
+      cats.forEach(function (cat) {
+        var bms = data.bookmarks.filter(function (b) { return b.categoryId === cat.id && !b.hidden; });
+        bms.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+
+        var card = document.createElement('div');
+        card.className = 'section-card';
+        card.setAttribute('data-category-id', cat.id);
+
+        // Header
+        var header = document.createElement('div');
+        header.className = 'section-header';
+
+        var titleGroup = document.createElement('div');
+        titleGroup.className = 'section-header-title';
+
+        // Dots Handle ::
+        var handle = document.createElement('div');
+        handle.className = 'drag-dots-handle';
+        handle.title = 'Long-press or click to reorder category';
+        handle.innerHTML = '<div class="dots-grid"><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div></div>';
+
+        // Interaction logic for category handle
+        var pressTimer = null;
+        var startX = 0, startY = 0;
+
+        var startHandle = function (e) {
+          e.stopPropagation();
+          var touch = e.touches ? e.touches[0] : e;
+          startX = touch.clientX;
+          startY = touch.clientY;
+
+          pressTimer = setTimeout(function () {
+            handle.classList.add('selected');
+            openReorderBar({ type: 'category', id: cat.id, title: cat.title });
+          }, 400);
+        };
+
+        var moveHandle = function (e) {
+          var touch = e.touches ? e.touches[0] : e;
+          if (Math.abs(touch.clientX - startX) > 8 || Math.abs(touch.clientY - startY) > 8) {
+            if (pressTimer) clearTimeout(pressTimer);
+          }
+        };
+
+        var endHandle = function (e) {
+          if (pressTimer) clearTimeout(pressTimer);
+        };
+
+        handle.addEventListener('mousedown', startHandle);
+        handle.addEventListener('mousemove', moveHandle);
+        handle.addEventListener('mouseup', endHandle);
+        handle.addEventListener('touchstart', startHandle);
+        handle.addEventListener('touchmove', moveHandle);
+        handle.addEventListener('touchend', endHandle);
+
+        handle.onclick = function (e) {
+          e.stopPropagation();
+          handle.classList.add('selected');
+          openReorderBar({ type: 'category', id: cat.id, title: cat.title });
+        };
+
+        var titleText = document.createElement('span');
+        titleText.textContent = cat.title;
+
+        titleGroup.appendChild(handle);
+        titleGroup.appendChild(titleText);
+
+        var addBmBtn = document.createElement('button');
+        addBmBtn.type = 'button';
+        addBmBtn.className = 'btn-add-bm-quick';
+        addBmBtn.title = 'Add bookmark to ' + cat.title;
+        addBmBtn.textContent = '+';
+        addBmBtn.onclick = function (e) {
+          e.stopPropagation();
+          openAddModal('bookmark', cat.id);
+        };
+
+        header.appendChild(titleGroup);
+        header.appendChild(addBmBtn);
+        card.appendChild(header);
+
+        // Bookmarks List
+        var listContainer = document.createElement('div');
+        listContainer.className = 'bookmarks-list';
+
+        var limit = 4; // default limit for vertical side columns
+        var isExpanded = !!expandedCategories[cat.id];
+        var visibleBms = isExpanded ? bms : bms.slice(0, limit);
+
+        visibleBms.forEach(function (bm) {
+          var bmCard = document.createElement('a');
+          bmCard.className = 'bookmark-card';
+          var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + (bm.url.startsWith('http') ? bm.url : 'https://' + bm.url);
+          bmCard.href = proxiedUrl;
+
+          var bmLeft = document.createElement('div');
+          bmLeft.className = 'bookmark-card-left';
+
+          var bmIcon = document.createElement('img');
+          bmIcon.className = 'bookmark-icon';
+          bmIcon.src = getFavicon(bm.url, bm.icon);
+          bmIcon.alt = bm.title;
+          bmIcon.onerror = function () { this.src = 'https://ssl.gstatic.com/classroom/favicon.png'; };
+
+          var bmTitle = document.createElement('span');
+          bmTitle.className = 'bookmark-title';
+          bmTitle.textContent = bm.title;
+
+          bmLeft.appendChild(bmIcon);
+          bmLeft.appendChild(bmTitle);
+
+          var bmHandle = document.createElement('div');
+          bmHandle.className = 'drag-dots-handle';
+          bmHandle.title = 'Long-press or click to reorder bookmark';
+          bmHandle.innerHTML = '<div class="dots-grid"><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div></div>';
+
+          var bmTimer = null;
+          var bmSX = 0, bmSY = 0;
+
+          var startBmHandle = function (e) {
+            e.stopPropagation();
+            var touch = e.touches ? e.touches[0] : e;
+            bmSX = touch.clientX;
+            bmSY = touch.clientY;
+
+            bmTimer = setTimeout(function () {
+              bmHandle.classList.add('selected');
+              openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title });
+            }, 400);
+          };
+
+          var moveBmHandle = function (e) {
+            var touch = e.touches ? e.touches[0] : e;
+            if (Math.abs(touch.clientX - bmSX) > 8 || Math.abs(touch.clientY - bmSY) > 8) {
+              if (bmTimer) clearTimeout(bmTimer);
+            }
+          };
+
+          var endBmHandle = function () {
+            if (bmTimer) clearTimeout(bmTimer);
+          };
+
+          bmHandle.addEventListener('mousedown', startBmHandle);
+          bmHandle.addEventListener('mousemove', moveBmHandle);
+          bmHandle.addEventListener('mouseup', endBmHandle);
+          bmHandle.addEventListener('touchstart', startBmHandle);
+          bmHandle.addEventListener('touchmove', moveBmHandle);
+          bmHandle.addEventListener('touchend', endBmHandle);
+
+          bmHandle.onclick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            bmHandle.classList.add('selected');
+            openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title });
+          };
+
+          bmCard.appendChild(bmLeft);
+          bmCard.appendChild(bmHandle);
+          listContainer.appendChild(bmCard);
+        });
+
+        card.appendChild(listContainer);
+
+        // Show More / Show Less Toggle Button
+        if (bms.length > limit) {
+          var showMoreBtn = document.createElement('button');
+          showMoreBtn.type = 'button';
+          showMoreBtn.className = 'show-more-btn';
+          showMoreBtn.textContent = isExpanded ? 'Show Less ▲' : 'Show More (' + (bms.length - limit) + ' more) ▼';
+          showMoreBtn.onclick = function (e) {
+            e.stopPropagation();
+            expandedCategories[cat.id] = !isExpanded;
+            // If expanded category is very large on side column, push to bottom side row
+            if (expandedCategories[cat.id] && bms.length >= 8 && cat.side !== 'bottom') {
+              cat.side = 'bottom';
+              saveBookmarkData(data);
+            }
+            renderBookmarksUI();
+          };
+          card.appendChild(showMoreBtn);
+        }
+
+        // Append to appropriate side column or bottom container
+        if (cat.side === 'right') {
+          rightCol.appendChild(card);
+        } else if (cat.side === 'bottom') {
+          bottomCol.appendChild(card);
+        } else {
+          leftCol.appendChild(card);
+        }
+      });
+    }
+
+    // Modal Actions
+    function openAddModal(type, targetCatId) {
+      var modal = $('add-modal');
+      var tabBm = $('tab-add-bm');
+      var tabCat = $('tab-add-cat');
+      var formBm = $('form-add-bm');
+      var formCat = $('form-add-cat');
+      var catSelect = $('bm-category');
+
+      if (!modal) return;
+
+      var data = loadBookmarkData();
+      catSelect.innerHTML = '';
+      data.categories.filter(function (c) { return !c.hidden; }).forEach(function (c) {
+        var opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.title;
+        if (c.id === targetCatId) opt.selected = true;
+        catSelect.appendChild(opt);
+      });
+
+      if (type === 'category') {
+        tabBm.style.background = 'rgba(30, 41, 59, 0.6)';
+        tabBm.style.color = '#94a3b8';
+        tabCat.style.background = 'rgba(56, 189, 248, 0.2)';
+        tabCat.style.color = '#38bdf8';
+        formBm.style.display = 'none';
+        formCat.style.display = 'flex';
+        $('modal-title').textContent = 'Add Category Section';
+      } else {
+        tabBm.style.background = 'rgba(56, 189, 248, 0.2)';
+        tabBm.style.color = '#38bdf8';
+        tabCat.style.background = 'rgba(30, 41, 59, 0.6)';
+        tabCat.style.color = '#94a3b8';
+        formBm.style.display = 'flex';
+        formCat.style.display = 'none';
+        $('modal-title').textContent = 'Add Bookmark';
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeAddModal() {
+      var modal = $('add-modal');
+      if (modal) modal.classList.remove('active');
+      $('bm-title').value = '';
+      $('bm-url').value = '';
+      $('cat-title').value = '';
+    }
+
+    function initBookmarksManager() {
+      renderBookmarksUI();
+
+      $('open-add-modal-btn').onclick = function () {
+        openAddModal('bookmark');
+      };
+
+      $('close-modal-btn').onclick = closeAddModal;
+
+      $('tab-add-bm').onclick = function () { openAddModal('bookmark'); };
+      $('tab-add-cat').onclick = function () { openAddModal('category'); };
+
+      // Submit Bookmark Form
+      $('form-add-bm').onsubmit = function (e) {
+        e.preventDefault();
+        var title = $('bm-title').value.trim();
+        var url = $('bm-url').value.trim();
+        var categoryId = $('bm-category').value;
+
+        if (!title || !url || !categoryId) return;
+
+        var data = loadBookmarkData();
+        data.bookmarks.push({
+          id: 'bm_' + Date.now(),
+          categoryId: categoryId,
+          title: title,
+          url: url,
+          builtIn: false,
+          hidden: false,
+          order: data.bookmarks.length
+        });
+        saveBookmarkData(data);
+        closeAddModal();
+        renderBookmarksUI();
+      };
+
+      // Submit Category Form
+      $('form-add-cat').onsubmit = function (e) {
+        e.preventDefault();
+        var title = $('cat-title').value.trim();
+        var side = $('cat-side').value;
+
+        if (!title) return;
+
+        var data = loadBookmarkData();
+        data.categories.push({
+          id: 'cat_' + Date.now(),
+          title: title,
+          side: side,
+          order: data.categories.length,
+          builtIn: false,
+          hidden: false
+        });
+        saveBookmarkData(data);
+        closeAddModal();
+        renderBookmarksUI();
+      };
+
+      // Bottom Bar Action Listeners
+      $('bar-close').onclick = closeReorderBar;
+
+      $('bar-move-top').onclick = function () {
+        if (!selectedItemState) return;
+        var data = loadBookmarkData();
+        if (selectedItemState.type === 'category') {
+          var cat = data.categories.find(function (c) { return c.id === selectedItemState.id; });
+          if (cat) {
+            cat.order = -1;
+            data.categories.forEach(function (c, idx) { if (c.id !== cat.id) c.order = idx + 1; });
+            saveBookmarkData(data);
+          }
+        } else if (selectedItemState.type === 'bookmark') {
+          var bm = data.bookmarks.find(function (b) { return b.id === selectedItemState.id; });
+          if (bm) {
+            bm.order = -1;
+            data.bookmarks.filter(function (b) { return b.categoryId === bm.categoryId; }).forEach(function (b, idx) {
+              if (b.id !== bm.id) b.order = idx + 1;
+            });
+            saveBookmarkData(data);
+          }
+        }
+        closeReorderBar();
+        renderBookmarksUI();
+      };
+
+      $('bar-move-bottom').onclick = function () {
+        if (!selectedItemState) return;
+        var data = loadBookmarkData();
+        if (selectedItemState.type === 'category') {
+          var cat = data.categories.find(function (c) { return c.id === selectedItemState.id; });
+          if (cat) {
+            cat.order = 999;
+            saveBookmarkData(data);
+          }
+        } else if (selectedItemState.type === 'bookmark') {
+          var bm = data.bookmarks.find(function (b) { return b.id === selectedItemState.id; });
+          if (bm) {
+            bm.order = 999;
+            saveBookmarkData(data);
+          }
+        }
+        closeReorderBar();
+        renderBookmarksUI();
+      };
+
+      $('bar-move-side').onclick = function () {
+        if (!selectedItemState || selectedItemState.type !== 'category') return;
+        var data = loadBookmarkData();
+        var cat = data.categories.find(function (c) { return c.id === selectedItemState.id; });
+        if (cat) {
+          if (cat.side === 'left') cat.side = 'right';
+          else if (cat.side === 'right') cat.side = 'bottom';
+          else cat.side = 'left';
+          saveBookmarkData(data);
+        }
+        closeReorderBar();
+        renderBookmarksUI();
+      };
+
+      $('bar-delete').onclick = function () {
+        if (!selectedItemState) return;
+        var data = loadBookmarkData();
+        if (selectedItemState.type === 'category') {
+          var cat = data.categories.find(function (c) { return c.id === selectedItemState.id; });
+          if (cat) {
+            if (cat.builtIn) cat.hidden = true;
+            else data.categories = data.categories.filter(function (c) { return c.id !== cat.id; });
+            saveBookmarkData(data);
+          }
+        } else if (selectedItemState.type === 'bookmark') {
+          var bm = data.bookmarks.find(function (b) { return b.id === selectedItemState.id; });
+          if (bm) {
+            if (bm.builtIn) bm.hidden = true;
+            else data.bookmarks = data.bookmarks.filter(function (b) { return b.id !== bm.id; });
+            saveBookmarkData(data);
+          }
+        }
+        closeReorderBar();
+        renderBookmarksUI();
+      };
+
+      // Click outside listener to dismiss bottom bar
+      document.addEventListener('click', function (e) {
+        var bar = $('reorder-bar');
+        if (!bar || !bar.classList.contains('active')) return;
+        if (!bar.contains(e.target) && !e.target.closest('.drag-dots-handle')) {
+          closeReorderBar();
+        }
+      });
+    }
+
     window.onload = function () {
       initLandingCloak();
       initHistoryDropdown();
+      initBookmarksManager();
       checkError();
       $('url').focus();
     };

@@ -569,6 +569,7 @@
       panicUrl: saved.panicUrl || 'https://classroom.google.com',
       showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
       showMagnifier: saved.showMagnifier !== undefined ? saved.showMagnifier : true,
+      showNavBookmark: saved.showNavBookmark !== undefined ? saved.showNavBookmark : true,
       showNavSearch: saved.showNavSearch !== undefined ? saved.showNavSearch : true,
       showNavHome: saved.showNavHome !== undefined ? saved.showNavHome : true,
       useWidgetDock: saved.useWidgetDock || false,
@@ -933,7 +934,60 @@
     }
   }
 
-  function initHeavenlyWidgets(window, settings) {
+  function promptBookmarkCurrentPage(window, config) {
+    try {
+      var storage = window.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (!storage) return;
+
+      var DEFAULT_BOOKMARK_DATA = {
+        categories: [
+          { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false },
+          { id: "cat_anime", title: "Anime", side: "left", order: 1, builtIn: true, hidden: false },
+          { id: "cat_games", title: "Games", side: "right", order: 0, builtIn: true, hidden: false }
+        ],
+        bookmarks: [
+          { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 0 }
+        ]
+      };
+
+      var data = DEFAULT_BOOKMARK_DATA;
+      try {
+        var raw = storage.getItem('heavenly_bookmarks');
+        if (raw) data = JSON.parse(raw);
+      } catch (e) {}
+
+      var path = window.location.pathname;
+      var prefix = (config && config.prefix) ? config.prefix : '/proxy/';
+      var unproxiedUrl = path.startsWith(prefix) ? path.substr(prefix.length) + window.location.search + window.location.hash : window.location.href;
+      var title = window.__heavenlyOriginalTitle || window.document.title || unproxiedUrl;
+
+      var catTitles = data.categories.filter(function (c) { return !c.hidden; }).map(function (c) { return c.title; });
+      if (catTitles.length === 0) catTitles = ["Games", "Movies/Shows", "Anime"];
+
+      var selectedCatTitle = window.prompt("Bookmark this page:\nURL: " + unproxiedUrl + "\n\nEnter Category (" + catTitles.join(", ") + "):", catTitles[0]);
+      if (!selectedCatTitle) return;
+
+      var matchedCat = data.categories.find(function (c) { return c.title.toLowerCase() === selectedCatTitle.trim().toLowerCase(); });
+      var catId = matchedCat ? matchedCat.id : data.categories[0].id;
+
+      data.bookmarks.push({
+        id: 'bm_' + Date.now(),
+        categoryId: catId,
+        title: title,
+        url: unproxiedUrl,
+        builtIn: false,
+        hidden: false,
+        order: data.bookmarks.length
+      });
+
+      storage.setItem('heavenly_bookmarks', JSON.stringify(data));
+      window.alert("⭐ Page bookmarked under " + (matchedCat ? matchedCat.title : "Default Category") + "!");
+    } catch (e) {
+      console.error("Error bookmarking page:", e);
+    }
+  }
+
+  function initHeavenlyWidgets(window, settings, config) {
     try {
       if (window !== window.top) return; // Only show in main top window
 
@@ -1278,6 +1332,7 @@
 
         var showScrollLock = settings.showScrollLock !== undefined ? settings.showScrollLock : true;
         var showMagnifier = settings.showMagnifier !== undefined ? settings.showMagnifier : true;
+        var showNavBookmark = settings.showNavBookmark !== undefined ? settings.showNavBookmark : true;
         var showNavSearch = settings.showNavSearch !== undefined ? settings.showNavSearch : true;
         var showNavHome = settings.showNavHome !== undefined ? settings.showNavHome : true;
         var useWidgetDock = settings.useWidgetDock || false;
@@ -1364,6 +1419,10 @@
             items.push('<button type="button" class="btn-ctrl" id="dock-home-btn" title="Go Home">🏠 Home</button>');
           }
 
+          if (showNavBookmark) {
+            items.push('<button type="button" class="btn-ctrl" id="dock-bm-btn" title="Bookmark Page">⭐ Bookmark</button>');
+          }
+
           if (showNavSearch) {
             items.push('<div class="dock-item"><input type="text" class="nav-input" id="dock-search-input" placeholder="Search or URL..." /><button type="button" class="btn-ctrl" id="dock-go-btn">Go</button></div>');
           }
@@ -1405,6 +1464,15 @@
             if (homeBtn) homeBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               (window.top || window).location.href = 'https://heavenly-node.vercel.app/';
+            });
+          }
+
+          // Wire up Bookmark button
+          if (showNavBookmark) {
+            var bmBtn = dockBar.querySelector('#dock-bm-btn');
+            if (bmBtn) bmBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              promptBookmarkCurrentPage(window, config);
             });
           }
 
@@ -1962,8 +2030,8 @@
           if (magEnabled) updateMirrorPosition();
         }, { passive: true });
 
-        // --- 3. NAVIGATION WIDGET (Search Bar & Home Button) ---
-        if (showNavSearch || showNavHome) {
+        // --- 3. NAVIGATION WIDGET (Search Bar, Bookmark & Home Button) ---
+        if (showNavSearch || showNavHome || showNavBookmark) {
           var navContainer = window.document.createElement('div');
           navContainer.id = 'heavenly-nav-root';
           navContainer.style.cssText = 'position:fixed;z-index:2147483646;user-select:none;-webkit-user-select:none;font-family:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
@@ -1989,6 +2057,10 @@
           if (showNavSearch) {
             navHtml.push('<input type="text" class="nav-input" id="nav-search-input" placeholder="Search or URL..." />');
             navHtml.push('<button type="button" class="btn-ctrl" id="nav-go-btn">Go</button>');
+          }
+
+          if (showNavBookmark) {
+            navHtml.push('<button type="button" class="btn-ctrl" id="nav-bm-btn" title="Bookmark Page">⭐ Bookmark</button>');
           }
 
           if (showNavHome) {
@@ -2028,6 +2100,14 @@
             if (searchInput) searchInput.addEventListener('keydown', function (e) {
               e.stopPropagation();
               if (e.key === 'Enter') handleNavigate();
+            });
+          }
+
+          if (showNavBookmark) {
+            var floatBmBtn = navWidget.querySelector('#nav-bm-btn') || (navShadow.querySelector ? navShadow.querySelector('#nav-bm-btn') : null);
+            if (floatBmBtn) floatBmBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              promptBookmarkCurrentPage(window, config);
             });
           }
 
@@ -2246,7 +2326,7 @@
     initPushState(config, window);
     var settings = loadHeavenlySettings(window);
     initHeavenlyCloakAndPanic(window, settings, config);
-    initHeavenlyWidgets(window, settings);
+    initHeavenlyWidgets(window, settings, config);
     initNewgroundsPagination(config, window);
 
     if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {
