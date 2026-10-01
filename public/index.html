@@ -218,6 +218,39 @@
     .input-wrapper {
       flex: 1;
       position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .url-clear-btn {
+      position: absolute;
+      right: 14px;
+      background: rgba(148, 163, 184, 0.15);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      color: #94a3b8;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 10;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .url-clear-btn:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+      transform: scale(1.08);
+    }
+
+    .url-clear-btn.visible {
+      display: flex;
     }
 
     .history-dropdown {
@@ -1036,7 +1069,8 @@
 
       <form action="no-js" method="get" id="unblocker-form" class="search-form">
         <div class="input-wrapper">
-          <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autofocus="autofocus" autocomplete="off" aria-label="URL or search query" aria-expanded="false" aria-controls="history-dropdown" />
+          <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autofocus="autofocus" autocomplete="off" aria-label="URL or search query" aria-expanded="false" aria-controls="history-dropdown" style="padding-right: 44px;" />
+          <button type="button" id="url-clear-btn" class="url-clear-btn" aria-label="Clear search input" title="Clear input">✕</button>
           <div id="history-dropdown" class="history-dropdown"></div>
         </div>
         <input type="submit" value="Go" />
@@ -1491,7 +1525,30 @@
     function initHistoryDropdown() {
       var input = $('url');
       var dropdown = $('history-dropdown');
+      var clearBtn = $('url-clear-btn');
       if (!input || !dropdown) return;
+
+      var updateClearBtnVisibility = function () {
+        if (clearBtn) {
+          if (input.value.trim().length > 0) {
+            clearBtn.classList.add('visible');
+          } else {
+            clearBtn.classList.remove('visible');
+          }
+        }
+      };
+
+      if (clearBtn) {
+        clearBtn.onclick = function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+          input.value = '';
+          originalInputValue = '';
+          updateClearBtnVisibility();
+          input.focus();
+          showDropdown(true);
+        };
+      }
 
       var hideDropdown = function () {
         dropdown.classList.remove('active');
@@ -1508,12 +1565,20 @@
         input.setAttribute('aria-expanded', 'true');
       };
 
-      input.onfocus = function () { showDropdown(false); };
-      input.onclick = function () { showDropdown(false); };
+      input.onfocus = function () {
+        updateClearBtnVisibility();
+        showDropdown(false);
+      };
+      input.onclick = function () {
+        updateClearBtnVisibility();
+        showDropdown(false);
+      };
       input.oninput = function () {
         originalInputValue = input.value;
+        updateClearBtnVisibility();
         showDropdown(true);
       };
+      updateClearBtnVisibility();
 
       function updateHighlight(cards) {
         for (var i = 0; i < cards.length; i++) {
