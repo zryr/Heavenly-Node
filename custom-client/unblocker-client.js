@@ -203,6 +203,7 @@
 
     if (window.open) {
       var _winOpen = window.open;
+      window.__nativeWinOpen = _winOpen;
       window.open = function (url) {
         var args = Array.prototype.slice.call(arguments);
         if (args[0]) {
@@ -1012,7 +1013,8 @@
       openTabBtn.style.cssText = 'padding:10px 18px;border-radius:12px;background:rgba(56,189,248,0.2);border:1px solid #38bdf8;color:#38bdf8;font-weight:600;font-size:0.88rem;cursor:pointer;font-family:inherit;';
       openTabBtn.textContent = '↗ Open in New Tab';
       openTabBtn.onclick = function () {
-        window.open(directUrl, '_blank', 'noopener');
+        var openFn = window.__nativeWinOpen || window.open;
+        openFn.call(window, directUrl, '_blank', 'noopener');
         backdrop.remove();
       };
 
@@ -1024,7 +1026,8 @@
         var w = 800, h = 600;
         var left = (window.screen.width / 2) - (w / 2);
         var top = (window.screen.height / 2) - (h / 2);
-        window.open(directUrl, 'DirectTestPopup', 'width=' + w + ',height=' + h + ',top=' + top + ',left=' + left + ',resizable=yes,scrollbars=yes');
+        var openFn = window.__nativeWinOpen || window.open;
+        openFn.call(window, directUrl, 'DirectTestPopup', 'width=' + w + ',height=' + h + ',top=' + top + ',left=' + left + ',resizable=yes,scrollbars=yes');
         backdrop.remove();
       };
 
