@@ -44,6 +44,21 @@
       50% { opacity: 0.9; }
     }
 
+    @keyframes topToBottomEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(-28px) scale(0.96);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .entrance-animate {
+      animation: topToBottomEntrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
     /* Ambient heavenly background glow */
     .glow-orb {
       position: fixed;
@@ -950,10 +965,15 @@
         <input type="submit" value="Go" />
       </form>
 
-      <div class="features-list">
-        <span class="badge">⚡ On-The-Fly Processing</span>
-        <span class="badge">✨ Ethereal UI</span>
-        <span class="badge">🌐 High Performance</span>
+      <div class="header-actions-group" style="margin-top: 4px; margin-bottom: 24px;">
+        <button id="open-add-modal-btn" type="button" class="add-category-btn">
+          <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <span>Add Bookmark / Category</span>
+        </button>
+        <a href="settings.html" id="open-settings-btn" class="settings-btn" aria-label="Settings and privacy controls page">
+          <svg style="width: 18px; height: 18px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Settings & Cloaking</span>
+        </a>
       </div>
 
       <div id="google-ad">
@@ -970,16 +990,6 @@
         <h3>About Heavenly</h3>
         <p>Heavenly is a fast, streamlined web proxy built to provide smooth web browsing and uninterrupted data streaming.</p>
         <p>It processes web responses dynamically in real time without buffering whole pages, preserving original relative URLs and site speed.</p>
-      </div>
-
-      <div class="header-actions-group">
-        <button id="open-add-modal-btn" type="button" class="add-category-btn">
-          <span>+ Add Bookmark / Category</span>
-        </button>
-        <a href="settings.html" id="open-settings-btn" class="settings-btn" aria-label="Settings and privacy controls page">
-          <svg style="width: 18px; height: 18px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          <span>Settings & Cloaking</span>
-        </a>
       </div>
 
       <div class="footer">
@@ -999,10 +1009,26 @@
   <!-- Reorder Bottom Floating Action Bar -->
   <div id="reorder-bar" class="reorder-action-bar">
     <div id="bar-target-info" class="bar-info">Selected Item</div>
-    <button id="bar-move-top" type="button" class="bar-btn bar-btn-primary">⬆️ Bring to Top</button>
-    <button id="bar-move-bottom" type="button" class="bar-btn bar-btn-primary">⬇️ Bring to Bottom</button>
-    <button id="bar-move-side" type="button" class="bar-btn bar-btn-primary">↔️ Switch Side</button>
-    <button id="bar-delete" type="button" class="bar-btn bar-btn-danger">🗑️ Delete</button>
+    <button id="bar-edit" type="button" class="bar-btn bar-btn-primary" style="display: none;">
+      <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      <span>Edit</span>
+    </button>
+    <button id="bar-move-top" type="button" class="bar-btn bar-btn-primary">
+      <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+      <span>Bring to Top</span>
+    </button>
+    <button id="bar-move-bottom" type="button" class="bar-btn bar-btn-primary">
+      <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+      <span>Bring to Bottom</span>
+    </button>
+    <button id="bar-move-side" type="button" class="bar-btn bar-btn-primary">
+      <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+      <span>Switch Side</span>
+    </button>
+    <button id="bar-delete" type="button" class="bar-btn bar-btn-danger">
+      <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      <span>Delete</span>
+    </button>
     <button id="bar-close" type="button" class="bar-btn bar-btn-close">✕ Close</button>
   </div>
 
@@ -1022,6 +1048,7 @@
 
       <!-- Add Bookmark Form -->
       <form id="form-add-bm" style="display: flex; flex-direction: column; gap: 12px;">
+        <input type="hidden" id="bm-id" value="" />
         <div class="form-group">
           <label class="form-label" for="bm-title">Title</label>
           <input type="text" id="bm-title" class="form-input" placeholder="e.g. Newgrounds" required />
@@ -1033,6 +1060,22 @@
         <div class="form-group">
           <label class="form-label" for="bm-category">Category Section</label>
           <select id="bm-category" class="form-select"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Icon Source</label>
+          <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+            <button type="button" id="icon-tab-favicon" class="icon-tab-btn active" style="flex: 1; padding: 6px; border-radius: 8px; background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.4); color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Auto Favicon</button>
+            <button type="button" id="icon-tab-preset" class="icon-tab-btn" style="flex: 1; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Preset Icons</button>
+            <button type="button" id="icon-tab-custom" class="icon-tab-btn" style="flex: 1; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Image / GIF URL</button>
+          </div>
+
+          <!-- Preset Icons Container -->
+          <div id="icon-preset-container" style="display: none; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 8px; background: rgba(30, 41, 59, 0.4); border-radius: 12px; border: 1px solid rgba(148,163,184,0.2);"></div>
+
+          <!-- Custom URL Container -->
+          <div id="icon-custom-container" style="display: none;">
+            <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="https://example.com/icon.png or .gif" />
+          </div>
         </div>
         <button type="submit" class="modal-submit-btn">Save Bookmark</button>
       </form>
@@ -1464,6 +1507,21 @@
     }
 
     // --- HEAVENLY BOOKMARKS MANAGER ---
+    var PRESET_LUCIDE_ICONS = [
+      { id: "gamepad", name: "Gamepad", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line><rect x="2" y="6" width="20" height="12" rx="6"></rect></svg>' },
+      { id: "tv", name: "TV", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>' },
+      { id: "film", name: "Film", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>' },
+      { id: "globe", name: "Globe", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>' },
+      { id: "star", name: "Star", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>' },
+      { id: "play", name: "Play", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' },
+      { id: "sparkles", name: "Sparkles", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"></path></svg>' },
+      { id: "bookmark", name: "Bookmark", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>' },
+      { id: "compass", name: "Compass", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>' },
+      { id: "heart", name: "Heart", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>' },
+      { id: "zap", name: "Zap", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>' },
+      { id: "shield", name: "Shield", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>' }
+    ];
+
     var DEFAULT_BOOKMARK_DATA = {
       categories: [
         { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false },
@@ -1476,6 +1534,8 @@
     };
 
     var expandedCategories = {};
+    var selectedIconMode = 'favicon'; // 'favicon' | 'preset' | 'custom'
+    var selectedPresetIconId = 'gamepad';
 
     function loadBookmarkData() {
       try {
@@ -1495,15 +1555,37 @@
       } catch (e) {}
     }
 
-    function getFavicon(url, customIcon) {
-      if (customIcon) return customIcon;
-      try {
-        var u = url.startsWith('http') ? url : 'https://' + url;
-        var parsed = new URL(u);
-        return 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(parsed.hostname) + '&sz=64';
-      } catch (e) {
-        return 'https://ssl.gstatic.com/classroom/favicon.png';
+    function renderIconElement(iconVal, url, altText) {
+      if (iconVal && iconVal.startsWith('preset:')) {
+        var presetId = iconVal.replace('preset:', '');
+        var found = PRESET_LUCIDE_ICONS.find(function (i) { return i.id === presetId; });
+        if (found) {
+          var wrapper = document.createElement('div');
+          wrapper.className = 'bookmark-icon-svg';
+          wrapper.style.width = '20px';
+          wrapper.style.height = '20px';
+          wrapper.style.flexShrink = '0';
+          wrapper.innerHTML = found.svg;
+          return wrapper;
+        }
       }
+
+      var img = document.createElement('img');
+      img.className = 'bookmark-icon';
+      img.alt = altText || 'Bookmark icon';
+      if (iconVal && (iconVal.startsWith('http') || iconVal.startsWith('data:'))) {
+        img.src = iconVal;
+      } else {
+        try {
+          var u = url.startsWith('http') ? url : 'https://' + url;
+          var parsed = new URL(u);
+          img.src = 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(parsed.hostname) + '&sz=64';
+        } catch (e) {
+          img.src = 'https://ssl.gstatic.com/classroom/favicon.png';
+        }
+      }
+      img.onerror = function () { this.src = 'https://ssl.gstatic.com/classroom/favicon.png'; };
+      return img;
     }
 
     // Selected item state for bottom action bar
@@ -1514,10 +1596,14 @@
       var bar = $('reorder-bar');
       var info = $('bar-target-info');
       var sideBtn = $('bar-move-side');
+      var editBtn = $('bar-edit');
 
-      if (info) info.textContent = (item.type === 'category' ? '📁 ' : '⭐ ') + item.title;
+      if (info) info.textContent = item.title;
       if (sideBtn) {
         sideBtn.style.display = item.type === 'category' ? 'inline-flex' : 'none';
+      }
+      if (editBtn) {
+        editBtn.style.display = item.type === 'bookmark' ? 'inline-flex' : 'none';
       }
       if (bar) bar.classList.add('active');
     }
@@ -1644,22 +1730,18 @@
           var bmLeft = document.createElement('div');
           bmLeft.className = 'bookmark-card-left';
 
-          var bmIcon = document.createElement('img');
-          bmIcon.className = 'bookmark-icon';
-          bmIcon.src = getFavicon(bm.url, bm.icon);
-          bmIcon.alt = bm.title;
-          bmIcon.onerror = function () { this.src = 'https://ssl.gstatic.com/classroom/favicon.png'; };
+          var bmIconEl = renderIconElement(bm.icon, bm.url, bm.title);
 
           var bmTitle = document.createElement('span');
           bmTitle.className = 'bookmark-title';
           bmTitle.textContent = bm.title;
 
-          bmLeft.appendChild(bmIcon);
+          bmLeft.appendChild(bmIconEl);
           bmLeft.appendChild(bmTitle);
 
           var bmHandle = document.createElement('div');
           bmHandle.className = 'drag-dots-handle';
-          bmHandle.title = 'Long-press or click to reorder bookmark';
+          bmHandle.title = 'Long-press or click to reorder or edit bookmark';
           bmHandle.innerHTML = '<div class="dots-grid"><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div></div>';
 
           var bmTimer = null;
@@ -1728,6 +1810,9 @@
           card.appendChild(showMoreBtn);
         }
 
+        // Apply entrance animation
+        card.classList.add('entrance-animate');
+
         // Append to appropriate side column or bottom container
         if (cat.side === 'right') {
           rightCol.appendChild(card);
@@ -1739,8 +1824,77 @@
       });
     }
 
+    function renderPresetIconPicker() {
+      var container = $('icon-preset-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      PRESET_LUCIDE_ICONS.forEach(function (item) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.style.width = '36px';
+        btn.style.height = '36px';
+        btn.style.borderRadius = '10px';
+        btn.style.background = selectedPresetIconId === item.id ? 'rgba(56, 189, 248, 0.3)' : 'rgba(15, 23, 42, 0.6)';
+        btn.style.border = selectedPresetIconId === item.id ? '1px solid #38bdf8' : '1px solid rgba(148,163,184,0.2)';
+        btn.style.display = 'flex';
+        btn.style.alignItems = 'center';
+        btn.style.justifyContent = 'center';
+        btn.style.cursor = 'pointer';
+        btn.title = item.name;
+
+        var svgWrap = document.createElement('div');
+        svgWrap.style.width = '20px';
+        svgWrap.style.height = '20px';
+        svgWrap.innerHTML = item.svg;
+
+        btn.appendChild(svgWrap);
+        btn.onclick = function () {
+          selectedPresetIconId = item.id;
+          renderPresetIconPicker();
+        };
+
+        container.appendChild(btn);
+      });
+    }
+
+    function switchIconMode(mode) {
+      selectedIconMode = mode;
+      var btnFavicon = $('icon-tab-favicon');
+      var btnPreset = $('icon-tab-preset');
+      var btnCustom = $('icon-tab-custom');
+      var presetContainer = $('icon-preset-container');
+      var customContainer = $('icon-custom-container');
+
+      var activeBg = 'rgba(56,189,248,0.2)';
+      var activeBorder = '1px solid rgba(56,189,248,0.4)';
+      var activeColor = '#38bdf8';
+      var inactiveBg = 'rgba(30,41,59,0.6)';
+      var inactiveBorder = '1px solid rgba(148,163,184,0.2)';
+      var inactiveColor = '#94a3b8';
+
+      btnFavicon.style.background = mode === 'favicon' ? activeBg : inactiveBg;
+      btnFavicon.style.border = mode === 'favicon' ? activeBorder : inactiveBorder;
+      btnFavicon.style.color = mode === 'favicon' ? activeColor : inactiveColor;
+
+      btnPreset.style.background = mode === 'preset' ? activeBg : inactiveBg;
+      btnPreset.style.border = mode === 'preset' ? activeBorder : inactiveBorder;
+      btnPreset.style.color = mode === 'preset' ? activeColor : inactiveColor;
+
+      btnCustom.style.background = mode === 'custom' ? activeBg : inactiveBg;
+      btnCustom.style.border = mode === 'custom' ? activeBorder : inactiveBorder;
+      btnCustom.style.color = mode === 'custom' ? activeColor : inactiveColor;
+
+      presetContainer.style.display = mode === 'preset' ? 'grid' : 'none';
+      customContainer.style.display = mode === 'custom' ? 'block' : 'none';
+
+      if (mode === 'preset') {
+        renderPresetIconPicker();
+      }
+    }
+
     // Modal Actions
-    function openAddModal(type, targetCatId) {
+    function openAddModal(type, targetCatId, editBmId) {
       var modal = $('add-modal');
       var tabBm = $('tab-add-bm');
       var tabCat = $('tab-add-cat');
@@ -1760,6 +1914,30 @@
         catSelect.appendChild(opt);
       });
 
+      $('bm-id').value = '';
+      $('bm-title').value = '';
+      $('bm-url').value = '';
+      $('bm-custom-icon-url').value = '';
+      switchIconMode('favicon');
+
+      if (editBmId) {
+        var existingBm = data.bookmarks.find(function (b) { return b.id === editBmId; });
+        if (existingBm) {
+          $('bm-id').value = existingBm.id;
+          $('bm-title').value = existingBm.title;
+          $('bm-url').value = existingBm.url;
+          if (existingBm.icon && existingBm.icon.startsWith('preset:')) {
+            selectedPresetIconId = existingBm.icon.replace('preset:', '');
+            switchIconMode('preset');
+          } else if (existingBm.icon && (existingBm.icon.startsWith('http') || existingBm.icon.startsWith('data:'))) {
+            $('bm-custom-icon-url').value = existingBm.icon;
+            switchIconMode('custom');
+          } else {
+            switchIconMode('favicon');
+          }
+        }
+      }
+
       if (type === 'category') {
         tabBm.style.background = 'rgba(30, 41, 59, 0.6)';
         tabBm.style.color = '#94a3b8';
@@ -1775,7 +1953,7 @@
         tabCat.style.color = '#94a3b8';
         formBm.style.display = 'flex';
         formCat.style.display = 'none';
-        $('modal-title').textContent = 'Add Bookmark';
+        $('modal-title').textContent = editBmId ? 'Edit Bookmark' : 'Add Bookmark';
       }
 
       modal.classList.add('active');
@@ -1784,8 +1962,10 @@
     function closeAddModal() {
       var modal = $('add-modal');
       if (modal) modal.classList.remove('active');
+      $('bm-id').value = '';
       $('bm-title').value = '';
       $('bm-url').value = '';
+      $('bm-custom-icon-url').value = '';
       $('cat-title').value = '';
     }
 
@@ -1801,25 +1981,48 @@
       $('tab-add-bm').onclick = function () { openAddModal('bookmark'); };
       $('tab-add-cat').onclick = function () { openAddModal('category'); };
 
+      $('icon-tab-favicon').onclick = function () { switchIconMode('favicon'); };
+      $('icon-tab-preset').onclick = function () { switchIconMode('preset'); };
+      $('icon-tab-custom').onclick = function () { switchIconMode('custom'); };
+
       // Submit Bookmark Form
       $('form-add-bm').onsubmit = function (e) {
         e.preventDefault();
+        var bmId = $('bm-id').value;
         var title = $('bm-title').value.trim();
         var url = $('bm-url').value.trim();
         var categoryId = $('bm-category').value;
 
         if (!title || !url || !categoryId) return;
 
+        var iconVal = '';
+        if (selectedIconMode === 'preset') {
+          iconVal = 'preset:' + selectedPresetIconId;
+        } else if (selectedIconMode === 'custom') {
+          iconVal = $('bm-custom-icon-url').value.trim();
+        }
+
         var data = loadBookmarkData();
-        data.bookmarks.push({
-          id: 'bm_' + Date.now(),
-          categoryId: categoryId,
-          title: title,
-          url: url,
-          builtIn: false,
-          hidden: false,
-          order: data.bookmarks.length
-        });
+        if (bmId) {
+          var bm = data.bookmarks.find(function (b) { return b.id === bmId; });
+          if (bm) {
+            bm.title = title;
+            bm.url = url;
+            bm.categoryId = categoryId;
+            bm.icon = iconVal;
+          }
+        } else {
+          data.bookmarks.push({
+            id: 'bm_' + Date.now(),
+            categoryId: categoryId,
+            title: title,
+            url: url,
+            icon: iconVal,
+            builtIn: false,
+            hidden: false,
+            order: data.bookmarks.length
+          });
+        }
         saveBookmarkData(data);
         closeAddModal();
         renderBookmarksUI();
@@ -1849,6 +2052,14 @@
 
       // Bottom Bar Action Listeners
       $('bar-close').onclick = closeReorderBar;
+
+      $('bar-edit').onclick = function () {
+        if (!selectedItemState || selectedItemState.type !== 'bookmark') return;
+        var bmId = selectedItemState.id;
+        var catId = selectedItemState.categoryId;
+        closeReorderBar();
+        openAddModal('bookmark', catId, bmId);
+      };
 
       $('bar-move-top').onclick = function () {
         if (!selectedItemState) return;
