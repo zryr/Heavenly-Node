@@ -1456,7 +1456,10 @@
           var targetParent = window.document.body || window.document.documentElement;
           if (targetParent) targetParent.appendChild(dockContainer);
 
-          var isCollapsed = false;
+          var isCollapsed = true;
+          wrapper.classList.add('collapsed');
+          pullBtn.querySelector('span').style.transform = 'rotate(180deg)';
+
           var isDraggingDock = false;
           var hasMovedDock = false;
           var startX = 0, startY = 0;
