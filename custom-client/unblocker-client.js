@@ -534,6 +534,64 @@
     };
   }
 
+  function createInMemoryStorage() {
+    var store = {};
+    return {
+      getItem: function (key) {
+        return Object.prototype.hasOwnProperty.call(store, key) ? store[key] : null;
+      },
+      setItem: function (key, value) {
+        store[key] = String(value);
+      },
+      removeItem: function (key) {
+        delete store[key];
+      },
+      clear: function () {
+        store = {};
+      },
+      key: function (index) {
+        var keys = Object.keys(store);
+        return keys[index] !== undefined ? keys[index] : null;
+      },
+      get length() {
+        return Object.keys(store).length;
+      }
+    };
+  }
+
+  function initStoragePolyfill(window) {
+    try {
+      var dummyLocal = null;
+      try {
+        var _testLocal = window.localStorage;
+      } catch (e) {
+        dummyLocal = createInMemoryStorage();
+        try {
+          Object.defineProperty(window, "localStorage", {
+            get: function () {
+              return dummyLocal;
+            },
+            configurable: true,
+          });
+        } catch (err) {}
+      }
+
+      try {
+        var _testSession = window.sessionStorage;
+      } catch (e) {
+        var dummySession = createInMemoryStorage();
+        try {
+          Object.defineProperty(window, "sessionStorage", {
+            get: function () {
+              return dummySession;
+            },
+            configurable: true,
+          });
+        } catch (err) {}
+      }
+    } catch (e) {}
+  }
+
   function getStorage(win) {
     try {
       if (win && win.localStorage) {
@@ -2265,6 +2323,7 @@
 
   function initForWindow(config, window) {
     console.log("begin unblocker client scripts", config, window);
+    initStoragePolyfill(window);
     initElementPrototypes(config, window);
     initMutationObserverAndClicks(config, window);
     initXMLHttpRequest(config, window);
