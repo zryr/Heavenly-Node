@@ -59,4 +59,19 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('aria-live="polite"'), 'status element should have aria-live="polite"');
         assert.ok(html.includes('role="status"'), 'status element should have role="status"');
     });
+
+    it('should assign role="switch" to switch toggle checkboxes in settings.html', function() {
+        assert.ok(html.includes('id="set-auto-cloak" role="switch"'), 'set-auto-cloak should have role="switch"');
+        assert.ok(html.includes('id="set-persistent-cloak" role="switch"'), 'set-persistent-cloak should have role="switch"');
+        assert.ok(html.includes('id="set-use-widget-dock" role="switch"'), 'set-use-widget-dock should have role="switch"');
+    });
+
+    it('should attach Enter key event listener to custom preset title and icon inputs', function() {
+        assert.ok(html.includes('save-custom-preset-btn\').click()'), 'Enter key on custom inputs should trigger save-custom-preset-btn click');
+    });
+
+    it('should configure delete button disabled state and tooltip for built-in presets', function() {
+        assert.ok(html.includes('deleteBtn.disabled = isBuiltIn'), 'deleteBtn should set disabled based on isBuiltIn');
+        assert.ok(html.includes('Built-in presets cannot be deleted'), 'deleteBtn tooltip should explain built-in preset restriction');
+    });
 });

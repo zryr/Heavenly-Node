@@ -430,7 +430,7 @@
             <div class="hero-card-header">
               <label for="set-auto-cloak" class="hero-card-title">Auto Tab Cloaking</label>
               <label class="switch-toggle">
-                <input type="checkbox" id="set-auto-cloak">
+                <input type="checkbox" id="set-auto-cloak" role="switch">
                 <span class="slider-knob"></span>
               </label>
             </div>
@@ -442,7 +442,7 @@
             <div class="hero-card-header">
               <label for="set-persistent-cloak" class="hero-card-title">Persistent Cloaking</label>
               <label class="switch-toggle">
-                <input type="checkbox" id="set-persistent-cloak">
+                <input type="checkbox" id="set-persistent-cloak" role="switch">
                 <span class="slider-knob"></span>
               </label>
             </div>
@@ -517,7 +517,7 @@
             <div class="hero-card-header">
               <label for="set-panic-key-enable" class="hero-card-title">Panic Key Shortcut</label>
               <label class="switch-toggle">
-                <input type="checkbox" id="set-panic-key-enable">
+                <input type="checkbox" id="set-panic-key-enable" role="switch">
                 <span class="slider-knob"></span>
               </label>
             </div>
@@ -533,7 +533,7 @@
             <div class="hero-card-header">
               <label for="set-touch-panic" class="hero-card-title">Touch Panic Overlay</label>
               <label class="switch-toggle">
-                <input type="checkbox" id="set-touch-panic">
+                <input type="checkbox" id="set-touch-panic" role="switch">
                 <span class="slider-knob"></span>
               </label>
             </div>
@@ -563,7 +563,7 @@
             <div class="hero-card-header">
               <label for="set-show-scroll-lock" class="hero-card-title">Scroll Lock Widget</label>
               <label class="switch-toggle">
-                <input type="checkbox" id="set-show-scroll-lock" checked>
+                <input type="checkbox" id="set-show-scroll-lock" role="switch" checked>
                 <span class="slider-knob"></span>
               </label>
             </div>
@@ -575,7 +575,7 @@
             <div class="hero-card-header">
               <label for="set-show-magnifier" class="hero-card-title">Magnifier Widget</label>
               <label class="switch-toggle">
-                <input type="checkbox" id="set-show-magnifier" checked>
+                <input type="checkbox" id="set-show-magnifier" role="switch" checked>
                 <span class="slider-knob"></span>
               </label>
             </div>
@@ -587,7 +587,7 @@
             <div class="hero-card-header">
               <label for="set-show-nav-search" class="hero-card-title">Navigation Quick Search Bar</label>
               <label class="switch-toggle">
-                <input type="checkbox" id="set-show-nav-search" checked>
+                <input type="checkbox" id="set-show-nav-search" role="switch" checked>
                 <span class="slider-knob"></span>
               </label>
             </div>
@@ -599,7 +599,7 @@
             <div class="hero-card-header">
               <label for="set-show-nav-home" class="hero-card-title">Navigation Home Button</label>
               <label class="switch-toggle">
-                <input type="checkbox" id="set-show-nav-home" checked>
+                <input type="checkbox" id="set-show-nav-home" role="switch" checked>
                 <span class="slider-knob"></span>
               </label>
             </div>
@@ -611,7 +611,7 @@
             <div class="hero-card-header">
               <label for="set-use-widget-dock" class="hero-card-title">Enable Collapsible Widget Dock Bar</label>
               <label class="switch-toggle">
-                <input type="checkbox" id="set-use-widget-dock">
+                <input type="checkbox" id="set-use-widget-dock" role="switch">
                 <span class="slider-knob"></span>
               </label>
             </div>
@@ -736,6 +736,15 @@
         select.appendChild(opt);
       }
 
+      var deleteBtn = $('delete-custom-preset-btn');
+      if (deleteBtn) {
+        var isBuiltIn = !!DEFAULT_PRESETS[settings.selectedPreset];
+        deleteBtn.disabled = isBuiltIn;
+        deleteBtn.title = isBuiltIn ? 'Built-in presets cannot be deleted' : 'Delete custom preset';
+        deleteBtn.style.opacity = isBuiltIn ? '0.5' : '1';
+        deleteBtn.style.cursor = isBuiltIn ? 'not-allowed' : 'pointer';
+      }
+
       updateLivePreview();
     }
 
@@ -856,7 +865,16 @@
       });
 
       ['custom-title', 'custom-icon'].forEach(function (id) {
-        $(id).oninput = updateLivePreview;
+        var el = $(id);
+        if (el) {
+          el.oninput = updateLivePreview;
+          el.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+              e.preventDefault();
+              $('save-custom-preset-btn').click();
+            }
+          });
+        }
       });
 
       function showStatusMessage(msg, isError) {
