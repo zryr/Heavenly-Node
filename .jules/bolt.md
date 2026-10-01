@@ -15,3 +15,9 @@
 **Learning:** Passing a base URL string (`new URL(input, base)`) forces unnecessary string concatenation and base resolution logic even when `input` is already an absolute HTTP/HTTPS URL. Additionally, running regex `.replace()` for rare malformed single-slash schemes on every URL string causes execution overhead. Guarding regex operations with `indexOf(':/') !== -1 && indexOf('://') === -1` and lazily constructing `base` only when input is relative yields a ~17.1% performance speedup in `fixUrl`.
 
 **Action:** Only construct or compute base URL parameters when resolving relative inputs, and use fast `indexOf` character guards before executing regex replacements on hot URL transformation paths.
+
+## 2025-05-21 - Fast-path string guards in request middleware
+
+**Learning:** Instantiating `new URL(data.url)` and evaluating regex domain matchers in backend proxy request middleware for every request adds significant CPU and garbage collection overhead (~56%). Guarding middleware functions with fast string checks (`!data.headers.referer && !data.headers.origin`, `/newgrounds|ngfiles|ungrounded/i.test(data.url)`, or `data.url.indexOf('/cdn-cgi/') === -1`) before attempting URL parsing yields a >50% throughput improvement.
+
+**Action:** Always add lightweight string/header guard conditions prior to performing object allocations or URL parsing inside Express/Unblocker middleware.

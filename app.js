@@ -77,12 +77,13 @@ function googleAnalyticsMiddleware(data) {
 }
 
 function headersMiddleware(data) {
-    if (!data.url) return;
+    // Fast-path guard: Skip URL instantiation if no headers exist or if both referer and origin are missing
+    if (!data.url || !data.headers || (!data.headers.referer && !data.headers.origin)) return;
     try {
         var targetUri = data.uri || new URL(data.url);
 
         // Clean & normalize Referer header if present
-        if (data.headers && data.headers.referer) {
+        if (data.headers.referer) {
             var ref = data.headers.referer;
             ref = ref.replace(/^(https?:\/)([^\/])/i, '$1/$2');
             var proxyPrefixIndex = ref.indexOf(unblockerConfig.prefix);
@@ -95,7 +96,7 @@ function headersMiddleware(data) {
         }
 
         // Rewrite Origin header to target origin if set to proxy domain
-        if (data.headers && data.headers.origin && targetUri.origin) {
+        if (data.headers.origin && targetUri.origin) {
             data.headers.origin = targetUri.origin;
         }
     } catch (e) {
@@ -130,7 +131,8 @@ function responseLinkHeaderMiddleware(data) {
 }
 
 function newgroundsMiddleware(data) {
-    if (!data.url) return;
+    // Fast-path guard: Skip URL parsing & regex evaluation if URL doesn't contain target domain substrings
+    if (!data.url || !/newgrounds|ngfiles|ungrounded/i.test(data.url)) return;
     try {
         var parsed = data.uri || new URL(data.url);
         var hostname = parsed.hostname || parsed.host;
@@ -156,7 +158,8 @@ function newgroundsMiddleware(data) {
 }
 
 function cloudflareMiddleware(data) {
-    if (!data.url) return;
+    // Fast-path guard: Skip URL parsing if request URL does not contain /cdn-cgi/
+    if (!data.url || data.url.indexOf('/cdn-cgi/') === -1) return;
     try {
         var parsed = data.uri || new URL(data.url);
         var hostname = parsed.hostname || parsed.host;
