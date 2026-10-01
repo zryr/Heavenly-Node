@@ -1211,6 +1211,8 @@
           var rect = container.getBoundingClientRect();
           isMinimized = false;
           widgetElement.classList.remove('minimized');
+          widgetElement._justExpanded = true;
+          setTimeout(function () { widgetElement._justExpanded = false; }, 300);
 
           if (!isLeft) {
             // Right mode: expand leftwards from right-side circle
@@ -1221,6 +1223,15 @@
           enforceBoundaries();
           resetInactivityTimer();
         }
+
+        // Intercept capture-phase clicks immediately after expansion to prevent accidental button triggers (e.g. Home button)
+        widgetElement.addEventListener('click', function (e) {
+          if (widgetElement._justExpanded) {
+            e.stopPropagation();
+            e.preventDefault();
+            widgetElement._justExpanded = false;
+          }
+        }, true);
 
         // Attach 'X' button handler inside widget if present
         var closeBtn = widgetElement.querySelector('.btn-close-widget');
@@ -2226,16 +2237,27 @@
 
         var saveContainer = window.document.createElement('div');
         saveContainer.id = 'heavenly-folder-save-root';
+        saveContainer.style.cssText = 'position:fixed;bottom:70px;right:20px;z-index:2147483646;user-select:none;-webkit-user-select:none;font-family:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
+
+        // Restore position from localStorage
+        try {
+          var savedSavePos = localStorage.getItem('heavenly_save_widget_pos');
+          if (savedSavePos) {
+            var pos = JSON.parse(savedSavePos);
+            if (typeof pos.left === 'number' && typeof pos.top === 'number') {
+              saveContainer.style.bottom = 'auto';
+              saveContainer.style.right = 'auto';
+              saveContainer.style.left = pos.left + 'px';
+              saveContainer.style.top = pos.top + 'px';
+            }
+          }
+        } catch (e) {}
 
         var shadow = saveContainer.attachShadow ? saveContainer.attachShadow({ mode: 'open' }) : saveContainer;
 
         var style = window.document.createElement('style');
         style.textContent = [
           '.save-bar {',
-          '  position: fixed;',
-          '  bottom: 70px;',
-          '  right: 20px;',
-          '  z-index: 2147483646;',
           '  display: flex;',
           '  align-items: center;',
           '  gap: 8px;',
@@ -2245,11 +2267,11 @@
           '  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 18px rgba(56, 189, 248, 0.3);',
           '  padding: 8px 14px;',
           '  border-radius: 16px;',
-          '  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;',
           '  color: #f8fafc;',
           '  font-size: 13px;',
-          '  user-select: none;',
+          '  cursor: grab;',
           '}',
+          '.save-bar:active { cursor: grabbing; }',
           '.save-btn {',
           '  background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(99, 102, 241, 0.25) 100%);',
           '  color: #38bdf8;',
@@ -2279,25 +2301,26 @@
 
         var bar = window.document.createElement('div');
         bar.className = 'save-bar';
-        bar.style.cursor = 'grab';
 
-        // Make quick-save widget draggable across screen
+        // Make quick-save widget draggable across screen with movement threshold
         var isDraggingSave = false;
+        var hasMovedSave = false;
         var startX = 0, startY = 0;
-        var startRight = 20, startBottom = 70;
+        var startLeft = 0, startTop = 0;
 
         var onSaveStart = function (e) {
-          if (e.target.tagName === 'BUTTON') return;
+          if (e.target && e.target.classList && e.target.classList.contains('close-btn')) return;
           var touch = e.touches ? e.touches[0] : e;
           if (!touch) return;
 
           isDraggingSave = true;
+          hasMovedSave = false;
           startX = touch.clientX;
           startY = touch.clientY;
 
-          var rect = bar.getBoundingClientRect();
-          startRight = (window.innerWidth || 800) - rect.right;
-          startBottom = (window.innerHeight || 600) - rect.bottom;
+          var rect = saveContainer.getBoundingClientRect();
+          startLeft = rect.left;
+          startTop = rect.top;
 
           window.addEventListener('mousemove', onSaveMove, { passive: false, capture: true });
           window.addEventListener('mouseup', onSaveEnd, { capture: true });
@@ -2310,18 +2333,33 @@
           var touch = e.touches ? e.touches[0] : e;
           if (!touch) return;
 
-          if (e.cancelable && e.touches) e.preventDefault();
           var dx = touch.clientX - startX;
           var dy = touch.clientY - startY;
 
-          var newRight = Math.max(0, startRight - dx);
-          var newBottom = Math.max(0, startBottom - dy);
+          if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+            hasMovedSave = true;
+            if (e.cancelable) e.preventDefault();
+          }
 
-          bar.style.right = newRight + 'px';
-          bar.style.bottom = newBottom + 'px';
+          if (hasMovedSave) {
+            saveContainer.style.bottom = 'auto';
+            saveContainer.style.right = 'auto';
+
+            var maxLeft = (window.innerWidth || 800) - saveContainer.offsetWidth;
+            var maxTop = (window.innerHeight || 600) - saveContainer.offsetHeight;
+
+            saveContainer.style.left = Math.max(0, Math.min(startLeft + dx, maxLeft)) + 'px';
+            saveContainer.style.top = Math.max(0, Math.min(startTop + dy, maxTop)) + 'px';
+          }
         };
 
         var onSaveEnd = function () {
+          if (isDraggingSave && hasMovedSave) {
+            try {
+              var rect = saveContainer.getBoundingClientRect();
+              localStorage.setItem('heavenly_save_widget_pos', JSON.stringify({ left: rect.left, top: rect.top }));
+            } catch (err) {}
+          }
           isDraggingSave = false;
           window.removeEventListener('mousemove', onSaveMove, { capture: true });
           window.removeEventListener('mouseup', onSaveEnd, { capture: true });
@@ -2339,6 +2377,7 @@
 
         btn.onclick = function (e) {
           e.stopPropagation();
+          if (hasMovedSave) return;
           var title = window.__heavenlyOriginalTitle || window.document.title || targetUrl;
           var customTitle = prompt("Save page to folder '" + matchedFolder.title + "':", title);
           if (customTitle === null) return;
@@ -2390,7 +2429,15 @@
       var targetUrl = (config && config.url) ? config.url : '';
       if (!targetUrl && window.location) targetUrl = window.location.href;
 
-      if (!/(^|\.)newgrounds\.com/i.test(targetUrl)) return;
+      var urlObj;
+      try {
+        urlObj = new URL(targetUrl.startsWith('http') ? targetUrl : 'https://' + targetUrl);
+      } catch (e) {
+        return;
+      }
+
+      if (!/(^|\.)newgrounds\.com$/i.test(urlObj.hostname)) return;
+      if (!urlObj.pathname.toLowerCase().startsWith('/games')) return;
 
       function setupPagination() {
         if (!window.document || !window.document.body) return;
