@@ -1457,8 +1457,94 @@
           if (targetParent) targetParent.appendChild(dockContainer);
 
           var isCollapsed = false;
+          var isDraggingDock = false;
+          var hasMovedDock = false;
+          var startX = 0, startY = 0;
+
+          var onDockStart = function (e) {
+            var target = e.target;
+            if (target && (target.tagName === 'INPUT' || (target.tagName === 'BUTTON' && target !== pullBtn && !pullBtn.contains(target)))) {
+              return;
+            }
+            var touch = e.touches ? e.touches[0] : e;
+            if (!touch) return;
+
+            isDraggingDock = true;
+            hasMovedDock = false;
+            startX = touch.clientX;
+            startY = touch.clientY;
+
+            window.addEventListener('mousemove', onDockMove, { passive: false, capture: true });
+            window.addEventListener('mouseup', onDockEnd, { capture: true });
+            window.addEventListener('touchmove', onDockMove, { passive: false, capture: true });
+            window.addEventListener('touchend', onDockEnd, { capture: true });
+          };
+
+          var onDockMove = function (e) {
+            if (!isDraggingDock) return;
+            var touch = e.touches ? e.touches[0] : e;
+            if (!touch) return;
+
+            var dx = touch.clientX - startX;
+            var dy = touch.clientY - startY;
+
+            if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+              hasMovedDock = true;
+              if (e.cancelable) e.preventDefault();
+            }
+          };
+
+          var onDockEnd = function (e) {
+            if (isDraggingDock && hasMovedDock) {
+              var touch = e.changedTouches ? e.changedTouches[0] : (e.touches ? e.touches[0] : e);
+              var curX = touch ? touch.clientX : startX;
+              var curY = touch ? touch.clientY : startY;
+
+              var winW = window.innerWidth || 800;
+              var winH = window.innerHeight || 600;
+
+              var distLeft = curX;
+              var distRight = winW - curX;
+              var distTop = curY;
+              var distBottom = winH - curY;
+
+              var minDist = Math.min(distLeft, distRight, distTop, distBottom);
+              var newPos = 'bottom';
+              if (minDist === distLeft) newPos = 'left';
+              else if (minDist === distRight) newPos = 'right';
+              else if (minDist === distTop) newPos = 'top';
+              else if (minDist === distBottom) newPos = 'bottom';
+
+              dockPosition = newPos;
+              wrapper.className = 'dock-wrapper dock-' + dockPosition + (isCollapsed ? ' collapsed' : '');
+
+              var arrow = '▼';
+              if (dockPosition === 'bottom') arrow = '▼';
+              else if (dockPosition === 'top') arrow = '▲';
+              else if (dockPosition === 'left') arrow = '◄';
+              else if (dockPosition === 'right') arrow = '►';
+              pullBtn.querySelector('span').textContent = arrow;
+
+              // Save to localStorage settings
+              try {
+                var s = loadHeavenlySettings(window);
+                s.dockPosition = newPos;
+                localStorage.setItem('heavenly_settings', JSON.stringify(s));
+              } catch (err) {}
+            }
+            isDraggingDock = false;
+            window.removeEventListener('mousemove', onDockMove, { capture: true });
+            window.removeEventListener('mouseup', onDockEnd, { capture: true });
+            window.removeEventListener('touchmove', onDockMove, { capture: true });
+            window.removeEventListener('touchend', onDockEnd, { capture: true });
+          };
+
+          pullBtn.addEventListener('mousedown', onDockStart);
+          pullBtn.addEventListener('touchstart', onDockStart, { passive: false });
+
           pullBtn.addEventListener('click', function (e) {
             e.stopPropagation();
+            if (hasMovedDock) return;
             isCollapsed = !isCollapsed;
             if (isCollapsed) {
               wrapper.classList.add('collapsed');
