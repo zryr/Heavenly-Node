@@ -2279,6 +2279,58 @@
 
         var bar = window.document.createElement('div');
         bar.className = 'save-bar';
+        bar.style.cursor = 'grab';
+
+        // Make quick-save widget draggable across screen
+        var isDraggingSave = false;
+        var startX = 0, startY = 0;
+        var startRight = 20, startBottom = 70;
+
+        var onSaveStart = function (e) {
+          if (e.target.tagName === 'BUTTON') return;
+          var touch = e.touches ? e.touches[0] : e;
+          if (!touch) return;
+
+          isDraggingSave = true;
+          startX = touch.clientX;
+          startY = touch.clientY;
+
+          var rect = bar.getBoundingClientRect();
+          startRight = (window.innerWidth || 800) - rect.right;
+          startBottom = (window.innerHeight || 600) - rect.bottom;
+
+          window.addEventListener('mousemove', onSaveMove, { passive: false, capture: true });
+          window.addEventListener('mouseup', onSaveEnd, { capture: true });
+          window.addEventListener('touchmove', onSaveMove, { passive: false, capture: true });
+          window.addEventListener('touchend', onSaveEnd, { capture: true });
+        };
+
+        var onSaveMove = function (e) {
+          if (!isDraggingSave) return;
+          var touch = e.touches ? e.touches[0] : e;
+          if (!touch) return;
+
+          if (e.cancelable && e.touches) e.preventDefault();
+          var dx = touch.clientX - startX;
+          var dy = touch.clientY - startY;
+
+          var newRight = Math.max(0, startRight - dx);
+          var newBottom = Math.max(0, startBottom - dy);
+
+          bar.style.right = newRight + 'px';
+          bar.style.bottom = newBottom + 'px';
+        };
+
+        var onSaveEnd = function () {
+          isDraggingSave = false;
+          window.removeEventListener('mousemove', onSaveMove, { capture: true });
+          window.removeEventListener('mouseup', onSaveEnd, { capture: true });
+          window.removeEventListener('touchmove', onSaveMove, { capture: true });
+          window.removeEventListener('touchend', onSaveEnd, { capture: true });
+        };
+
+        bar.addEventListener('mousedown', onSaveStart);
+        bar.addEventListener('touchstart', onSaveStart, { passive: false });
 
         var btn = window.document.createElement('button');
         btn.type = 'button';

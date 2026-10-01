@@ -560,6 +560,23 @@
       letter-spacing: -0.01em;
     }
 
+    /* Drag and Drop styling */
+    .section-card.drag-over {
+      border-color: #38bdf8 !important;
+      background: rgba(56, 189, 248, 0.15) !important;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.4) !important;
+    }
+
+    .side-column.drag-over, .bottom-section-container.drag-over {
+      outline: 2px dashed #38bdf8;
+      outline-offset: 4px;
+      border-radius: 18px;
+    }
+
+    .section-card.dragging, .bookmark-card.dragging {
+      opacity: 0.4;
+    }
+
     /* 4 Transparent Dots Drag Handle :: */
     .drag-dots-handle {
       display: inline-flex;
@@ -1023,6 +1040,10 @@
     <button id="bar-edit" type="button" class="bar-btn bar-btn-primary" style="display: none;">
       <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
       <span>Edit</span>
+    </button>
+    <button id="bar-move-cat" type="button" class="bar-btn bar-btn-primary" style="display: none;">
+      <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+      <span>Move Section</span>
     </button>
     <button id="bar-move-top" type="button" class="bar-btn bar-btn-primary">
       <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
@@ -1620,6 +1641,7 @@
       var info = $('bar-target-info');
       var sideBtn = $('bar-move-side');
       var editBtn = $('bar-edit');
+      var moveCatBtn = $('bar-move-cat');
 
       if (info) info.textContent = item.title;
       if (sideBtn) {
@@ -1627,6 +1649,9 @@
       }
       if (editBtn) {
         editBtn.style.display = item.type === 'bookmark' ? 'inline-flex' : 'none';
+      }
+      if (moveCatBtn) {
+        moveCatBtn.style.display = item.type === 'bookmark' ? 'inline-flex' : 'none';
       }
       if (bar) bar.classList.add('active');
     }
@@ -1686,6 +1711,20 @@
         var card = document.createElement('div');
         card.className = 'section-card';
         card.setAttribute('data-category-id', cat.id);
+        card.setAttribute('draggable', 'true');
+
+        // HTML5 Drag and drop for Category Sections
+        card.ondragstart = function (e) {
+          e.stopPropagation();
+          card.classList.add('dragging');
+          e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'category', id: cat.id }));
+          e.dataTransfer.effectAllowed = 'move';
+        };
+
+        card.ondragend = function () {
+          card.classList.remove('dragging');
+          document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
+        };
 
         // Header
         var header = document.createElement('div');
@@ -1759,6 +1798,40 @@
         header.appendChild(addBmBtn);
         card.appendChild(header);
 
+        // Allow dropping bookmarks into category card
+        card.ondragover = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.dataTransfer.dropEffect = 'move';
+          card.classList.add('drag-over');
+        };
+
+        card.ondragleave = function (e) {
+          e.stopPropagation();
+          card.classList.remove('drag-over');
+        };
+
+        card.ondrop = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          card.classList.remove('drag-over');
+          try {
+            var raw = e.dataTransfer.getData('text/plain');
+            if (!raw) return;
+            var dragData = JSON.parse(raw);
+            if (dragData.type === 'bookmark') {
+              var allData = loadBookmarkData();
+              var bm = allData.bookmarks.find(function (b) { return b.id === dragData.id; });
+              if (bm && bm.categoryId !== cat.id) {
+                bm.categoryId = cat.id;
+                bm.order = 999; // Move to end of category
+                saveBookmarkData(allData);
+                renderBookmarksUI();
+              }
+            }
+          } catch (err) {}
+        };
+
         // Bookmarks List
         var listContainer = document.createElement('div');
         listContainer.className = 'bookmarks-list';
@@ -1778,6 +1851,21 @@
 
           var bmCard = document.createElement(bm.type === 'folder' ? 'div' : 'a');
           bmCard.className = 'bookmark-card';
+          bmCard.setAttribute('draggable', 'true');
+          bmCard.setAttribute('data-bm-id', bm.id);
+
+          bmCard.ondragstart = function (e) {
+            e.stopPropagation();
+            bmCard.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'bookmark', id: bm.id, categoryId: cat.id }));
+            e.dataTransfer.effectAllowed = 'move';
+          };
+
+          bmCard.ondragend = function () {
+            bmCard.classList.remove('dragging');
+            document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
+          };
+
           if (bm.type !== 'folder') {
             bmCard.target = '_blank';
             bmCard.rel = 'noopener';
@@ -2186,8 +2274,45 @@
       $('cat-title').value = '';
     }
 
+    function setupContainerDropTarget(containerEl, sideName) {
+      if (!containerEl) return;
+
+      containerEl.ondragover = function (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        containerEl.classList.add('drag-over');
+      };
+
+      containerEl.ondragleave = function () {
+        containerEl.classList.remove('drag-over');
+      };
+
+      containerEl.ondrop = function (e) {
+        e.preventDefault();
+        containerEl.classList.remove('drag-over');
+        try {
+          var raw = e.dataTransfer.getData('text/plain');
+          if (!raw) return;
+          var dragData = JSON.parse(raw);
+          if (dragData.type === 'category') {
+            var data = loadBookmarkData();
+            var cat = data.categories.find(function (c) { return c.id === dragData.id; });
+            if (cat && cat.side !== sideName) {
+              cat.side = sideName;
+              saveBookmarkData(data);
+              renderBookmarksUI();
+            }
+          }
+        } catch (err) {}
+      };
+    }
+
     function initBookmarksManager() {
       renderBookmarksUI();
+
+      setupContainerDropTarget($('left-column'), 'left');
+      setupContainerDropTarget($('right-column'), 'right');
+      setupContainerDropTarget($('bottom-container'), 'bottom');
 
       var searchInput = $('bm-universal-search');
       if (searchInput) {
@@ -2296,23 +2421,50 @@
         openAddModal('bookmark', catId, bmId);
       };
 
+      $('bar-move-cat').onclick = function () {
+        if (!selectedItemState || selectedItemState.type !== 'bookmark') return;
+        var data = loadBookmarkData();
+        var bm = data.bookmarks.find(function (b) { return b.id === selectedItemState.id; });
+        if (!bm) return;
+
+        var availableCats = data.categories.filter(function (c) { return !c.hidden; });
+        if (availableCats.length === 0) return;
+
+        var catNames = availableCats.map(function (c, i) { return (i + 1) + '. ' + c.title; }).join('\n');
+        var choice = prompt('Select Section to move to:\n' + catNames + '\n\nEnter number:');
+        if (!choice) return;
+
+        var idx = parseInt(choice, 10) - 1;
+        if (isNaN(idx) || idx < 0 || idx >= availableCats.length) return;
+
+        bm.categoryId = availableCats[idx].id;
+        bm.order = 999;
+        saveBookmarkData(data);
+        closeReorderBar();
+        renderBookmarksUI();
+      };
+
       $('bar-move-top').onclick = function () {
         if (!selectedItemState) return;
         var data = loadBookmarkData();
         if (selectedItemState.type === 'category') {
-          var cat = data.categories.find(function (c) { return c.id === selectedItemState.id; });
-          if (cat) {
-            cat.order = -1;
-            data.categories.forEach(function (c, idx) { if (c.id !== cat.id) c.order = idx + 1; });
+          var sideCats = data.categories.filter(function (c) { return !c.hidden; });
+          sideCats.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+          var targetCat = sideCats.find(function (c) { return c.id === selectedItemState.id; });
+          if (targetCat) {
+            sideCats = sideCats.filter(function (c) { return c.id !== targetCat.id; });
+            sideCats.unshift(targetCat);
+            sideCats.forEach(function (c, idx) { c.order = idx; });
             saveBookmarkData(data);
           }
         } else if (selectedItemState.type === 'bookmark') {
-          var bm = data.bookmarks.find(function (b) { return b.id === selectedItemState.id; });
-          if (bm) {
-            bm.order = -1;
-            data.bookmarks.filter(function (b) { return b.categoryId === bm.categoryId; }).forEach(function (b, idx) {
-              if (b.id !== bm.id) b.order = idx + 1;
-            });
+          var targetBm = data.bookmarks.find(function (b) { return b.id === selectedItemState.id; });
+          if (targetBm) {
+            var catBms = data.bookmarks.filter(function (b) { return b.categoryId === targetBm.categoryId && !b.hidden; });
+            catBms.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+            catBms = catBms.filter(function (b) { return b.id !== targetBm.id; });
+            catBms.unshift(targetBm);
+            catBms.forEach(function (b, idx) { b.order = idx; });
             saveBookmarkData(data);
           }
         }
@@ -2324,15 +2476,23 @@
         if (!selectedItemState) return;
         var data = loadBookmarkData();
         if (selectedItemState.type === 'category') {
-          var cat = data.categories.find(function (c) { return c.id === selectedItemState.id; });
-          if (cat) {
-            cat.order = 999;
+          var sideCats = data.categories.filter(function (c) { return !c.hidden; });
+          sideCats.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+          var targetCat = sideCats.find(function (c) { return c.id === selectedItemState.id; });
+          if (targetCat) {
+            sideCats = sideCats.filter(function (c) { return c.id !== targetCat.id; });
+            sideCats.push(targetCat);
+            sideCats.forEach(function (c, idx) { c.order = idx; });
             saveBookmarkData(data);
           }
         } else if (selectedItemState.type === 'bookmark') {
-          var bm = data.bookmarks.find(function (b) { return b.id === selectedItemState.id; });
-          if (bm) {
-            bm.order = 999;
+          var targetBm = data.bookmarks.find(function (b) { return b.id === selectedItemState.id; });
+          if (targetBm) {
+            var catBms = data.bookmarks.filter(function (b) { return b.categoryId === targetBm.categoryId && !b.hidden; });
+            catBms.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+            catBms = catBms.filter(function (b) { return b.id !== targetBm.id; });
+            catBms.push(targetBm);
+            catBms.forEach(function (b, idx) { b.order = idx; });
             saveBookmarkData(data);
           }
         }
