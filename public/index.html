@@ -1738,6 +1738,12 @@
       avatarWidth = rect.width;
       clone.style.width = avatarWidth + 'px';
 
+      // Fallback if initial coordinates are (0,0) or missing (common in HTML5 dragstart events)
+      if ((!mouseX && !mouseY) || (mouseX === 0 && mouseY === 0)) {
+        mouseX = rect.left + rect.width / 2;
+        mouseY = rect.top + rect.height / 2;
+      }
+
       avatarX = mouseX - avatarWidth / 2;
       avatarY = mouseY - 20;
       clone.style.transform = 'translate3d(' + avatarX + 'px, ' + avatarY + 'px, 0px) scale(1.05) rotate(1.5deg)';
@@ -1748,6 +1754,9 @@
 
     function updatePopoutAvatar(mouseX, mouseY) {
       if (!activePopoutAvatar) return;
+      // Ignore invalid (0,0) coordinates sent by native dragover/drag events
+      if (mouseX === 0 && mouseY === 0) return;
+
       avatarX = mouseX - avatarWidth / 2;
       avatarY = mouseY - 20;
 
