@@ -2174,6 +2174,164 @@
     } catch (e) {}
   }
 
+  function initFolderQuickSaveWidget(config, window) {
+    try {
+      if (window !== window.top) return;
+      var targetUrl = (config && config.url) ? config.url : '';
+      if (!targetUrl && window.location) {
+        var path = window.location.pathname;
+        var prefix = (config && config.prefix) ? config.prefix : '/proxy/';
+        if (path.startsWith(prefix)) {
+          targetUrl = path.substr(prefix.length) + window.location.search + window.location.hash;
+        }
+      }
+
+      if (!targetUrl || targetUrl.startsWith('about:') || targetUrl.startsWith('data:')) return;
+
+      var currentHost = '';
+      try {
+        var u = new URL(targetUrl.startsWith('http') ? targetUrl : 'https://' + targetUrl);
+        currentHost = u.hostname.toLowerCase();
+      } catch (e) {
+        return;
+      }
+
+      var storage = window.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (!storage) return;
+
+      var raw = storage.getItem('heavenly_bookmarks');
+      if (!raw) return;
+
+      var data = JSON.parse(raw);
+      if (!data || !data.bookmarks) return;
+
+      // Find matching Folder or Folder-Bookmark
+      var matchedFolder = data.bookmarks.find(function (bm) {
+        if (bm.hidden) return false;
+        if (bm.type !== 'folder' && bm.type !== 'folder_bookmark') return false;
+        if (!bm.url) return false;
+        try {
+          var folderHost = new URL(bm.url.startsWith('http') ? bm.url : 'https://' + bm.url).hostname.toLowerCase();
+          return currentHost === folderHost || currentHost.endsWith('.' + folderHost);
+        } catch (e) {
+          return false;
+        }
+      });
+
+      if (!matchedFolder) return;
+
+      function setupWidget() {
+        if (!window.document || !window.document.body) return;
+        if (window.document.getElementById('heavenly-folder-save-root')) return;
+
+        var saveContainer = window.document.createElement('div');
+        saveContainer.id = 'heavenly-folder-save-root';
+
+        var shadow = saveContainer.attachShadow ? saveContainer.attachShadow({ mode: 'open' }) : saveContainer;
+
+        var style = window.document.createElement('style');
+        style.textContent = [
+          '.save-bar {',
+          '  position: fixed;',
+          '  bottom: 70px;',
+          '  right: 20px;',
+          '  z-index: 2147483646;',
+          '  display: flex;',
+          '  align-items: center;',
+          '  gap: 8px;',
+          '  background: rgba(15, 23, 42, 0.92);',
+          '  backdrop-filter: blur(16px);',
+          '  border: 1px solid rgba(56, 189, 248, 0.4);',
+          '  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 18px rgba(56, 189, 248, 0.3);',
+          '  padding: 8px 14px;',
+          '  border-radius: 16px;',
+          '  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;',
+          '  color: #f8fafc;',
+          '  font-size: 13px;',
+          '  user-select: none;',
+          '}',
+          '.save-btn {',
+          '  background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(99, 102, 241, 0.25) 100%);',
+          '  color: #38bdf8;',
+          '  border: 1px solid rgba(56, 189, 248, 0.5);',
+          '  padding: 6px 12px;',
+          '  border-radius: 10px;',
+          '  cursor: pointer;',
+          '  font-weight: 700;',
+          '  font-size: 12px;',
+          '  transition: all 0.2s ease;',
+          '  display: inline-flex;',
+          '  align-items: center;',
+          '  gap: 6px;',
+          '}',
+          '.save-btn:hover {',
+          '  background: rgba(56, 189, 248, 0.4);',
+          '  color: #ffffff;',
+          '  border-color: #38bdf8;',
+          '  transform: translateY(-1px);',
+          '}',
+          '.close-btn {',
+          '  background: none; border: none; color: #94a3b8; font-size: 13px;',
+          '  cursor: pointer; padding: 2px 4px; line-height: 1;',
+          '}',
+          '.close-btn:hover { color: #ef4444; }'
+        ].join('\n');
+
+        var bar = window.document.createElement('div');
+        bar.className = 'save-bar';
+
+        var btn = window.document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'save-btn';
+        btn.innerHTML = '📁 Save to ' + matchedFolder.title;
+
+        btn.onclick = function (e) {
+          e.stopPropagation();
+          var title = window.__heavenlyOriginalTitle || window.document.title || targetUrl;
+          var customTitle = prompt("Save page to folder '" + matchedFolder.title + "':", title);
+          if (customTitle === null) return;
+
+          var freshRaw = storage.getItem('heavenly_bookmarks');
+          var freshData = freshRaw ? JSON.parse(freshRaw) : data;
+          var targetBm = freshData.bookmarks.find(function (b) { return b.id === matchedFolder.id; });
+          if (targetBm) {
+            if (!targetBm.subBookmarks) targetBm.subBookmarks = [];
+            targetBm.subBookmarks.push({
+              id: 'sub_' + Date.now(),
+              title: customTitle.trim() || title,
+              url: targetUrl,
+              icon: ''
+            });
+            storage.setItem('heavenly_bookmarks', JSON.stringify(freshData));
+            window.alert("✅ Saved page to " + matchedFolder.title + "!");
+          }
+        };
+
+        var closeBtn = window.document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'close-btn';
+        closeBtn.textContent = '✕';
+        closeBtn.onclick = function (e) {
+          e.stopPropagation();
+          saveContainer.remove();
+        };
+
+        bar.appendChild(btn);
+        bar.appendChild(closeBtn);
+
+        shadow.appendChild(style);
+        shadow.appendChild(bar);
+        window.document.body.appendChild(saveContainer);
+      }
+
+      if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {
+        setupWidget();
+      } else if (window.document) {
+        window.document.addEventListener('DOMContentLoaded', setupWidget);
+      }
+    } catch (e) {}
+  }
+
   function initNewgroundsPagination(config, window) {
     try {
       if (window !== window.top) return;
@@ -2327,6 +2485,7 @@
     var settings = loadHeavenlySettings(window);
     initHeavenlyCloakAndPanic(window, settings, config);
     initHeavenlyWidgets(window, settings, config);
+    initFolderQuickSaveWidget(config, window);
     initNewgroundsPagination(config, window);
 
     if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {

@@ -714,7 +714,7 @@
       border-radius: 20px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.3);
       padding: 10px 18px;
-      display: flex;
+      display: none;
       align-items: center;
       gap: 10px;
       transition: bottom 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -726,6 +726,7 @@
     }
 
     .reorder-action-bar.active {
+      display: flex;
       bottom: 24px;
     }
 
@@ -965,11 +966,14 @@
         <input type="submit" value="Go" />
       </form>
 
+      <!-- Universal Bookmark Search -->
+      <div style="margin-bottom: 20px;">
+        <div style="position: relative; width: 100%;">
+          <input type="text" id="bm-universal-search" placeholder="🔍 Search bookmarks, folders & categories..." autocomplete="off" aria-label="Search bookmarks and folders" style="padding-left: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); font-size: 0.9rem;" />
+        </div>
+      </div>
+
       <div class="header-actions-group" style="margin-top: 4px; margin-bottom: 24px;">
-        <button id="open-add-modal-btn" type="button" class="add-category-btn">
-          <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          <span>Add Bookmark / Category</span>
-        </button>
         <a href="settings.html" id="open-settings-btn" class="settings-btn" aria-label="Settings and privacy controls page">
           <svg style="width: 18px; height: 18px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
           <span>Settings & Cloaking</span>
@@ -990,6 +994,13 @@
         <h3>About Heavenly</h3>
         <p>Heavenly is a fast, streamlined web proxy built to provide smooth web browsing and uninterrupted data streaming.</p>
         <p>It processes web responses dynamically in real time without buffering whole pages, preserving original relative URLs and site speed.</p>
+
+        <div style="margin-top: 16px; text-align: center;">
+          <button id="open-add-modal-btn" type="button" class="add-category-btn">
+            <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>Add Bookmark / Category</span>
+          </button>
+        </div>
       </div>
 
       <div class="footer">
@@ -1050,12 +1061,23 @@
       <form id="form-add-bm" style="display: flex; flex-direction: column; gap: 12px;">
         <input type="hidden" id="bm-id" value="" />
         <div class="form-group">
+          <label class="form-label" for="bm-type">Item Type</label>
+          <select id="bm-type" class="form-select">
+            <option value="bookmark">Standard Bookmark (Site Link)</option>
+            <option value="folder_bookmark">Folder-Bookmark (Site Link + Expandable Folder)</option>
+            <option value="folder">Normal Folder (Expandable Container Only)</option>
+          </select>
+          <div id="bm-type-explain" style="font-size: 0.78rem; color: #94a3b8; margin-top: 4px; line-height: 1.4;">
+            Standard Bookmark: Opens site link in a new tab.
+          </div>
+        </div>
+        <div class="form-group">
           <label class="form-label" for="bm-title">Title</label>
           <input type="text" id="bm-title" class="form-input" placeholder="e.g. Newgrounds" required />
         </div>
-        <div class="form-group">
+        <div class="form-group" id="group-bm-url">
           <label class="form-label" for="bm-url">URL</label>
-          <input type="text" id="bm-url" class="form-input" placeholder="https://example.com" required />
+          <input type="text" id="bm-url" class="form-input" placeholder="https://example.com" />
         </div>
         <div class="form-group">
           <label class="form-label" for="bm-category">Category Section</label>
@@ -1529,11 +1551,12 @@
         { id: "cat_games", title: "Games", side: "right", order: 0, builtIn: true, hidden: false }
       ],
       bookmarks: [
-        { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 0 }
+        { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 0, subBookmarks: [] }
       ]
     };
 
     var expandedCategories = {};
+    var expandedFolders = {};
     var selectedIconMode = 'favicon'; // 'favicon' | 'preset' | 'custom'
     var selectedPresetIconId = 'gamepad';
 
@@ -1629,12 +1652,36 @@
       rightCol.innerHTML = '';
       bottomCol.innerHTML = '';
 
+      var searchQuery = ($('bm-universal-search') ? $('bm-universal-search').value.trim().toLowerCase() : '');
+
       var cats = data.categories.filter(function (c) { return !c.hidden; });
       cats.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
 
       cats.forEach(function (cat) {
         var bms = data.bookmarks.filter(function (b) { return b.categoryId === cat.id && !b.hidden; });
         bms.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+
+        // Filter bookmarks by search query if active
+        if (searchQuery) {
+          var catMatches = cat.title.toLowerCase().includes(searchQuery);
+          bms = bms.filter(function (bm) {
+            if (catMatches) return true;
+            var titleMatch = (bm.title || '').toLowerCase().includes(searchQuery);
+            var urlMatch = (bm.url || '').toLowerCase().includes(searchQuery);
+            var subMatch = false;
+            if (bm.subBookmarks) {
+              subMatch = bm.subBookmarks.some(function (sb) {
+                return (sb.title || '').toLowerCase().includes(searchQuery) || (sb.url || '').toLowerCase().includes(searchQuery);
+              });
+            }
+            return titleMatch || urlMatch || subMatch;
+          });
+
+          // Skip category if neither category title nor any bookmark inside matches
+          if (!catMatches && bms.length === 0) {
+            return;
+          }
+        }
 
         var card = document.createElement('div');
         card.className = 'section-card';
@@ -1653,7 +1700,6 @@
         handle.title = 'Long-press or click to reorder category';
         handle.innerHTML = '<div class="dots-grid"><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div></div>';
 
-        // Interaction logic for category handle
         var pressTimer = null;
         var startX = 0, startY = 0;
 
@@ -1718,17 +1764,62 @@
         listContainer.className = 'bookmarks-list';
 
         var limit = 4; // default limit for vertical side columns
-        var isExpanded = !!expandedCategories[cat.id];
+        var isExpanded = !!expandedCategories[cat.id] || !!searchQuery;
         var visibleBms = isExpanded ? bms : bms.slice(0, limit);
 
         visibleBms.forEach(function (bm) {
-          var bmCard = document.createElement('a');
+          var isFolderType = bm.type === 'folder' || bm.type === 'folder_bookmark';
+          var isFolderExpanded = !!expandedFolders[bm.id] || !!searchQuery;
+
+          var bmWrapper = document.createElement('div');
+          bmWrapper.style.display = 'flex';
+          bmWrapper.style.flexDirection = 'column';
+          bmWrapper.style.gap = '4px';
+
+          var bmCard = document.createElement(bm.type === 'folder' ? 'div' : 'a');
           bmCard.className = 'bookmark-card';
-          var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + (bm.url.startsWith('http') ? bm.url : 'https://' + bm.url);
-          bmCard.href = proxiedUrl;
+          if (bm.type !== 'folder') {
+            bmCard.target = '_blank';
+            bmCard.rel = 'noopener';
+            var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + (bm.url.startsWith('http') ? bm.url : 'https://' + bm.url);
+            bmCard.href = proxiedUrl;
+          } else {
+            bmCard.style.cursor = 'pointer';
+            bmCard.onclick = function (e) {
+              if (!e.target.closest('.drag-dots-handle') && !e.target.closest('.folder-expand-btn')) {
+                expandedFolders[bm.id] = !expandedFolders[bm.id];
+                renderBookmarksUI();
+              }
+            };
+          }
 
           var bmLeft = document.createElement('div');
           bmLeft.className = 'bookmark-card-left';
+
+          // Folder Expand Arrow (>) for Folder-Bookmarks and Normal Folders
+          if (isFolderType) {
+            var expandBtn = document.createElement('button');
+            expandBtn.type = 'button';
+            expandBtn.className = 'folder-expand-btn';
+            expandBtn.title = isFolderExpanded ? 'Collapse folder' : 'Expand folder';
+            expandBtn.style.background = 'none';
+            expandBtn.style.border = 'none';
+            expandBtn.style.color = '#38bdf8';
+            expandBtn.style.fontWeight = 'bold';
+            expandBtn.style.cursor = 'pointer';
+            expandBtn.style.fontSize = '0.9rem';
+            expandBtn.style.padding = '2px 4px';
+            expandBtn.style.transform = isFolderExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
+            expandBtn.style.transition = 'transform 0.2s ease';
+            expandBtn.textContent = '>';
+            expandBtn.onclick = function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              expandedFolders[bm.id] = !expandedFolders[bm.id];
+              renderBookmarksUI();
+            };
+            bmLeft.appendChild(expandBtn);
+          }
 
           var bmIconEl = renderIconElement(bm.icon, bm.url, bm.title);
 
@@ -1786,13 +1877,113 @@
 
           bmCard.appendChild(bmLeft);
           bmCard.appendChild(bmHandle);
-          listContainer.appendChild(bmCard);
+          bmWrapper.appendChild(bmCard);
+
+          // Render Sub-Bookmarks if folder is expanded
+          if (isFolderType && isFolderExpanded) {
+            var subContainer = document.createElement('div');
+            subContainer.style.display = 'flex';
+            subContainer.style.flexDirection = 'column';
+            subContainer.style.gap = '6px';
+            subContainer.style.paddingLeft = '18px';
+            subContainer.style.borderLeft = '2px dashed rgba(56, 189, 248, 0.3)';
+            subContainer.style.marginTop = '2px';
+
+            var subBms = bm.subBookmarks || [];
+            if (searchQuery) {
+              subBms = subBms.filter(function (sb) {
+                return (sb.title || '').toLowerCase().includes(searchQuery) || (sb.url || '').toLowerCase().includes(searchQuery);
+              });
+            }
+
+            subBms.forEach(function (sb, sbIdx) {
+              var sbCard = document.createElement('a');
+              sbCard.className = 'bookmark-card';
+              sbCard.target = '_blank';
+              sbCard.rel = 'noopener';
+              sbCard.style.padding = '6px 10px';
+              sbCard.style.fontSize = '0.82rem';
+              sbCard.style.background = 'rgba(15, 23, 42, 0.6)';
+
+              var sbProxiedUrl = location.protocol + '//' + location.host + '/proxy/' + (sb.url.startsWith('http') ? sb.url : 'https://' + sb.url);
+              sbCard.href = sbProxiedUrl;
+
+              var sbLeft = document.createElement('div');
+              sbLeft.className = 'bookmark-card-left';
+
+              var sbIconEl = renderIconElement(sb.icon, sb.url, sb.title);
+
+              var sbTitle = document.createElement('span');
+              sbTitle.className = 'bookmark-title';
+              sbTitle.textContent = sb.title;
+
+              sbLeft.appendChild(sbIconEl);
+              sbLeft.appendChild(sbTitle);
+
+              var sbDelBtn = document.createElement('button');
+              sbDelBtn.type = 'button';
+              sbDelBtn.title = 'Delete sub-bookmark';
+              sbDelBtn.style.background = 'none';
+              sbDelBtn.style.border = 'none';
+              sbDelBtn.style.color = '#ef4444';
+              sbDelBtn.style.cursor = 'pointer';
+              sbDelBtn.style.fontSize = '0.85rem';
+              sbDelBtn.textContent = '✕';
+              sbDelBtn.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                bm.subBookmarks.splice(sbIdx, 1);
+                saveBookmarkData(data);
+                renderBookmarksUI();
+              };
+
+              sbCard.appendChild(sbLeft);
+              sbCard.appendChild(sbDelBtn);
+              subContainer.appendChild(sbCard);
+            });
+
+            // Quick Add button for sub-bookmark inside folder
+            var addSubBtn = document.createElement('button');
+            addSubBtn.type = 'button';
+            addSubBtn.style.background = 'rgba(56, 189, 248, 0.12)';
+            addSubBtn.style.border = '1px dashed rgba(56, 189, 248, 0.3)';
+            addSubBtn.style.color = '#38bdf8';
+            addSubBtn.style.borderRadius = '8px';
+            addSubBtn.style.padding = '4px 8px';
+            addSubBtn.style.fontSize = '0.78rem';
+            addSubBtn.style.cursor = 'pointer';
+            addSubBtn.style.textAlign = 'center';
+            addSubBtn.textContent = '+ Add link to ' + bm.title;
+            addSubBtn.onclick = function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              var subTitle = prompt('Sub-Bookmark Title:');
+              if (!subTitle) return;
+              var subUrl = prompt('Sub-Bookmark URL:');
+              if (!subUrl) return;
+
+              if (!bm.subBookmarks) bm.subBookmarks = [];
+              bm.subBookmarks.push({
+                id: 'sub_' + Date.now(),
+                title: subTitle,
+                url: subUrl,
+                icon: ''
+              });
+              saveBookmarkData(data);
+              renderBookmarksUI();
+            };
+
+            subContainer.appendChild(addSubBtn);
+            bmWrapper.appendChild(subContainer);
+          }
+
+          listContainer.appendChild(bmWrapper);
         });
 
         card.appendChild(listContainer);
 
         // Show More / Show Less Toggle Button
-        if (bms.length > limit) {
+        if (bms.length > limit && !searchQuery) {
           var showMoreBtn = document.createElement('button');
           showMoreBtn.type = 'button';
           showMoreBtn.className = 'show-more-btn';
@@ -1894,6 +2085,27 @@
     }
 
     // Modal Actions
+    function updateBmTypeExplanation() {
+      var val = $('bm-type').value;
+      var explain = $('bm-type-explain');
+      var urlGroup = $('group-bm-url');
+      var urlInput = $('bm-url');
+
+      if (val === 'bookmark') {
+        explain.textContent = 'Standard Bookmark: Opens site link directly in a new tab.';
+        urlGroup.style.display = 'flex';
+        urlInput.required = true;
+      } else if (val === 'folder_bookmark') {
+        explain.textContent = 'Folder-Bookmark: Main title opens site link, while > arrow expands to show sub-bookmarks.';
+        urlGroup.style.display = 'flex';
+        urlInput.required = true;
+      } else if (val === 'folder') {
+        explain.textContent = 'Normal Folder: Purely an expandable container for sub-bookmarks (no main link).';
+        urlGroup.style.display = 'none';
+        urlInput.required = false;
+      }
+    }
+
     function openAddModal(type, targetCatId, editBmId) {
       var modal = $('add-modal');
       var tabBm = $('tab-add-bm');
@@ -1918,6 +2130,8 @@
       $('bm-title').value = '';
       $('bm-url').value = '';
       $('bm-custom-icon-url').value = '';
+      $('bm-type').value = 'bookmark';
+      updateBmTypeExplanation();
       switchIconMode('favicon');
 
       if (editBmId) {
@@ -1925,7 +2139,10 @@
         if (existingBm) {
           $('bm-id').value = existingBm.id;
           $('bm-title').value = existingBm.title;
-          $('bm-url').value = existingBm.url;
+          $('bm-url').value = existingBm.url || '';
+          $('bm-type').value = existingBm.type || 'bookmark';
+          updateBmTypeExplanation();
+
           if (existingBm.icon && existingBm.icon.startsWith('preset:')) {
             selectedPresetIconId = existingBm.icon.replace('preset:', '');
             switchIconMode('preset');
@@ -1953,7 +2170,7 @@
         tabCat.style.color = '#94a3b8';
         formBm.style.display = 'flex';
         formCat.style.display = 'none';
-        $('modal-title').textContent = editBmId ? 'Edit Bookmark' : 'Add Bookmark';
+        $('modal-title').textContent = editBmId ? 'Edit Bookmark / Folder' : 'Add Bookmark / Folder';
       }
 
       modal.classList.add('active');
@@ -1972,6 +2189,18 @@
     function initBookmarksManager() {
       renderBookmarksUI();
 
+      var searchInput = $('bm-universal-search');
+      if (searchInput) {
+        searchInput.oninput = function () {
+          renderBookmarksUI();
+        };
+      }
+
+      var bmTypeSelect = $('bm-type');
+      if (bmTypeSelect) {
+        bmTypeSelect.onchange = updateBmTypeExplanation;
+      }
+
       $('open-add-modal-btn').onclick = function () {
         openAddModal('bookmark');
       };
@@ -1989,11 +2218,13 @@
       $('form-add-bm').onsubmit = function (e) {
         e.preventDefault();
         var bmId = $('bm-id').value;
+        var bmType = $('bm-type').value;
         var title = $('bm-title').value.trim();
         var url = $('bm-url').value.trim();
         var categoryId = $('bm-category').value;
 
-        if (!title || !url || !categoryId) return;
+        if (!title || !categoryId) return;
+        if (bmType !== 'folder' && !url) return;
 
         var iconVal = '';
         if (selectedIconMode === 'preset') {
@@ -2006,21 +2237,25 @@
         if (bmId) {
           var bm = data.bookmarks.find(function (b) { return b.id === bmId; });
           if (bm) {
+            bm.type = bmType;
             bm.title = title;
-            bm.url = url;
+            bm.url = bmType === 'folder' ? '' : url;
             bm.categoryId = categoryId;
             bm.icon = iconVal;
+            if (!bm.subBookmarks) bm.subBookmarks = [];
           }
         } else {
           data.bookmarks.push({
             id: 'bm_' + Date.now(),
             categoryId: categoryId,
+            type: bmType,
             title: title,
-            url: url,
+            url: bmType === 'folder' ? '' : url,
             icon: iconVal,
             builtIn: false,
             hidden: false,
-            order: data.bookmarks.length
+            order: data.bookmarks.length,
+            subBookmarks: []
           });
         }
         saveBookmarkData(data);
