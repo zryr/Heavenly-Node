@@ -1694,11 +1694,37 @@
     // Selected item state for bottom action bar
     var selectedItemState = null; // { type: 'category'|'bookmark', id: string, title: string, categoryId?: string }
 
-    // --- Pop-Out Floating Drag Avatar Manager ---
+    // --- Pop-Out Floating Drag Avatar Manager & Ghost Helpers ---
     var activePopoutAvatar = null;
     var avatarX = 0, avatarY = 0;
     var avatarWidth = 200;
     var avatarRafPending = false;
+
+    function getSectionGhost() {
+      var ghost = document.querySelector('.section-drag-ghost');
+      if (!ghost) {
+        ghost = document.createElement('div');
+        ghost.className = 'section-drag-ghost';
+        ghost.textContent = '📁 Move Section Here';
+      }
+      return ghost;
+    }
+
+    function getBookmarkGhost() {
+      var ghost = document.querySelector('.bookmark-drag-ghost');
+      if (!ghost) {
+        ghost = document.createElement('div');
+        ghost.className = 'bookmark-drag-ghost';
+        ghost.textContent = '📌 Move Bookmark Here';
+      }
+      return ghost;
+    }
+
+    function clearDragGhosts() {
+      document.querySelectorAll('.bookmark-drag-ghost, .section-drag-ghost').forEach(function (el) {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      });
+    }
 
     function createPopoutAvatar(sourceEl, mouseX, mouseY) {
       removePopoutAvatar();
@@ -1844,14 +1870,23 @@
         card.ondragstart = function (e) {
           e.stopPropagation();
           card.classList.add('dragging');
-          e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'category', id: cat.id, title: cat.title }));
-          e.dataTransfer.effectAllowed = 'move';
+          if (e.dataTransfer) {
+            if (e.dataTransfer.setDragImage) {
+              var emptyImg = document.createElement('img');
+              emptyImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+              e.dataTransfer.setDragImage(emptyImg, 0, 0);
+            }
+            e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'category', id: cat.id, title: cat.title }));
+            e.dataTransfer.effectAllowed = 'move';
+          }
+          createPopoutAvatar(card, e.clientX, e.clientY);
         };
 
         card.ondragend = function () {
           card.classList.remove('dragging');
+          removePopoutAvatar();
           document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
-          document.querySelectorAll('.bookmark-drag-ghost, .section-drag-ghost').forEach(function (el) { el.remove(); });
+          clearDragGhosts();
         };
 
         // Header
@@ -1904,25 +1939,22 @@
               if (target) {
                 var targetCard = target.closest('.section-card');
                 var targetCol = target.closest('#left-column, #right-column, #bottom-container');
-                document.querySelectorAll('.section-drag-ghost').forEach(function (el) { el.remove(); });
-
-                var ghostCat = document.createElement('div');
-                ghostCat.className = 'section-drag-ghost';
-                ghostCat.textContent = '📁 Move Section Here';
+                var ghostCat = getSectionGhost();
 
                 if (targetCard && targetCard !== card) {
                   var p = targetCard.parentNode;
                   if (p) {
                     var rect = targetCard.getBoundingClientRect();
                     var isLowerHalf = (touch.clientY - rect.top) > (rect.height / 2);
-                    if (isLowerHalf) {
-                      p.insertBefore(ghostCat, targetCard.nextSibling);
-                    } else {
-                      p.insertBefore(ghostCat, targetCard);
+                    var targetPos = isLowerHalf ? targetCard.nextSibling : targetCard;
+                    if (ghostCat.parentNode !== p || ghostCat.nextSibling !== targetPos) {
+                      p.insertBefore(ghostCat, targetPos);
                     }
                   }
                 } else if (targetCol) {
-                  targetCol.appendChild(ghostCat);
+                  if (ghostCat.parentNode !== targetCol) {
+                    targetCol.appendChild(ghostCat);
+                  }
                 }
               }
             }
@@ -1932,7 +1964,7 @@
         var endHandle = function (e) {
           if (pressTimer) clearTimeout(pressTimer);
           removePopoutAvatar();
-          document.querySelectorAll('.section-drag-ghost').forEach(function (el) { el.remove(); });
+          clearDragGhosts();
           if (isTouchDraggingCat && e.changedTouches) {
             card.classList.remove('dragging');
             isTouchDraggingCat = false;
@@ -2024,28 +2056,21 @@
           if (isCategoryDrag && isCategoryDrag !== card) {
             var col = card.parentNode;
             if (col) {
-              document.querySelectorAll('.section-drag-ghost').forEach(function (el) { el.remove(); });
-              var ghostCat = document.createElement('div');
-              ghostCat.className = 'section-drag-ghost';
-              ghostCat.textContent = '📁 Move Section Here';
-
+              var ghostCat = getSectionGhost();
               var rect = card.getBoundingClientRect();
               var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
-              if (isLowerHalf) {
-                col.insertBefore(ghostCat, card.nextSibling);
-              } else {
-                col.insertBefore(ghostCat, card);
+              var targetPos = isLowerHalf ? card.nextSibling : card;
+              if (ghostCat.parentNode !== col || ghostCat.nextSibling !== targetPos) {
+                col.insertBefore(ghostCat, targetPos);
               }
             }
-          } else {
-            // Render ghost placeholder if a bookmark is being dragged
+          } else if (!isCategoryDrag) {
             var listEl = card.querySelector('.bookmarks-list');
-            if (listEl && !listEl.querySelector('.bookmark-drag-ghost')) {
-              document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
-              var ghost = document.createElement('div');
-              ghost.className = 'bookmark-drag-ghost';
-              ghost.textContent = '📌 Move Bookmark Here';
-              listEl.appendChild(ghost);
+            if (listEl) {
+              var ghostBm = getBookmarkGhost();
+              if (ghostBm.parentNode !== listEl) {
+                listEl.appendChild(ghostBm);
+              }
             }
           }
         };
@@ -2053,17 +2078,13 @@
         card.ondragleave = function (e) {
           e.stopPropagation();
           card.classList.remove('drag-over');
-          var ghost = card.querySelector('.bookmark-drag-ghost');
-          if (ghost && !card.contains(e.relatedTarget)) {
-            ghost.remove();
-          }
         };
 
         card.ondrop = function (e) {
           e.preventDefault();
           e.stopPropagation();
           card.classList.remove('drag-over');
-          document.querySelectorAll('.bookmark-drag-ghost, .section-drag-ghost').forEach(function (el) { el.remove(); });
+          clearDragGhosts();
           try {
             var raw = e.dataTransfer.getData('text/plain');
             if (!raw) return;
@@ -2127,16 +2148,23 @@
           bmCard.ondragstart = function (e) {
             e.stopPropagation();
             bmCard.classList.add('dragging');
+            if (e.dataTransfer) {
+              if (e.dataTransfer.setDragImage) {
+                var emptyImg = document.createElement('img');
+                emptyImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                e.dataTransfer.setDragImage(emptyImg, 0, 0);
+              }
+              e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }));
+              e.dataTransfer.effectAllowed = 'move';
+            }
             createPopoutAvatar(bmCard, e.clientX, e.clientY);
-            e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }));
-            e.dataTransfer.effectAllowed = 'move';
           };
 
           bmCard.ondragend = function () {
             bmCard.classList.remove('dragging');
             removePopoutAvatar();
             document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
-            document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+            clearDragGhosts();
           };
 
           bmCard.ondragover = function (e) {
@@ -2147,17 +2175,12 @@
 
             var parentList = bmWrapper.parentNode;
             if (parentList) {
-              document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
-              var ghostBm = document.createElement('div');
-              ghostBm.className = 'bookmark-drag-ghost';
-              ghostBm.textContent = '📌 Move Bookmark Here';
-
+              var ghostBm = getBookmarkGhost();
               var rect = bmCard.getBoundingClientRect();
               var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
-              if (isLowerHalf) {
-                parentList.insertBefore(ghostBm, bmWrapper.nextSibling);
-              } else {
-                parentList.insertBefore(ghostBm, bmWrapper);
+              var targetPos = isLowerHalf ? bmWrapper.nextSibling : bmWrapper;
+              if (ghostBm.parentNode !== parentList || ghostBm.nextSibling !== targetPos) {
+                parentList.insertBefore(ghostBm, targetPos);
               }
             }
           };
@@ -2171,7 +2194,7 @@
             e.preventDefault();
             e.stopPropagation();
             bmCard.classList.remove('drag-over');
-            document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+            clearDragGhosts();
             try {
               var raw = e.dataTransfer.getData('text/plain');
               if (!raw) return;
@@ -2294,26 +2317,23 @@
                 if (target) {
                   var targetBm = target.closest('.bookmark-card');
                   var targetCat = target.closest('.section-card');
-                  document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
-
-                  var ghostBm = document.createElement('div');
-                  ghostBm.className = 'bookmark-drag-ghost';
-                  ghostBm.textContent = '📌 Move Bookmark Here';
+                  var ghostBm = getBookmarkGhost();
 
                   if (targetBm && targetBm !== bmCard) {
                     var p = targetBm.parentNode;
                     if (p) {
                       var rect = targetBm.getBoundingClientRect();
                       var isLowerHalf = (touch.clientY - rect.top) > (rect.height / 2);
-                      if (isLowerHalf) {
-                        p.insertBefore(ghostBm, targetBm.nextSibling);
-                      } else {
-                        p.insertBefore(ghostBm, targetBm);
+                      var targetPos = isLowerHalf ? targetBm.nextSibling : targetBm;
+                      if (ghostBm.parentNode !== p || ghostBm.nextSibling !== targetPos) {
+                        p.insertBefore(ghostBm, targetPos);
                       }
                     }
                   } else if (targetCat) {
                     var listEl = targetCat.querySelector('.bookmarks-list');
-                    if (listEl) listEl.appendChild(ghostBm);
+                    if (listEl && ghostBm.parentNode !== listEl) {
+                      listEl.appendChild(ghostBm);
+                    }
                   }
                 }
               }
@@ -2323,7 +2343,7 @@
           var endBmHandle = function (e) {
             if (bmTimer) clearTimeout(bmTimer);
             removePopoutAvatar();
-            document.querySelectorAll('.bookmark-drag-ghost').forEach(function (el) { el.remove(); });
+            clearDragGhosts();
             if (isTouchDraggingBm && e.changedTouches) {
               bmCard.classList.remove('dragging');
               isTouchDraggingBm = false;
