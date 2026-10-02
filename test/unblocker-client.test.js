@@ -26,6 +26,30 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       );
     });
 
+    it('should leave unproxied bypass URLs unmodified in fixUrl and window.open', function () {
+      const bypassObj = new String('https://cpsgames.org/');
+      bypassObj.__unproxiedBypass = true;
+      assert.strictEqual(fixUrl(bypassObj, config, location), 'https://cpsgames.org/');
+
+      let openedUrl = '';
+      const mockWindow = {
+        location: location,
+        open: function (url) {
+          openedUrl = url;
+        },
+        addEventListener: function () {},
+        document: {
+          readyState: 'complete',
+          documentElement: { addEventListener: function () {} }
+        },
+        localStorage: { getItem: function () { return '{}'; } }
+      };
+
+      initForWindow(config, mockWindow);
+      mockWindow.open(bypassObj);
+      assert.strictEqual(openedUrl, 'https://cpsgames.org/');
+    });
+
     it('should correctly proxy srcset candidates', function () {
       const srcset = 'https://picon.ngfiles.com/a.webp 1x, https://picon.ngfiles.com/b.webp 2x';
       const fixed = fixSrcset(srcset, config, location);

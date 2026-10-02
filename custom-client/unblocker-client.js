@@ -40,9 +40,19 @@
     return fixedCandidates.join(", ");
   }
 
+  function createUnproxiedUrl(urlStr) {
+    if (urlStr === null || urlStr === undefined) return urlStr;
+    var s = new String(urlStr);
+    s.__unproxiedBypass = true;
+    return s;
+  }
+
   function fixUrl(urlStr, config, location) {
     if (urlStr === null || urlStr === undefined) {
       return urlStr;
+    }
+    if (urlStr && urlStr.__unproxiedBypass) {
+      return urlStr.toString();
     }
     urlStr = urlStr.toString();
 
@@ -202,7 +212,7 @@
       };
     }
 
-    if (window.open) {
+    if (window.open && !window.__nativeWinOpen) {
       var _winOpen = window.open;
       window.__nativeWinOpen = _winOpen;
       window.open = function (url) {
@@ -210,7 +220,7 @@
         if (args[0]) {
           args[0] = fixUrl(args[0], config, window.location);
         }
-        return _winOpen.apply(window, args);
+        return window.__nativeWinOpen.apply(window, args);
       };
     }
   }
@@ -1019,7 +1029,7 @@
       openTabBtn.textContent = '↗ Open in New Tab';
       openTabBtn.onclick = function () {
         var openFn = window.__nativeWinOpen || window.open;
-        openFn.call(window, directUrl, '_blank', 'noopener');
+        openFn.call(window, createUnproxiedUrl(directUrl), '_blank', 'noopener');
         backdrop.remove();
       };
 
@@ -1032,7 +1042,7 @@
         var left = (window.screen.width / 2) - (w / 2);
         var top = (window.screen.height / 2) - (h / 2);
         var openFn = window.__nativeWinOpen || window.open;
-        openFn.call(window, directUrl, 'DirectTestPopup', 'width=' + w + ',height=' + h + ',top=' + top + ',left=' + left + ',resizable=yes,scrollbars=yes');
+        openFn.call(window, createUnproxiedUrl(directUrl), 'DirectTestPopup', 'width=' + w + ',height=' + h + ',top=' + top + ',left=' + left + ',resizable=yes,scrollbars=yes');
         backdrop.remove();
       };
 
@@ -1052,7 +1062,8 @@
       if (targetParent) targetParent.appendChild(backdrop);
     } catch (e) {
       console.error('Error opening direct site preview:', e);
-      window.open(directUrl, '_blank', 'noopener');
+      var openFn = window.__nativeWinOpen || window.open;
+      openFn.call(window, createUnproxiedUrl(directUrl), '_blank', 'noopener');
     }
   }
 
