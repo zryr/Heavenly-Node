@@ -532,6 +532,12 @@
             <span class="hero-card-title">Restore & Toggle Built-in Bookmarks</span>
             <p class="hero-card-desc">Check or uncheck pre-made sections and built-in bookmarks to restore or hide them on your homepage.</p>
             <div id="bookmark-mgr-container" class="bookmark-mgr-list"></div>
+            <div style="margin-top: 14px; border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 14px;">
+              <button id="reset-builtin-bookmarks-btn" type="button" style="width: 100%; padding: 12px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; color: #38bdf8; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s ease;">
+                🔄 Reset Bookmarks to Default
+              </button>
+              <div id="bookmark-reset-msg" aria-live="polite" role="status" style="margin-top: 8px; font-size: 0.82rem; text-align: center; min-height: 1.2em; color: #38bdf8;"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -710,7 +716,36 @@
         { id: "cat_games", title: "Games", side: "right", order: 0, builtIn: true, hidden: false }
       ],
       bookmarks: [
-        { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 0 }
+        {
+          id: "bm_individual_games",
+          categoryId: "cat_games",
+          title: "Individual Games",
+          url: "",
+          type: "folder",
+          icon: "preset:gamepad",
+          builtIn: true,
+          hidden: false,
+          order: 0,
+          subBookmarks: [
+            { id: "sub_slopeplus", title: "Slope Plus", url: "https://lonfro.github.io/SlopePlusWeb/", icon: "" },
+            { id: "sub_whatbeatsrock", title: "What Beats Rock", url: "https://www.whatbeatsrock.com/", icon: "" },
+            { id: "sub_fnf", title: "Friday Night Funkin", url: "https://luckydog7.github.io/funkinmobile/game/index.html", icon: "" }
+          ]
+        },
+        { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+        { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+        { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+        { id: "bm_smdgames", categoryId: "cat_games", title: "SMD Games", url: "https://smdgames.github.io/index.html", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
+        { id: "bm_mgalternative", categoryId: "cat_games", title: "MG Alternative", url: "https://mgalternative.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
+        { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
+        { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
+        { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
+        { id: "bm_mountaingames", categoryId: "cat_games", title: "Mountain Games", url: "https://mountain-game-games.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
+        { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
+        { id: "bm_bloxcraftstudios", categoryId: "cat_games", title: "Bloxcraft Studios", url: "https://5kh0.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 14, subBookmarks: [] }
       ]
     };
 
@@ -1082,6 +1117,19 @@
 
         showStatusMessage('Widget positions reset to middle of screen!', false);
       };
+
+      // Reset built-in bookmarks button
+      var resetBmBtn = $('reset-builtin-bookmarks-btn');
+      if (resetBmBtn) {
+        resetBmBtn.onclick = function () {
+          saveBookmarkData(DEFAULT_BOOKMARK_DATA);
+          renderBookmarkManager();
+          var msgEl = $('bookmark-reset-msg');
+          if (msgEl) {
+            msgEl.textContent = 'Bookmarks successfully reset to default!';
+          }
+        };
+      }
     }
 
     window.onload = function () {
