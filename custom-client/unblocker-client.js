@@ -960,6 +960,40 @@
     }
   }
 
+  function extractTargetRemoteUrl(urlStr, window, config) {
+    if (!urlStr) return '';
+    var prefix = (config && config.prefix) ? config.prefix : '/proxy/';
+    var target = urlStr.toString();
+
+    while (target.indexOf(prefix) !== -1) {
+      var idx = target.indexOf(prefix);
+      target = target.substring(idx + prefix.length);
+    }
+
+    if (target.indexOf(":/") !== -1 && target.indexOf("://") === -1) {
+      target = target.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+    }
+
+    if (target.startsWith('http://') || target.startsWith('https://')) {
+      return target;
+    }
+
+    if (target.startsWith('//')) {
+      return 'https:' + target;
+    }
+
+    if (target.startsWith('/')) {
+      var currentDirect = getDirectRemoteUrl(window, config);
+      try {
+        return new URL(target, currentDirect).href;
+      } catch (e) {
+        return 'https://' + target;
+      }
+    }
+
+    return 'https://' + target;
+  }
+
   function isEverythingMoePage(window, config) {
     try {
       var directUrl = getDirectRemoteUrl(window, config);
@@ -998,7 +1032,8 @@
       header.appendChild(title);
       header.appendChild(closeBtn);
 
-      var cleanDirectUrl = rawUrl.startsWith('http') ? rawUrl : (rawUrl.startsWith('/') ? new URL(rawUrl, getDirectRemoteUrl(window, config)).href : 'https://' + rawUrl);
+      var cleanDirectUrl = extractTargetRemoteUrl(rawUrl, window, config);
+      var targetProxiedUrl = fixUrl(cleanDirectUrl, config, window.location);
 
       var body = window.document.createElement('div');
       body.style.cssText = 'display:flex;flex-direction:column;gap:12px;font-size:0.9rem;color:#cbd5e1;line-height:1.5;';
@@ -1014,7 +1049,7 @@
       openProxyBtn.textContent = '🔒 Open with Proxy';
       openProxyBtn.onclick = function () {
         var openFn = window.__nativeWinOpen || window.open;
-        openFn.call(window, proxiedUrl, '_blank', 'noopener');
+        openFn.call(window, targetProxiedUrl, '_blank', 'noopener');
         backdrop.remove();
       };
 
