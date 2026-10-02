@@ -534,7 +534,7 @@
             <div id="bookmark-mgr-container" class="bookmark-mgr-list"></div>
             <div style="margin-top: 14px; border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 14px;">
               <button id="reset-builtin-bookmarks-btn" type="button" style="width: 100%; padding: 12px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; color: #38bdf8; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s ease;">
-                🔄 Reset Bookmarks to Default
+                🔄 Reset Built-in Bookmarks to Default
               </button>
               <div id="bookmark-reset-msg" aria-live="polite" role="status" style="margin-top: 8px; font-size: 0.82rem; text-align: center; min-height: 1.2em; color: #38bdf8;"></div>
             </div>
@@ -1122,11 +1122,19 @@
       var resetBmBtn = $('reset-builtin-bookmarks-btn');
       if (resetBmBtn) {
         resetBmBtn.onclick = function () {
-          saveBookmarkData(DEFAULT_BOOKMARK_DATA);
+          var current = loadBookmarkData();
+          var customCats = (current.categories || []).filter(function (c) { return !c.builtIn; });
+          var customBms = (current.bookmarks || []).filter(function (b) { return !b.builtIn; });
+
+          var freshData = JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));
+          freshData.categories = freshData.categories.concat(customCats);
+          freshData.bookmarks = freshData.bookmarks.concat(customBms);
+
+          saveBookmarkData(freshData);
           renderBookmarkManager();
           var msgEl = $('bookmark-reset-msg');
           if (msgEl) {
-            msgEl.textContent = 'Bookmarks successfully reset to default!';
+            msgEl.textContent = 'Built-in bookmarks reset to defaults. Your custom sections & bookmarks were preserved!';
           }
         };
       }
