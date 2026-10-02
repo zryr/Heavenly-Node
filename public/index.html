@@ -1239,6 +1239,22 @@
     </div>
   </div>
 
+  <!-- EverythingMoe Explanation Modal -->
+  <div id="everythingmoe-modal" class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="everythingmoe-modal-title" style="max-width: 440px;">
+      <div class="modal-header">
+        <span class="modal-title" id="everythingmoe-modal-title">EverythingMoe</span>
+        <button id="close-everythingmoe-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <div style="font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 20px;">
+        This website is for you to test other sites to see if they are unblocked where you are.
+      </div>
+      <div style="display: flex; justify-content: flex-end;">
+        <button id="everythingmoe-ok-btn" type="button" class="modal-submit-btn" style="width: 100%;">Okay</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Direct Site Test Prompt Modal for Default & Custom Bookmarks -->
   <div id="builtin-test-modal" class="modal-backdrop">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="builtin-modal-title" style="max-width: 440px;">
@@ -1692,7 +1708,10 @@
         if (e.key === 'Escape' || e.keyCode === 27) {
           var addModal = $('add-modal');
           var builtinModal = $('builtin-test-modal');
-          if (builtinModal && builtinModal.classList.contains('active')) {
+          var emoeModal = $('everythingmoe-modal');
+          if (emoeModal && emoeModal.classList.contains('active')) {
+            closeEverythingMoeNoticeModal();
+          } else if (builtinModal && builtinModal.classList.contains('active')) {
             closeBuiltinTestModal();
           } else if (addModal && addModal.classList.contains('active')) {
             closeAddModal();
@@ -2403,7 +2422,7 @@
               if (bm.builtIn) {
                 if (bm.id === 'bm_everythingmoe' || (bm.url && bm.url.includes('everythingmoe.com'))) {
                   e.preventDefault();
-                  openBuiltinTestModal(bm.title, bm.url, proxiedUrl, 'This website is for you to test other sites to see if they are unblocked where you are.', false);
+                  openEverythingMoeNoticeModal(proxiedUrl);
                   return;
                 }
 
@@ -2910,6 +2929,18 @@
     }
 
     var pendingBuiltinUrls = { rawUrl: '', proxiedUrl: '' };
+    var pendingEverythingMoeUrl = '';
+
+    function openEverythingMoeNoticeModal(proxiedUrl) {
+      pendingEverythingMoeUrl = proxiedUrl;
+      var modal = $('everythingmoe-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeEverythingMoeNoticeModal() {
+      var modal = $('everythingmoe-modal');
+      if (modal) modal.classList.remove('active');
+    }
 
     function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk) {
       pendingBuiltinUrls.rawUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
@@ -3040,6 +3071,14 @@
 
       $('close-modal-btn').onclick = closeAddModal;
       $('close-builtin-modal-btn').onclick = closeBuiltinTestModal;
+      $('close-everythingmoe-modal-btn').onclick = closeEverythingMoeNoticeModal;
+
+      $('everythingmoe-ok-btn').onclick = function () {
+        closeEverythingMoeNoticeModal();
+        if (pendingEverythingMoeUrl) {
+          window.location.href = pendingEverythingMoeUrl;
+        }
+      };
 
       $('builtin-test-direct-btn').onclick = function () {
         saveBuiltinPromptPref();
