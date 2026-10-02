@@ -1239,7 +1239,7 @@
     </div>
   </div>
 
-  <!-- Direct Site Test Prompt Modal for Default Bookmarks -->
+  <!-- Direct Site Test Prompt Modal for Default & Custom Bookmarks -->
   <div id="builtin-test-modal" class="modal-backdrop">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="builtin-modal-title" style="max-width: 440px;">
       <div class="modal-header">
@@ -1249,7 +1249,7 @@
       <div id="builtin-modal-desc" style="font-size: 0.9rem; color: #94a3b8; line-height: 1.5; margin-bottom: 16px;">
         Would you like to test opening <strong id="builtin-site-name" style="color: #38bdf8;"></strong> directly without the proxy to see if your internet blocks it or if things load better without proxy?
       </div>
-      <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 20px; cursor: pointer;">
+      <div id="builtin-dont-ask-container" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 20px; cursor: pointer;">
         <input type="checkbox" id="builtin-dont-ask" style="accent-color: #38bdf8; cursor: pointer; width: 16px; height: 16px;" />
         <label for="builtin-dont-ask" style="cursor: pointer; user-select: none;">Don't ask me again for default bookmarks</label>
       </div>
@@ -2397,13 +2397,13 @@
             var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + (bm.url.startsWith('http') ? bm.url : 'https://' + bm.url);
             bmCard.href = proxiedUrl;
 
-            if (bm.builtIn) {
-              bmCard.onclick = function (e) {
-                if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
+            bmCard.onclick = function (e) {
+              if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
 
+              if (bm.builtIn) {
                 if (bm.id === 'bm_everythingmoe' || (bm.url && bm.url.includes('everythingmoe.com'))) {
                   e.preventDefault();
-                  openBuiltinTestModal(bm.title, bm.url, proxiedUrl, 'This website is for you to test other sites to see if they are unblocked where you are.');
+                  openBuiltinTestModal(bm.title, bm.url, proxiedUrl, 'This website is for you to test other sites to see if they are unblocked where you are.', false);
                   return;
                 }
 
@@ -2414,9 +2414,13 @@
                 }
 
                 e.preventDefault();
-                openBuiltinTestModal(bm.title, bm.url, proxiedUrl);
-              };
-            }
+                openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, true);
+              } else {
+                // User-made custom bookmark
+                e.preventDefault();
+                openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, false);
+              }
+            };
           } else {
             bmCard.style.cursor = 'pointer';
             bmCard.onclick = function (e) {
@@ -2907,11 +2911,16 @@
 
     var pendingBuiltinUrls = { rawUrl: '', proxiedUrl: '' };
 
-    function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc) {
+    function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk) {
       pendingBuiltinUrls.rawUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
       pendingBuiltinUrls.proxiedUrl = proxiedUrl;
       if ($('builtin-site-name')) $('builtin-site-name').textContent = title || rawUrl;
       if ($('builtin-dont-ask')) $('builtin-dont-ask').checked = false;
+
+      var dontAskContainer = $('builtin-dont-ask-container');
+      if (dontAskContainer) {
+        dontAskContainer.style.display = showDontAsk !== false ? 'flex' : 'none';
+      }
 
       var descEl = $('builtin-modal-desc');
       if (descEl) {

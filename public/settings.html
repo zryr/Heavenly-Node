@@ -528,6 +528,19 @@
         </h2>
 
         <div class="cards-grid">
+
+          <!-- Direct Connection Test Prompt Toggle for Built-in Bookmarks -->
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-show-builtin-prompt" class="hero-card-title">Direct Connection Test Prompt</label>
+              <label class="switch-toggle">
+                <input type="checkbox" id="set-show-builtin-prompt" role="switch" checked>
+                <span class="slider-knob"></span>
+              </label>
+            </div>
+            <p class="hero-card-desc">Prompts you to test direct connection or open with proxy when clicking built-in bookmarks. Enable this if you previously checked 'Don't ask me again'.</p>
+          </div>
+
           <div class="hero-card">
             <span class="hero-card-title">Restore & Toggle Built-in Bookmarks</span>
             <p class="hero-card-desc">Check or uncheck pre-made sections and built-in bookmarks to restore or hide them on your homepage.</p>
@@ -767,6 +780,7 @@
         persistentCloak: saved.persistentCloak || false,
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
+        skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
         panicKeyEnable: saved.panicKeyEnable || false,
         panicKey: saved.panicKey || '`',
         touchPanic: saved.touchPanic || false,
@@ -900,6 +914,7 @@
       var settings = loadSettings();
       $('set-auto-cloak').checked = settings.autoCloak;
       $('set-persistent-cloak').checked = settings.persistentCloak;
+      $('set-show-builtin-prompt').checked = !settings.skipBuiltinTestPrompt;
       $('set-panic-key-enable').checked = settings.panicKeyEnable;
       $('set-panic-key').value = settings.panicKey;
       $('set-touch-panic').checked = settings.touchPanic;
@@ -1028,6 +1043,7 @@
         var settings = loadSettings();
         settings.autoCloak = $('set-auto-cloak').checked;
         settings.persistentCloak = $('set-persistent-cloak').checked;
+        settings.skipBuiltinTestPrompt = !$('set-show-builtin-prompt').checked;
         settings.panicKeyEnable = $('set-panic-key-enable').checked;
         settings.panicKey = $('set-panic-key').value.trim();
         settings.touchPanic = $('set-touch-panic').checked;
@@ -1044,7 +1060,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-dock-position', 'preset-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-dock-position', 'preset-select'].forEach(function (id) {
         $(id).onchange = function () {
           updateHandler();
           updateLivePreview();
