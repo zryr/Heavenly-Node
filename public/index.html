@@ -633,6 +633,7 @@
       will-change: transform;
       margin: 0 !important;
       transition: none !important;
+      animation: none !important;
       opacity: 1 !important;
     }
 
@@ -1771,6 +1772,9 @@
     var avatarWidth = 200;
     var avatarRafPending = false;
 
+    var emptyDragImage = new Image();
+    emptyDragImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
     function getSectionGhost() {
       var ghost = document.querySelector('.section-drag-ghost');
       if (!ghost) {
@@ -1815,9 +1819,10 @@
 
       var clone = sourceEl.cloneNode(true);
       clone.id = 'heavenly-drag-avatar';
-      clone.className += ' drag-popout-avatar';
+      clone.className = (clone.className || '').replace(/\bentrance-animate\b/g, '') + ' drag-popout-avatar';
       clone.style.width = avatarWidth + 'px';
       clone.style.transition = 'none';
+      clone.style.animation = 'none';
       clone.style.opacity = '1';
       clone.style.transform = 'translate3d(' + avatarX + 'px, ' + avatarY + 'px, 0px) scale(1.05) rotate(1.5deg)';
 
@@ -1959,9 +1964,7 @@
           card.classList.add('dragging');
           if (e.dataTransfer) {
             if (e.dataTransfer.setDragImage) {
-              var emptyImg = document.createElement('img');
-              emptyImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-              e.dataTransfer.setDragImage(emptyImg, 0, 0);
+              e.dataTransfer.setDragImage(emptyDragImage, 0, 0);
             }
             e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'category', id: cat.id, title: cat.title }));
             e.dataTransfer.effectAllowed = 'move';
@@ -2237,9 +2240,7 @@
             bmCard.classList.add('dragging');
             if (e.dataTransfer) {
               if (e.dataTransfer.setDragImage) {
-                var emptyImg = document.createElement('img');
-                emptyImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-                e.dataTransfer.setDragImage(emptyImg, 0, 0);
+                e.dataTransfer.setDragImage(emptyDragImage, 0, 0);
               }
               e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }));
               e.dataTransfer.effectAllowed = 'move';
