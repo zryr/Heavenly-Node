@@ -1794,24 +1794,54 @@
     function loadBookmarkData() {
       try {
         var raw = localStorage.getItem('heavenly_bookmarks');
-        if (!raw) return DEFAULT_BOOKMARK_DATA;
+        if (!raw) {
+          saveBookmarkData(DEFAULT_BOOKMARK_DATA);
+          return JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));
+        }
         var data = JSON.parse(raw);
-        if (!data.categories || !data.bookmarks) return DEFAULT_BOOKMARK_DATA;
+        if (!data || !data.categories || !data.bookmarks) {
+          saveBookmarkData(DEFAULT_BOOKMARK_DATA);
+          return JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));
+        }
 
         var updated = false;
-        DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
-          var exists = data.bookmarks.some(function (b) { return b.id === defBm.id; });
+
+        // Merge missing default categories
+        DEFAULT_BOOKMARK_DATA.categories.forEach(function (defCat) {
+          var exists = data.categories.some(function (c) { return c.id === defCat.id; });
           if (!exists) {
-            data.bookmarks.push(defBm);
+            data.categories.push(JSON.parse(JSON.stringify(defCat)));
             updated = true;
           }
         });
+
+        // Merge missing default bookmarks and folder sub-bookmarks
+        DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
+          var userBm = data.bookmarks.find(function (b) { return b.id === defBm.id; });
+          if (!userBm) {
+            data.bookmarks.push(JSON.parse(JSON.stringify(defBm)));
+            updated = true;
+          } else if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
+            if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
+              userBm.subBookmarks = [];
+              updated = true;
+            }
+            defBm.subBookmarks.forEach(function (defSub) {
+              var subExists = userBm.subBookmarks.some(function (s) { return s.id === defSub.id; });
+              if (!subExists) {
+                userBm.subBookmarks.push(JSON.parse(JSON.stringify(defSub)));
+                updated = true;
+              }
+            });
+          }
+        });
+
         if (updated) {
           saveBookmarkData(data);
         }
         return data;
       } catch (e) {
-        return DEFAULT_BOOKMARK_DATA;
+        return JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));
       }
     }
 
@@ -2363,8 +2393,9 @@
             if (parentList) {
               var ghostBm = getBookmarkGhost();
               var rect = bmCard.getBoundingClientRect();
-              var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
-              var targetPos = isLowerHalf ? bmWrapper.nextSibling : bmWrapper;
+              var isHorizontal = cat.side === 'bottom' || (getComputedStyle(parentList).display === 'grid');
+              var isAfter = isHorizontal ? ((e.clientX - rect.left) > (rect.width / 2)) : ((e.clientY - rect.top) > (rect.height / 2));
+              var targetPos = isAfter ? bmWrapper.nextSibling : bmWrapper;
               if (ghostBm.parentNode !== parentList || ghostBm.nextSibling !== targetPos) {
                 parentList.insertBefore(ghostBm, targetPos);
               }
@@ -2391,12 +2422,14 @@
                 var targetBm = allData.bookmarks.find(function (b) { return b.id === bm.id; });
                 if (sourceBm && targetBm) {
                   sourceBm.categoryId = cat.id;
+                  var parentList = bmWrapper.parentNode;
                   var rect = bmCard.getBoundingClientRect();
-                  var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
+                  var isHorizontal = cat.side === 'bottom' || (parentList && getComputedStyle(parentList).display === 'grid');
+                  var isAfter = isHorizontal ? ((e.clientX - rect.left) > (rect.width / 2)) : ((e.clientY - rect.top) > (rect.height / 2));
 
                   allData.bookmarks = allData.bookmarks.filter(function (b) { return b.id !== sourceBm.id; });
                   var targetIdx = allData.bookmarks.findIndex(function (b) { return b.id === targetBm.id; });
-                  if (targetIdx !== -1 && isLowerHalf) {
+                  if (targetIdx !== -1 && isAfter) {
                     targetIdx += 1;
                   }
                   if (targetIdx === -1) targetIdx = allData.bookmarks.length;
@@ -2534,8 +2567,9 @@
                     var p = targetBm.parentNode;
                     if (p) {
                       var rect = targetBm.getBoundingClientRect();
-                      var isLowerHalf = (touch.clientY - rect.top) > (rect.height / 2);
-                      var targetPos = isLowerHalf ? targetBm.nextSibling : targetBm;
+                      var isHorizontal = cat.side === 'bottom' || (getComputedStyle(p).display === 'grid');
+                      var isAfter = isHorizontal ? ((touch.clientX - rect.left) > (rect.width / 2)) : ((touch.clientY - rect.top) > (rect.height / 2));
+                      var targetPos = isAfter ? targetBm.nextSibling : targetBm;
                       if (ghostBm.parentNode !== p || ghostBm.nextSibling !== targetPos) {
                         p.insertBefore(ghostBm, targetPos);
                       }
@@ -2571,12 +2605,14 @@
                   var targetBm = allData.bookmarks.find(function (b) { return b.id === targetBmId; });
                   if (sourceBm && targetBm) {
                     sourceBm.categoryId = targetBm.categoryId;
+                    var parentList = targetBmCard.parentNode;
                     var rect = targetBmCard.getBoundingClientRect();
-                    var isLowerHalf = (endTouch.clientY - rect.top) > (rect.height / 2);
+                    var isHorizontal = cat.side === 'bottom' || (parentList && getComputedStyle(parentList).display === 'grid');
+                    var isAfter = isHorizontal ? ((endTouch.clientX - rect.left) > (rect.width / 2)) : ((endTouch.clientY - rect.top) > (rect.height / 2));
 
                     allData.bookmarks = allData.bookmarks.filter(function (b) { return b.id !== sourceBm.id; });
                     var targetIdx = allData.bookmarks.findIndex(function (b) { return b.id === targetBm.id; });
-                    if (targetIdx !== -1 && isLowerHalf) {
+                    if (targetIdx !== -1 && isAfter) {
                       targetIdx += 1;
                     }
                     if (targetIdx === -1) targetIdx = allData.bookmarks.length;

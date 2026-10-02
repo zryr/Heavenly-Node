@@ -1212,14 +1212,88 @@
           { id: "cat_games", title: "Games", side: "right", order: 0, builtIn: true, hidden: false }
         ],
         bookmarks: [
-          { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 0 }
+          { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+          { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_cinezo_anime", categoryId: "cat_anime", title: "Cinezo", url: "https://www.cinezo.org", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+          { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+          { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+          { id: "bm_cinezo_movies", categoryId: "cat_movies", title: "Cinezo", url: "https://www.cinezo.org", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+          {
+            id: "bm_individual_games",
+            categoryId: "cat_games",
+            title: "Individual Games",
+            url: "",
+            type: "folder",
+            icon: "preset:gamepad",
+            builtIn: true,
+            hidden: false,
+            order: 0,
+            subBookmarks: [
+              { id: "sub_slopeplus", title: "Slope Plus", url: "https://lonfro.github.io/SlopePlusWeb/", icon: "" },
+              { id: "sub_whatbeatsrock", title: "What Beats Rock", url: "https://www.whatbeatsrock.com/", icon: "" },
+              { id: "sub_fnf", title: "Friday Night Funkin", url: "https://luckydog7.github.io/funkinmobile/game/index.html", icon: "" }
+            ]
+          },
+          { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+          { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+          { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+          { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+          { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
+          { id: "bm_mgalternative", categoryId: "cat_games", title: "MG Alternative", url: "https://mgalternative.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
+          { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
+          { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
+          { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
+          { id: "bm_mountaingames", categoryId: "cat_games", title: "Mountain Games", url: "https://mountain-game-games.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
+          { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
+          { id: "bm_bloxcraftstudios", categoryId: "cat_games", title: "Bloxcraft Studios", url: "https://5kh0.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 14, subBookmarks: [] }
         ]
       };
 
-      var data = DEFAULT_BOOKMARK_DATA;
+      var data = JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));
       try {
         var raw = storage.getItem('heavenly_bookmarks');
-        if (raw) data = JSON.parse(raw);
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && parsed.categories && parsed.bookmarks) {
+            data = parsed;
+            var updated = false;
+
+            DEFAULT_BOOKMARK_DATA.categories.forEach(function (defCat) {
+              var exists = data.categories.some(function (c) { return c.id === defCat.id; });
+              if (!exists) {
+                data.categories.push(JSON.parse(JSON.stringify(defCat)));
+                updated = true;
+              }
+            });
+
+            DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
+              var userBm = data.bookmarks.find(function (b) { return b.id === defBm.id; });
+              if (!userBm) {
+                data.bookmarks.push(JSON.parse(JSON.stringify(defBm)));
+                updated = true;
+              } else if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
+                if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
+                  userBm.subBookmarks = [];
+                  updated = true;
+                }
+                defBm.subBookmarks.forEach(function (defSub) {
+                  var subExists = userBm.subBookmarks.some(function (s) { return s.id === defSub.id; });
+                  if (!subExists) {
+                    userBm.subBookmarks.push(JSON.parse(JSON.stringify(defSub)));
+                    updated = true;
+                  }
+                });
+              }
+            });
+
+            if (updated) {
+              storage.setItem('heavenly_bookmarks', JSON.stringify(data));
+            }
+          }
+        }
       } catch (e) {}
 
       var path = window.location.pathname;
