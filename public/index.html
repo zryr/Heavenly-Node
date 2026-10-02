@@ -3112,7 +3112,7 @@
       $('everythingmoe-ok-btn').onclick = function () {
         closeEverythingMoeNoticeModal();
         if (pendingEverythingMoeUrl) {
-          window.location.href = pendingEverythingMoeUrl;
+          window.open(pendingEverythingMoeUrl, '_blank', 'noopener');
         }
       };
 
