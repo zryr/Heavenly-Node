@@ -332,7 +332,7 @@
       });
     }
 
-    // Global capture-phase click and auxclick event listener to enforce proxied href on anchor clicks
+    // Global capture-phase click and auxclick event listener to enforce proxied href on anchor clicks & intercept EverythingMoe links
     function handleLinkClick(e) {
       var target = e.target;
       while (target && target !== window.document) {
@@ -342,6 +342,16 @@
             var proxiedHref = fixUrl(rawHref, config, window.location);
             if (proxiedHref !== rawHref) {
               try { target.setAttribute("href", proxiedHref); } catch (err) {}
+            }
+
+            // EverythingMoe Link Interception
+            if (isEverythingMoePage(window, config)) {
+              if (rawHref.substr(0, 11) !== "javascript:" && rawHref.substr(0, 1) !== "#") {
+                e.preventDefault();
+                e.stopPropagation();
+                openEverythingMoeLinkModal(window, config, rawHref, proxiedHref);
+                return;
+              }
             }
           }
           break;
@@ -950,6 +960,94 @@
     }
   }
 
+  function isEverythingMoePage(window, config) {
+    try {
+      var directUrl = getDirectRemoteUrl(window, config);
+      var u = new URL(directUrl.startsWith('http') ? directUrl : 'https://' + directUrl);
+      return /(^|\.)everythingmoe\.com$/i.test(u.hostname);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function openEverythingMoeLinkModal(window, config, rawUrl, proxiedUrl) {
+    try {
+      var existingModal = window.document.getElementById('heavenly-em-link-modal');
+      if (existingModal) existingModal.remove();
+
+      var backdrop = window.document.createElement('div');
+      backdrop.id = 'heavenly-em-link-modal';
+      backdrop.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:16px;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
+
+      var card = window.document.createElement('div');
+      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:500px;padding:24px;display:flex;flex-direction:column;gap:16px;color:#f8fafc;';
+
+      var header = window.document.createElement('div');
+      header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(148,163,184,0.15);padding-bottom:12px;';
+
+      var title = window.document.createElement('span');
+      title.style.cssText = 'font-size:1.15rem;font-weight:700;color:#f8fafc;display:flex;align-items:center;gap:8px;';
+      title.innerHTML = '🔗 EverythingMoe Link Intercept';
+
+      var closeBtn = window.document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.style.cssText = 'background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;padding:4px;';
+      closeBtn.textContent = '✕';
+      closeBtn.onclick = function () { backdrop.remove(); };
+
+      header.appendChild(title);
+      header.appendChild(closeBtn);
+
+      var cleanDirectUrl = rawUrl.startsWith('http') ? rawUrl : (rawUrl.startsWith('/') ? new URL(rawUrl, getDirectRemoteUrl(window, config)).href : 'https://' + rawUrl);
+
+      var body = window.document.createElement('div');
+      body.style.cssText = 'display:flex;flex-direction:column;gap:12px;font-size:0.9rem;color:#cbd5e1;line-height:1.5;';
+      body.innerHTML = '<p>Would you like to open this link in a new tab?</p>' +
+        '<div style="background:rgba(30,41,59,0.7);padding:10px 14px;border-radius:12px;border:1px solid rgba(56,189,248,0.25);word-break:break-all;color:#38bdf8;font-weight:600;font-family:monospace;">' + cleanDirectUrl + '</div>';
+
+      var actions = window.document.createElement('div');
+      actions.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap;';
+
+      var openProxyBtn = window.document.createElement('button');
+      openProxyBtn.type = 'button';
+      openProxyBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;';
+      openProxyBtn.textContent = '🔒 Open with Proxy';
+      openProxyBtn.onclick = function () {
+        var openFn = window.__nativeWinOpen || window.open;
+        openFn.call(window, proxiedUrl, '_blank', 'noopener');
+        backdrop.remove();
+      };
+
+      var openDirectBtn = window.document.createElement('button');
+      openDirectBtn.type = 'button';
+      openDirectBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:rgba(56,189,248,0.15);border:1px solid #38bdf8;color:#38bdf8;font-weight:600;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;';
+      openDirectBtn.textContent = '🌐 Open Direct (Without Proxy)';
+      openDirectBtn.onclick = function () {
+        var openFn = window.__nativeWinOpen || window.open;
+        openFn.call(window, createUnproxiedUrl(cleanDirectUrl), '_blank', 'noopener');
+        backdrop.remove();
+      };
+
+      actions.appendChild(openDirectBtn);
+      actions.appendChild(openProxyBtn);
+
+      card.appendChild(header);
+      card.appendChild(body);
+      card.appendChild(actions);
+      backdrop.appendChild(card);
+
+      backdrop.onclick = function (e) {
+        if (e.target === backdrop) backdrop.remove();
+      };
+
+      var targetParent = window.document.body || window.document.documentElement;
+      if (targetParent) targetParent.appendChild(backdrop);
+    } catch (e) {
+      console.error('Error in EverythingMoe link modal:', e);
+      window.open(proxiedUrl, '_blank', 'noopener');
+    }
+  }
+
   function getDirectRemoteUrl(window, config) {
     try {
       var prefix = (config && config.prefix) || '/proxy/';
@@ -1304,8 +1402,11 @@
           }
         } catch (e) {}
 
-        // Clamp on initial load
-        setTimeout(enforceBoundaries, 0);
+        // Default to collapsed state upon page open
+        setTimeout(function () {
+          minimize();
+          enforceBoundaries();
+        }, 0);
 
         // Re-clamp on window resize
         window.addEventListener('resize', enforceBoundaries);
