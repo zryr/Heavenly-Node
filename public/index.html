@@ -3135,34 +3135,54 @@
       if (container) {
         container.innerHTML = '';
         bmsData.categories.forEach(function (cat) {
-          var catCard = document.createElement('div');
-          catCard.className = 'bookmark-mgr-item';
-          catCard.style.flexDirection = 'column';
-          catCard.style.alignItems = 'flex-start';
-          catCard.style.gap = '6px';
+          // Find custom non-builtIn bookmarks in this category
+          var customCatBms = bmsData.bookmarks.filter(function (b) { return b.categoryId === cat.id && !b.builtIn; });
 
-          var catHeader = document.createElement('label');
-          catHeader.style.cssText = 'display:flex;align-items:center;gap:8px;cursor:pointer;width:100%;font-weight:700;font-size:0.88rem;color:#818cf8;';
-          catHeader.innerHTML = '<input type="checkbox" class="share-cb share-cat-cb" data-cat-id="' + cat.id + '" checked style="width:15px;height:15px;accent-color:#818cf8;" />📁 ' + cat.title;
+          // Render category if custom section OR contains custom bookmarks
+          if (!cat.builtIn || customCatBms.length > 0) {
+            var catCard = document.createElement('div');
+            catCard.className = 'bookmark-mgr-item';
+            catCard.style.flexDirection = 'column';
+            catCard.style.alignItems = 'flex-start';
+            catCard.style.gap = '6px';
 
-          catCard.appendChild(catHeader);
+            var catHeader = document.createElement('label');
+            catHeader.style.cssText = 'display:flex;align-items:center;gap:8px;cursor:pointer;width:100%;font-weight:700;font-size:0.88rem;color:#818cf8;';
+            var catCb = document.createElement('input');
+            catCb.type = 'checkbox';
+            catCb.className = 'share-cb share-cat-cb';
+            catCb.setAttribute('data-cat-id', cat.id);
+            catCb.checked = true;
+            catCb.style.cssText = 'width:15px;height:15px;accent-color:#818cf8;';
+            catHeader.appendChild(catCb);
+            catHeader.appendChild(document.createTextNode(' 📁 ' + cat.title));
 
-          var catBms = bmsData.bookmarks.filter(function (b) { return b.categoryId === cat.id; });
-          if (catBms.length > 0) {
-            var bmsList = document.createElement('div');
-            bmsList.style.cssText = 'display:flex;flex-direction:column;gap:4px;padding-left:22px;width:100%;border-left:2px dashed rgba(129,140,248,0.3);margin-left:4px;';
+            catCard.appendChild(catHeader);
 
-            catBms.forEach(function (bm) {
-              var bmItem = document.createElement('label');
-              bmItem.style.cssText = 'display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;color:#cbd5e1;';
-              bmItem.innerHTML = '<input type="checkbox" class="share-cb share-bm-cb" data-cat-id="' + cat.id + '" data-bm-id="' + bm.id + '" checked style="width:14px;height:14px;accent-color:#818cf8;" />⭐ ' + bm.title;
-              bmsList.appendChild(bmItem);
-            });
+            if (customCatBms.length > 0) {
+              var bmsList = document.createElement('div');
+              bmsList.style.cssText = 'display:flex;flex-direction:column;gap:4px;padding-left:22px;width:100%;border-left:2px dashed rgba(129,140,248,0.3);margin-left:4px;';
 
-            catCard.appendChild(bmsList);
+              customCatBms.forEach(function (bm) {
+                var bmItem = document.createElement('label');
+                bmItem.style.cssText = 'display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;color:#cbd5e1;';
+                var bmCb = document.createElement('input');
+                bmCb.type = 'checkbox';
+                bmCb.className = 'share-cb share-bm-cb';
+                bmCb.setAttribute('data-cat-id', cat.id);
+                bmCb.setAttribute('data-bm-id', bm.id);
+                bmCb.checked = true;
+                bmCb.style.cssText = 'width:14px;height:14px;accent-color:#818cf8;';
+                bmItem.appendChild(bmCb);
+                bmItem.appendChild(document.createTextNode(' ⭐ ' + bm.title));
+                bmsList.appendChild(bmItem);
+              });
+
+              catCard.appendChild(bmsList);
+            }
+
+            container.appendChild(catCard);
           }
-
-          container.appendChild(catCard);
         });
 
         // Toggle category child bookmarks
