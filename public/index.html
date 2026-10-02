@@ -632,6 +632,8 @@
       -webkit-backdrop-filter: blur(12px);
       will-change: transform;
       margin: 0 !important;
+      transition: none !important;
+      opacity: 1 !important;
     }
 
     .bookmark-drag-ghost {
@@ -1799,13 +1801,8 @@
       removePopoutAvatar();
       if (!sourceEl) return;
 
-      var clone = sourceEl.cloneNode(true);
-      clone.id = 'heavenly-drag-avatar';
-      clone.className += ' drag-popout-avatar';
-
       var rect = sourceEl.getBoundingClientRect();
       avatarWidth = rect.width;
-      clone.style.width = avatarWidth + 'px';
 
       // Fallback if initial coordinates are (0,0) or missing (common in HTML5 dragstart events)
       if ((!mouseX && !mouseY) || (mouseX === 0 && mouseY === 0)) {
@@ -1815,6 +1812,13 @@
 
       avatarX = mouseX - avatarWidth / 2;
       avatarY = mouseY - 20;
+
+      var clone = sourceEl.cloneNode(true);
+      clone.id = 'heavenly-drag-avatar';
+      clone.className += ' drag-popout-avatar';
+      clone.style.width = avatarWidth + 'px';
+      clone.style.transition = 'none';
+      clone.style.opacity = '1';
       clone.style.transform = 'translate3d(' + avatarX + 'px, ' + avatarY + 'px, 0px) scale(1.05) rotate(1.5deg)';
 
       document.body.appendChild(clone);
@@ -1846,10 +1850,9 @@
       }
       activePopoutAvatar = null;
       avatarRafPending = false;
-      var existing = document.getElementById('heavenly-drag-avatar');
-      if (existing && existing.parentNode) {
-        existing.parentNode.removeChild(existing);
-      }
+      document.querySelectorAll('#heavenly-drag-avatar, .drag-popout-avatar').forEach(function (el) {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      });
     }
 
     document.addEventListener('drag', function (e) {
