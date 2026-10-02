@@ -59,4 +59,13 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('input.setAttribute(\'aria-expanded\', \'false\')'), 'hideDropdown should set aria-expanded="false"');
         assert.ok(html.includes('e.key === \'Escape\'') || html.includes('e.keyCode === 27'), 'keydown listener should handle Escape key');
     });
+
+    it('should configure add-modal dialog with ARIA semantics, close button label, Escape key dismissal, and focus restoration', function() {
+        assert.ok(html.includes('role="dialog"'), 'add-modal card should have role="dialog"');
+        assert.ok(html.includes('aria-modal="true"'), 'add-modal card should have aria-modal="true"');
+        assert.ok(html.includes('aria-labelledby="modal-title"'), 'add-modal card should specify aria-labelledby="modal-title"');
+        assert.ok(html.includes('id="close-modal-btn"') && html.includes('aria-label="Close dialog"'), 'close-modal-btn should specify aria-label="Close dialog"');
+        assert.ok(html.includes('lastFocusedElement'), 'index.html should track lastFocusedElement for focus restoration');
+        assert.ok(html.includes('closeAddModal()'), 'Escape key handler should call closeAddModal when active');
+    });
 });
