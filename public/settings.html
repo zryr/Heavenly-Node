@@ -753,12 +753,12 @@
           ]
         },
         { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-        { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-        { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
-        { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-        { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-        { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
-        { id: "bm_smdgames", categoryId: "cat_games", title: "SMD Games", url: "https://smdgames.github.io/index.html", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
+        { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+        { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+        { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+        { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
         { id: "bm_mgalternative", categoryId: "cat_games", title: "MG Alternative", url: "https://mgalternative.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
         { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
         { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
@@ -804,12 +804,54 @@
     function loadBookmarkData() {
       try {
         var raw = localStorage.getItem('heavenly_bookmarks');
-        if (!raw) return DEFAULT_BOOKMARK_DATA;
+        if (!raw) {
+          saveBookmarkData(DEFAULT_BOOKMARK_DATA);
+          return JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));
+        }
         var data = JSON.parse(raw);
-        if (!data.categories || !data.bookmarks) return DEFAULT_BOOKMARK_DATA;
+        if (!data || !data.categories || !data.bookmarks) {
+          saveBookmarkData(DEFAULT_BOOKMARK_DATA);
+          return JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));
+        }
+
+        var updated = false;
+
+        // Merge missing default categories
+        DEFAULT_BOOKMARK_DATA.categories.forEach(function (defCat) {
+          var exists = data.categories.some(function (c) { return c.id === defCat.id; });
+          if (!exists) {
+            data.categories.push(JSON.parse(JSON.stringify(defCat)));
+            updated = true;
+          }
+        });
+
+        // Merge missing default bookmarks and folder sub-bookmarks
+        DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
+          var userBm = data.bookmarks.find(function (b) { return b.id === defBm.id; });
+          if (!userBm) {
+            data.bookmarks.push(JSON.parse(JSON.stringify(defBm)));
+            updated = true;
+          } else if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
+            if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
+              userBm.subBookmarks = [];
+              updated = true;
+            }
+            defBm.subBookmarks.forEach(function (defSub) {
+              var subExists = userBm.subBookmarks.some(function (s) { return s.id === defSub.id; });
+              if (!subExists) {
+                userBm.subBookmarks.push(JSON.parse(JSON.stringify(defSub)));
+                updated = true;
+              }
+            });
+          }
+        });
+
+        if (updated) {
+          saveBookmarkData(data);
+        }
         return data;
       } catch (e) {
-        return DEFAULT_BOOKMARK_DATA;
+        return JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));
       }
     }
 
