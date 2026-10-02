@@ -1239,17 +1239,33 @@
     </div>
   </div>
 
-  <!-- Direct Site Test Prompt Modal for Default Bookmarks -->
+  <!-- EverythingMoe Explanation Modal -->
+  <div id="everythingmoe-modal" class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="everythingmoe-modal-title" style="max-width: 440px;">
+      <div class="modal-header">
+        <span class="modal-title" id="everythingmoe-modal-title">EverythingMoe</span>
+        <button id="close-everythingmoe-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <div style="font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 20px;">
+        This website is for you to test other sites to see if they are unblocked where you are.
+      </div>
+      <div style="display: flex; justify-content: flex-end;">
+        <button id="everythingmoe-ok-btn" type="button" class="modal-submit-btn" style="width: 100%;">Okay</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Direct Site Test Prompt Modal for Default & Custom Bookmarks -->
   <div id="builtin-test-modal" class="modal-backdrop">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="builtin-modal-title" style="max-width: 440px;">
       <div class="modal-header">
         <span class="modal-title" id="builtin-modal-title">Test Direct Connection</span>
         <button id="close-builtin-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
-      <div style="font-size: 0.9rem; color: #94a3b8; line-height: 1.5; margin-bottom: 16px;">
+      <div id="builtin-modal-desc" style="font-size: 0.9rem; color: #94a3b8; line-height: 1.5; margin-bottom: 16px;">
         Would you like to test opening <strong id="builtin-site-name" style="color: #38bdf8;"></strong> directly without the proxy to see if your internet blocks it or if things load better without proxy?
       </div>
-      <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 20px; cursor: pointer;">
+      <div id="builtin-dont-ask-container" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 20px; cursor: pointer;">
         <input type="checkbox" id="builtin-dont-ask" style="accent-color: #38bdf8; cursor: pointer; width: 16px; height: 16px;" />
         <label for="builtin-dont-ask" style="cursor: pointer; user-select: none;">Don't ask me again for default bookmarks</label>
       </div>
@@ -1692,7 +1708,10 @@
         if (e.key === 'Escape' || e.keyCode === 27) {
           var addModal = $('add-modal');
           var builtinModal = $('builtin-test-modal');
-          if (builtinModal && builtinModal.classList.contains('active')) {
+          var emoeModal = $('everythingmoe-modal');
+          if (emoeModal && emoeModal.classList.contains('active')) {
+            closeEverythingMoeNoticeModal();
+          } else if (builtinModal && builtinModal.classList.contains('active')) {
             closeBuiltinTestModal();
           } else if (addModal && addModal.classList.contains('active')) {
             closeAddModal();
@@ -1726,6 +1745,13 @@
         { id: "cat_games", title: "Games", side: "right", order: 0, builtIn: true, hidden: false }
       ],
       bookmarks: [
+        { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_cinezo_anime", categoryId: "cat_anime", title: "Cinezo", url: "https://www.cinezo.org", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+        { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+        { id: "bm_cinezo_movies", categoryId: "cat_movies", title: "Cinezo", url: "https://www.cinezo.org", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
         {
           id: "bm_individual_games",
           categoryId: "cat_games",
@@ -1771,6 +1797,18 @@
         if (!raw) return DEFAULT_BOOKMARK_DATA;
         var data = JSON.parse(raw);
         if (!data.categories || !data.bookmarks) return DEFAULT_BOOKMARK_DATA;
+
+        var updated = false;
+        DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
+          var exists = data.bookmarks.some(function (b) { return b.id === defBm.id; });
+          if (!exists) {
+            data.bookmarks.push(defBm);
+            updated = true;
+          }
+        });
+        if (updated) {
+          saveBookmarkData(data);
+        }
         return data;
       } catch (e) {
         return DEFAULT_BOOKMARK_DATA;
@@ -2188,6 +2226,13 @@
         header.appendChild(addBmBtn);
         card.appendChild(header);
 
+        if (cat.id === 'cat_anime') {
+          var notice = document.createElement('div');
+          notice.style.cssText = 'font-size: 0.78rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 6px 10px; margin-top: 2px; margin-bottom: 2px; line-height: 1.4; font-weight: 500;';
+          notice.textContent = '💡 Tip: Try different servers if a site is blocked or not loading!';
+          card.appendChild(notice);
+        }
+
         // Allow dropping bookmarks or categories into category card
         card.ondragover = function (e) {
           e.preventDefault();
@@ -2371,9 +2416,15 @@
             var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + (bm.url.startsWith('http') ? bm.url : 'https://' + bm.url);
             bmCard.href = proxiedUrl;
 
-            if (bm.builtIn) {
-              bmCard.onclick = function (e) {
-                if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
+            bmCard.onclick = function (e) {
+              if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
+
+              if (bm.builtIn) {
+                if (bm.id === 'bm_everythingmoe' || (bm.url && bm.url.includes('everythingmoe.com'))) {
+                  e.preventDefault();
+                  openEverythingMoeNoticeModal(proxiedUrl);
+                  return;
+                }
 
                 var settings = {};
                 try { settings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}'); } catch(err) {}
@@ -2382,9 +2433,13 @@
                 }
 
                 e.preventDefault();
-                openBuiltinTestModal(bm.title, bm.url, proxiedUrl);
-              };
-            }
+                openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, true);
+              } else {
+                // User-made custom bookmark
+                e.preventDefault();
+                openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, false);
+              }
+            };
           } else {
             bmCard.style.cursor = 'pointer';
             bmCard.onclick = function (e) {
@@ -2874,12 +2929,39 @@
     }
 
     var pendingBuiltinUrls = { rawUrl: '', proxiedUrl: '' };
+    var pendingEverythingMoeUrl = '';
 
-    function openBuiltinTestModal(title, rawUrl, proxiedUrl) {
+    function openEverythingMoeNoticeModal(proxiedUrl) {
+      pendingEverythingMoeUrl = proxiedUrl;
+      var modal = $('everythingmoe-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeEverythingMoeNoticeModal() {
+      var modal = $('everythingmoe-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk) {
       pendingBuiltinUrls.rawUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
       pendingBuiltinUrls.proxiedUrl = proxiedUrl;
       if ($('builtin-site-name')) $('builtin-site-name').textContent = title || rawUrl;
       if ($('builtin-dont-ask')) $('builtin-dont-ask').checked = false;
+
+      var dontAskContainer = $('builtin-dont-ask-container');
+      if (dontAskContainer) {
+        dontAskContainer.style.display = showDontAsk !== false ? 'flex' : 'none';
+      }
+
+      var descEl = $('builtin-modal-desc');
+      if (descEl) {
+        if (customDesc) {
+          descEl.textContent = customDesc;
+        } else {
+          descEl.innerHTML = 'Would you like to test opening <strong id="builtin-site-name" style="color: #38bdf8;">' + (title || rawUrl) + '</strong> directly without the proxy to see if your internet blocks it or if things load better without proxy?';
+        }
+      }
+
       var modal = $('builtin-test-modal');
       if (modal) modal.classList.add('active');
     }
@@ -2989,6 +3071,14 @@
 
       $('close-modal-btn').onclick = closeAddModal;
       $('close-builtin-modal-btn').onclick = closeBuiltinTestModal;
+      $('close-everythingmoe-modal-btn').onclick = closeEverythingMoeNoticeModal;
+
+      $('everythingmoe-ok-btn').onclick = function () {
+        closeEverythingMoeNoticeModal();
+        if (pendingEverythingMoeUrl) {
+          window.location.href = pendingEverythingMoeUrl;
+        }
+      };
 
       $('builtin-test-direct-btn').onclick = function () {
         saveBuiltinPromptPref();
