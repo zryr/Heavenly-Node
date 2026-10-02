@@ -777,16 +777,7 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Docks all active widgets inside a collapsible bar on the screen edge with a blue arrow pull tab.</p>
-            <div style="display: flex; gap: 10px; align-items: center; margin-top: 6px;">
-              <label for="set-dock-position" style="font-size: 0.85rem; color: #cbd5e1;">Dock Position:</label>
-              <select id="set-dock-position" aria-label="Dock position" style="flex: 1; padding: 8px 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #f8fafc; font-family: inherit; font-size: 0.88rem; outline: none; cursor: pointer;">
-                <option value="bottom">Bottom Edge (Default)</option>
-                <option value="top">Top Edge</option>
-                <option value="left">Left Edge</option>
-                <option value="right">Right Edge</option>
-              </select>
-            </div>
+            <p class="hero-card-desc">Docks all active widgets inside a collapsible bar on the screen edge. Drag the tab to any viewport edge (left, right, top, bottom) to snap and position it.</p>
           </div>
 
           <!-- Hero Card: Reset Widget Positions -->
@@ -1159,7 +1150,6 @@
       $('set-show-nav-search').checked = settings.showNavSearch;
       $('set-show-nav-home').checked = settings.showNavHome;
       $('set-use-widget-dock').checked = settings.useWidgetDock;
-      $('set-dock-position').value = settings.dockPosition;
 
       // Populate preset dropdown
       var select = $('preset-select');
@@ -1288,13 +1278,12 @@
         settings.showNavSearch = $('set-show-nav-search').checked;
         settings.showNavHome = $('set-show-nav-home').checked;
         settings.useWidgetDock = $('set-use-widget-dock').checked;
-        settings.dockPosition = $('set-dock-position').value;
         settings.selectedPreset = $('preset-select').value;
         saveSettings(settings);
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-dock-position', 'preset-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'preset-select'].forEach(function (id) {
         $(id).onchange = function () {
           updateHandler();
           updateLivePreview();
