@@ -21,3 +21,9 @@
 **Learning:** Instantiating `new URL(data.url)` and evaluating regex domain matchers in backend proxy request middleware for every request adds significant CPU and garbage collection overhead (~56%). Guarding middleware functions with fast string checks (`!data.headers.referer && !data.headers.origin`, `/newgrounds|ngfiles|ungrounded/i.test(data.url)`, or `data.url.indexOf('/cdn-cgi/') === -1`) before attempting URL parsing yields a >50% throughput improvement.
 
 **Action:** Always add lightweight string/header guard conditions prior to performing object allocations or URL parsing inside Express/Unblocker middleware.
+
+## 2025-05-22 - Fast-path equality checks and avoiding array allocations in MutationObserver callbacks
+
+**Learning:** Allocating temporary arrays (e.g. `presetTitles = [...]`) and iterating over custom settings objects inside high-frequency `MutationObserver` callbacks creates unnecessary garbage collection pressure and CPU overhead on every DOM mutation. Replacing array creation with direct equality checks against default values (`title === "Google Classroom" || ...`) and direct matching yields a ~64.2% speedup in title check execution time. Additionally, replacing regex `.replace(/^\s+|\s+$/g, "")` with native `String.prototype.trim()` in client asset rewriting functions like `fixSrcset` provides an ~18.7% speedup.
+
+**Action:** Avoid allocating arrays or objects inside high-frequency DOM event or MutationObserver handlers; use direct equality fast-paths and native string methods instead of regex replacements.

@@ -27,7 +27,8 @@
     var fixedCandidates = [];
     for (var i = 0; i < candidates.length; i++) {
       var candidate = candidates[i];
-      var trimmed = candidate.replace(/^\s+|\s+$/g, "");
+      // Fast-path string trimming using native String.prototype.trim() instead of regex replacement
+      var trimmed = candidate.trim();
       if (!trimmed) {
         fixedCandidates.push(candidate);
         continue;
@@ -536,20 +537,24 @@
 
   function isPresetTitle(title, settings) {
     if (!title) return false;
-    var presetTitles = [
-      "Google Classroom",
-      "My Drive - Google Drive",
-      "Dashboard",
-      "Dashboard | Khan Academy"
-    ];
+    // Fast-path equality checks for built-in preset titles avoiding array allocation & iteration
+    if (
+      title === "Google Classroom" ||
+      title === "My Drive - Google Drive" ||
+      title === "Dashboard" ||
+      title === "Dashboard | Khan Academy"
+    ) {
+      return true;
+    }
+    // Direct matching in custom presets avoiding presetTitles array allocation
     if (settings && settings.customPresets) {
       for (var k in settings.customPresets) {
-        if (settings.customPresets[k] && settings.customPresets[k].title) {
-          presetTitles.push(settings.customPresets[k].title);
+        if (settings.customPresets[k] && settings.customPresets[k].title === title) {
+          return true;
         }
       }
     }
-    return presetTitles.indexOf(title) !== -1;
+    return false;
   }
 
   function loadHeavenlySettings(window) {
