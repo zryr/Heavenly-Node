@@ -1848,11 +1848,17 @@
       }
     }
 
-    document.addEventListener('dragover', function (e) {
-      if (activePopoutAvatar) {
+    document.addEventListener('drag', function (e) {
+      if (activePopoutAvatar && e.clientX !== 0 && e.clientY !== 0) {
         updatePopoutAvatar(e.clientX, e.clientY);
       }
-    });
+    }, true);
+
+    document.addEventListener('dragover', function (e) {
+      if (activePopoutAvatar && e.clientX !== 0 && e.clientY !== 0) {
+        updatePopoutAvatar(e.clientX, e.clientY);
+      }
+    }, true);
 
     document.addEventListener('dragend', function () {
       removePopoutAvatar();
