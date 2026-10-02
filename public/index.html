@@ -1125,10 +1125,10 @@
 
   <!-- Add Bookmark / Category Modal -->
   <div id="add-modal" class="modal-backdrop">
-    <div class="modal-card">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div class="modal-header">
         <span class="modal-title" id="modal-title">Add Bookmark</span>
-        <button id="close-modal-btn" type="button" class="modal-close-btn">✕</button>
+        <button id="close-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
 
       <!-- Tab selection between Add Bookmark & Add Category -->
@@ -1598,10 +1598,13 @@
         }
       });
 
-      // Hide dropdown on Escape key
+      // Hide dropdown or modal on Escape key
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' || e.keyCode === 27) {
-          if (dropdown.classList.contains('active')) {
+          var addModal = $('add-modal');
+          if (addModal && addModal.classList.contains('active')) {
+            closeAddModal();
+          } else if (dropdown.classList.contains('active')) {
             hideDropdown();
           }
         }
@@ -1639,6 +1642,7 @@
     var expandedFolders = {};
     var selectedIconMode = 'favicon'; // 'favicon' | 'preset' | 'custom'
     var selectedPresetIconId = 'gamepad';
+    var lastFocusedElement = null;
 
     function loadBookmarkData() {
       try {
@@ -2684,6 +2688,10 @@
         }
       }
 
+      if (document.activeElement) {
+        lastFocusedElement = document.activeElement;
+      }
+
       if (type === 'category') {
         tabBm.style.background = 'rgba(30, 41, 59, 0.6)';
         tabBm.style.color = '#94a3b8';
@@ -2703,6 +2711,14 @@
       }
 
       modal.classList.add('active');
+
+      setTimeout(function () {
+        if (type === 'category') {
+          if ($('cat-title')) $('cat-title').focus();
+        } else {
+          if ($('bm-title')) $('bm-title').focus();
+        }
+      }, 50);
     }
 
     function closeAddModal() {
@@ -2713,6 +2729,12 @@
       $('bm-url').value = '';
       $('bm-custom-icon-url').value = '';
       $('cat-title').value = '';
+
+      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        try {
+          lastFocusedElement.focus();
+        } catch (e) {}
+      }
     }
 
     function setupContainerDropTarget(containerEl, sideName) {
