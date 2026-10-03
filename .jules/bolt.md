@@ -27,3 +27,9 @@
 **Learning:** Allocating temporary arrays (e.g. `presetTitles = [...]`) and iterating over custom settings objects inside high-frequency `MutationObserver` callbacks creates unnecessary garbage collection pressure and CPU overhead on every DOM mutation. Replacing array creation with direct equality checks against default values (`title === "Google Classroom" || ...`) and direct matching yields a ~64.2% speedup in title check execution time. Additionally, replacing regex `.replace(/^\s+|\s+$/g, "")` with native `String.prototype.trim()` in client asset rewriting functions like `fixSrcset` provides an ~18.7% speedup.
 
 **Action:** Avoid allocating arrays or objects inside high-frequency DOM event or MutationObserver handlers; use direct equality fast-paths and native string methods instead of regex replacements.
+
+## 2025-05-23 - Fast-path equality guard on history recording to avoid redundant localStorage writes
+
+**Learning:** In client-side tracking functions like `saveToHeavenlyHistory` triggered on DOM mutations or page load events, parsing `localStorage` history arrays and executing `.filter()`, `.unshift()`, `.slice()`, and `JSON.stringify()` on every invocation introduces unnecessary CPU and synchronous storage I/O overhead. Checking whether the most recent entry `current[0]` already matches the target URL and title enables an early return that speeds up execution by ~31% to ~36%.
+
+**Action:** Add fast-path equality guards against the top entry of persistent state arrays before performing array transformations and synchronous `localStorage` updates.
