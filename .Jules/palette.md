@@ -9,3 +9,7 @@
 ## 2026-10-05 - Search Autocomplete Dropdown Combobox Accessibility
 **Learning:** Custom input autocomplete/history dropdowns without `aria-expanded` and `aria-controls` fail to communicate their state to screen readers, and lacking an `Escape` key listener prevents keyboard users from dismissing the overlay without losing focus.
 **Action:** Link custom input overlays with `aria-controls` and `aria-expanded="true|false"`, and attach an `Escape` key listener to dismiss the overlay and sync state.
+
+## 2026-10-06 - Search Input Clear Button & Escape Key Dismissal UX
+**Learning:** Search inputs without an inline clear button and `Escape` key listener force users to manually select and backspace text to clear search filters or dismiss overlays.
+**Action:** Always provide an accessible clear button with `aria-label` and `title`, toggle its visibility on input, and attach `Escape` key handlers to reset search filters and refocus inputs.

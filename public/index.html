@@ -1081,8 +1081,9 @@
 
       <!-- Universal Bookmark Search -->
       <div style="margin-bottom: 20px;">
-        <div style="position: relative; width: 100%;">
-          <input type="text" id="bm-universal-search" placeholder="🔍 Search bookmarks, folders & categories..." autocomplete="off" aria-label="Search bookmarks and folders" style="padding-left: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); font-size: 0.9rem;" />
+        <div style="position: relative; width: 100%; display: flex; align-items: center;">
+          <input type="text" id="bm-universal-search" placeholder="🔍 Search bookmarks, folders & categories..." autocomplete="off" aria-label="Search bookmarks and folders" style="padding-left: 16px; padding-right: 44px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); font-size: 0.9rem;" />
+          <button type="button" id="bm-search-clear-btn" class="url-clear-btn" aria-label="Clear bookmark search input" title="Clear search input">✕</button>
         </div>
       </div>
 
@@ -1703,20 +1704,29 @@
         }
       });
 
-      // Hide dropdown or modal on Escape key
+      // Hide dropdown, modals, reorder bar, or search on Escape key
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' || e.keyCode === 27) {
           var addModal = $('add-modal');
           var builtinModal = $('builtin-test-modal');
           var emoeModal = $('everythingmoe-modal');
+          var reorderBar = $('reorder-bar');
+          var bmSearch = $('bm-universal-search');
           if (emoeModal && emoeModal.classList.contains('active')) {
             closeEverythingMoeNoticeModal();
           } else if (builtinModal && builtinModal.classList.contains('active')) {
             closeBuiltinTestModal();
           } else if (addModal && addModal.classList.contains('active')) {
             closeAddModal();
+          } else if (reorderBar && reorderBar.classList.contains('active')) {
+            closeReorderBar();
           } else if (dropdown.classList.contains('active')) {
             hideDropdown();
+          } else if (bmSearch && bmSearch.value) {
+            bmSearch.value = '';
+            var bmClearBtn = $('bm-search-clear-btn');
+            if (bmClearBtn) bmClearBtn.classList.remove('visible');
+            renderBookmarksUI();
           }
         }
       });
@@ -3090,8 +3100,31 @@
       setupContainerDropTarget($('bottom-container'), 'bottom');
 
       var searchInput = $('bm-universal-search');
+      var searchClearBtn = $('bm-search-clear-btn');
       if (searchInput) {
+        var updateBmSearchClearBtn = function () {
+          if (searchClearBtn) {
+            if (searchInput.value.trim().length > 0) {
+              searchClearBtn.classList.add('visible');
+            } else {
+              searchClearBtn.classList.remove('visible');
+            }
+          }
+        };
+
+        if (searchClearBtn) {
+          searchClearBtn.onclick = function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            searchInput.value = '';
+            updateBmSearchClearBtn();
+            renderBookmarksUI();
+            searchInput.focus();
+          };
+        }
+
         searchInput.oninput = function () {
+          updateBmSearchClearBtn();
           renderBookmarksUI();
         };
       }
