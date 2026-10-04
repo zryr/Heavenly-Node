@@ -9,3 +9,7 @@
 ## 2026-10-05 - Search Autocomplete Dropdown Combobox Accessibility
 **Learning:** Custom input autocomplete/history dropdowns without `aria-expanded` and `aria-controls` fail to communicate their state to screen readers, and lacking an `Escape` key listener prevents keyboard users from dismissing the overlay without losing focus.
 **Action:** Link custom input overlays with `aria-controls` and `aria-expanded="true|false"`, and attach an `Escape` key listener to dismiss the overlay and sync state.
+
+## 2026-10-08 - Search Empty State & Actionable Reset UX
+**Learning:** Real-time client-side search controls that hide all content on zero matches leave users confused if no explicit feedback card or direct "Clear Search" reset button is provided.
+**Action:** When filtering lists dynamically on search input, always render a styled empty state card informing the user of no matches and providing a direct "Clear Search" action button.

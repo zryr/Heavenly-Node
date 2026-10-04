@@ -2044,6 +2044,7 @@
       bottomCol.innerHTML = '';
 
       var searchQuery = ($('bm-universal-search') ? $('bm-universal-search').value.trim().toLowerCase() : '');
+      var renderedCatCount = 0;
 
       var cats = data.categories.filter(function (c) { return !c.hidden; });
       cats.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
@@ -2242,10 +2243,13 @@
         titleGroup.appendChild(handle);
         titleGroup.appendChild(titleText);
 
+        renderedCatCount++;
+
         var addBmBtn = document.createElement('button');
         addBmBtn.type = 'button';
         addBmBtn.className = 'btn-add-bm-quick';
         addBmBtn.title = 'Add bookmark to ' + cat.title;
+        addBmBtn.setAttribute('aria-label', 'Add bookmark to ' + cat.title);
         addBmBtn.textContent = '+';
         addBmBtn.onclick = function (e) {
           e.stopPropagation();
@@ -2789,6 +2793,35 @@
           leftCol.appendChild(card);
         }
       });
+
+      if (searchQuery && renderedCatCount === 0) {
+        var emptyCard = document.createElement('div');
+        emptyCard.className = 'section-card entrance-animate';
+        emptyCard.style.textAlign = 'center';
+        emptyCard.style.padding = '24px 16px';
+
+        var emptyTitle = document.createElement('div');
+        emptyTitle.style.fontSize = '0.95rem';
+        emptyTitle.style.fontWeight = '600';
+        emptyTitle.style.color = '#cbd5e1';
+        emptyTitle.style.marginBottom = '12px';
+        emptyTitle.textContent = 'No bookmarks or folders matching "' + searchQuery + '"';
+
+        var clearSearchBtn = document.createElement('button');
+        clearSearchBtn.type = 'button';
+        clearSearchBtn.className = 'show-more-btn';
+        clearSearchBtn.textContent = '✕ Clear Search';
+        clearSearchBtn.setAttribute('aria-label', 'Clear bookmark search query');
+        clearSearchBtn.onclick = function () {
+          var searchInput = $('bm-universal-search');
+          if (searchInput) searchInput.value = '';
+          renderBookmarksUI();
+        };
+
+        emptyCard.appendChild(emptyTitle);
+        emptyCard.appendChild(clearSearchBtn);
+        leftCol.appendChild(emptyCard);
+      }
     }
 
     function renderPresetIconPicker() {
@@ -2809,6 +2842,7 @@
         btn.style.justifyContent = 'center';
         btn.style.cursor = 'pointer';
         btn.title = item.name;
+        btn.setAttribute('aria-label', item.name + ' icon preset');
 
         var svgWrap = document.createElement('div');
         svgWrap.style.width = '20px';
