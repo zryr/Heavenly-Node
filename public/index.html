@@ -115,10 +115,10 @@
       z-index: 1;
       width: 100%;
       max-width: 1380px;
-      margin: 24px auto 0 auto;
+      margin: 32px auto 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 24px;
       min-height: 120px;
       padding: 10px;
       border-radius: 20px;
@@ -1809,8 +1809,8 @@
     var DEFAULT_BOOKMARK_DATA = {
       categories: [
         { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false },
-        { id: "cat_anime", title: "Anime", side: "left", order: 1, builtIn: true, hidden: false },
-        { id: "cat_games", title: "Games", side: "right", order: 0, builtIn: true, hidden: false }
+        { id: "cat_anime", title: "Anime", side: "right", order: 0, builtIn: true, hidden: false },
+        { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false }
       ],
       bookmarks: [
         { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
@@ -2413,7 +2413,8 @@
         var listContainer = document.createElement('div');
         listContainer.className = 'bookmarks-list';
 
-        var limit = 4; // default limit for vertical side columns
+        // Limit items before Show More: side columns show 4 items; bottom container shows up to 6 items to fill a row on larger screens
+        var limit = (cat.side === 'bottom') ? 6 : 4;
         var isExpanded = !!expandedCategories[cat.id] || !!searchQuery;
         var visibleBms = isExpanded ? bms : bms.slice(0, limit);
 
@@ -2835,11 +2836,6 @@
           showMoreBtn.onclick = function (e) {
             e.stopPropagation();
             expandedCategories[cat.id] = !isExpanded;
-            // If expanded category is very large on side column, push to bottom side row
-            if (expandedCategories[cat.id] && bms.length >= 8 && cat.side !== 'bottom') {
-              cat.side = 'bottom';
-              saveBookmarkData(data);
-            }
             renderBookmarksUI();
           };
           card.appendChild(showMoreBtn);
