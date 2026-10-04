@@ -86,6 +86,31 @@
     var isAbsoluteHttp =
       urlStr.substr(0, 7) === "http://" || urlStr.substr(0, 8) === "https://";
 
+    // Performance optimization: Fast-path string check for external absolute HTTP/HTTPS URLs.
+    // If the target URL hostname does not match location.hostname (the proxy host), prefix it directly
+    // to bypass expensive new URL() object instantiation and base URL resolution.
+    if (isAbsoluteHttp) {
+      var hostIdx = urlStr.indexOf("://") + 3;
+      var slashIdx = urlStr.indexOf("/", hostIdx);
+      var queryIdx = urlStr.indexOf("?", hostIdx);
+      var hashIdx = urlStr.indexOf("#", hostIdx);
+
+      var endHostIdx = urlStr.length;
+      if (slashIdx !== -1 && slashIdx < endHostIdx) endHostIdx = slashIdx;
+      if (queryIdx !== -1 && queryIdx < endHostIdx) endHostIdx = queryIdx;
+      if (hashIdx !== -1 && hashIdx < endHostIdx) endHostIdx = hashIdx;
+
+      var targetHost = urlStr.substring(hostIdx, endHostIdx);
+      var atIdx = targetHost.indexOf("@");
+      if (atIdx !== -1) targetHost = targetHost.substring(atIdx + 1);
+      var colonIdx = targetHost.indexOf(":");
+      var targetHostname = colonIdx === -1 ? targetHost : targetHost.substring(0, colonIdx);
+
+      if (targetHostname && targetHostname !== location.hostname) {
+        return prefix + urlStr;
+      }
+    }
+
     var currentRemoteHref;
     function getCurrentRemoteHref() {
       if (currentRemoteHref !== undefined) return currentRemoteHref;
