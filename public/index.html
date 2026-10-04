@@ -1054,6 +1054,14 @@
     <!-- Center Container -->
     <div class="container">
 
+      <!-- Universal Bookmark Search -->
+      <div style="margin-bottom: 24px;">
+        <div style="position: relative; width: 100%; display: flex; align-items: center;">
+          <input type="text" id="bm-universal-search" placeholder="🔍 Search bookmarks, folders & categories..." autocomplete="off" aria-label="Search bookmarks and folders" style="padding-left: 16px; padding-right: 44px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); font-size: 0.9rem;" />
+          <button type="button" id="bm-search-clear-btn" class="url-clear-btn" aria-label="Clear bookmark search input" title="Clear search input">✕</button>
+        </div>
+      </div>
+
       <div class="brand-header">
         <div class="brand-icon">
           <svg viewBox="0 0 24 24">
@@ -1078,14 +1086,6 @@
         </div>
         <input type="submit" value="Go" />
       </form>
-
-      <!-- Universal Bookmark Search -->
-      <div style="margin-bottom: 20px;">
-        <div style="position: relative; width: 100%; display: flex; align-items: center;">
-          <input type="text" id="bm-universal-search" placeholder="🔍 Search bookmarks, folders & categories..." autocomplete="off" aria-label="Search bookmarks and folders" style="padding-left: 16px; padding-right: 44px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); font-size: 0.9rem;" />
-          <button type="button" id="bm-search-clear-btn" class="url-clear-btn" aria-label="Clear bookmark search input" title="Clear search input">✕</button>
-        </div>
-      </div>
 
       <div class="header-actions-group" style="margin-top: 4px; margin-bottom: 24px;">
         <a href="settings.html" id="open-settings-btn" class="settings-btn" aria-label="Settings and privacy controls page">

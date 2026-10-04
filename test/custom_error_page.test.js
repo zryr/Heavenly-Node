@@ -17,9 +17,10 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
             assert.ok(html.includes('Server Not Found'), 'Should display error status badge');
             assert.ok(html.includes('https://example-down-site.com'), 'Should display target URL');
             assert.ok(html.includes('Heavenly could not resolve the server address.'), 'Should display error details');
-            assert.ok(html.includes('🔄 Try Again'), 'Should include Try Again button');
-            assert.ok(html.includes('🌐 Test Direct Connection (No Proxy)'), 'Should include Test Direct Connection button');
-            assert.ok(html.includes('🏠 Return to Heavenly Home'), 'Should include Return Home button');
+            assert.ok(html.includes('Try Again'), 'Should include Try Again button');
+            assert.ok(html.includes('Test Direct Connection (No Proxy)'), 'Should include Test Direct Connection button');
+            assert.ok(html.includes('Return to Heavenly Home'), 'Should include Return Home button');
+            assert.ok(html.includes("window.location.href=window.location.origin + '/'"), 'Return Home button should navigate directly to root origin');
             assert.ok(html.includes('#030712'), 'Should use Heavenly dark theme background color');
         });
 
@@ -188,9 +189,10 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                     assert.ok(res.text.includes('Heavenly - Error 502'));
                     assert.ok(res.text.includes('Server Not Found'));
                     assert.ok(res.text.includes('https://invalid-nonexistent-domain-test12345.com/'));
-                    assert.ok(res.text.includes('🔄 Try Again'));
-                    assert.ok(res.text.includes('🌐 Test Direct Connection (No Proxy)'));
-                    assert.ok(res.text.includes('🏠 Return to Heavenly Home'));
+                    assert.ok(res.text.includes('Try Again'));
+                    assert.ok(res.text.includes('Test Direct Connection (No Proxy)'));
+                    assert.ok(res.text.includes('Return to Heavenly Home'));
+                    assert.ok(res.text.includes("window.location.href=window.location.origin + '/'"));
                     done();
                 });
         });

@@ -1533,16 +1533,14 @@
         function minimize() {
           if (isMinimized) return;
           var isLeft = updateWidgetMode();
-          var expandedW = container.offsetWidth || 200;
           var rect = container.getBoundingClientRect();
+          var rightEdge = rect.right;
           isMinimized = true;
           widgetElement.classList.add('minimized');
 
-          var miniW = 38; // size of circle widget
           if (!isLeft) {
-            // Right mode: circle appears on right side where close button was
-            var newLeft = rect.left + (expandedW - miniW);
-            container.style.left = newLeft + 'px';
+            var miniW = container.offsetWidth || 38;
+            container.style.left = (rightEdge - miniW) + 'px';
           }
           enforceBoundaries();
         }
@@ -1550,18 +1548,16 @@
         function expand() {
           if (!isMinimized) return;
           var isLeft = updateWidgetMode();
-          var miniW = container.offsetWidth || 38;
           var rect = container.getBoundingClientRect();
+          var rightEdge = rect.right;
           isMinimized = false;
           widgetElement.classList.remove('minimized');
           widgetElement._justExpanded = true;
           setTimeout(function () { widgetElement._justExpanded = false; }, 300);
 
           if (!isLeft) {
-            // Right mode: expand leftwards from right-side circle
             var expandedW = container.offsetWidth || 200;
-            var newLeft = rect.left - (expandedW - miniW);
-            container.style.left = newLeft + 'px';
+            container.style.left = (rightEdge - expandedW) + 'px';
           }
           enforceBoundaries();
           resetInactivityTimer();
