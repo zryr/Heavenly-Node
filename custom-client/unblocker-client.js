@@ -1208,8 +1208,8 @@
       var DEFAULT_BOOKMARK_DATA = {
         categories: [
           { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false },
-          { id: "cat_anime", title: "Anime", side: "left", order: 1, builtIn: true, hidden: false },
-          { id: "cat_games", title: "Games", side: "right", order: 0, builtIn: true, hidden: false }
+          { id: "cat_anime", title: "Anime", side: "right", order: 0, builtIn: true, hidden: false },
+          { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false }
         ],
         bookmarks: [
           { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
