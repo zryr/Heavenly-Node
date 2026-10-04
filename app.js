@@ -288,134 +288,176 @@ function renderHeavenlyErrorPage(opts) {
 '      font-family: \'Outfit\', -apple-system, BlinkMacSystemFont, sans-serif;\n' +
 '      background-color: #030712;\n' +
 '      background-image:\n' +
-'        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),\n' +
-'        radial-gradient(at 100% 0%, rgba(129, 140, 248, 0.15) 0px, transparent 50%),\n' +
-'        radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);\n' +
+'        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.14) 0px, transparent 50%),\n' +
+'        radial-gradient(at 100% 0%, rgba(239, 68, 68, 0.16) 0px, transparent 50%),\n' +
+'        radial-gradient(at 50% 100%, rgba(129, 140, 248, 0.12) 0px, transparent 50%);\n' +
 '      color: #f8fafc;\n' +
 '      min-height: 100vh;\n' +
 '      display: flex;\n' +
 '      align-items: center;\n' +
 '      justify-content: center;\n' +
-'      padding: 24px 16px;\n' +
+'      padding: 32px 16px;\n' +
 '      overflow-x: hidden;\n' +
+'    }\n' +
+'    @keyframes floatOrb {\n' +
+'      0%, 100% { transform: translate(-50%, 0) scale(1); }\n' +
+'      50% { transform: translate(-50%, 15px) scale(1.05); }\n' +
+'    }\n' +
+'    @keyframes pulseGlow {\n' +
+'      0%, 100% { opacity: 0.6; }\n' +
+'      50% { opacity: 0.9; }\n' +
 '    }\n' +
 '    .glow-orb {\n' +
 '      position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;\n' +
 '    }\n' +
 '    .glow-orb-1 {\n' +
-'      top: -100px; left: 50%; transform: translateX(-50%); width: 500px; height: 300px;\n' +
-'      background: radial-gradient(circle, rgba(239, 68, 68, 0.22) 0%, rgba(99, 102, 241, 0.12) 60%, transparent 100%);\n' +
+'      top: -120px; left: 50%; transform: translateX(-50%); width: 550px; height: 320px;\n' +
+'      background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, rgba(99, 102, 241, 0.15) 60%, transparent 100%);\n' +
+'      animation: floatOrb 10s ease-in-out infinite;\n' +
 '    }\n' +
 '    .glow-orb-2 {\n' +
-'      bottom: -100px; right: 10%; width: 400px; height: 300px;\n' +
-'      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);\n' +
+'      bottom: -100px; right: 10%; width: 450px; height: 320px;\n' +
+'      background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%);\n' +
+'      animation: pulseGlow 8s ease-in-out infinite;\n' +
 '    }\n' +
-'    .error-card {\n' +
-'      position: relative; z-index: 1; width: 100%; max-width: 580px;\n' +
+'    .error-container {\n' +
+'      position: relative; z-index: 1; width: 100%; max-width: 620px;\n' +
 '      background: rgba(15, 23, 42, 0.88);\n' +
-'      backdrop-filter: blur(24px);\n' +
-'      -webkit-backdrop-filter: blur(24px);\n' +
+'      backdrop-filter: blur(28px);\n' +
+'      -webkit-backdrop-filter: blur(28px);\n' +
 '      border: 1px solid rgba(239, 68, 68, 0.35);\n' +
 '      border-radius: 28px;\n' +
-'      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 50px -10px rgba(239, 68, 68, 0.25);\n' +
-'      padding: 40px 32px;\n' +
+'      box-shadow:\n' +
+'        0 0 0 1px rgba(255, 255, 255, 0.08) inset,\n' +
+'        0 30px 70px -15px rgba(0, 0, 0, 0.85),\n' +
+'        0 0 50px -10px rgba(239, 68, 68, 0.25);\n' +
+'      padding: 44px 36px 36px 36px;\n' +
 '      text-align: center;\n' +
-'      display: flex; flex-direction: column; align-items: center; gap: 20px;\n' +
+'      display: flex; flex-direction: column; align-items: center; gap: 22px;\n' +
+'    }\n' +
+'    .brand-badge {\n' +
+'      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;\n' +
+'      background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35);\n' +
+'      border-radius: 20px; color: #fca5a5; font-size: 0.82rem; font-weight: 700;\n' +
+'      letter-spacing: 0.03em; text-transform: uppercase;\n' +
 '    }\n' +
 '    .brand-icon {\n' +
-'      width: 58px; height: 58px; display: flex; align-items: center; justify-content: center;\n' +
-'      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);\n' +
-'      border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 16px;\n' +
-'      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);\n' +
+'      width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;\n' +
+'      background: linear-gradient(135deg, rgba(239, 68, 68, 0.22) 0%, rgba(99, 102, 241, 0.22) 100%);\n' +
+'      border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 20px;\n' +
+'      box-shadow: 0 0 25px rgba(239, 68, 68, 0.35);\n' +
 '    }\n' +
 '    .brand-icon svg {\n' +
-'      width: 28px; height: 28px; fill: none; stroke: #fca5a5; stroke-width: 2;\n' +
+'      width: 32px; height: 32px; fill: none; stroke: #fca5a5; stroke-width: 2;\n' +
 '      stroke-linecap: round; stroke-linejoin: round;\n' +
-'      filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.8));\n' +
-'    }\n' +
-'    .status-badge {\n' +
-'      display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;\n' +
-'      background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4);\n' +
-'      border-radius: 20px; color: #fca5a5; font-size: 0.82rem; font-weight: 700;\n' +
-'      letter-spacing: 0.04em; text-transform: uppercase;\n' +
+'      filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));\n' +
 '    }\n' +
 '    h1 {\n' +
-'      font-family: \'Space Grotesk\', sans-serif; font-size: 2.2rem; font-weight: 700;\n' +
+'      font-family: \'Space Grotesk\', sans-serif; font-size: 2.35rem; font-weight: 700;\n' +
 '      letter-spacing: -0.02em;\n' +
-'      background: linear-gradient(135deg, #ffffff 0%, #fca5a5 50%, #38bdf8 100%);\n' +
+'      background: linear-gradient(135deg, #ffffff 0%, #fca5a5 40%, #38bdf8 100%);\n' +
 '      -webkit-background-clip: text; -webkit-text-fill-color: transparent;\n' +
-'      line-height: 1.2;\n' +
+'      line-height: 1.15;\n' +
 '    }\n' +
 '    .details-box {\n' +
-'      width: 100%; background: rgba(30, 41, 59, 0.5);\n' +
-'      border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 16px; padding: 16px;\n' +
-'      display: flex; flex-direction: column; gap: 10px; text-align: left;\n' +
+'      width: 100%; background: rgba(30, 41, 59, 0.55);\n' +
+'      border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 18px; padding: 18px 20px;\n' +
+'      display: flex; flex-direction: column; gap: 12px; text-align: left;\n' +
 '    }\n' +
-'    .target-url-label { font-size: 0.78rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }\n' +
+'    .target-url-header {\n' +
+'      display: flex; align-items: center; gap: 6px;\n' +
+'      font-size: 0.78rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;\n' +
+'    }\n' +
 '    .target-url-val {\n' +
 '      font-family: monospace; font-size: 0.88rem; color: #38bdf8; word-break: break-all;\n' +
-'      background: rgba(15, 23, 42, 0.7); padding: 8px 12px; border-radius: 10px;\n' +
-'      border: 1px solid rgba(56, 189, 248, 0.25);\n' +
+'      background: rgba(15, 23, 42, 0.75); padding: 10px 14px; border-radius: 12px;\n' +
+'      border: 1px solid rgba(56, 189, 248, 0.28);\n' +
 '    }\n' +
-'    .error-desc { font-size: 0.9rem; color: #cbd5e1; line-height: 1.5; }\n' +
+'    .error-desc {\n' +
+'      font-size: 0.92rem; color: #cbd5e1; line-height: 1.55;\n' +
+'    }\n' +
 '    .actions-group {\n' +
-'      display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 8px;\n' +
+'      display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 6px;\n' +
 '    }\n' +
 '    .btn-action {\n' +
-'      width: 100%; padding: 14px 20px; border-radius: 14px; font-size: 0.92rem; font-weight: 600;\n' +
+'      width: 100%; padding: 14px 22px; border-radius: 16px; font-size: 0.95rem; font-weight: 600;\n' +
 '      font-family: inherit; cursor: pointer; display: inline-flex; align-items: center;\n' +
-'      justify-content: center; gap: 8px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);\n' +
-'      text-decoration: none;\n' +
+'      justify-content: center; gap: 10px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);\n' +
+'      text-decoration: none; border: none; outline: none;\n' +
+'    }\n' +
+'    .btn-action svg {\n' +
+'      width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2;\n' +
+'      stroke-linecap: round; stroke-linejoin: round;\n' +
 '    }\n' +
 '    .btn-primary {\n' +
 '      background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);\n' +
-'      border: none; color: #030712; font-weight: 700;\n' +
-'      box-shadow: 0 4px 18px rgba(56, 189, 248, 0.35);\n' +
+'      color: #030712; font-weight: 700;\n' +
+'      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.38);\n' +
 '    }\n' +
 '    .btn-primary:hover {\n' +
-'      transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 189, 248, 0.5);\n' +
+'      transform: translateY(-2px); box-shadow: 0 8px 28px rgba(56, 189, 248, 0.55);\n' +
 '      background: linear-gradient(135deg, #7dd3fc 0%, #60a5fa 100%);\n' +
 '    }\n' +
 '    .btn-secondary {\n' +
-'      background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35);\n' +
+'      background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.4);\n' +
 '      color: #38bdf8;\n' +
 '    }\n' +
 '    .btn-secondary:hover {\n' +
-'      background: rgba(56, 189, 248, 0.25); color: #ffffff; transform: translateY(-1px);\n' +
+'      background: rgba(56, 189, 248, 0.25); color: #ffffff; border-color: #38bdf8;\n' +
+'      transform: translateY(-2px); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.25);\n' +
 '    }\n' +
 '    .btn-outline {\n' +
-'      background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.25);\n' +
-'      color: #cbd5e1;\n' +
+'      background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(148, 163, 184, 0.3);\n' +
+'      color: #e2e8f0;\n' +
 '    }\n' +
 '    .btn-outline:hover {\n' +
-'      background: rgba(30, 41, 59, 0.9); color: #ffffff; border-color: rgba(148, 163, 184, 0.4);\n' +
-'      transform: translateY(-1px);\n' +
+'      background: rgba(30, 41, 59, 0.95); color: #ffffff; border-color: rgba(148, 163, 184, 0.5);\n' +
+'      transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);\n' +
+'    }\n' +
+'    .footer-note {\n' +
+'      font-size: 0.82rem; color: #64748b; margin-top: 4px;\n' +
 '    }\n' +
 '  </style>\n' +
 '</head>\n' +
 '<body>\n' +
 '  <div class="glow-orb glow-orb-1"></div>\n' +
 '  <div class="glow-orb glow-orb-2"></div>\n' +
-'  <div class="error-card">\n' +
+'  <div class="error-container">\n' +
 '    <div class="brand-icon">\n' +
 '      <svg viewBox="0 0 24 24">\n' +
-'        <circle cx="12" cy="12" r="10"></circle>\n' +
-'        <line x1="12" y1="8" x2="12" y2="12"></line>\n' +
-'        <line x1="12" y1="16" x2="12.01" y2="16"></line>\n' +
+'        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>\n' +
+'        <line x1="12" y1="9" x2="12" y2="13"></line>\n' +
+'        <line x1="12" y1="17" x2="12.01" y2="17"></line>\n' +
 '      </svg>\n' +
 '    </div>\n' +
-'    <span class="status-badge">' + errorType + '</span>\n' +
+'    <span class="brand-badge">\n' +
+'      <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>\n' +
+'      Heavenly Web Proxy &bull; ' + errorType + '\n' +
+'    </span>\n' +
 '    <h1>' + pageTitle + '</h1>\n' +
 '    <div class="details-box">\n' +
-(safeTargetUrl ? '      <div class="target-url-label">Requested Website:</div>\n' +
+(safeTargetUrl ? '      <div class="target-url-header">\n' +
+'        <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>\n' +
+'        Target Address:\n' +
+'      </div>\n' +
 '      <div class="target-url-val">' + safeTargetUrl + '</div>\n' : '') +
 '      <div class="error-desc">' + safeDetails + '</div>\n' +
 '    </div>\n' +
 '    <div class="actions-group">\n' +
-'      <button type="button" onclick="window.location.reload()" class="btn-action btn-primary">🔄 Try Again</button>\n' +
-(safeTargetUrl ? '      <a href="' + safeTargetUrl + '" target="_blank" rel="noopener" class="btn-action btn-secondary">🌐 Test Direct Connection (No Proxy)</a>\n' : '') +
-'      <a href="/" class="btn-action btn-outline">🏠 Return to Heavenly Home</a>\n' +
+'      <button type="button" onclick="window.location.reload();" class="btn-action btn-primary">\n' +
+'        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>\n' +
+'        <span>Try Again</span>\n' +
+'      </button>\n' +
+(safeTargetUrl ? '      <a href="' + safeTargetUrl + '" target="_blank" rel="noopener" class="btn-action btn-secondary">\n' +
+'        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>\n' +
+'        <span>Test Direct Connection (No Proxy)</span>\n' +
+'      </a>\n' : '') +
+'      <button type="button" onclick="window.location.href=window.location.origin + \'/\'; return false;" class="btn-action btn-outline">\n' +
+'        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>\n' +
+'        <span>Return to Heavenly Home</span>\n' +
+'      </button>\n' +
 '    </div>\n' +
+'    <div class="footer-note">Heavenly Web Proxy &bull; Ethereal &bull; Streamlined</div>\n' +
 '  </div>\n' +
 '</body>\n' +
 '</html>';
