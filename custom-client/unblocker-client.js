@@ -2623,6 +2623,12 @@
 
       var current = JSON.parse(storage.getItem('heavenly_history') || '[]');
 
+      // Performance optimization: Fast-path check if most recent entry is already identical
+      // Avoids redundant array filtering, slicing, and localStorage serialization overhead
+      if (current.length > 0 && current[0].url === targetUrl && current[0].title === title) {
+        return;
+      }
+
       // Filter out existing duplicates of this url
       current = current.filter(function (item) {
         return item.url !== targetUrl;
