@@ -150,6 +150,80 @@
     return prefix + url.href;
   }
 
+  function initLocationPrototype(config, window) {
+    var locProto = window.Location ? window.Location.prototype : null;
+    if (!locProto) return;
+
+    var prefix = config.prefix;
+    var prefixLen = prefix.length;
+
+    var pathDesc = Object.getOwnPropertyDescriptor(locProto, "pathname");
+    var nativePathGet = pathDesc ? pathDesc.get : null;
+
+    function getTargetUrlObj(loc) {
+      try {
+        var nativePath = "";
+        if (nativePathGet) {
+          nativePath = nativePathGet.call(loc) || "";
+        } else if (loc._pathname) {
+          nativePath = loc._pathname;
+        } else {
+          nativePath = loc.pathname || "";
+        }
+        if (nativePath.substr(0, prefixLen) !== prefix) {
+          return null;
+        }
+        var rawTarget = nativePath.substr(prefixLen) + (loc.search || "") + (loc.hash || "");
+        while (rawTarget && rawTarget.indexOf(prefix) !== -1) {
+          var idx = rawTarget.indexOf(prefix);
+          rawTarget = rawTarget.substring(idx + prefixLen);
+        }
+        if (rawTarget.indexOf(":/") !== -1 && rawTarget.indexOf("://") === -1) {
+          rawTarget = rawTarget.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+        }
+        if (!rawTarget.startsWith("http://") && !rawTarget.startsWith("https://")) {
+          rawTarget = "https://" + rawTarget;
+        }
+        return new URL(rawTarget);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function wrapLocProp(prop, getTargetVal, fixAssignment) {
+      var desc = Object.getOwnPropertyDescriptor(locProto, prop);
+      if (!desc || (!desc.get && !desc.set)) return;
+
+      var nativeGet = desc.get;
+      var nativeSet = desc.set;
+
+      Object.defineProperty(locProto, prop, {
+        get: function () {
+          var targetObj = getTargetUrlObj(this);
+          if (targetObj) {
+            return getTargetVal(targetObj, this);
+          }
+          return nativeGet ? nativeGet.call(this) : this[prop];
+        },
+        set: function (val) {
+          if (!nativeSet) return;
+          if (typeof val === "string" && fixAssignment) {
+            val = fixAssignment(val, config, this);
+          }
+          return nativeSet.call(this, val);
+        },
+        configurable: true,
+        enumerable: desc ? desc.enumerable : true,
+      });
+    }
+
+    wrapLocProp("pathname", function (target) { return target.pathname; }, function (val, config, loc) { return fixUrl(val, config, loc); });
+    wrapLocProp("href", function (target) { return target.href; }, function (val, config, loc) { return fixUrl(val, config, loc); });
+    wrapLocProp("origin", function (target) { return target.origin; }, null);
+    wrapLocProp("host", function (target) { return target.host; }, null);
+    wrapLocProp("hostname", function (target) { return target.hostname; }, null);
+  }
+
   function initElementPrototypes(config, window) {
     function wrapProperty(proto, prop, fixFn) {
       if (!proto) return;
@@ -197,11 +271,37 @@
       wrapProperty(window.HTMLLinkElement.prototype, "href", fixUrl);
     }
 
+    // Neutralize integrity attribute getters/setters on script and link prototypes to prevent SRI failures
+    if (window.HTMLScriptElement && window.HTMLScriptElement.prototype) {
+      try {
+        Object.defineProperty(window.HTMLScriptElement.prototype, "integrity", {
+          get: function () { return ""; },
+          set: function () { this.removeAttribute("integrity"); },
+          configurable: true,
+          enumerable: true
+        });
+      } catch (e) {}
+    }
+    if (window.HTMLLinkElement && window.HTMLLinkElement.prototype) {
+      try {
+        Object.defineProperty(window.HTMLLinkElement.prototype, "integrity", {
+          get: function () { return ""; },
+          set: function () { this.removeAttribute("integrity"); },
+          configurable: true,
+          enumerable: true
+        });
+      } catch (e) {}
+    }
+
     if (window.Element && window.Element.prototype && window.Element.prototype.setAttribute) {
       var _setAttribute = window.Element.prototype.setAttribute;
       window.Element.prototype.setAttribute = function (name, value) {
         if (typeof name === "string") {
           var lowerName = name.toLowerCase();
+          if (lowerName === "integrity") {
+            try { this.removeAttribute("integrity"); } catch (e) {}
+            return;
+          }
           if (lowerName === "src" || lowerName === "href" || lowerName === "poster" || lowerName === "data-src" || lowerName === "data-href" || lowerName === "data-url") {
             value = fixUrl(value, config, window.location);
           } else if (lowerName === "srcset" || lowerName === "data-srcset") {
@@ -230,6 +330,11 @@
       if (!el || el.nodeType !== 1) return;
 
       var tagName = el.tagName ? el.tagName.toLowerCase() : "";
+      if (tagName === "script" || tagName === "link") {
+        if (el.hasAttribute && el.hasAttribute("integrity")) {
+          try { el.removeAttribute("integrity"); } catch (e) {}
+        }
+      }
       if (tagName === "img" || tagName === "script" || tagName === "iframe" || tagName === "video" || tagName === "audio") {
         var src = el.getAttribute("src");
         if (src) {
@@ -360,8 +465,10 @@
       }
     }
 
-    window.addEventListener("click", handleLinkClick, true);
-    window.addEventListener("auxclick", handleLinkClick, true);
+    if (window.addEventListener) {
+      window.addEventListener("click", handleLinkClick, true);
+      window.addEventListener("auxclick", handleLinkClick, true);
+    }
   }
 
   function initXMLHttpRequest(config, window) {
@@ -3033,6 +3140,7 @@
 
   function initForWindow(config, window) {
     console.log("begin unblocker client scripts", config, window);
+    initLocationPrototype(config, window);
     initElementPrototypes(config, window);
     initMutationObserverAndClicks(config, window);
     initXMLHttpRequest(config, window);

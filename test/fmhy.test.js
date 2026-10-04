@@ -120,4 +120,72 @@ describe('fmhy.net & proxy fixes', function() {
             assert.strictEqual(res, '/proxy/https://fmhy.net/assets/chunks/theme.js');
         });
     });
+
+    describe('Client Location.prototype wrapping and SRI attribute stripping', function() {
+        it('should return target URL pathname and origin via Location.prototype getters', function() {
+            function MockLocation(pathname, search, hash) {
+                this._pathname = pathname;
+                this.search = search || '';
+                this.hash = hash || '';
+            }
+            MockLocation.prototype = {};
+            Object.defineProperty(MockLocation.prototype, 'pathname', { get: function() { return this._pathname; }, set: function(v) { this._pathname = v; }, configurable: true });
+            Object.defineProperty(MockLocation.prototype, 'href', { get: function() { return 'https://heavenly-node.vercel.app' + this._pathname; }, set: function(v) { this._pathname = v; }, configurable: true });
+            Object.defineProperty(MockLocation.prototype, 'origin', { get: function() { return 'https://heavenly-node.vercel.app'; }, configurable: true });
+            Object.defineProperty(MockLocation.prototype, 'host', { get: function() { return 'heavenly-node.vercel.app'; }, configurable: true });
+            Object.defineProperty(MockLocation.prototype, 'hostname', { get: function() { return 'heavenly-node.vercel.app'; }, configurable: true });
+
+            var mockWin = {
+                Location: MockLocation
+            };
+
+            client.initForWindow({ prefix: '/proxy/', url: 'https://fmhy.net/' }, mockWin);
+
+            var locInstance = new MockLocation('/proxy/https://fmhy.net/beginners-guide', '', '');
+            assert.strictEqual(locInstance.pathname, '/beginners-guide');
+            assert.strictEqual(locInstance.origin, 'https://fmhy.net');
+            assert.strictEqual(locInstance.hostname, 'fmhy.net');
+            assert.strictEqual(locInstance.href, 'https://fmhy.net/beginners-guide');
+        });
+
+        it('should strip integrity attribute via Element.prototype.setAttribute', function() {
+            function MockElement() {
+                this.attributes = {};
+            }
+            MockElement.prototype.setAttribute = function(name, val) {
+                this.attributes[name] = val;
+            };
+            MockElement.prototype.removeAttribute = function(name) {
+                delete this.attributes[name];
+            };
+
+            function MockScript() { MockElement.call(this); }
+            MockScript.prototype = Object.create(MockElement.prototype);
+
+            function MockLink() { MockElement.call(this); }
+            MockLink.prototype = Object.create(MockElement.prototype);
+
+            var mockWin = {
+                Element: MockElement,
+                HTMLScriptElement: MockScript,
+                HTMLLinkElement: MockLink,
+                location: {
+                    pathname: '/proxy/https://fmhy.net/',
+                    search: '',
+                    hash: '',
+                    origin: 'https://heavenly-node.vercel.app',
+                    hostname: 'heavenly-node.vercel.app'
+                }
+            };
+
+            client.initForWindow({ prefix: '/proxy/', url: 'https://fmhy.net/' }, mockWin);
+
+            var script = new MockScript();
+            script.setAttribute('src', 'https://static.cloudflareinsights.com/beacon.min.js');
+            script.setAttribute('integrity', 'sha512-iIg7k2xntmwu6');
+
+            assert.strictEqual(script.attributes['integrity'], undefined);
+            assert.strictEqual(script.integrity, '');
+        });
+    });
 });
