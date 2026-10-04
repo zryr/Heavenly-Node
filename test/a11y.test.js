@@ -68,4 +68,12 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('lastFocusedElement'), 'index.html should track lastFocusedElement for focus restoration');
         assert.ok(html.includes('closeAddModal()'), 'Escape key handler should call closeAddModal when active');
     });
+
+    it('should configure bookmark search clear button with aria-label, title, and Escape key dismiss handling', function() {
+        assert.ok(html.includes('id="bm-search-clear-btn"'), 'bm-search-clear-btn should exist');
+        assert.ok(html.includes('aria-label="Clear bookmark search input"'), 'bm-search-clear-btn should specify aria-label');
+        assert.ok(html.includes('title="Clear search input"'), 'bm-search-clear-btn should specify title tooltip');
+        assert.ok(html.includes('closeReorderBar()'), 'Escape key handler should close reorder bar');
+        assert.ok(html.includes('bmSearch.value = \'\''), 'Escape key handler should clear bookmark search value');
+    });
 });
