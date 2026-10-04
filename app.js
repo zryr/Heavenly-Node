@@ -227,7 +227,8 @@ var unblockerConfig = {
     responseMiddleware: [
         responseRedirectMiddleware,
         responseLinkHeaderMiddleware,
-        googleAnalyticsMiddleware
+        googleAnalyticsMiddleware,
+        serverErrorResponseMiddleware
     ]
 };
 
@@ -249,6 +250,178 @@ app.use(function normalizeProxyUrl(req, res, next) {
     }
     next();
 });
+
+function renderHeavenlyErrorPage(opts) {
+    opts = opts || {};
+    var statusCode = opts.statusCode || 500;
+    var errorType = opts.errorType || 'Internal Server Error';
+    var targetUrl = opts.targetUrl || '';
+    var details = opts.details || 'An error occurred while attempting to load this website through Heavenly Proxy.';
+    var pageTitle = 'Heavenly - Error ' + statusCode;
+
+    var safeTargetUrl = String(targetUrl)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    var safeDetails = String(details)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    return '<!DOCTYPE html>\n' +
+'<html lang="en">\n' +
+'<head>\n' +
+'  <meta charset="UTF-8">\n' +
+'  <title>' + pageTitle + '</title>\n' +
+'  <meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+'  <link rel="preconnect" href="https://fonts.googleapis.com">\n' +
+'  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
+'  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">\n' +
+'  <style type="text/css">\n' +
+'    * { box-sizing: border-box; margin: 0; padding: 0; }\n' +
+'    body {\n' +
+'      font-family: \'Outfit\', -apple-system, BlinkMacSystemFont, sans-serif;\n' +
+'      background-color: #030712;\n' +
+'      background-image:\n' +
+'        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),\n' +
+'        radial-gradient(at 100% 0%, rgba(129, 140, 248, 0.15) 0px, transparent 50%),\n' +
+'        radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);\n' +
+'      color: #f8fafc;\n' +
+'      min-height: 100vh;\n' +
+'      display: flex;\n' +
+'      align-items: center;\n' +
+'      justify-content: center;\n' +
+'      padding: 24px 16px;\n' +
+'      overflow-x: hidden;\n' +
+'    }\n' +
+'    .glow-orb {\n' +
+'      position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;\n' +
+'    }\n' +
+'    .glow-orb-1 {\n' +
+'      top: -100px; left: 50%; transform: translateX(-50%); width: 500px; height: 300px;\n' +
+'      background: radial-gradient(circle, rgba(239, 68, 68, 0.22) 0%, rgba(99, 102, 241, 0.12) 60%, transparent 100%);\n' +
+'    }\n' +
+'    .glow-orb-2 {\n' +
+'      bottom: -100px; right: 10%; width: 400px; height: 300px;\n' +
+'      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);\n' +
+'    }\n' +
+'    .error-card {\n' +
+'      position: relative; z-index: 1; width: 100%; max-width: 580px;\n' +
+'      background: rgba(15, 23, 42, 0.88);\n' +
+'      backdrop-filter: blur(24px);\n' +
+'      -webkit-backdrop-filter: blur(24px);\n' +
+'      border: 1px solid rgba(239, 68, 68, 0.35);\n' +
+'      border-radius: 28px;\n' +
+'      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 50px -10px rgba(239, 68, 68, 0.25);\n' +
+'      padding: 40px 32px;\n' +
+'      text-align: center;\n' +
+'      display: flex; flex-direction: column; align-items: center; gap: 20px;\n' +
+'    }\n' +
+'    .brand-icon {\n' +
+'      width: 58px; height: 58px; display: flex; align-items: center; justify-content: center;\n' +
+'      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);\n' +
+'      border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 16px;\n' +
+'      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);\n' +
+'    }\n' +
+'    .brand-icon svg {\n' +
+'      width: 28px; height: 28px; fill: none; stroke: #fca5a5; stroke-width: 2;\n' +
+'      stroke-linecap: round; stroke-linejoin: round;\n' +
+'      filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.8));\n' +
+'    }\n' +
+'    .status-badge {\n' +
+'      display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;\n' +
+'      background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4);\n' +
+'      border-radius: 20px; color: #fca5a5; font-size: 0.82rem; font-weight: 700;\n' +
+'      letter-spacing: 0.04em; text-transform: uppercase;\n' +
+'    }\n' +
+'    h1 {\n' +
+'      font-family: \'Space Grotesk\', sans-serif; font-size: 2.2rem; font-weight: 700;\n' +
+'      letter-spacing: -0.02em;\n' +
+'      background: linear-gradient(135deg, #ffffff 0%, #fca5a5 50%, #38bdf8 100%);\n' +
+'      -webkit-background-clip: text; -webkit-text-fill-color: transparent;\n' +
+'      line-height: 1.2;\n' +
+'    }\n' +
+'    .details-box {\n' +
+'      width: 100%; background: rgba(30, 41, 59, 0.5);\n' +
+'      border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 16px; padding: 16px;\n' +
+'      display: flex; flex-direction: column; gap: 10px; text-align: left;\n' +
+'    }\n' +
+'    .target-url-label { font-size: 0.78rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }\n' +
+'    .target-url-val {\n' +
+'      font-family: monospace; font-size: 0.88rem; color: #38bdf8; word-break: break-all;\n' +
+'      background: rgba(15, 23, 42, 0.7); padding: 8px 12px; border-radius: 10px;\n' +
+'      border: 1px solid rgba(56, 189, 248, 0.25);\n' +
+'    }\n' +
+'    .error-desc { font-size: 0.9rem; color: #cbd5e1; line-height: 1.5; }\n' +
+'    .actions-group {\n' +
+'      display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 8px;\n' +
+'    }\n' +
+'    .btn-action {\n' +
+'      width: 100%; padding: 14px 20px; border-radius: 14px; font-size: 0.92rem; font-weight: 600;\n' +
+'      font-family: inherit; cursor: pointer; display: inline-flex; align-items: center;\n' +
+'      justify-content: center; gap: 8px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);\n' +
+'      text-decoration: none;\n' +
+'    }\n' +
+'    .btn-primary {\n' +
+'      background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);\n' +
+'      border: none; color: #030712; font-weight: 700;\n' +
+'      box-shadow: 0 4px 18px rgba(56, 189, 248, 0.35);\n' +
+'    }\n' +
+'    .btn-primary:hover {\n' +
+'      transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 189, 248, 0.5);\n' +
+'      background: linear-gradient(135deg, #7dd3fc 0%, #60a5fa 100%);\n' +
+'    }\n' +
+'    .btn-secondary {\n' +
+'      background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35);\n' +
+'      color: #38bdf8;\n' +
+'    }\n' +
+'    .btn-secondary:hover {\n' +
+'      background: rgba(56, 189, 248, 0.25); color: #ffffff; transform: translateY(-1px);\n' +
+'    }\n' +
+'    .btn-outline {\n' +
+'      background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.25);\n' +
+'      color: #cbd5e1;\n' +
+'    }\n' +
+'    .btn-outline:hover {\n' +
+'      background: rgba(30, 41, 59, 0.9); color: #ffffff; border-color: rgba(148, 163, 184, 0.4);\n' +
+'      transform: translateY(-1px);\n' +
+'    }\n' +
+'  </style>\n' +
+'</head>\n' +
+'<body>\n' +
+'  <div class="glow-orb glow-orb-1"></div>\n' +
+'  <div class="glow-orb glow-orb-2"></div>\n' +
+'  <div class="error-card">\n' +
+'    <div class="brand-icon">\n' +
+'      <svg viewBox="0 0 24 24">\n' +
+'        <circle cx="12" cy="12" r="10"></circle>\n' +
+'        <line x1="12" y1="8" x2="12" y2="12"></line>\n' +
+'        <line x1="12" y1="16" x2="12.01" y2="16"></line>\n' +
+'      </svg>\n' +
+'    </div>\n' +
+'    <span class="status-badge">' + errorType + '</span>\n' +
+'    <h1>' + pageTitle + '</h1>\n' +
+'    <div class="details-box">\n' +
+(safeTargetUrl ? '      <div class="target-url-label">Requested Website:</div>\n' +
+'      <div class="target-url-val">' + safeTargetUrl + '</div>\n' : '') +
+'      <div class="error-desc">' + safeDetails + '</div>\n' +
+'    </div>\n' +
+'    <div class="actions-group">\n' +
+'      <button type="button" onclick="window.location.reload()" class="btn-action btn-primary">🔄 Try Again</button>\n' +
+(safeTargetUrl ? '      <a href="' + safeTargetUrl + '" target="_blank" rel="noopener" class="btn-action btn-secondary">🌐 Test Direct Connection (No Proxy)</a>\n' : '') +
+'      <a href="/" class="btn-action btn-outline">🏠 Return to Heavenly Home</a>\n' +
+'    </div>\n' +
+'  </div>\n' +
+'</body>\n' +
+'</html>';
+}
+
+app.renderHeavenlyErrorPage = renderHeavenlyErrorPage;
 
 var unblocker = new Unblocker(unblockerConfig);
 
@@ -312,6 +485,101 @@ app.get("/no-js", function(req, res) {
     res.redirect(unblockerConfig.prefix + targetUrl);
 });
 
+function heavenlyErrorMiddleware(err, req, res, next) {
+    if (res.headersSent) {
+        return next(err);
+    }
+
+    var targetUrl = '';
+    var reqPath = req.originalUrl || req.url || '';
+    if (reqPath && reqPath.indexOf('/proxy/') === 0) {
+        targetUrl = reqPath.substring('/proxy/'.length);
+        if (targetUrl.indexOf(':/') !== -1 && targetUrl.indexOf('://') === -1) {
+            targetUrl = targetUrl.replace(/^(https?:\/)([^\/])/i, '$1/$2');
+        }
+        if (!/^https?:\/\//i.test(targetUrl)) {
+            targetUrl = 'https://' + targetUrl;
+        }
+    }
+
+    var code = (err && (err.code || err.errno)) || '';
+    var statusCode = 502;
+    var errorType = 'Server Not Found';
+    var details = 'An error occurred while connecting to the requested website through Heavenly Proxy.';
+
+    if (code === 'ENOTFOUND' || code === 'EAI_AGAIN') {
+        statusCode = 502;
+        errorType = 'Server Not Found';
+        details = 'Heavenly could not connect or resolve the server address at ' + (targetUrl || 'this website') + '. Check that the website address is typed correctly.';
+    } else if (code === 'ECONNREFUSED') {
+        statusCode = 502;
+        errorType = 'Connection Refused';
+        details = 'The target server at ' + (targetUrl || 'this website') + ' refused the connection. The server may be offline or down for maintenance.';
+    } else if (code === 'ETIMEDOUT' || code === 'ESOCKETTIMEDOUT') {
+        statusCode = 504;
+        errorType = 'Connection Timed Out';
+        details = 'The connection to ' + (targetUrl || 'this website') + ' timed out before a response was received.';
+    } else if (code === 'ECONNRESET' || code === 'EPIPE') {
+        statusCode = 502;
+        errorType = 'Connection Reset';
+        details = 'The connection to the target website was unexpectedly reset.';
+    } else if (err && err.status && err.status >= 400 && err.status < 600) {
+        statusCode = err.status;
+        errorType = 'Error ' + err.status;
+        details = err.message || details;
+    } else if (err && err.message) {
+        details = err.message;
+    }
+
+    var html = renderHeavenlyErrorPage({
+        statusCode: statusCode,
+        errorType: errorType,
+        targetUrl: targetUrl,
+        details: details
+    });
+
+    res.status(statusCode);
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+}
+
+app.use(heavenlyErrorMiddleware);
+
+function serverErrorResponseMiddleware(data) {
+    if (!data.remoteResponse || !data.remoteResponse.statusCode) return;
+    var status = data.remoteResponse.statusCode;
+    if (status >= 500 && status < 600) {
+        if (data.contentType === 'text/html') {
+            var targetUrl = data.url || '';
+            var errorType = 'Server Error ' + status;
+            if (status === 500) errorType = 'Internal Server Error (500)';
+            else if (status === 502) errorType = 'Bad Gateway (502)';
+            else if (status === 503) errorType = 'Service Unavailable (503)';
+            else if (status === 504) errorType = 'Gateway Timeout (504)';
+
+            var details = 'The target server at ' + (targetUrl || 'this website') + ' returned a ' + status + ' error response. The remote website is currently experiencing server issues.';
+
+            var html = renderHeavenlyErrorPage({
+                statusCode: status,
+                errorType: errorType,
+                targetUrl: targetUrl,
+                details: details
+            });
+
+            data.headers = data.headers || {};
+            data.headers['content-type'] = 'text/html; charset=utf-8';
+            data.headers['content-length'] = Buffer.byteLength(html).toString();
+
+            var Stream = require('stream');
+            var readable = new Stream.Readable();
+            readable._read = function() {};
+            readable.push(html);
+            readable.push(null);
+            data.stream = readable;
+        }
+    }
+}
+
 app.addGa = addGa;
 app.googleAnalyticsMiddleware = googleAnalyticsMiddleware;
 app.headersMiddleware = headersMiddleware;
@@ -319,6 +587,8 @@ app.responseLinkHeaderMiddleware = responseLinkHeaderMiddleware;
 app.newgroundsMiddleware = newgroundsMiddleware;
 app.cloudflareMiddleware = cloudflareMiddleware;
 app.responseRedirectMiddleware = responseRedirectMiddleware;
+app.serverErrorResponseMiddleware = serverErrorResponseMiddleware;
+app.heavenlyErrorMiddleware = heavenlyErrorMiddleware;
 
 module.exports = app;
 
