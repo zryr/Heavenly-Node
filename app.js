@@ -104,6 +104,26 @@ function headersMiddleware(data) {
     }
 }
 
+function stripIntegrityMiddleware(data) {
+    if (data.contentType == 'text/html' && data.stream) {
+        data.stream = data.stream.pipe(new Transform({
+            decodeStrings: false,
+            transform: function(chunk, encoding, next) {
+                var str = chunk.toString();
+                var cleaned = str.replace(/\s+integrity\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+                this.push(cleaned);
+                next();
+            }
+        }));
+    }
+}
+
+function stripFrameHeadersMiddleware(data) {
+    if (data.headers) {
+        delete data.headers['x-frame-options'];
+    }
+}
+
 function responseLinkHeaderMiddleware(data) {
     if (data.headers && data.headers['link']) {
         var link = data.headers['link'];
@@ -228,6 +248,8 @@ var unblockerConfig = {
         responseRedirectMiddleware,
         responseLinkHeaderMiddleware,
         googleAnalyticsMiddleware,
+        stripIntegrityMiddleware,
+        stripFrameHeadersMiddleware,
         serverErrorResponseMiddleware
     ]
 };
@@ -629,6 +651,8 @@ app.responseLinkHeaderMiddleware = responseLinkHeaderMiddleware;
 app.newgroundsMiddleware = newgroundsMiddleware;
 app.cloudflareMiddleware = cloudflareMiddleware;
 app.responseRedirectMiddleware = responseRedirectMiddleware;
+app.stripIntegrityMiddleware = stripIntegrityMiddleware;
+app.stripFrameHeadersMiddleware = stripFrameHeadersMiddleware;
 app.serverErrorResponseMiddleware = serverErrorResponseMiddleware;
 app.heavenlyErrorMiddleware = heavenlyErrorMiddleware;
 

@@ -150,6 +150,91 @@
     return prefix + url.href;
   }
 
+  function initURLConstructor(config, window) {
+    if (!window.URL) return;
+    var _NativeURL = window.URL;
+    var prefix = config.prefix;
+    var prefixLen = prefix.length;
+
+    function ProxyURL(urlStr, base) {
+      if (typeof urlStr === "string" && urlStr.substr(0, prefixLen) === prefix) {
+        var unproxied = urlStr.substr(prefixLen);
+        while (unproxied && unproxied.indexOf(prefix) !== -1) {
+          var idx = unproxied.indexOf(prefix);
+          unproxied = unproxied.substring(idx + prefixLen);
+        }
+        if (unproxied.indexOf(":/") !== -1 && unproxied.indexOf("://") === -1) {
+          unproxied = unproxied.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+        }
+        if (!unproxied.startsWith("http://") && !unproxied.startsWith("https://")) {
+          unproxied = "https://" + unproxied;
+        }
+        urlStr = unproxied;
+      }
+      if (base !== undefined) {
+        return new _NativeURL(urlStr, base);
+      }
+      return new _NativeURL(urlStr);
+    }
+
+    ProxyURL.prototype = _NativeURL.prototype;
+    for (var key in _NativeURL) {
+      if (Object.prototype.hasOwnProperty.call(_NativeURL, key)) {
+        ProxyURL[key] = _NativeURL[key];
+      }
+    }
+    if (_NativeURL.createObjectURL) ProxyURL.createObjectURL = _NativeURL.createObjectURL;
+    if (_NativeURL.revokeObjectURL) ProxyURL.revokeObjectURL = _NativeURL.revokeObjectURL;
+
+    window.URL = ProxyURL;
+  }
+
+  function initDocumentPrototypes(config, window) {
+    if (!window.Document || !window.Document.prototype) return;
+    var prefix = config.prefix;
+    var prefixLen = prefix.length;
+
+    function getTargetHref(window) {
+      try {
+        var loc = window.location;
+        var p = loc.pathname || "";
+        if (p.substr(0, prefixLen) === prefix) {
+          var t = p.substr(prefixLen) + (loc.search || "") + (loc.hash || "");
+          while (t && t.indexOf(prefix) !== -1) {
+            t = t.substring(t.indexOf(prefix) + prefixLen);
+          }
+          if (t.indexOf(":/") !== -1 && t.indexOf("://") === -1) {
+            t = t.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+          }
+          if (!t.startsWith("http://") && !t.startsWith("https://")) {
+            t = "https://" + t;
+          }
+          return t;
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    function wrapDocProp(prop) {
+      var desc = Object.getOwnPropertyDescriptor(window.Document.prototype, prop);
+      if (!desc || !desc.get) return;
+      var nativeGet = desc.get;
+      Object.defineProperty(window.Document.prototype, prop, {
+        get: function () {
+          var target = getTargetHref(window);
+          if (target) return target;
+          return nativeGet.call(this);
+        },
+        configurable: true,
+        enumerable: desc.enumerable
+      });
+    }
+
+    wrapDocProp("URL");
+    wrapDocProp("documentURI");
+    wrapDocProp("baseURI");
+  }
+
   function initLocationPrototype(config, window) {
     var locProto = window.Location ? window.Location.prototype : null;
     if (!locProto) return;
@@ -224,8 +309,46 @@
     wrapLocProp("hostname", function (target) { return target.hostname; }, null);
   }
 
+  function unfixUrl(urlStr, config) {
+    if (!urlStr) return urlStr;
+    var prefix = config.prefix;
+    var prefixLen = prefix.length;
+    var s = urlStr.toString();
+    var idx = s.indexOf(prefix);
+    if (idx !== -1) {
+      s = s.substring(idx + prefixLen);
+      while (s && s.indexOf(prefix) !== -1) {
+        s = s.substring(s.indexOf(prefix) + prefixLen);
+      }
+      if (s.indexOf(":/") !== -1 && s.indexOf("://") === -1) {
+        s = s.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+      }
+      if (!s.startsWith("http://") && !s.startsWith("https://")) {
+        s = "https://" + s;
+      }
+    }
+    return s;
+  }
+
+  function unfixAttributeUrl(val, config) {
+    if (!val) return val;
+    var prefix = config.prefix;
+    var prefixLen = prefix.length;
+    var s = val.toString();
+    if (s.substr(0, prefixLen) === prefix) {
+      var unp = unfixUrl(s, config);
+      try {
+        var u = new URL(unp);
+        return u.pathname + u.search + u.hash;
+      } catch (e) {
+        return unp;
+      }
+    }
+    return val;
+  }
+
   function initElementPrototypes(config, window) {
-    function wrapProperty(proto, prop, fixFn) {
+    function wrapProperty(proto, prop, fixFn, getFn) {
       if (!proto) return;
       var desc;
       var p = proto;
@@ -239,6 +362,7 @@
         get: function () {
           var val = nativeGet.call(this);
           if (typeof val === "string" && val) {
+            if (getFn) return getFn(val, config);
             return fixFn(val, config, window.location);
           }
           return val;
@@ -265,7 +389,7 @@
       wrapProperty(window.HTMLMediaElement.prototype, "src", fixUrl);
     }
     if (window.HTMLAnchorElement && window.HTMLAnchorElement.prototype) {
-      wrapProperty(window.HTMLAnchorElement.prototype, "href", fixUrl);
+      wrapProperty(window.HTMLAnchorElement.prototype, "href", fixUrl, unfixUrl);
     }
     if (window.HTMLLinkElement && window.HTMLLinkElement.prototype) {
       wrapProperty(window.HTMLLinkElement.prototype, "href", fixUrl);
@@ -293,23 +417,39 @@
       } catch (e) {}
     }
 
-    if (window.Element && window.Element.prototype && window.Element.prototype.setAttribute) {
-      var _setAttribute = window.Element.prototype.setAttribute;
-      window.Element.prototype.setAttribute = function (name, value) {
-        if (typeof name === "string") {
-          var lowerName = name.toLowerCase();
-          if (lowerName === "integrity") {
-            try { this.removeAttribute("integrity"); } catch (e) {}
-            return;
+    if (window.Element && window.Element.prototype) {
+      if (window.Element.prototype.getAttribute) {
+        var _getAttribute = window.Element.prototype.getAttribute;
+        window.Element.prototype.getAttribute = function (name) {
+          var val = _getAttribute.call(this, name);
+          if (typeof name === "string" && typeof val === "string") {
+            var lowerName = name.toLowerCase();
+            if (lowerName === "href" || lowerName === "src") {
+              return unfixAttributeUrl(val, config);
+            }
           }
-          if (lowerName === "src" || lowerName === "href" || lowerName === "poster" || lowerName === "data-src" || lowerName === "data-href" || lowerName === "data-url") {
-            value = fixUrl(value, config, window.location);
-          } else if (lowerName === "srcset" || lowerName === "data-srcset") {
-            value = fixSrcset(value, config, window.location);
+          return val;
+        };
+      }
+
+      if (window.Element.prototype.setAttribute) {
+        var _setAttribute = window.Element.prototype.setAttribute;
+        window.Element.prototype.setAttribute = function (name, value) {
+          if (typeof name === "string") {
+            var lowerName = name.toLowerCase();
+            if (lowerName === "integrity") {
+              try { this.removeAttribute("integrity"); } catch (e) {}
+              return;
+            }
+            if (lowerName === "src" || lowerName === "href" || lowerName === "poster" || lowerName === "data-src" || lowerName === "data-href" || lowerName === "data-url") {
+              value = fixUrl(value, config, window.location);
+            } else if (lowerName === "srcset" || lowerName === "data-srcset") {
+              value = fixSrcset(value, config, window.location);
+            }
           }
-        }
-        return _setAttribute.call(this, name, value);
-      };
+          return _setAttribute.call(this, name, value);
+        };
+      }
     }
 
     if (window.open && !window.__nativeWinOpen) {
@@ -3140,6 +3280,8 @@
 
   function initForWindow(config, window) {
     console.log("begin unblocker client scripts", config, window);
+    initURLConstructor(config, window);
+    initDocumentPrototypes(config, window);
     initLocationPrototype(config, window);
     initElementPrototypes(config, window);
     initMutationObserverAndClicks(config, window);
