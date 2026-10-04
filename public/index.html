@@ -1092,6 +1092,10 @@
           <svg style="width: 18px; height: 18px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
           <span>Settings & Cloaking</span>
         </a>
+        <button type="button" id="open-share-btn" class="settings-btn" style="background: rgba(129, 140, 248, 0.15); border-color: rgba(129, 140, 248, 0.4); color: #a5b4fc;" aria-label="Share bookmarks with friends">
+          <svg style="width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+          <span>Share Bookmarks</span>
+        </button>
       </div>
 
       <div id="google-ad">
@@ -1252,6 +1256,60 @@
       </div>
       <div style="display: flex; justify-content: flex-end;">
         <button id="everythingmoe-ok-btn" type="button" class="modal-submit-btn" style="width: 100%;">Okay</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share Bookmarks Modal -->
+  <div id="share-modal" class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="share-modal-title" style="max-width: 500px;">
+      <div class="modal-header">
+        <span class="modal-title" id="share-modal-title">Share Bookmarks with Friends</span>
+        <button id="close-share-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
+        <button id="tab-share-create" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(129, 140, 248, 0.2); border: 1px solid rgba(129, 140, 248, 0.4); color: #818cf8; font-weight: 600; cursor: pointer;">1. Pick & Share</button>
+        <button id="tab-share-redeem" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">2. Enter Code / Link</button>
+      </div>
+
+      <!-- Create Share Code Tab -->
+      <div id="share-view-create" style="display: flex; flex-direction: column; gap: 12px;">
+        <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Select which bookmarks or categories you want to share:</p>
+
+        <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(148,163,184,0.15); padding-bottom: 6px;">
+          <span style="font-size: 0.82rem; font-weight: 600; color: #e0f2fe;">Select Items:</span>
+          <div style="display: flex; gap: 6px;">
+            <button id="share-select-all-btn" type="button" style="padding: 3px 8px; background: rgba(129, 140, 248, 0.15); border: 1px solid rgba(129, 140, 248, 0.35); border-radius: 6px; color: #818cf8; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Select All</button>
+            <button id="share-deselect-all-btn" type="button" style="padding: 3px 8px; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 6px; color: #cbd5e1; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Deselect All</button>
+          </div>
+        </div>
+
+        <div id="share-tree-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px;"></div>
+
+        <!-- Generated Code / Link Section -->
+        <div id="share-output-container" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid rgba(148,163,184,0.15); padding-top: 10px;">
+          <label for="share-code-output" style="font-size: 0.82rem; font-weight: 600; color: #cbd5e1;">Your Share Code / Link:</label>
+          <input type="text" id="share-code-output" readonly placeholder="Generating code..." style="padding: 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(129, 140, 248, 0.4); border-radius: 10px; color: #a5b4fc; font-size: 0.82rem; font-family: monospace;" />
+          <div style="display: flex; gap: 8px;">
+            <button id="copy-share-code-btn" type="button" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%); border: none; border-radius: 10px; color: #ffffff; font-weight: 700; font-size: 0.85rem; cursor: pointer;">📋 Copy Code</button>
+            <button id="copy-share-link-btn" type="button" style="flex: 1; padding: 10px; background: rgba(129, 140, 248, 0.18); border: 1px solid #818cf8; border-radius: 10px; color: #818cf8; font-weight: 600; font-size: 0.85rem; cursor: pointer;">🔗 Copy Link</button>
+          </div>
+          <div id="share-copy-status" style="font-size: 0.8rem; text-align: center; color: #38bdf8; min-height: 1.2em;"></div>
+        </div>
+      </div>
+
+      <!-- Redeem Share Code Tab -->
+      <div id="share-view-redeem" style="display: none; flex-direction: column; gap: 12px;">
+        <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Paste a share code or share link received from a friend:</p>
+        <input type="text" id="share-code-input" placeholder="Paste share code or link here..." style="padding: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(129, 140, 248, 0.4); border-radius: 12px; color: #ffffff; font-size: 0.88rem; font-family: monospace;" />
+
+        <div id="share-preview-container" style="display: none; flex-direction: column; gap: 8px;">
+          <span style="font-size: 0.85rem; font-weight: 600; color: #e0f2fe;">Shared Bookmarks Found:</span>
+          <div id="share-preview-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; padding: 10px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2);"></div>
+        </div>
+
+        <button id="apply-share-code-btn" type="button" style="padding: 12px; background: linear-gradient(135deg, #818cf8 0%, #a855f7 100%); border: none; border-radius: 12px; color: #ffffff; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 4px;">Import Shared Bookmarks</button>
       </div>
     </div>
   </div>
@@ -1756,12 +1814,12 @@
       ],
       bookmarks: [
         { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-        { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-        { id: "bm_cinezo_anime", categoryId: "cat_anime", title: "Cinezo", url: "https://www.cinezo.org", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+        { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
-        { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-        { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-        { id: "bm_cinezo_movies", categoryId: "cat_movies", title: "Cinezo", url: "https://www.cinezo.org", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         {
           id: "bm_individual_games",
           categoryId: "cat_games",
@@ -2266,10 +2324,10 @@
         header.appendChild(addBmBtn);
         card.appendChild(header);
 
-        if (cat.id === 'cat_anime') {
+        if (cat.id === 'cat_anime' || cat.id === 'cat_movies') {
           var notice = document.createElement('div');
           notice.style.cssText = 'font-size: 0.78rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 6px 10px; margin-top: 2px; margin-bottom: 2px; line-height: 1.4; font-weight: 500;';
-          notice.textContent = '💡 Tip: Try different servers if an anime is blocked or not loading!';
+          notice.textContent = cat.id === 'cat_anime' ? '💡 Tip: Try different servers if an anime is blocked or not loading!' : '💡 Tip: Try different servers if a movie or show is blocked or not loading!';
           card.appendChild(notice);
         }
 
@@ -3027,6 +3085,285 @@
       }
     }
 
+    // --- Granular Share Bookmarks Manager ---
+    var parsedSharePayload = null;
+
+    function encodeSharePayload(payload) {
+      try {
+        var str = JSON.stringify(payload);
+        return 'HBM1_' + btoa(encodeURIComponent(str));
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function decodeSharePayload(codeStr) {
+      try {
+        if (!codeStr) return null;
+        var clean = codeStr.trim();
+        if (clean.includes('share_code=')) {
+          var idx = clean.indexOf('share_code=');
+          clean = clean.substring(idx + 11).split('&')[0];
+        }
+        if (clean.startsWith('HBM1_')) {
+          clean = clean.substring(5);
+        }
+        var decoded = decodeURIComponent(atob(clean));
+        return JSON.parse(decoded);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function updateShareOutputCode() {
+      var bmsData = loadBookmarkData();
+      var selectedCatCbs = document.querySelectorAll('.share-cat-cb:checked');
+      var selectedBmCbs = document.querySelectorAll('.share-bm-cb:checked');
+
+      var selectedCatIds = Array.from(selectedCatCbs).map(function (cb) { return cb.getAttribute('data-cat-id'); });
+      var selectedBmIds = Array.from(selectedBmCbs).map(function (cb) { return cb.getAttribute('data-bm-id'); });
+
+      var fileCats = (bmsData.categories || []).filter(function (c) { return selectedCatIds.includes(c.id); });
+      var fileBms = (bmsData.bookmarks || []).filter(function (b) { return selectedBmIds.includes(b.id) || selectedCatIds.includes(b.categoryId); });
+
+      var payload = {
+        categories: fileCats,
+        bookmarks: fileBms
+      };
+
+      var code = encodeSharePayload(payload);
+      var outInput = $('share-code-output');
+      if (outInput) outInput.value = code;
+    }
+
+    function openShareModal() {
+      var modal = $('share-modal');
+      if (!modal) return;
+
+      var bmsData = loadBookmarkData();
+      var container = $('share-tree-container');
+      if (container) {
+        container.innerHTML = '';
+        bmsData.categories.forEach(function (cat) {
+          // Find custom non-builtIn bookmarks in this category
+          var customCatBms = bmsData.bookmarks.filter(function (b) { return b.categoryId === cat.id && !b.builtIn; });
+
+          // Render category if custom section OR contains custom bookmarks
+          if (!cat.builtIn || customCatBms.length > 0) {
+            var catCard = document.createElement('div');
+            catCard.className = 'bookmark-mgr-item';
+            catCard.style.flexDirection = 'column';
+            catCard.style.alignItems = 'flex-start';
+            catCard.style.gap = '6px';
+
+            var catHeader = document.createElement('label');
+            catHeader.style.cssText = 'display:flex;align-items:center;gap:8px;cursor:pointer;width:100%;font-weight:700;font-size:0.88rem;color:#818cf8;';
+            var catCb = document.createElement('input');
+            catCb.type = 'checkbox';
+            catCb.className = 'share-cb share-cat-cb';
+            catCb.setAttribute('data-cat-id', cat.id);
+            catCb.checked = true;
+            catCb.style.cssText = 'width:15px;height:15px;accent-color:#818cf8;';
+            catHeader.appendChild(catCb);
+            catHeader.appendChild(document.createTextNode(' 📁 ' + cat.title));
+
+            catCard.appendChild(catHeader);
+
+            if (customCatBms.length > 0) {
+              var bmsList = document.createElement('div');
+              bmsList.style.cssText = 'display:flex;flex-direction:column;gap:4px;padding-left:22px;width:100%;border-left:2px dashed rgba(129,140,248,0.3);margin-left:4px;';
+
+              customCatBms.forEach(function (bm) {
+                var bmItem = document.createElement('label');
+                bmItem.style.cssText = 'display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;color:#cbd5e1;';
+                var bmCb = document.createElement('input');
+                bmCb.type = 'checkbox';
+                bmCb.className = 'share-cb share-bm-cb';
+                bmCb.setAttribute('data-cat-id', cat.id);
+                bmCb.setAttribute('data-bm-id', bm.id);
+                bmCb.checked = true;
+                bmCb.style.cssText = 'width:14px;height:14px;accent-color:#818cf8;';
+                bmItem.appendChild(bmCb);
+                bmItem.appendChild(document.createTextNode(' ⭐ ' + bm.title));
+                bmsList.appendChild(bmItem);
+              });
+
+              catCard.appendChild(bmsList);
+            }
+
+            container.appendChild(catCard);
+          }
+        });
+
+        // Toggle category child bookmarks
+        container.querySelectorAll('.share-cat-cb').forEach(function (catCb) {
+          catCb.onchange = function () {
+            var catId = catCb.getAttribute('data-cat-id');
+            container.querySelectorAll('.share-bm-cb[data-cat-id="' + catId + '"]').forEach(function (bmCb) {
+              bmCb.checked = catCb.checked;
+            });
+            updateShareOutputCode();
+          };
+        });
+
+        container.querySelectorAll('.share-cb').forEach(function (cb) {
+          cb.onchange = updateShareOutputCode;
+        });
+      }
+
+      switchShareTab('create');
+      updateShareOutputCode();
+      modal.classList.add('active');
+    }
+
+    function closeShareModal() {
+      var modal = $('share-modal');
+      if (modal) modal.classList.remove('active');
+      $('share-copy-status').textContent = '';
+    }
+
+    function switchShareTab(tab) {
+      var tabCreate = $('tab-share-create');
+      var tabRedeem = $('tab-share-redeem');
+      var viewCreate = $('share-view-create');
+      var viewRedeem = $('share-view-redeem');
+
+      if (tab === 'redeem') {
+        tabCreate.style.background = 'rgba(30, 41, 59, 0.6)';
+        tabCreate.style.color = '#94a3b8';
+        tabRedeem.style.background = 'rgba(129, 140, 248, 0.2)';
+        tabRedeem.style.color = '#818cf8';
+        viewCreate.style.display = 'none';
+        viewRedeem.style.display = 'flex';
+      } else {
+        tabCreate.style.background = 'rgba(129, 140, 248, 0.2)';
+        tabCreate.style.color = '#818cf8';
+        tabRedeem.style.background = 'rgba(30, 41, 59, 0.6)';
+        tabRedeem.style.color = '#94a3b8';
+        viewCreate.style.display = 'flex';
+        viewRedeem.style.display = 'none';
+      }
+    }
+
+    function initShareBookmarkHandlers() {
+      var tabCreate = $('tab-share-create');
+      var tabRedeem = $('tab-share-redeem');
+      if (tabCreate) tabCreate.onclick = function () { switchShareTab('create'); };
+      if (tabRedeem) tabRedeem.onclick = function () { switchShareTab('redeem'); };
+
+      var selectAllBtn = $('share-select-all-btn');
+      var deselectAllBtn = $('share-deselect-all-btn');
+      if (selectAllBtn) selectAllBtn.onclick = function () {
+        document.querySelectorAll('#share-tree-container .share-cb').forEach(function (cb) { cb.checked = true; });
+        updateShareOutputCode();
+      };
+      if (deselectAllBtn) deselectAllBtn.onclick = function () {
+        document.querySelectorAll('#share-tree-container .share-cb').forEach(function (cb) { cb.checked = false; });
+        updateShareOutputCode();
+      };
+
+      var copyCodeBtn = $('copy-share-code-btn');
+      if (copyCodeBtn) {
+        copyCodeBtn.onclick = function () {
+          var out = $('share-code-output');
+          if (out && out.value) {
+            navigator.clipboard.writeText(out.value).then(function () {
+              $('share-copy-status').textContent = '✅ Share code copied to clipboard!';
+            }).catch(function () {
+              out.select();
+              document.execCommand('copy');
+              $('share-copy-status').textContent = '✅ Share code copied!';
+            });
+          }
+        };
+      }
+
+      var copyLinkBtn = $('copy-share-link-btn');
+      if (copyLinkBtn) {
+        copyLinkBtn.onclick = function () {
+          var out = $('share-code-output');
+          if (out && out.value) {
+            var fullUrl = window.location.origin + window.location.pathname + '?share_code=' + encodeURIComponent(out.value);
+            navigator.clipboard.writeText(fullUrl).then(function () {
+              $('share-copy-status').textContent = '✅ Share link copied to clipboard!';
+            }).catch(function () {
+              $('share-copy-status').textContent = '✅ Share link created!';
+            });
+          }
+        };
+      }
+
+      var shareInput = $('share-code-input');
+      if (shareInput) {
+        shareInput.oninput = function () {
+          var val = shareInput.value.trim();
+          parsedSharePayload = decodeSharePayload(val);
+          var previewContainer = $('share-preview-container');
+          var previewList = $('share-preview-list');
+
+          if (parsedSharePayload && (parsedSharePayload.bookmarks || parsedSharePayload.categories)) {
+            previewList.innerHTML = '';
+            var bms = parsedSharePayload.bookmarks || [];
+            bms.forEach(function (b) {
+              var item = document.createElement('div');
+              item.style.cssText = 'font-size:0.82rem;color:#f1f5f9;display:flex;align-items:center;gap:6px;';
+              item.textContent = '⭐ ' + b.title + ' (' + (b.url || 'Folder') + ')';
+              previewList.appendChild(item);
+            });
+            previewContainer.style.display = 'flex';
+          } else {
+            previewContainer.style.display = 'none';
+          }
+        };
+      }
+
+      var applyShareBtn = $('apply-share-code-btn');
+      if (applyShareBtn) {
+        applyShareBtn.onclick = function () {
+          if (!parsedSharePayload) {
+            alert('Please enter a valid share code or link.');
+            return;
+          }
+
+          var data = loadBookmarkData();
+          var shareCats = parsedSharePayload.categories || [];
+          var shareBms = parsedSharePayload.bookmarks || [];
+
+          shareCats.forEach(function (cat) {
+            var exists = data.categories.some(function (c) { return c.id === cat.id; });
+            if (!exists) data.categories.push(cat);
+          });
+
+          shareBms.forEach(function (bm) {
+            var exists = data.bookmarks.some(function (b) { return b.id === bm.id; });
+            if (!exists) data.bookmarks.push(bm);
+          });
+
+          saveBookmarkData(data);
+          closeShareModal();
+          renderBookmarksUI();
+          alert('✅ Shared bookmarks imported successfully!');
+        };
+      }
+
+      // Check URL query params for auto-share redemption
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var shareCodeParam = params.get('share_code');
+        if (shareCodeParam) {
+          setTimeout(function () {
+            openShareModal();
+            switchShareTab('redeem');
+            var shareInput = $('share-code-input');
+            if (shareInput) {
+              shareInput.value = shareCodeParam;
+              shareInput.oninput();
+            }
+          }, 300);
+        }
+      } catch (e) {}
+    }
+
     function closeAddModal() {
       var modal = $('add-modal');
       if (modal) modal.classList.remove('active');
@@ -3138,14 +3475,22 @@
         openAddModal('bookmark');
       };
 
+      var openShareBtn = $('open-share-btn');
+      if (openShareBtn) {
+        openShareBtn.onclick = function () {
+          openShareModal();
+        };
+      }
+
       $('close-modal-btn').onclick = closeAddModal;
       $('close-builtin-modal-btn').onclick = closeBuiltinTestModal;
       $('close-everythingmoe-modal-btn').onclick = closeEverythingMoeNoticeModal;
+      $('close-share-modal-btn').onclick = closeShareModal;
 
       $('everythingmoe-ok-btn').onclick = function () {
         closeEverythingMoeNoticeModal();
         if (pendingEverythingMoeUrl) {
-          window.location.href = pendingEverythingMoeUrl;
+          window.open(pendingEverythingMoeUrl, '_blank', 'noopener');
         }
       };
 
@@ -3383,6 +3728,7 @@
       initLandingCloak();
       initHistoryDropdown();
       initBookmarksManager();
+      initShareBookmarkHandlers();
       checkError();
       $('url').focus();
     };

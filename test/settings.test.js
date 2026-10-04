@@ -44,7 +44,7 @@ describe('settings.html standalone page', function() {
 
     it('should associate labels with form inputs using for attributes in settings.html', function() {
         assert.ok(html.includes('for="set-panic-key"'), 'label for set-panic-key should exist');
-        assert.ok(html.includes('for="set-dock-position"'), 'label for set-dock-position should exist');
+        assert.ok(html.includes('for="set-use-widget-dock"'), 'label for set-use-widget-dock should exist');
     });
 
     it('should have accessible aria-labels on settings form controls', function() {
