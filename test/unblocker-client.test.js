@@ -14,6 +14,41 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
     hash: ''
   };
 
+  describe('Location & URL un-proxying', function () {
+    it('should un-proxy Location prototype properties and URL constructor', function () {
+      function MockLocation() {}
+      Object.defineProperty(MockLocation.prototype, 'pathname', { value: '/proxy/https://fmhy.net/storage', writable: true, configurable: true });
+      Object.defineProperty(MockLocation.prototype, 'search', { value: '?q=test', writable: true, configurable: true });
+      Object.defineProperty(MockLocation.prototype, 'hash', { value: '#section', writable: true, configurable: true });
+      Object.defineProperty(MockLocation.prototype, 'origin', { value: 'http://localhost:8080', writable: true, configurable: true });
+
+      const mockLoc = new MockLocation();
+      const mockWindow = {
+        Location: MockLocation,
+        URL: global.URL,
+        location: mockLoc,
+        addEventListener: function () {},
+        document: {
+          readyState: 'complete',
+          documentElement: { addEventListener: function () {} }
+        },
+        localStorage: { getItem: function () { return '{}'; } }
+      };
+
+      initForWindow(config, mockWindow);
+
+      assert.strictEqual(mockLoc.pathname, '/storage');
+      assert.strictEqual(mockLoc.search, '?q=test');
+      assert.strictEqual(mockLoc.hash, '#section');
+      assert.strictEqual(mockLoc.origin, 'https://fmhy.net');
+      assert.strictEqual(mockLoc.href, 'https://fmhy.net/storage?q=test#section');
+
+      const parsedUrl = new mockWindow.URL('/proxy/https://fmhy.net/gaming');
+      assert.strictEqual(parsedUrl.pathname, '/gaming');
+      assert.strictEqual(parsedUrl.origin, 'https://fmhy.net');
+    });
+  });
+
   describe('fixUrl & fixSrcset', function () {
     it('should correctly proxy relative and absolute URLs', function () {
       assert.strictEqual(

@@ -150,6 +150,176 @@
     return prefix + url.href;
   }
 
+  function initLocationPrototype(config, window) {
+    if (!window.Location || !window.Location.prototype) return;
+    var proto = window.Location.prototype;
+    if (proto.__heavenlyLocUnproxied) return;
+    proto.__heavenlyLocUnproxied = true;
+
+    var prefix = config.prefix || '/proxy/';
+    var prefixLen = prefix.length;
+
+    var nativeGetters = {};
+    ['pathname', 'href', 'search', 'hash', 'origin'].forEach(function (prop) {
+      var desc;
+      var p = proto;
+      while (p && !(desc = Object.getOwnPropertyDescriptor(p, prop))) {
+        p = Object.getPrototypeOf(p);
+      }
+      if (desc && desc.get) {
+        nativeGetters[prop] = desc.get;
+      }
+    });
+
+    function getNativeLocProp(loc, prop) {
+      if (loc && loc['_raw' + prop] !== undefined) {
+        return loc['_raw' + prop];
+      }
+      if (nativeGetters[prop]) {
+        try {
+          var val = nativeGetters[prop].call(loc);
+          if (val !== undefined && val !== null) return val;
+        } catch (e) {}
+      }
+      return loc && loc['_' + prop] !== undefined ? loc['_' + prop] : '';
+    }
+
+    function getTargetRemoteObj(loc) {
+      if (!loc) return null;
+      var path = getNativeLocProp(loc, 'pathname');
+      if (typeof path !== 'string' || path.substr(0, prefixLen) !== prefix) return null;
+
+      var currentRemoteHref = path.substr(prefixLen) + getNativeLocProp(loc, 'search') + getNativeLocProp(loc, 'hash');
+      while (currentRemoteHref && currentRemoteHref.indexOf(prefix) !== -1) {
+        var idx = currentRemoteHref.indexOf(prefix);
+        currentRemoteHref = currentRemoteHref.substring(idx + prefixLen);
+      }
+      if (currentRemoteHref && currentRemoteHref.indexOf(":/") !== -1 && currentRemoteHref.indexOf("://") === -1) {
+        currentRemoteHref = currentRemoteHref.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+      }
+      if (currentRemoteHref && !currentRemoteHref.startsWith("http://") && !currentRemoteHref.startsWith("https://")) {
+        currentRemoteHref = "https://" + currentRemoteHref;
+      }
+
+      var cacheKey = path + getNativeLocProp(loc, 'search') + getNativeLocProp(loc, 'hash');
+      if (loc._heavenlyTargetCacheKey === cacheKey && loc._heavenlyTargetObj) {
+        return loc._heavenlyTargetObj;
+      }
+
+      try {
+        var targetObj = new URL(currentRemoteHref);
+        loc._heavenlyTargetCacheKey = cacheKey;
+        loc._heavenlyTargetObj = targetObj;
+        return targetObj;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function overrideLocProp(prop, getterFn) {
+      var desc;
+      var p = proto;
+      while (p && !(desc = Object.getOwnPropertyDescriptor(p, prop))) {
+        p = Object.getPrototypeOf(p);
+      }
+      var initialVal = (desc && 'value' in desc) ? desc.value : undefined;
+      var nativeGet = nativeGetters[prop] || (desc && desc.get ? desc.get : null);
+      var nativeSet = desc && desc.set ? desc.set : null;
+      Object.defineProperty(proto, prop, {
+        get: function () {
+          if (this['_raw' + prop] === undefined && initialVal !== undefined) {
+            this['_raw' + prop] = initialVal;
+          }
+          if (Object.prototype.hasOwnProperty.call(this, prop)) {
+            var ownVal = this[prop];
+            if (typeof ownVal === 'string' && ownVal.startsWith(prefix)) {
+              this['_raw' + prop] = ownVal;
+              delete this[prop];
+            }
+          }
+          var targetObj = getTargetRemoteObj(this);
+          if (targetObj) {
+            return getterFn(targetObj);
+          }
+          if (nativeGet) return nativeGet.call(this);
+          return this['_' + prop] !== undefined ? this['_' + prop] : (this['_raw' + prop] !== undefined ? this['_raw' + prop] : '');
+        },
+        set: function (val) {
+          if (nativeSet) {
+            return nativeSet.call(this, val);
+          }
+          this['_' + prop] = val;
+        },
+        configurable: true,
+        enumerable: desc ? desc.enumerable : true
+      });
+    }
+
+    overrideLocProp('pathname', function (targetObj) { return targetObj.pathname; });
+    overrideLocProp('href', function (targetObj) { return targetObj.href; });
+    overrideLocProp('search', function (targetObj) { return targetObj.search; });
+    overrideLocProp('hash', function (targetObj) { return targetObj.hash; });
+    overrideLocProp('origin', function (targetObj) { return targetObj.origin; });
+
+    if (window.Document && window.Document.prototype) {
+      var docProto = window.Document.prototype;
+      var docDesc = Object.getOwnPropertyDescriptor(docProto, 'location');
+      if (docDesc && docDesc.get) {
+        var nativeDocLocGet = docDesc.get;
+        Object.defineProperty(docProto, 'location', {
+          get: function () {
+            return nativeDocLocGet.call(this);
+          },
+          set: function (val) {
+            if (typeof val === 'string') {
+              val = fixUrl(val, config, window.location);
+            }
+            if (docDesc.set) {
+              return docDesc.set.call(this, val);
+            }
+            window.location.href = val;
+          },
+          configurable: true,
+          enumerable: docDesc.enumerable
+        });
+      }
+    }
+
+    if (window.URL) {
+      var NativeURL = window.URL;
+      function HeavenlyURL(urlArg, baseArg) {
+        if (typeof urlArg === 'string' && urlArg.startsWith(prefix)) {
+          var unproxied = urlArg.substr(prefixLen);
+          if (unproxied.indexOf(":/") !== -1 && unproxied.indexOf("://") === -1) {
+            unproxied = unproxied.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+          }
+          if (!unproxied.startsWith("http://") && !unproxied.startsWith("https://")) {
+            unproxied = "https://" + unproxied;
+          }
+          urlArg = unproxied;
+        }
+        if (baseArg && typeof baseArg === 'string' && baseArg.startsWith(prefix)) {
+          var baseUnproxied = baseArg.substr(prefixLen);
+          if (baseUnproxied.indexOf(":/") !== -1 && baseUnproxied.indexOf("://") === -1) {
+            baseUnproxied = baseUnproxied.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+          }
+          if (!baseUnproxied.startsWith("http://") && !baseUnproxied.startsWith("https://")) {
+            baseUnproxied = "https://" + baseUnproxied;
+          }
+          baseArg = baseUnproxied;
+        }
+        if (baseArg !== undefined) {
+          return new NativeURL(urlArg, baseArg);
+        }
+        return new NativeURL(urlArg);
+      }
+      HeavenlyURL.prototype = NativeURL.prototype;
+      if (NativeURL.createObjectURL) HeavenlyURL.createObjectURL = NativeURL.createObjectURL;
+      if (NativeURL.revokeObjectURL) HeavenlyURL.revokeObjectURL = NativeURL.revokeObjectURL;
+      window.URL = HeavenlyURL;
+    }
+  }
+
   function initElementPrototypes(config, window) {
     function wrapProperty(proto, prop, fixFn) {
       if (!proto) return;
@@ -3060,7 +3230,8 @@
   }
 
   function initForWindow(config, window) {
-    console.log("begin unblocker client scripts", config, window);
+    console.log("[Heavenly Debug] Initializing unblocker client scripts for window", config, window);
+    initLocationPrototype(config, window);
     initElementPrototypes(config, window);
     initMutationObserverAndClicks(config, window);
     initXMLHttpRequest(config, window);
