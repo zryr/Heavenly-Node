@@ -2314,6 +2314,7 @@
         addBmBtn.type = 'button';
         addBmBtn.className = 'btn-add-bm-quick';
         addBmBtn.title = 'Add bookmark to ' + cat.title;
+        addBmBtn.setAttribute('aria-label', 'Add bookmark to ' + cat.title);
         addBmBtn.textContent = '+';
         addBmBtn.onclick = function (e) {
           e.stopPropagation();
@@ -2561,6 +2562,7 @@
             expandBtn.type = 'button';
             expandBtn.className = 'folder-expand-btn';
             expandBtn.title = isFolderExpanded ? 'Collapse folder' : 'Expand folder';
+            expandBtn.setAttribute('aria-label', (isFolderExpanded ? 'Collapse folder ' : 'Expand folder ') + bm.title);
             expandBtn.style.background = 'none';
             expandBtn.style.border = 'none';
             expandBtn.style.color = '#38bdf8';

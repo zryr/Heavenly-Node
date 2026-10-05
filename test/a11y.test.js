@@ -76,4 +76,9 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('closeReorderBar()'), 'Escape key handler should close reorder bar');
         assert.ok(html.includes('bmSearch.value = \'\''), 'Escape key handler should clear bookmark search value');
     });
+
+    it('should configure category quick-add and folder expand buttons with descriptive aria-label attributes', function() {
+        assert.ok(html.includes('addBmBtn.setAttribute(\'aria-label\', \'Add bookmark to \' + cat.title)'), 'quick-add button should set aria-label with category title');
+        assert.ok(html.includes('expandBtn.setAttribute(\'aria-label\', (isFolderExpanded ? \'Collapse folder \' : \'Expand folder \') + bm.title)'), 'folder expand button should set aria-label with expand/collapse state and folder title');
+    });
 });
