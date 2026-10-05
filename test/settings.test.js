@@ -74,4 +74,8 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('deleteBtn.disabled = isBuiltIn'), 'deleteBtn should set disabled based on isBuiltIn');
         assert.ok(html.includes('Built-in presets cannot be deleted'), 'deleteBtn tooltip should explain built-in preset restriction');
     });
+
+    it('should check for touch devices when setting touchPanic default', function() {
+        assert.ok(html.includes("('ontouchstart' in window) || (navigator && navigator.maxTouchPoints > 0)"), 'settings.html should detect touch support for touchPanic default');
+    });
 });

@@ -48,6 +48,11 @@ function unoptimizedInit(win) {
   try {
     saved1 = JSON.parse(win.localStorage.getItem('heavenly_settings') || '{}');
   } catch (e) {}
+  var isTouch1 = false;
+  try {
+    isTouch1 = ('ontouchstart' in win) || (win.navigator && win.navigator.maxTouchPoints > 0);
+  } catch (e) {}
+
   var settings1 = {
     autoCloak: saved1.autoCloak !== undefined ? saved1.autoCloak : true,
     persistentCloak: saved1.persistentCloak || false,
@@ -55,7 +60,7 @@ function unoptimizedInit(win) {
     customPresets: saved1.customPresets || {},
     panicKeyEnable: saved1.panicKeyEnable || false,
     panicKey: saved1.panicKey || '`',
-    touchPanic: saved1.touchPanic || false,
+    touchPanic: saved1.touchPanic !== undefined ? saved1.touchPanic : isTouch1,
     panicUrl: saved1.panicUrl || 'https://classroom.google.com',
     showScrollLock: saved1.showScrollLock !== undefined ? saved1.showScrollLock : true,
     showMagnifier: saved1.showMagnifier !== undefined ? saved1.showMagnifier : true,
@@ -83,6 +88,11 @@ function loadHeavenlySettings(win) {
     saved = JSON.parse(win.localStorage.getItem('heavenly_settings') || '{}');
   } catch (e) {}
 
+  var isTouch = false;
+  try {
+    isTouch = ('ontouchstart' in win) || (win.navigator && win.navigator.maxTouchPoints > 0);
+  } catch (e) {}
+
   return {
     autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : true,
     persistentCloak: saved.persistentCloak || false,
@@ -90,7 +100,7 @@ function loadHeavenlySettings(win) {
     customPresets: saved.customPresets || {},
     panicKeyEnable: saved.panicKeyEnable || false,
     panicKey: saved.panicKey || '`',
-    touchPanic: saved.touchPanic || false,
+    touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : isTouch,
     panicUrl: saved.panicUrl || 'https://classroom.google.com',
     showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
     showMagnifier: saved.showMagnifier !== undefined ? saved.showMagnifier : true,

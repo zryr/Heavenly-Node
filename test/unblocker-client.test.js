@@ -262,4 +262,123 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       assert.strictEqual(parsed[0].title, 'Newgrounds: Everything by Everyone');
     });
   });
+
+  describe('Touch Panic Default & Default Bookmark Icons', function () {
+    function createMockElement(id) {
+      const children = [];
+      const el = {
+        id: id || '',
+        tagName: 'DIV',
+        style: {},
+        classList: { add: function () {}, remove: function () {} },
+        appendChild: function (c) { children.push(c); return c; },
+        addEventListener: function () {},
+        removeEventListener: function () {},
+        querySelector: function (sel) {
+          return createMockElement(sel);
+        },
+        querySelectorAll: function () { return []; },
+        attachShadow: function () {
+          return createMockElement('shadow');
+        },
+        getBoundingClientRect: function () {
+          return { left: 0, top: 0, right: 100, bottom: 100, width: 100, height: 100 };
+        }
+      };
+      return el;
+    }
+
+    it('should default touchPanic based on touch device detection when undefined', function () {
+      let touchPanicInjected = false;
+      const touchWindow = {
+        location: location,
+        ontouchstart: true,
+        navigator: { maxTouchPoints: 1 },
+        addEventListener: function () {},
+        removeEventListener: function () {},
+        document: {
+          readyState: 'complete',
+          body: { appendChild: function () {}, querySelectorAll: function () { return []; } },
+          getElementById: function (id) {
+            if (id === 'heavenly-touch-panic-root' && touchPanicInjected) return {};
+            return null;
+          },
+          getElementsByTagName: function () { return []; },
+          querySelectorAll: function () { return []; },
+          createElement: function (tag) {
+            const el = createMockElement();
+            const originalAttach = el.attachShadow;
+            el.attachShadow = function () {
+              if (el.id === 'heavenly-touch-panic-root') {
+                touchPanicInjected = true;
+              }
+              return originalAttach();
+            };
+            return el;
+          },
+          documentElement: { addEventListener: function () {} }
+        },
+        localStorage: { getItem: function () { return '{}'; } }
+      };
+      touchWindow.top = touchWindow;
+
+      initForWindow(config, touchWindow);
+      assert.strictEqual(touchPanicInjected, true, 'Touch Panic overlay should inject on touch device');
+
+      let nonTouchPanicInjected = false;
+      const nonTouchWindow = {
+        location: location,
+        navigator: { maxTouchPoints: 0 },
+        addEventListener: function () {},
+        removeEventListener: function () {},
+        document: {
+          readyState: 'complete',
+          body: { appendChild: function () {}, querySelectorAll: function () { return []; } },
+          getElementById: function (id) {
+            if (id === 'heavenly-touch-panic-root' && nonTouchPanicInjected) return {};
+            return null;
+          },
+          getElementsByTagName: function () { return []; },
+          querySelectorAll: function () { return []; },
+          createElement: function (tag) {
+            const el = createMockElement();
+            const originalAttach = el.attachShadow;
+            el.attachShadow = function () {
+              if (el.id === 'heavenly-touch-panic-root') {
+                nonTouchPanicInjected = true;
+              }
+              return originalAttach();
+            };
+            return el;
+          },
+          documentElement: { addEventListener: function () {} }
+        },
+        localStorage: { getItem: function () { return '{}'; } }
+      };
+      nonTouchWindow.top = nonTouchWindow;
+
+      initForWindow(config, nonTouchWindow);
+      assert.strictEqual(nonTouchPanicInjected, false, 'Touch Panic overlay should NOT inject on non-touch desktop device');
+    });
+
+    it('should have non-empty icons for all default built-in bookmarks and sub-bookmarks', function () {
+      const fs = require('fs');
+      const indexHtml = fs.readFileSync(require('path').join(__dirname, '../public/index.html'), 'utf8');
+
+      const match = indexHtml.match(/var DEFAULT_BOOKMARK_DATA = (\{[\s\S]*?\n    \};)/);
+      assert.ok(match, 'DEFAULT_BOOKMARK_DATA should be present in index.html');
+
+      const data = eval('(' + match[1] + ')');
+      assert.ok(data.bookmarks && data.bookmarks.length > 0);
+
+      data.bookmarks.forEach(function (bm) {
+        assert.ok(bm.icon && bm.icon.trim() !== '', 'Bookmark ' + bm.title + ' (' + bm.id + ') should have non-empty icon');
+        if (bm.subBookmarks && bm.subBookmarks.length > 0) {
+          bm.subBookmarks.forEach(function (sb) {
+            assert.ok(sb.icon && sb.icon.trim() !== '', 'Sub-bookmark ' + sb.title + ' (' + sb.id + ') should have non-empty icon');
+          });
+        }
+      });
+    });
+  });
 });
