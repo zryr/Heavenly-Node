@@ -503,7 +503,7 @@
       });
     }
 
-    // Global capture-phase click and auxclick event listener to enforce proxied href on anchor clicks & intercept EverythingMoe links
+    // Global capture-phase click and auxclick event listener to enforce proxied href on anchor clicks & intercept EverythingMoe/FMHY links
     function handleLinkClick(e) {
       var target = e.target;
       while (target && target !== window.document) {
@@ -522,6 +522,25 @@
                 e.stopPropagation();
                 openEverythingMoeLinkModal(window, config, rawHref, proxiedHref);
                 return;
+              }
+            }
+
+            // FMHY Outbound Link Interception
+            if (isFmhyPage(window, config)) {
+              // Exclude internal clicks originating from FMHY search or container elements
+              if (!target.closest('.shell') && !target.closest('.search-bar') && !target.closest('#localsearch-input') && !target.closest('.results')) {
+                if (rawHref.substr(0, 11) !== "javascript:" && rawHref.substr(0, 1) !== "#") {
+                  var extractedTarget = extractTargetRemoteUrl(rawHref, window, config);
+                  try {
+                    var parsedTarget = new URL(extractedTarget);
+                    if (!/(^|\.)fmhy\.net$/i.test(parsedTarget.hostname)) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      openFmhyLinkModal(window, config, rawHref, proxiedHref);
+                      return;
+                    }
+                  } catch (err) {}
+                }
               }
             }
           }
@@ -1186,6 +1205,95 @@
     }
   }
 
+  function isFmhyPage(window, config) {
+    try {
+      var directUrl = getDirectRemoteUrl(window, config);
+      var u = new URL(directUrl.startsWith('http') ? directUrl : 'https://' + directUrl);
+      return /(^|\.)fmhy\.net$/i.test(u.hostname);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function openFmhyLinkModal(window, config, rawUrl, proxiedUrl) {
+    try {
+      var existingModal = window.document.getElementById('heavenly-fmhy-link-modal');
+      if (existingModal) existingModal.remove();
+
+      var backdrop = window.document.createElement('div');
+      backdrop.id = 'heavenly-fmhy-link-modal';
+      backdrop.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:16px;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
+
+      var card = window.document.createElement('div');
+      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:500px;padding:24px;display:flex;flex-direction:column;gap:16px;color:#f8fafc;';
+
+      var header = window.document.createElement('div');
+      header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(148,163,184,0.15);padding-bottom:12px;';
+
+      var title = window.document.createElement('span');
+      title.style.cssText = 'font-size:1.15rem;font-weight:700;color:#f8fafc;display:flex;align-items:center;gap:8px;';
+      title.innerHTML = '🔗 FMHY Link Intercept';
+
+      var closeBtn = window.document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.style.cssText = 'background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;padding:4px;';
+      closeBtn.textContent = '✕';
+      closeBtn.onclick = function () { backdrop.remove(); };
+
+      header.appendChild(title);
+      header.appendChild(closeBtn);
+
+      var cleanDirectUrl = extractTargetRemoteUrl(rawUrl, window, config);
+      var targetProxiedUrl = fixUrl(cleanDirectUrl, config, window.location);
+
+      var body = window.document.createElement('div');
+      body.style.cssText = 'display:flex;flex-direction:column;gap:12px;font-size:0.9rem;color:#cbd5e1;line-height:1.5;';
+      body.innerHTML = '<p>Would you like to open this FMHY external link in a new tab?</p>' +
+        '<div style="background:rgba(30,41,59,0.7);padding:10px 14px;border-radius:12px;border:1px solid rgba(56,189,248,0.25);word-break:break-all;color:#38bdf8;font-weight:600;font-family:monospace;">' + cleanDirectUrl + '</div>';
+
+      var actions = window.document.createElement('div');
+      actions.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap;';
+
+      var openProxyBtn = window.document.createElement('button');
+      openProxyBtn.type = 'button';
+      openProxyBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;';
+      openProxyBtn.textContent = '🔒 Open with Proxy';
+      openProxyBtn.onclick = function () {
+        var openFn = window.__nativeWinOpen || window.open;
+        openFn.call(window, targetProxiedUrl, '_blank', 'noopener');
+        backdrop.remove();
+      };
+
+      var openDirectBtn = window.document.createElement('button');
+      openDirectBtn.type = 'button';
+      openDirectBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:rgba(56,189,248,0.15);border:1px solid #38bdf8;color:#38bdf8;font-weight:600;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;';
+      openDirectBtn.textContent = '🌐 Open Direct (Without Proxy)';
+      openDirectBtn.onclick = function () {
+        var openFn = window.__nativeWinOpen || window.open;
+        openFn.call(window, createUnproxiedUrl(cleanDirectUrl), '_blank', 'noopener');
+        backdrop.remove();
+      };
+
+      actions.appendChild(openDirectBtn);
+      actions.appendChild(openProxyBtn);
+
+      card.appendChild(header);
+      card.appendChild(body);
+      card.appendChild(actions);
+      backdrop.appendChild(card);
+
+      backdrop.onclick = function (e) {
+        if (e.target === backdrop) backdrop.remove();
+      };
+
+      var targetParent = window.document.body || window.document.documentElement;
+      if (targetParent) targetParent.appendChild(backdrop);
+    } catch (e) {
+      console.error('Error in FMHY link modal:', e);
+      window.open(proxiedUrl, '_blank', 'noopener');
+    }
+  }
+
   function openEverythingMoeLinkModal(window, config, rawUrl, proxiedUrl) {
     try {
       var existingModal = window.document.getElementById('heavenly-em-link-modal');
@@ -1395,13 +1503,15 @@
         ],
         bookmarks: [
           { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-          { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-          { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-          { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
-          { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-          { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-          { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-          { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+          { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+          { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+          { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+          { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+          { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
           {
             id: "bm_individual_games",
             categoryId: "cat_games",
