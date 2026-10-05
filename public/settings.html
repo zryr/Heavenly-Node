@@ -1243,8 +1243,8 @@
         { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_user_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: false, hidden: false, order: 99, subBookmarks: [] },
         { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-        { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
-        { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
         { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
         { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
@@ -1346,9 +1346,15 @@
             data.bookmarks.push(JSON.parse(JSON.stringify(defBm)));
             updated = true;
           } else {
-            if (defBm.builtIn && userBm.title !== defBm.title) {
-              userBm.title = defBm.title;
-              updated = true;
+            if (defBm.builtIn) {
+              if (userBm.title !== defBm.title) {
+                userBm.title = defBm.title;
+                updated = true;
+              }
+              if (userBm.type !== defBm.type) {
+                userBm.type = defBm.type;
+                updated = true;
+              }
             }
             if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
               if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
