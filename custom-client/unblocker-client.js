@@ -600,7 +600,9 @@
       showNavHome: saved.showNavHome !== undefined ? saved.showNavHome : true,
       useWidgetDock: saved.useWidgetDock || false,
       dockPosition: saved.dockPosition || 'bottom',
-      expandDirection: saved.expandDirection || 'left'
+      expandDirection: saved.expandDirection || 'left',
+      disableAllWidgets: saved.disableAllWidgets || false,
+      disableAllFeatures: saved.disableAllFeatures || false
     };
   }
 
@@ -617,6 +619,12 @@
 
       if (!settings) {
         settings = loadHeavenlySettings(window);
+      }
+
+      if (settings.disableAllFeatures) {
+        var existingPanic = window.document ? window.document.getElementById('heavenly-touch-panic-root') : null;
+        if (existingPanic) existingPanic.remove();
+        return;
       }
 
       var currentlyCloaked = false;
@@ -1333,6 +1341,14 @@
 
       if (!settings) {
         settings = loadHeavenlySettings(window);
+      }
+
+      if (settings.disableAllWidgets || settings.disableAllFeatures) {
+        ['heavenly-scroll-lock-root', 'heavenly-magnifier-root', 'heavenly-nav-root', 'heavenly-dock-root'].forEach(function (id) {
+          var el = window.document ? window.document.getElementById(id) : null;
+          if (el) el.remove();
+        });
+        return;
       }
 
       var scrollLockEnabled = false;
@@ -2648,6 +2664,12 @@
   function initFolderQuickSaveWidget(config, window) {
     try {
       if (window !== window.top) return;
+      var settings = loadHeavenlySettings(window);
+      if (settings.disableAllWidgets || settings.disableAllFeatures) {
+        var existingSave = window.document ? window.document.getElementById('heavenly-folder-save-root') : null;
+        if (existingSave) existingSave.remove();
+        return;
+      }
       var targetUrl = (config && config.url) ? config.url : '';
       if (!targetUrl && window.location) {
         var path = window.location.pathname;
@@ -2886,6 +2908,12 @@
   function initNewgroundsPagination(config, window) {
     try {
       if (window !== window.top) return;
+      var settings = loadHeavenlySettings(window);
+      if (settings.disableAllWidgets || settings.disableAllFeatures) {
+        var existingNg = window.document ? window.document.getElementById('heavenly-ng-pagination-root') : null;
+        if (existingNg) existingNg.remove();
+        return;
+      }
       var targetUrl = (config && config.url) ? config.url : '';
       if (!targetUrl && window.location) targetUrl = window.location.href;
 
@@ -3042,10 +3070,14 @@
     initWebSockets(config, window);
     initPushState(config, window);
     var settings = loadHeavenlySettings(window);
-    initHeavenlyCloakAndPanic(window, settings, config);
-    initHeavenlyWidgets(window, settings, config);
-    initFolderQuickSaveWidget(config, window);
-    initNewgroundsPagination(config, window);
+    if (!settings.disableAllFeatures) {
+      initHeavenlyCloakAndPanic(window, settings, config);
+    }
+    if (!settings.disableAllWidgets && !settings.disableAllFeatures) {
+      initHeavenlyWidgets(window, settings, config);
+      initFolderQuickSaveWidget(config, window);
+      initNewgroundsPagination(config, window);
+    }
 
     if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {
       saveToHeavenlyHistory(window, config);

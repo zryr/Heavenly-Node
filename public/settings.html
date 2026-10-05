@@ -703,10 +703,37 @@
       <!-- Section 4: Widget Controls & Reset -->
       <div>
         <h2 class="section-title">
-          🎛️ Proxied Page Widgets
+          🎛️ Proxied Page Widgets & Master Switches
         </h2>
 
         <div class="cards-grid">
+
+          <!-- Hero Card: Disable All Proxied Page Widgets -->
+          <div class="hero-card" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(30, 41, 59, 0.65);">
+            <div class="hero-card-header">
+              <label for="set-disable-all-widgets" class="hero-card-title">Disable All Proxied Page Widgets</label>
+              <label class="switch-toggle">
+                <input type="checkbox" id="set-disable-all-widgets" role="switch">
+                <span class="slider-knob"></span>
+              </label>
+            </div>
+            <p class="hero-card-desc">Completely disables and removes all floating widgets, dock bars, quick-save tools, and pagination overlays on proxied pages.</p>
+          </div>
+
+          <!-- Hero Card: Disable All Privacy & Widget Overlays -->
+          <div class="hero-card" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(30, 41, 59, 0.65);">
+            <div class="hero-card-header">
+              <label for="set-disable-all-features" class="hero-card-title">Disable All Privacy & Widget Overlays</label>
+              <label class="switch-toggle">
+                <input type="checkbox" id="set-disable-all-features" role="switch">
+                <span class="slider-knob"></span>
+              </label>
+            </div>
+            <p class="hero-card-desc">Completely disables all proxied page widgets as well as tab cloaking and panic overlays.</p>
+          </div>
+
+          <!-- Sub-widget Container for Dimming -->
+          <div id="sub-widgets-container" class="cards-grid" style="transition: opacity 0.3s ease;">
 
           <!-- Hero Card: Scroll Lock -->
           <div class="hero-card">
@@ -788,6 +815,8 @@
               📍 Reset All Widget Positions
             </button>
           </div>
+
+          </div><!-- End sub-widgets-container -->
 
         </div>
       </div>
@@ -974,7 +1003,9 @@
         showNavSearch: saved.showNavSearch !== undefined ? saved.showNavSearch : true,
         showNavHome: saved.showNavHome !== undefined ? saved.showNavHome : true,
         useWidgetDock: saved.useWidgetDock || false,
-        dockPosition: saved.dockPosition || 'bottom'
+        dockPosition: saved.dockPosition || 'bottom',
+        disableAllWidgets: saved.disableAllWidgets || false,
+        disableAllFeatures: saved.disableAllFeatures || false
       };
     }
 
@@ -1150,6 +1181,16 @@
       $('set-show-nav-search').checked = settings.showNavSearch;
       $('set-show-nav-home').checked = settings.showNavHome;
       $('set-use-widget-dock').checked = settings.useWidgetDock;
+      $('set-disable-all-widgets').checked = settings.disableAllWidgets;
+      $('set-disable-all-features').checked = settings.disableAllFeatures;
+
+      // Visual dimming for sub-widgets container when master widget switch or all features switch is on
+      var subWidgetsContainer = $('sub-widgets-container');
+      if (subWidgetsContainer) {
+        var disableWidgets = settings.disableAllWidgets || settings.disableAllFeatures;
+        subWidgetsContainer.style.opacity = disableWidgets ? '0.45' : '1';
+        subWidgetsContainer.style.pointerEvents = disableWidgets ? 'none' : 'auto';
+      }
 
       // Populate preset dropdown
       var select = $('preset-select');
@@ -1278,16 +1319,22 @@
         settings.showNavSearch = $('set-show-nav-search').checked;
         settings.showNavHome = $('set-show-nav-home').checked;
         settings.useWidgetDock = $('set-use-widget-dock').checked;
+        settings.disableAllWidgets = $('set-disable-all-widgets').checked;
+        settings.disableAllFeatures = $('set-disable-all-features').checked;
         settings.selectedPreset = $('preset-select').value;
         saveSettings(settings);
+        syncSettingsToUI();
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'preset-select'].forEach(function (id) {
-        $(id).onchange = function () {
-          updateHandler();
-          updateLivePreview();
-        };
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select'].forEach(function (id) {
+        var el = $(id);
+        if (el) {
+          el.onchange = function () {
+            updateHandler();
+            updateLivePreview();
+          };
+        }
       });
 
       ['set-panic-key', 'set-panic-url'].forEach(function (id) {
