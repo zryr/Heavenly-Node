@@ -781,7 +781,7 @@
       customPresets: saved.customPresets || {},
       panicKeyEnable: saved.panicKeyEnable || false,
       panicKey: saved.panicKey || '`',
-      touchPanic: saved.touchPanic || false,
+      touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
       panicUrl: saved.panicUrl || 'https://classroom.google.com',
       showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
       showMagnifier: saved.showMagnifier !== undefined ? saved.showMagnifier : true,
@@ -804,8 +804,8 @@
         classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
         google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
         drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
-        elearn_lee: { title: "eLearn Lee College", icon: "https://elearn.lee.edu/favicon.ico" },
-        lee_college: { title: "Lee College", icon: "https://www.lee.edu/favicon.ico" },
+        elearn_lee: { title: "Courses", icon: "https://elearn.lee.edu/favicon.ico" },
+        lee_college: { title: "Home | Lee College", icon: "https://www.lee.edu/favicon.ico" },
         canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" },
         khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" }
       };
@@ -1502,14 +1502,14 @@
           { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false }
         ],
         bookmarks: [
-          { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-          { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+          { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
           { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
           { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
           { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
           { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
           { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
-          { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+          { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
           { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
           { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
           {
@@ -1531,8 +1531,8 @@
           { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
           { id: "bm_user_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: false, hidden: false, order: 99, subBookmarks: [] },
           { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-          { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
-          { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+          { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+          { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
           { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
           { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
           { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
@@ -1589,9 +1589,15 @@
                 data.bookmarks.push(JSON.parse(JSON.stringify(defBm)));
                 updated = true;
               } else {
-                if (defBm.builtIn && userBm.title !== defBm.title) {
-                  userBm.title = defBm.title;
-                  updated = true;
+                if (defBm.builtIn) {
+                  if (userBm.title !== defBm.title) {
+                    userBm.title = defBm.title;
+                    updated = true;
+                  }
+                  if (userBm.type !== defBm.type) {
+                    userBm.type = defBm.type;
+                    updated = true;
+                  }
                 }
                 if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
                   if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {

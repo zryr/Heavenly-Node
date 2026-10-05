@@ -858,6 +858,12 @@
       gap: 10px;
     }
 
+    .bottom-section-container .section-card .bookmarks-list .subsection-divider,
+    .bottom-section-container .section-card .bookmarks-list .show-more-btn {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+
     .bookmark-card {
       display: flex;
       align-items: center;
@@ -1226,6 +1232,54 @@
         width: 100%;
       }
     }
+
+    .switch-toggle {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .switch-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider-knob {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: rgba(51, 65, 85, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 30px;
+    }
+
+    .slider-knob:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #94a3b8;
+      transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .switch-toggle input:checked + .slider-knob {
+      background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+    }
+
+    .switch-toggle input:checked + .slider-knob:before {
+      transform: translateX(20px);
+      background-color: #ffffff;
+    }
   </style>
 </head>
 
@@ -1429,6 +1483,32 @@
             <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="https://example.com/icon.png or .gif" />
           </div>
         </div>
+
+        <div class="form-group" id="group-bm-quick-save" style="display: none;">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px;">
+            <div>
+              <div style="font-weight: 600; font-size: 0.88rem; color: #f8fafc;">Enable Quick Save Widget</div>
+              <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Shows a floating widget on proxied pages to quickly save sub-bookmarks</div>
+            </div>
+            <label class="switch-toggle">
+              <input type="checkbox" id="bm-quick-save-toggle" checked />
+              <span class="slider-knob"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" id="group-sub-bookmarks" style="display: none; border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 12px;">
+          <label class="form-label">Folder Sub-Bookmarks</label>
+          <div id="sub-bookmarks-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; padding-right: 4px; margin-bottom: 8px;"></div>
+
+          <div id="add-sub-bm-fields" style="display: flex; flex-direction: column; gap: 8px; background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 10px; border: 1px dashed rgba(56, 189, 248, 0.3);">
+            <div style="font-size: 0.8rem; font-weight: 600; color: #38bdf8;">Add New Sub-Bookmark</div>
+            <input type="text" id="sub-bm-title" class="form-input" placeholder="Sub-bookmark title (e.g. Level 1)" style="font-size: 0.82rem; padding: 6px 10px;" />
+            <input type="text" id="sub-bm-url" class="form-input" placeholder="https://example.com/sub-page" style="font-size: 0.82rem; padding: 6px 10px;" />
+            <button type="button" id="btn-add-sub-bm" style="align-self: flex-end; padding: 6px 12px; background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; border-radius: 8px; font-size: 0.78rem; font-weight: 600; cursor: pointer;">+ Add Sub-Bookmark</button>
+          </div>
+        </div>
+
         <button type="submit" class="modal-submit-btn">Save Bookmark</button>
       </form>
 
@@ -1548,7 +1628,17 @@
       <div id="builtin-modal-desc" style="font-size: 0.9rem; color: #94a3b8; line-height: 1.5; margin-bottom: 16px;">
         Would you like to test opening <strong id="builtin-site-name" style="color: #38bdf8;"></strong> directly without the proxy to see if your internet blocks it or if things load better without proxy?
       </div>
-      <div id="builtin-dont-ask-container" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 20px; cursor: pointer;">
+      <div id="builtin-quick-save-container" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; margin-bottom: 16px;">
+        <div>
+          <div style="font-weight: 600; font-size: 0.85rem; color: #f8fafc;">Enable Quick Save Widget</div>
+          <div style="font-size: 0.72rem; color: #94a3b8;">Show floating quick save widget on proxied page</div>
+        </div>
+        <label class="switch-toggle">
+          <input type="checkbox" id="builtin-quick-save-toggle" checked />
+          <span class="slider-knob"></span>
+        </label>
+      </div>
+      <div id="builtin-dont-ask-container" style="display: none; align-items: center; gap: 8px; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 20px; cursor: pointer;">
         <input type="checkbox" id="builtin-dont-ask" style="accent-color: #38bdf8; cursor: pointer; width: 16px; height: 16px;" />
         <label for="builtin-dont-ask" style="cursor: pointer; user-select: none;">Don't ask me again for default bookmarks</label>
       </div>
@@ -1634,8 +1724,8 @@
       classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
       google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
       drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
-      elearn_lee: { title: "eLearn Lee College", icon: "https://elearn.lee.edu/favicon.ico" },
-      lee_college: { title: "Lee College", icon: "https://www.lee.edu/favicon.ico" },
+      elearn_lee: { title: "Courses", icon: "https://elearn.lee.edu/favicon.ico" },
+      lee_college: { title: "Home | Lee College", icon: "https://www.lee.edu/favicon.ico" },
       canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" },
       khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" }
     };
@@ -2038,6 +2128,7 @@
 
     // --- HEAVENLY BOOKMARKS MANAGER ---
     var PRESET_LUCIDE_ICONS = [
+      { id: "list", name: "List of Sites", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>' },
       { id: "gamepad", name: "Gamepad", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line><rect x="2" y="6" width="20" height="12" rx="6"></rect></svg>' },
       { id: "tv", name: "TV", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>' },
       { id: "film", name: "Film", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>' },
@@ -2059,14 +2150,14 @@
         { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false }
       ],
       bookmarks: [
-        { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-        { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
         { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
-        { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
         { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         {
@@ -2088,8 +2179,8 @@
         { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_user_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: false, hidden: false, order: 99, subBookmarks: [] },
         { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-        { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
-        { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
         { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
         { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
@@ -2105,6 +2196,7 @@
 
     var expandedCategories = {};
     var expandedFolders = {};
+    var expandedSubSections = {};
     var collapsedSubSections = {}; // e.g. { "cat_anime_builtin": true }
     var selectedIconMode = 'favicon'; // 'favicon' | 'preset' | 'custom'
     var selectedPresetIconId = 'gamepad';
@@ -2164,9 +2256,15 @@
             data.bookmarks.push(JSON.parse(JSON.stringify(defBm)));
             updated = true;
           } else {
-            if (defBm.builtIn && userBm.title !== defBm.title) {
-              userBm.title = defBm.title;
-              updated = true;
+            if (defBm.builtIn) {
+              if (userBm.title !== defBm.title) {
+                userBm.title = defBm.title;
+                updated = true;
+              }
+              if (userBm.type !== defBm.type) {
+                userBm.type = defBm.type;
+                updated = true;
+              }
             }
             if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
               if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
@@ -2814,25 +2912,14 @@
               bmCard.onclick = function (e) {
                 if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
 
-                if (bm.builtIn) {
-                  if (bm.id === 'bm_everythingmoe' || bm.id === 'bm_fmhy_movies' || bm.id === 'bm_fmhy_anime' || (bm.url && (bm.url.includes('everythingmoe.com') || bm.url.includes('fmhy.net')))) {
-                    e.preventDefault();
-                    openEverythingMoeNoticeModal(bm.title, rawTargetUrl, proxiedUrl);
-                    return;
-                  }
-
-                  var settings = {};
-                  try { settings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}'); } catch(err) {}
-                  if (settings.skipBuiltinTestPrompt) {
-                    return;
-                  }
-
+                if (bm.builtIn && (bm.id === 'bm_everythingmoe' || bm.id === 'bm_fmhy_movies' || bm.id === 'bm_fmhy_anime' || (bm.url && (bm.url.includes('everythingmoe.com') || bm.url.includes('fmhy.net'))))) {
                   e.preventDefault();
-                  openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, true);
-                } else {
-                  e.preventDefault();
-                  openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, false);
+                  openEverythingMoeNoticeModal(bm.title, rawTargetUrl, proxiedUrl);
+                  return;
                 }
+
+                e.preventDefault();
+                openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, false, bm.id);
               };
             } else {
               bmCard.style.cursor = 'pointer';
@@ -3073,6 +3160,11 @@
                   renderBookmarksUI();
                 };
 
+                sbCard.onclick = function (e) {
+                  e.preventDefault();
+                  openBuiltinTestModal(sb.title, sb.url, sbProxiedUrl, null, false, bm.id);
+                };
+
                 sbCard.appendChild(sbLeft);
                 sbCard.appendChild(sbDelBtn);
                 subContainer.appendChild(sbCard);
@@ -3131,7 +3223,10 @@
 
           var builtinArrow = document.createElement('span');
           builtinArrow.className = 'subsection-arrow';
-          builtinArrow.textContent = isBuiltinCollapsed ? '▲' : '▼';
+          builtinArrow.textContent = '>';
+          builtinArrow.style.display = 'inline-block';
+          builtinArrow.style.transition = 'transform 0.2s ease';
+          builtinArrow.style.transform = isBuiltinCollapsed ? 'rotate(0deg)' : 'rotate(90deg)';
 
           builtinDiv.appendChild(builtinTitle);
           builtinDiv.appendChild(builtinArrow);
@@ -3145,8 +3240,22 @@
           listContainer.appendChild(builtinDiv);
 
           if (!isBuiltinCollapsed) {
-            var visibleBuiltin = isExpanded ? builtinBms : builtinBms.slice(0, limit);
+            var isBuiltinExpanded = !!expandedSubSections[cat.id + '_builtin'] || !!searchQuery;
+            var visibleBuiltin = isBuiltinExpanded ? builtinBms : builtinBms.slice(0, limit);
             renderBookmarkListSection(visibleBuiltin, listContainer);
+
+            if (builtinBms.length > limit && !searchQuery) {
+              var builtinShowMoreBtn = document.createElement('button');
+              builtinShowMoreBtn.type = 'button';
+              builtinShowMoreBtn.className = 'show-more-btn';
+              builtinShowMoreBtn.innerHTML = '<span>' + (isBuiltinExpanded ? 'Show Less' : 'Show More (' + (builtinBms.length - limit) + ' more)') + '</span> <span style="margin-left:4px; display:inline-block; transition:transform 0.2s ease; transform:' + (isBuiltinExpanded ? 'rotate(-90deg)' : 'rotate(0deg)') + ';">&gt;</span>';
+              builtinShowMoreBtn.onclick = function (e) {
+                e.stopPropagation();
+                expandedSubSections[cat.id + '_builtin'] = !isBuiltinExpanded;
+                renderBookmarksUI();
+              };
+              listContainer.appendChild(builtinShowMoreBtn);
+            }
           }
         }
 
@@ -3162,7 +3271,10 @@
 
         var userArrow = document.createElement('span');
         userArrow.className = 'subsection-arrow';
-        userArrow.textContent = isUserCollapsed ? '▲' : '▼';
+        userArrow.textContent = '>';
+        userArrow.style.display = 'inline-block';
+        userArrow.style.transition = 'transform 0.2s ease';
+        userArrow.style.transform = isUserCollapsed ? 'rotate(0deg)' : 'rotate(90deg)';
 
         userDiv.appendChild(userTitle);
         userDiv.appendChild(userArrow);
@@ -3177,29 +3289,30 @@
 
         if (!isUserCollapsed) {
           if (userBms.length > 0) {
-            renderBookmarkListSection(userBms, listContainer);
+            var isUserExpanded = !!expandedSubSections[cat.id + '_user'] || !!searchQuery;
+            var visibleUser = isUserExpanded ? userBms : userBms.slice(0, limit);
+            renderBookmarkListSection(visibleUser, listContainer);
+
+            if (userBms.length > limit && !searchQuery) {
+              var userShowMoreBtn = document.createElement('button');
+              userShowMoreBtn.type = 'button';
+              userShowMoreBtn.className = 'show-more-btn';
+              userShowMoreBtn.innerHTML = '<span>' + (isUserExpanded ? 'Show Less' : 'Show More (' + (userBms.length - limit) + ' more)') + '</span> <span style="margin-left:4px; display:inline-block; transition:transform 0.2s ease; transform:' + (isUserExpanded ? 'rotate(-90deg)' : 'rotate(0deg)') + ';">&gt;</span>';
+              userShowMoreBtn.onclick = function (e) {
+                e.stopPropagation();
+                expandedSubSections[cat.id + '_user'] = !isUserExpanded;
+                renderBookmarksUI();
+              };
+              listContainer.appendChild(userShowMoreBtn);
+            }
           } else {
             var emptyNotice = document.createElement('div');
-            emptyNotice.style.cssText = 'font-size: 0.78rem; color: #64748b; font-style: italic; padding: 4px 8px; text-align: center;';
+            emptyNotice.style.cssText = 'font-size: 0.78rem; color: #64748b; font-style: italic; padding: 4px 8px; text-align: center; grid-column: 1 / -1; width: 100%;';
             emptyNotice.textContent = 'No user bookmarks added yet.';
             listContainer.appendChild(emptyNotice);
           }
         }
         card.appendChild(listContainer);
-
-        // Show More / Show Less Toggle Button
-        if (bms.length > limit && !searchQuery) {
-          var showMoreBtn = document.createElement('button');
-          showMoreBtn.type = 'button';
-          showMoreBtn.className = 'show-more-btn';
-          showMoreBtn.textContent = isExpanded ? 'Show Less ▲' : 'Show More (' + (bms.length - limit) + ' more) ▼';
-          showMoreBtn.onclick = function (e) {
-            e.stopPropagation();
-            expandedCategories[cat.id] = !isExpanded;
-            renderBookmarksUI();
-          };
-          card.appendChild(showMoreBtn);
-        }
 
         // Apply entrance animation
         card.classList.add('entrance-animate');
@@ -3284,26 +3397,90 @@
       }
     }
 
+    // Global state for modal sub-bookmarks
+    var modalSubBookmarks = [];
+
     // Modal Actions
     function updateBmTypeExplanation() {
       var val = $('bm-type').value;
       var explain = $('bm-type-explain');
       var urlGroup = $('group-bm-url');
       var urlInput = $('bm-url');
+      var quickSaveGroup = $('group-bm-quick-save');
+      var subBmsGroup = $('group-sub-bookmarks');
 
       if (val === 'bookmark') {
         explain.textContent = 'Standard Bookmark: Opens site link directly in a new tab.';
         urlGroup.style.display = 'flex';
         urlInput.required = true;
+        if (quickSaveGroup) quickSaveGroup.style.display = 'none';
+        if (subBmsGroup) subBmsGroup.style.display = 'none';
       } else if (val === 'folder_bookmark') {
         explain.textContent = 'Folder-Bookmark: Main title opens site link, while > arrow expands to show sub-bookmarks.';
         urlGroup.style.display = 'flex';
         urlInput.required = true;
+        if (quickSaveGroup) quickSaveGroup.style.display = 'block';
+        if (subBmsGroup) subBmsGroup.style.display = 'block';
       } else if (val === 'folder') {
         explain.textContent = 'Normal Folder: Purely an expandable container for sub-bookmarks (no main link).';
         urlGroup.style.display = 'none';
         urlInput.required = false;
+        if (quickSaveGroup) quickSaveGroup.style.display = 'block';
+        if (subBmsGroup) subBmsGroup.style.display = 'block';
       }
+    }
+
+    function renderModalSubBookmarksList() {
+      var container = $('sub-bookmarks-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!modalSubBookmarks || modalSubBookmarks.length === 0) {
+        container.innerHTML = '<div style="font-size:0.78rem; color:#94a3b8; font-style:italic; padding:4px 0;">No sub-bookmarks added yet.</div>';
+        return;
+      }
+
+      modalSubBookmarks.forEach(function (sub, idx) {
+        var item = document.createElement('div');
+        item.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 10px; background:rgba(30, 41, 59, 0.6); border:1px solid rgba(148, 163, 184, 0.2); border-radius:8px;';
+
+        var info = document.createElement('div');
+        info.style.cssText = 'overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;';
+        info.innerHTML = '<div style="font-size:0.8rem; font-weight:600; color:#f8fafc;">' + escapeHtml(sub.title) + '</div><div style="font-size:0.72rem; color:#94a3b8; overflow:hidden; text-overflow:ellipsis;">' + escapeHtml(sub.url) + '</div>';
+
+        var actions = document.createElement('div');
+        actions.style.cssText = 'display:flex; gap:4px; flex-shrink:0;';
+
+        var editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.style.cssText = 'background:rgba(56, 189, 248, 0.15); color:#38bdf8; border:1px solid rgba(56, 189, 248, 0.3); padding:3px 6px; border-radius:6px; font-size:0.72rem; cursor:pointer;';
+        editBtn.textContent = 'Edit';
+        editBtn.onclick = function () {
+          var newTitle = prompt('Edit sub-bookmark title:', sub.title);
+          if (newTitle === null) return;
+          var newUrl = prompt('Edit sub-bookmark URL:', sub.url);
+          if (newUrl === null) return;
+          sub.title = newTitle.trim() || sub.title;
+          sub.url = newUrl.trim() || sub.url;
+          renderModalSubBookmarksList();
+        };
+
+        var delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.style.cssText = 'background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.3); padding:3px 6px; border-radius:6px; font-size:0.72rem; cursor:pointer;';
+        delBtn.textContent = '✕';
+        delBtn.onclick = function () {
+          modalSubBookmarks.splice(idx, 1);
+          renderModalSubBookmarksList();
+        };
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        item.appendChild(info);
+        item.appendChild(actions);
+        container.appendChild(item);
+      });
     }
 
     function openAddModal(type, targetCatId, editBmId) {
@@ -3331,6 +3508,8 @@
       $('bm-url').value = '';
       $('bm-custom-icon-url').value = '';
       $('bm-type').value = 'bookmark';
+      modalSubBookmarks = [];
+      if ($('bm-quick-save-toggle')) $('bm-quick-save-toggle').checked = true;
       updateBmTypeExplanation();
       switchIconMode('favicon');
 
@@ -3341,6 +3520,8 @@
           $('bm-title').value = existingBm.title;
           $('bm-url').value = existingBm.url || '';
           $('bm-type').value = existingBm.type || 'bookmark';
+          modalSubBookmarks = existingBm.subBookmarks ? JSON.parse(JSON.stringify(existingBm.subBookmarks)) : [];
+          if ($('bm-quick-save-toggle')) $('bm-quick-save-toggle').checked = existingBm.disableQuickSaveWidget !== true;
           updateBmTypeExplanation();
 
           if (existingBm.icon && existingBm.icon.startsWith('preset:')) {
@@ -3354,6 +3535,7 @@
           }
         }
       }
+      renderModalSubBookmarksList();
 
       if (document.activeElement) {
         lastFocusedElement = document.activeElement;
@@ -3408,15 +3590,29 @@
       if (modal) modal.classList.remove('active');
     }
 
-    function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk) {
+    function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId) {
       pendingBuiltinUrls.rawUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
       pendingBuiltinUrls.proxiedUrl = proxiedUrl;
+      pendingBuiltinUrls.targetBmId = targetBmId || null;
       if ($('builtin-site-name')) $('builtin-site-name').textContent = title || rawUrl;
       if ($('builtin-dont-ask')) $('builtin-dont-ask').checked = false;
 
       var dontAskContainer = $('builtin-dont-ask-container');
       if (dontAskContainer) {
-        dontAskContainer.style.display = showDontAsk !== false ? 'flex' : 'none';
+        dontAskContainer.style.display = showDontAsk === true ? 'flex' : 'none';
+      }
+
+      var qsToggle = $('builtin-quick-save-toggle');
+      if (qsToggle) {
+        var isEnabled = true;
+        if (targetBmId) {
+          var data = loadBookmarkData();
+          var bm = data.bookmarks.find(function (b) { return b.id === targetBmId; });
+          if (bm) {
+            isEnabled = bm.disableQuickSaveWidget !== true;
+          }
+        }
+        qsToggle.checked = isEnabled;
       }
 
       var descEl = $('builtin-modal-desc');
@@ -3424,12 +3620,26 @@
         if (customDesc) {
           descEl.textContent = customDesc;
         } else {
-          descEl.innerHTML = 'Would you like to test opening <strong id="builtin-site-name" style="color: #38bdf8;">' + (title || rawUrl) + '</strong> directly without the proxy to see if your internet blocks it or if things load better without proxy?';
+          descEl.innerHTML = 'Opening <strong id="builtin-site-name" style="color: #38bdf8;">' + escapeHtml(title || rawUrl) + '</strong>. Choose how you would like to open this bookmark:';
         }
       }
 
       var modal = $('builtin-test-modal');
       if (modal) modal.classList.add('active');
+    }
+
+    function saveQuickSaveWidgetTogglePref() {
+      var qsToggle = $('builtin-quick-save-toggle');
+      if (qsToggle && pendingBuiltinUrls.targetBmId) {
+        try {
+          var data = loadBookmarkData();
+          var bm = data.bookmarks.find(function (b) { return b.id === pendingBuiltinUrls.targetBmId; });
+          if (bm) {
+            bm.disableQuickSaveWidget = !qsToggle.checked;
+            saveBookmarkData(data);
+          }
+        } catch (e) {}
+      }
     }
 
     function closeBuiltinTestModal() {
@@ -3889,6 +4099,7 @@
 
       $('builtin-test-direct-btn').onclick = function () {
         saveBuiltinPromptPref();
+        saveQuickSaveWidgetTogglePref();
         closeBuiltinTestModal();
         if (pendingBuiltinUrls.rawUrl) {
           window.open(pendingBuiltinUrls.rawUrl, '_blank', 'noopener');
@@ -3897,6 +4108,7 @@
 
       $('builtin-open-proxy-btn').onclick = function () {
         saveBuiltinPromptPref();
+        saveQuickSaveWidgetTogglePref();
         closeBuiltinTestModal();
         if (pendingBuiltinUrls.proxiedUrl) {
           window.open(pendingBuiltinUrls.proxiedUrl, '_blank', 'noopener');
@@ -3909,6 +4121,29 @@
       $('icon-tab-favicon').onclick = function () { switchIconMode('favicon'); };
       $('icon-tab-preset').onclick = function () { switchIconMode('preset'); };
       $('icon-tab-custom').onclick = function () { switchIconMode('custom'); };
+
+      var btnAddSubBm = $('btn-add-sub-bm');
+      if (btnAddSubBm) {
+        btnAddSubBm.onclick = function () {
+          var titleInp = $('sub-bm-title');
+          var urlInp = $('sub-bm-url');
+          var subTitle = titleInp.value.trim();
+          var subUrl = urlInp.value.trim();
+          if (!subUrl) {
+            alert('Please enter a URL for the sub-bookmark.');
+            return;
+          }
+          modalSubBookmarks.push({
+            id: 'sub_' + Date.now(),
+            title: subTitle || subUrl,
+            url: subUrl,
+            icon: ''
+          });
+          titleInp.value = '';
+          urlInp.value = '';
+          renderModalSubBookmarksList();
+        };
+      }
 
       // Submit Bookmark Form
       $('form-add-bm').onsubmit = function (e) {
@@ -3929,6 +4164,7 @@
           iconVal = $('bm-custom-icon-url').value.trim();
         }
 
+        var isQuickSaveEnabled = $('bm-quick-save-toggle') ? $('bm-quick-save-toggle').checked : true;
         var data = loadBookmarkData();
         if (bmId) {
           var bm = data.bookmarks.find(function (b) { return b.id === bmId; });
@@ -3938,7 +4174,8 @@
             bm.url = bmType === 'folder' ? '' : url;
             bm.categoryId = categoryId;
             bm.icon = iconVal;
-            if (!bm.subBookmarks) bm.subBookmarks = [];
+            bm.disableQuickSaveWidget = !isQuickSaveEnabled;
+            bm.subBookmarks = modalSubBookmarks;
           }
         } else {
           data.bookmarks.push({
@@ -3950,8 +4187,9 @@
             icon: iconVal,
             builtIn: false,
             hidden: false,
+            disableQuickSaveWidget: !isQuickSaveEnabled,
             order: data.bookmarks.length,
-            subBookmarks: []
+            subBookmarks: modalSubBookmarks
           });
         }
         saveBookmarkData(data);
