@@ -262,4 +262,102 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       assert.strictEqual(parsed[0].title, 'Newgrounds: Everything by Everyone');
     });
   });
+
+  describe('Draggable Touch Panic Overlay', function () {
+    it('should inject panic overlay, handle mouse & touch dragging, clamp bounds, and persist position', function () {
+      let savedPanicPos = null;
+
+      const mockElement = function (tag) {
+        this.tagName = tag.toUpperCase();
+        this.style = {};
+        this.children = [];
+        this.elementListeners = {};
+        this.querySelector = (sel) => {
+          if (sel === '#p-btn') return this.btn || this;
+          return this;
+        };
+        this.attachShadow = () => this;
+        this.appendChild = (child) => this.children.push(child);
+        this.getBoundingClientRect = () => ({ left: 20, top: 200, width: 100, height: 40 });
+        this.offsetWidth = 100;
+        this.offsetHeight = 40;
+        this.classList = {
+          add: () => {},
+          remove: () => {},
+          contains: () => false
+        };
+        this.addEventListener = (evt, fn) => {
+          this.elementListeners[evt] = fn;
+        };
+      };
+
+      const mockDoc = {
+        readyState: 'complete',
+        body: new mockElement('body'),
+        createElement: (tag) => new mockElement(tag),
+        getElementById: (id) => null,
+        getElementsByTagName: () => [],
+        querySelectorAll: () => [],
+        documentElement: { addEventListener: function () {} }
+      };
+
+      const windowListeners = {};
+      const mockWindow = {
+        innerWidth: 800,
+        innerHeight: 600,
+        location: { href: 'http://localhost/proxy/https://example.com' },
+        document: mockDoc,
+        addEventListener: function (evt, fn, capture) {
+          if (!windowListeners[evt]) windowListeners[evt] = [];
+          windowListeners[evt].push(fn);
+        },
+        removeEventListener: function (evt, fn, capture) {
+          if (windowListeners[evt]) {
+            windowListeners[evt] = windowListeners[evt].filter(f => f !== fn);
+          }
+        },
+        localStorage: {
+          getItem: function (key) {
+            if (key === 'heavenly_settings') {
+              return JSON.stringify({ touchPanic: true, panicUrl: 'https://classroom.google.com' });
+            }
+            return null;
+          },
+          setItem: function (key, val) {
+            if (key === 'heavenly_panic_pos') savedPanicPos = val;
+          }
+        }
+      };
+      mockWindow.top = mockWindow;
+
+      initForWindow(config, mockWindow);
+
+      const panicRoot = mockDoc.body.children.find(c => c.id === 'heavenly-touch-panic-root');
+      assert.ok(panicRoot, 'Panic root element should be injected');
+
+      // Simulate mousedown / drag on panicRoot
+      assert.ok(panicRoot.elementListeners['mousedown'], 'mousedown listener should be registered');
+      panicRoot.elementListeners['mousedown']({ clientX: 20, clientY: 200 });
+
+      assert.ok(windowListeners['mousemove'] && windowListeners['mousemove'].length > 0, 'mousemove window listener should be active during drag');
+      windowListeners['mousemove'].forEach(fn => fn({ clientX: 120, clientY: 300 }));
+
+      assert.strictEqual(panicRoot.style.left, '120px');
+      assert.strictEqual(panicRoot.style.top, '300px');
+
+      // Test upper clamp bound
+      windowListeners['mousemove'].forEach(fn => fn({ clientX: 1000, clientY: 1000 }));
+      assert.strictEqual(panicRoot.style.left, '700px'); // 800 - 100
+      assert.strictEqual(panicRoot.style.top, '560px'); // 600 - 40
+
+      // End drag
+      assert.ok(windowListeners['mouseup'] && windowListeners['mouseup'].length > 0, 'mouseup window listener should be registered');
+      windowListeners['mouseup'].forEach(fn => fn());
+
+      assert.ok(savedPanicPos, 'Position should be saved to localStorage');
+      const parsedPos = JSON.parse(savedPanicPos);
+      assert.strictEqual(typeof parsedPos.left, 'number');
+      assert.strictEqual(typeof parsedPos.top, 'number');
+    });
+  });
 });
