@@ -1547,7 +1547,7 @@
           { id: "bm_mgalternative", categoryId: "cat_games", title: "MG Alternative", url: "https://mgalternative.github.io", type: "bookmark", icon: "preset:star", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
           { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "preset:shield", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
           { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
-          { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
+          { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "folder_bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
           { id: "bm_mountaingames", categoryId: "cat_games", title: "Mountain Games", url: "https://mountain-game-games.github.io", type: "bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
           { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "bookmark", icon: "preset:zap", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
           { id: "bm_bloxcraftstudios", categoryId: "cat_games", title: "Bloxcraft Studios", url: "https://5kh0.github.io", type: "bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 14, subBookmarks: [] }
@@ -1577,6 +1577,13 @@
               ngBm.title = 'Newgrounds: Syshi';
               updated = true;
             }
+
+        // Migration: Ensure bm_outredgames is set to type folder_bookmark
+        var outredBm = data.bookmarks.find(function (b) { return b.id === 'bm_outredgames'; });
+        if (outredBm && outredBm.type !== 'folder_bookmark') {
+          outredBm.type = 'folder_bookmark';
+          updated = true;
+        }
 
             // Migration: Re-sort built-in anime bookmarks so FMHY: Anime is under EverythingMoe and above AniSnatch
             var animeBms = data.bookmarks.filter(function (b) { return b.categoryId === 'cat_anime' && b.builtIn; });
@@ -1810,7 +1817,8 @@
 
         function updateWidgetMode() {
           var rect = container.getBoundingClientRect();
-          var winW = window.innerWidth || document.documentElement.clientWidth || 800;
+          var docEl = typeof document !== 'undefined' && document.documentElement ? document.documentElement : null;
+          var winW = window.innerWidth || (docEl ? docEl.clientWidth : 800);
           var widgetW = container.offsetWidth || 40;
           var centerX = rect.left + widgetW / 2;
           var isLeft = centerX < (winW / 2);
@@ -1824,8 +1832,9 @@
 
         function enforceBoundaries() {
           var currentRect = container.getBoundingClientRect();
-          var winW = window.innerWidth || document.documentElement.clientWidth || 800;
-          var winH = window.innerHeight || document.documentElement.clientHeight || 600;
+          var docEl = typeof document !== 'undefined' && document.documentElement ? document.documentElement : null;
+          var winW = window.innerWidth || (docEl ? docEl.clientWidth : 800);
+          var winH = window.innerHeight || (docEl ? docEl.clientHeight : 600);
           var maxLeft = Math.max(0, winW - container.offsetWidth);
           var maxTop = Math.max(0, winH - container.offsetHeight);
 

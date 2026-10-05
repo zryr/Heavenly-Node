@@ -368,7 +368,8 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       const match = indexHtml.match(/var DEFAULT_BOOKMARK_DATA = (\{[\s\S]*?\n    \};)/);
       assert.ok(match, 'DEFAULT_BOOKMARK_DATA should be present in index.html');
 
-      const data = eval('(' + match[1] + ')');
+      let jsonStr = match[1].replace(/;\s*$/, '');
+      const data = eval('(' + jsonStr + ')');
       assert.ok(data.bookmarks && data.bookmarks.length > 0);
 
       data.bookmarks.forEach(function (bm) {
