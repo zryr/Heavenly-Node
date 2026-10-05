@@ -1232,7 +1232,7 @@
 
       var title = window.document.createElement('span');
       title.style.cssText = 'font-size:1.15rem;font-weight:700;color:#f8fafc;display:flex;align-items:center;gap:8px;';
-      title.innerHTML = '🔗 FMHY Link Intercept';
+      title.innerHTML = '<svg style="width:18px;height:18px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>FMHY Link Intercept</span>';
 
       var closeBtn = window.document.createElement('button');
       closeBtn.type = 'button';
@@ -1256,8 +1256,8 @@
 
       var openProxyBtn = window.document.createElement('button');
       openProxyBtn.type = 'button';
-      openProxyBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;';
-      openProxyBtn.textContent = '🔒 Open with Proxy';
+      openProxyBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;';
+      openProxyBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span>';
       openProxyBtn.onclick = function () {
         var openFn = window.__nativeWinOpen || window.open;
         openFn.call(window, targetProxiedUrl, '_blank', 'noopener');
@@ -1266,8 +1266,8 @@
 
       var openDirectBtn = window.document.createElement('button');
       openDirectBtn.type = 'button';
-      openDirectBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:rgba(56,189,248,0.15);border:1px solid #38bdf8;color:#38bdf8;font-weight:600;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;';
-      openDirectBtn.textContent = '🌐 Open Direct (Without Proxy)';
+      openDirectBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:rgba(56,189,248,0.15);border:1px solid #38bdf8;color:#38bdf8;font-weight:600;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;';
+      openDirectBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Open Direct (Without Proxy)</span>';
       openDirectBtn.onclick = function () {
         var openFn = window.__nativeWinOpen || window.open;
         openFn.call(window, createUnproxiedUrl(cleanDirectUrl), '_blank', 'noopener');
@@ -1311,7 +1311,7 @@
 
       var title = window.document.createElement('span');
       title.style.cssText = 'font-size:1.15rem;font-weight:700;color:#f8fafc;display:flex;align-items:center;gap:8px;';
-      title.innerHTML = '🔗 EverythingMoe Link Intercept';
+      title.innerHTML = '<svg style="width:18px;height:18px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>EverythingMoe Link Intercept</span>';
 
       var closeBtn = window.document.createElement('button');
       closeBtn.type = 'button';
@@ -1335,8 +1335,8 @@
 
       var openProxyBtn = window.document.createElement('button');
       openProxyBtn.type = 'button';
-      openProxyBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;';
-      openProxyBtn.textContent = '🔒 Open with Proxy';
+      openProxyBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;';
+      openProxyBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span>';
       openProxyBtn.onclick = function () {
         var openFn = window.__nativeWinOpen || window.open;
         openFn.call(window, targetProxiedUrl, '_blank', 'noopener');
@@ -1345,8 +1345,8 @@
 
       var openDirectBtn = window.document.createElement('button');
       openDirectBtn.type = 'button';
-      openDirectBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:rgba(56,189,248,0.15);border:1px solid #38bdf8;color:#38bdf8;font-weight:600;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;';
-      openDirectBtn.textContent = '🌐 Open Direct (Without Proxy)';
+      openDirectBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:rgba(56,189,248,0.15);border:1px solid #38bdf8;color:#38bdf8;font-weight:600;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;';
+      openDirectBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Open Direct (Without Proxy)</span>';
       openDirectBtn.onclick = function () {
         var openFn = window.__nativeWinOpen || window.open;
         openFn.call(window, createUnproxiedUrl(cleanDirectUrl), '_blank', 'noopener');
@@ -1426,7 +1426,7 @@
 
       var title = window.document.createElement('span');
       title.style.cssText = 'font-size:1.15rem;font-weight:700;color:#f8fafc;display:flex;align-items:center;gap:8px;';
-      title.innerHTML = '🌐 Test Direct Site (No Proxy)';
+      title.innerHTML = '<svg style="width:18px;height:18px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Test Direct Site (No Proxy)</span>';
 
       var closeBtn = window.document.createElement('button');
       closeBtn.type = 'button';
@@ -1458,8 +1458,8 @@
 
       var openPopupBtn = window.document.createElement('button');
       openPopupBtn.type = 'button';
-      openPopupBtn.style.cssText = 'padding:10px 18px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;';
-      openPopupBtn.textContent = '🔍 Test in Popup Window';
+      openPopupBtn.style.cssText = 'padding:10px 18px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;';
+      openPopupBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>Test in Popup Window</span>';
       openPopupBtn.onclick = function () {
         var w = 800, h = 600;
         var left = (window.screen.width / 2) - (w / 2);
@@ -1614,7 +1614,7 @@
       });
 
       storage.setItem('heavenly_bookmarks', JSON.stringify(data));
-      window.alert("⭐ Page bookmarked under " + (matchedCat ? matchedCat.title : "Default Category") + "!");
+      window.alert("Page bookmarked under " + (matchedCat ? matchedCat.title : "Default Category") + "!");
     } catch (e) {
       console.error("Error bookmarking page:", e);
     }
