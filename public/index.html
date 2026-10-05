@@ -674,6 +674,46 @@
       letter-spacing: -0.01em;
     }
 
+    .subsection-divider {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 8px;
+      margin-top: 6px;
+      margin-bottom: 4px;
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      flex-basis: 100%;
+    }
+
+    .subsection-divider:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.25);
+    }
+
+    .subsection-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .subsection-arrow {
+      font-size: 0.7rem;
+      color: #38bdf8;
+      transition: transform 0.2s ease;
+    }
+
     /* Drag and Drop styling */
     .section-card.drag-over {
       border-color: #38bdf8 !important;
@@ -2045,7 +2085,8 @@
             { id: "sub_fnf", title: "Friday Night Funkin", url: "https://luckydog7.github.io/funkinmobile/game/index.html", icon: "" }
           ]
         },
-        { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_user_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: false, hidden: false, order: 99, subBookmarks: [] },
         { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
@@ -2064,6 +2105,7 @@
 
     var expandedCategories = {};
     var expandedFolders = {};
+    var collapsedSubSections = {}; // e.g. { "cat_anime_builtin": true }
     var selectedIconMode = 'favicon'; // 'favicon' | 'preset' | 'custom'
     var selectedPresetIconId = 'gamepad';
     var lastFocusedElement = null;
@@ -2095,24 +2137,50 @@
           }
         });
 
+        // Migration: Rename bm_ng title to "Newgrounds: Syshi" if needed
+        var ngBm = data.bookmarks.find(function (b) { return b.id === 'bm_ng'; });
+        if (ngBm && ngBm.title !== 'Newgrounds: Syshi') {
+          ngBm.title = 'Newgrounds: Syshi';
+          updated = true;
+        }
+
+        // Migration: Re-sort built-in anime bookmarks so FMHY: Anime is under EverythingMoe and above AniSnatch
+        var animeBms = data.bookmarks.filter(function (b) { return b.categoryId === 'cat_anime' && b.builtIn; });
+        if (animeBms.length > 0) {
+          var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_anify", "bm_anidb"];
+          desiredAnimeOrder.forEach(function (id, index) {
+            var found = animeBms.find(function (b) { return b.id === id; });
+            if (found && found.order !== index) {
+              found.order = index;
+              updated = true;
+            }
+          });
+        }
+
         // Merge missing default bookmarks and folder sub-bookmarks
         DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
           var userBm = data.bookmarks.find(function (b) { return b.id === defBm.id; });
           if (!userBm) {
             data.bookmarks.push(JSON.parse(JSON.stringify(defBm)));
             updated = true;
-          } else if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
-            if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
-              userBm.subBookmarks = [];
+          } else {
+            if (defBm.builtIn && userBm.title !== defBm.title) {
+              userBm.title = defBm.title;
               updated = true;
             }
-            defBm.subBookmarks.forEach(function (defSub) {
-              var subExists = userBm.subBookmarks.some(function (s) { return s.id === defSub.id; });
-              if (!subExists) {
-                userBm.subBookmarks.push(JSON.parse(JSON.stringify(defSub)));
+            if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
+              if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
+                userBm.subBookmarks = [];
                 updated = true;
               }
-            });
+              defBm.subBookmarks.forEach(function (defSub) {
+                var subExists = userBm.subBookmarks.some(function (s) { return s.id === defSub.id; });
+                if (!subExists) {
+                  userBm.subBookmarks.push(JSON.parse(JSON.stringify(defSub)));
+                  updated = true;
+                }
+              });
+            }
           }
         });
 
@@ -2629,417 +2697,494 @@
         // Limit items before Show More: side columns show 4 items; bottom container shows up to 6 items to fill a row on larger screens
         var limit = (cat.side === 'bottom') ? 6 : 4;
         var isExpanded = !!expandedCategories[cat.id] || !!searchQuery;
-        var visibleBms = isExpanded ? bms : bms.slice(0, limit);
 
-        visibleBms.forEach(function (bm) {
-          var isFolderType = bm.type === 'folder' || bm.type === 'folder_bookmark';
-          var isFolderExpanded = !!expandedFolders[bm.id] || !!searchQuery;
+        var builtinBms = bms.filter(function (b) { return b.builtIn === true; });
+        var userBms = bms.filter(function (b) { return !b.builtIn; });
 
-          var bmWrapper = document.createElement('div');
-          bmWrapper.style.display = 'flex';
-          bmWrapper.style.flexDirection = 'column';
-          bmWrapper.style.gap = '4px';
+        // Helper function to render a list of bookmarks into a target DOM container
+        function renderBookmarkListSection(bmList, targetContainer) {
+          bmList.forEach(function (bm) {
+            var isFolderType = bm.type === 'folder' || bm.type === 'folder_bookmark';
+            var isFolderExpanded = !!expandedFolders[bm.id] || !!searchQuery;
 
-          var bmCard = document.createElement(bm.type === 'folder' ? 'div' : 'a');
-          bmCard.className = 'bookmark-card';
-          bmCard.setAttribute('draggable', 'true');
-          bmCard.setAttribute('data-bm-id', bm.id);
+            var bmWrapper = document.createElement('div');
+            bmWrapper.style.display = 'flex';
+            bmWrapper.style.flexDirection = 'column';
+            bmWrapper.style.gap = '4px';
 
-          bmCard.ondragstart = function (e) {
-            e.stopPropagation();
-            bmCard.classList.add('dragging');
-            if (e.dataTransfer) {
-              if (e.dataTransfer.setDragImage) {
-                e.dataTransfer.setDragImage(emptyDragImage, 0, 0);
-              }
-              e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }));
-              e.dataTransfer.effectAllowed = 'move';
-            }
-            createPopoutAvatar(bmCard, e.clientX, e.clientY);
-          };
+            var bmCard = document.createElement(bm.type === 'folder' ? 'div' : 'a');
+            bmCard.className = 'bookmark-card';
+            bmCard.setAttribute('draggable', 'true');
+            bmCard.setAttribute('data-bm-id', bm.id);
 
-          bmCard.ondragend = function () {
-            bmCard.classList.remove('dragging');
-            removePopoutAvatar();
-            document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
-            clearDragGhosts();
-          };
-
-          bmCard.ondragover = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.dataTransfer.dropEffect = 'move';
-            bmCard.classList.add('drag-over');
-
-            var parentList = bmWrapper.parentNode;
-            if (parentList) {
-              var ghostBm = getBookmarkGhost();
-              var rect = bmCard.getBoundingClientRect();
-              var isHorizontal = cat.side === 'bottom' || (getComputedStyle(parentList).display === 'grid');
-              var isAfter = isHorizontal ? ((e.clientX - rect.left) > (rect.width / 2)) : ((e.clientY - rect.top) > (rect.height / 2));
-              var targetPos = isAfter ? bmWrapper.nextSibling : bmWrapper;
-              if (ghostBm.parentNode !== parentList || ghostBm.nextSibling !== targetPos) {
-                parentList.insertBefore(ghostBm, targetPos);
-              }
-            }
-          };
-
-          bmCard.ondragleave = function (e) {
-            e.stopPropagation();
-            bmCard.classList.remove('drag-over');
-          };
-
-          bmCard.ondrop = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            bmCard.classList.remove('drag-over');
-            clearDragGhosts();
-            try {
-              var raw = e.dataTransfer.getData('text/plain');
-              if (!raw) return;
-              var dragData = JSON.parse(raw);
-              if (dragData.type === 'bookmark' && dragData.id !== bm.id) {
-                var allData = loadBookmarkData();
-                var sourceBm = allData.bookmarks.find(function (b) { return b.id === dragData.id; });
-                var targetBm = allData.bookmarks.find(function (b) { return b.id === bm.id; });
-                if (sourceBm && targetBm) {
-                  sourceBm.categoryId = cat.id;
-                  var parentList = bmWrapper.parentNode;
-                  var rect = bmCard.getBoundingClientRect();
-                  var isHorizontal = cat.side === 'bottom' || (parentList && getComputedStyle(parentList).display === 'grid');
-                  var isAfter = isHorizontal ? ((e.clientX - rect.left) > (rect.width / 2)) : ((e.clientY - rect.top) > (rect.height / 2));
-
-                  allData.bookmarks = allData.bookmarks.filter(function (b) { return b.id !== sourceBm.id; });
-                  var targetIdx = allData.bookmarks.findIndex(function (b) { return b.id === targetBm.id; });
-                  if (targetIdx !== -1 && isAfter) {
-                    targetIdx += 1;
-                  }
-                  if (targetIdx === -1) targetIdx = allData.bookmarks.length;
-
-                  allData.bookmarks.splice(targetIdx, 0, sourceBm);
-                  allData.bookmarks.forEach(function (b, idx) { b.order = idx; });
-                  saveBookmarkData(allData);
-                  renderBookmarksUI();
+            bmCard.ondragstart = function (e) {
+              e.stopPropagation();
+              bmCard.classList.add('dragging');
+              if (e.dataTransfer) {
+                if (e.dataTransfer.setDragImage) {
+                  e.dataTransfer.setDragImage(emptyDragImage, 0, 0);
                 }
+                e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }));
+                e.dataTransfer.effectAllowed = 'move';
               }
-            } catch (err) {}
-          };
-
-          if (bm.type !== 'folder') {
-            bmCard.target = '_blank';
-            bmCard.rel = 'noopener';
-            var rawTargetUrl = bm.url ? (bm.url.startsWith('http') ? bm.url : 'https://' + bm.url) : '';
-            var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + rawTargetUrl;
-            bmCard.href = proxiedUrl;
-
-            bmCard.onclick = function (e) {
-              if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
-
-              if (bm.builtIn) {
-                if (bm.id === 'bm_everythingmoe' || bm.id === 'bm_fmhy_movies' || bm.id === 'bm_fmhy_anime' || (bm.url && (bm.url.includes('everythingmoe.com') || bm.url.includes('fmhy.net')))) {
-                  e.preventDefault();
-                  openEverythingMoeNoticeModal(bm.title, rawTargetUrl, proxiedUrl);
-                  return;
-                }
-
-                var settings = {};
-                try { settings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}'); } catch(err) {}
-                if (settings.skipBuiltinTestPrompt) {
-                  return;
-                }
-
-                e.preventDefault();
-                openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, true);
-              } else {
-                // User-made custom bookmark
-                e.preventDefault();
-                openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, false);
-              }
+              createPopoutAvatar(bmCard, e.clientX, e.clientY);
             };
-          } else {
-            bmCard.style.cursor = 'pointer';
-            bmCard.onclick = function (e) {
-              if (!e.target.closest('.drag-dots-handle') && !e.target.closest('.folder-expand-btn')) {
-                expandedFolders[bm.id] = !expandedFolders[bm.id];
-                renderBookmarksUI();
-              }
+
+            bmCard.ondragend = function () {
+              bmCard.classList.remove('dragging');
+              removePopoutAvatar();
+              document.querySelectorAll('.drag-over').forEach(function (el) { el.classList.remove('drag-over'); });
+              clearDragGhosts();
             };
-          }
 
-          var bmLeft = document.createElement('div');
-          bmLeft.className = 'bookmark-card-left';
-
-          // Folder Expand Arrow (>) for Folder-Bookmarks and Normal Folders
-          if (isFolderType) {
-            var expandBtn = document.createElement('button');
-            expandBtn.type = 'button';
-            expandBtn.className = 'folder-expand-btn';
-            expandBtn.title = isFolderExpanded ? 'Collapse folder' : 'Expand folder';
-            expandBtn.setAttribute('aria-label', (isFolderExpanded ? 'Collapse folder ' : 'Expand folder ') + bm.title);
-            expandBtn.style.background = 'none';
-            expandBtn.style.border = 'none';
-            expandBtn.style.color = '#38bdf8';
-            expandBtn.style.fontWeight = 'bold';
-            expandBtn.style.cursor = 'pointer';
-            expandBtn.style.fontSize = '0.9rem';
-            expandBtn.style.padding = '2px 4px';
-            expandBtn.style.transform = isFolderExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
-            expandBtn.style.transition = 'transform 0.2s ease';
-            expandBtn.textContent = '>';
-            expandBtn.onclick = function (e) {
+            bmCard.ondragover = function (e) {
               e.preventDefault();
               e.stopPropagation();
-              expandedFolders[bm.id] = !expandedFolders[bm.id];
-              renderBookmarksUI();
+              e.dataTransfer.dropEffect = 'move';
+              bmCard.classList.add('drag-over');
+
+              var parentList = bmWrapper.parentNode;
+              if (parentList) {
+                var ghostBm = getBookmarkGhost();
+                var rect = bmCard.getBoundingClientRect();
+                var isHorizontal = cat.side === 'bottom' || (getComputedStyle(parentList).display === 'grid');
+                var isAfter = isHorizontal ? ((e.clientX - rect.left) > (rect.width / 2)) : ((e.clientY - rect.top) > (rect.height / 2));
+                var targetPos = isAfter ? bmWrapper.nextSibling : bmWrapper;
+                if (ghostBm.parentNode !== parentList || ghostBm.nextSibling !== targetPos) {
+                  parentList.insertBefore(ghostBm, targetPos);
+                }
+              }
             };
-            bmLeft.appendChild(expandBtn);
-          }
 
-          var bmIconEl = renderIconElement(bm.icon, bm.url, bm.title);
+            bmCard.ondragleave = function (e) {
+              e.stopPropagation();
+              bmCard.classList.remove('drag-over');
+            };
 
-          var bmTitle = document.createElement('span');
-          bmTitle.className = 'bookmark-title';
-          bmTitle.textContent = bm.title;
-
-          bmLeft.appendChild(bmIconEl);
-          bmLeft.appendChild(bmTitle);
-
-          var bmHandle = document.createElement('div');
-          bmHandle.className = 'drag-dots-handle';
-          bmHandle.title = 'Drag to move or long-press/click for menu';
-          bmHandle.innerHTML = '<div class="dots-grid"><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div></div>';
-
-          var bmTimer = null;
-          var bmSX = 0, bmSY = 0;
-          var isTouchDraggingBm = false;
-
-          var startBmHandle = function (e) {
-            e.stopPropagation();
-            var touch = e.touches ? e.touches[0] : e;
-            bmSX = touch.clientX;
-            bmSY = touch.clientY;
-            isTouchDraggingBm = false;
-
-            bmTimer = setTimeout(function () {
-              if (!isTouchDraggingBm) {
-                bmHandle.classList.add('selected');
-                openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title });
-              }
-            }, 500);
-          };
-
-          var moveBmHandle = function (e) {
-            var touch = e.touches ? e.touches[0] : e;
-            if (Math.abs(touch.clientX - bmSX) > 8 || Math.abs(touch.clientY - bmSY) > 8) {
-              if (bmTimer) clearTimeout(bmTimer);
-              if (e.touches) {
-                if (!isTouchDraggingBm) {
-                  isTouchDraggingBm = true;
-                  bmCard.classList.add('dragging');
-                  createPopoutAvatar(bmCard, touch.clientX, touch.clientY);
-                } else {
-                  updatePopoutAvatar(touch.clientX, touch.clientY);
-                }
-
-                var target = document.elementFromPoint(touch.clientX, touch.clientY);
-                if (target) {
-                  var targetBm = target.closest('.bookmark-card');
-                  var targetCat = target.closest('.section-card');
-                  var ghostBm = getBookmarkGhost();
-
-                  if (targetBm && targetBm !== bmCard) {
-                    var p = targetBm.parentNode;
-                    if (p) {
-                      var rect = targetBm.getBoundingClientRect();
-                      var isHorizontal = cat.side === 'bottom' || (getComputedStyle(p).display === 'grid');
-                      var isAfter = isHorizontal ? ((touch.clientX - rect.left) > (rect.width / 2)) : ((touch.clientY - rect.top) > (rect.height / 2));
-                      var targetPos = isAfter ? targetBm.nextSibling : targetBm;
-                      if (ghostBm.parentNode !== p || ghostBm.nextSibling !== targetPos) {
-                        p.insertBefore(ghostBm, targetPos);
-                      }
-                    }
-                  } else if (targetCat) {
-                    var listEl = targetCat.querySelector('.bookmarks-list');
-                    if (listEl && ghostBm.parentNode !== listEl) {
-                      listEl.appendChild(ghostBm);
-                    }
-                  }
-                }
-              }
-            }
-          };
-
-          var endBmHandle = function (e) {
-            if (bmTimer) clearTimeout(bmTimer);
-            removePopoutAvatar();
-            clearDragGhosts();
-            if (isTouchDraggingBm && e.changedTouches) {
-              bmCard.classList.remove('dragging');
-              isTouchDraggingBm = false;
-              var endTouch = e.changedTouches[0];
-              var dropTarget = document.elementFromPoint(endTouch.clientX, endTouch.clientY);
-              if (dropTarget) {
-                var targetBmCard = dropTarget.closest('.bookmark-card');
-                var targetCatCard = dropTarget.closest('.section-card');
+            bmCard.ondrop = function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              bmCard.classList.remove('drag-over');
+              clearDragGhosts();
+              try {
+                var raw = e.dataTransfer.getData('text/plain');
+                if (!raw) return;
+                var dragData = JSON.parse(raw);
                 var allData = loadBookmarkData();
 
-                if (targetBmCard && targetBmCard !== bmCard) {
-                  var targetBmId = targetBmCard.getAttribute('data-bm-id');
-                  var sourceBm = allData.bookmarks.find(function (b) { return b.id === bm.id; });
-                  var targetBm = allData.bookmarks.find(function (b) { return b.id === targetBmId; });
-                  if (sourceBm && targetBm) {
-                    sourceBm.categoryId = targetBm.categoryId;
-                    var parentList = targetBmCard.parentNode;
-                    var rect = targetBmCard.getBoundingClientRect();
-                    var isHorizontal = cat.side === 'bottom' || (parentList && getComputedStyle(parentList).display === 'grid');
-                    var isAfter = isHorizontal ? ((endTouch.clientX - rect.left) > (rect.width / 2)) : ((endTouch.clientY - rect.top) > (rect.height / 2));
+                if (dragData.type === 'category' && dragData.id !== cat.id) {
+                  var sourceCat = allData.categories.find(function (c) { return c.id === dragData.id; });
+                  var targetCat = allData.categories.find(function (c) { return c.id === cat.id; });
+                  if (sourceCat && targetCat) {
+                    sourceCat.side = targetCat.side;
+                    var rect = card.getBoundingClientRect();
+                    var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
 
-                    allData.bookmarks = allData.bookmarks.filter(function (b) { return b.id !== sourceBm.id; });
-                    var targetIdx = allData.bookmarks.findIndex(function (b) { return b.id === targetBm.id; });
-                    if (targetIdx !== -1 && isAfter) {
+                    allData.categories = allData.categories.filter(function (c) { return c.id !== sourceCat.id; });
+                    var targetIdx = allData.categories.findIndex(function (c) { return c.id === targetCat.id; });
+                    if (targetIdx !== -1 && isLowerHalf) {
                       targetIdx += 1;
                     }
-                    if (targetIdx === -1) targetIdx = allData.bookmarks.length;
+                    if (targetIdx === -1) targetIdx = allData.categories.length;
 
-                    allData.bookmarks.splice(targetIdx, 0, sourceBm);
-                    allData.bookmarks.forEach(function (b, idx) { b.order = idx; });
+                    allData.categories.splice(targetIdx, 0, sourceCat);
+                    allData.categories.forEach(function (c, idx) { c.order = idx; });
                     saveBookmarkData(allData);
                     renderBookmarksUI();
                   }
-                } else if (targetCatCard) {
-                  var targetCatId = targetCatCard.getAttribute('data-category-id');
-                  var sourceBm2 = allData.bookmarks.find(function (b) { return b.id === bm.id; });
-                  if (sourceBm2 && sourceBm2.categoryId !== targetCatId) {
-                    sourceBm2.categoryId = targetCatId;
-                    sourceBm2.order = 999;
+                } else if (dragData.type === 'bookmark') {
+                  var sourceBm = allData.bookmarks.find(function (b) { return b.id === dragData.id; });
+                  if (sourceBm && sourceBm.categoryId !== cat.id) {
+                    sourceBm.categoryId = cat.id;
+                    sourceBm.order = 999;
                     saveBookmarkData(allData);
                     renderBookmarksUI();
                   }
                 }
-              }
-            }
-          };
-
-          bmHandle.addEventListener('mousedown', startBmHandle);
-          bmHandle.addEventListener('mousemove', moveBmHandle);
-          bmHandle.addEventListener('mouseup', endBmHandle);
-          bmHandle.addEventListener('touchstart', startBmHandle, { passive: true });
-          bmHandle.addEventListener('touchmove', moveBmHandle, { passive: true });
-          bmHandle.addEventListener('touchend', endBmHandle);
-
-          bmHandle.onclick = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (isTouchDraggingBm) return;
-            bmHandle.classList.add('selected');
-            openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title });
-          };
-
-          bmCard.appendChild(bmLeft);
-          bmCard.appendChild(bmHandle);
-          bmWrapper.appendChild(bmCard);
-
-          // Render Sub-Bookmarks if folder is expanded
-          if (isFolderType && isFolderExpanded) {
-            var subContainer = document.createElement('div');
-            subContainer.style.display = 'flex';
-            subContainer.style.flexDirection = 'column';
-            subContainer.style.gap = '6px';
-            subContainer.style.paddingLeft = '18px';
-            subContainer.style.borderLeft = '2px dashed rgba(56, 189, 248, 0.3)';
-            subContainer.style.marginTop = '2px';
-
-            var subBms = bm.subBookmarks || [];
-            if (searchQuery) {
-              subBms = subBms.filter(function (sb) {
-                return (sb.title || '').toLowerCase().includes(searchQuery) || (sb.url || '').toLowerCase().includes(searchQuery);
-              });
-            }
-
-            subBms.forEach(function (sb, sbIdx) {
-              var sbCard = document.createElement('a');
-              sbCard.className = 'bookmark-card';
-              sbCard.target = '_blank';
-              sbCard.rel = 'noopener';
-              sbCard.style.padding = '6px 10px';
-              sbCard.style.fontSize = '0.82rem';
-              sbCard.style.background = 'rgba(15, 23, 42, 0.6)';
-
-              var sbProxiedUrl = location.protocol + '//' + location.host + '/proxy/' + (sb.url.startsWith('http') ? sb.url : 'https://' + sb.url);
-              sbCard.href = sbProxiedUrl;
-
-              var sbLeft = document.createElement('div');
-              sbLeft.className = 'bookmark-card-left';
-
-              var sbIconEl = renderIconElement(sb.icon, sb.url, sb.title);
-
-              var sbTitle = document.createElement('span');
-              sbTitle.className = 'bookmark-title';
-              sbTitle.textContent = sb.title;
-
-              sbLeft.appendChild(sbIconEl);
-              sbLeft.appendChild(sbTitle);
-
-              var sbDelBtn = document.createElement('button');
-              sbDelBtn.type = 'button';
-              sbDelBtn.title = 'Delete sub-bookmark';
-              sbDelBtn.style.background = 'none';
-              sbDelBtn.style.border = 'none';
-              sbDelBtn.style.color = '#ef4444';
-              sbDelBtn.style.cursor = 'pointer';
-              sbDelBtn.style.fontSize = '0.85rem';
-              sbDelBtn.textContent = '✕';
-              sbDelBtn.onclick = function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                bm.subBookmarks.splice(sbIdx, 1);
-                saveBookmarkData(data);
-                renderBookmarksUI();
-              };
-
-              sbCard.appendChild(sbLeft);
-              sbCard.appendChild(sbDelBtn);
-              subContainer.appendChild(sbCard);
-            });
-
-            // Quick Add button for sub-bookmark inside folder
-            var addSubBtn = document.createElement('button');
-            addSubBtn.type = 'button';
-            addSubBtn.style.background = 'rgba(56, 189, 248, 0.12)';
-            addSubBtn.style.border = '1px dashed rgba(56, 189, 248, 0.3)';
-            addSubBtn.style.color = '#38bdf8';
-            addSubBtn.style.borderRadius = '8px';
-            addSubBtn.style.padding = '4px 8px';
-            addSubBtn.style.fontSize = '0.78rem';
-            addSubBtn.style.cursor = 'pointer';
-            addSubBtn.style.textAlign = 'center';
-            addSubBtn.textContent = '+ Add link to ' + bm.title;
-            addSubBtn.onclick = function (e) {
-              e.preventDefault();
-              e.stopPropagation();
-              var subTitle = prompt('Sub-Bookmark Title:');
-              if (!subTitle) return;
-              var subUrl = prompt('Sub-Bookmark URL:');
-              if (!subUrl) return;
-
-              if (!bm.subBookmarks) bm.subBookmarks = [];
-              bm.subBookmarks.push({
-                id: 'sub_' + Date.now(),
-                title: subTitle,
-                url: subUrl,
-                icon: ''
-              });
-              saveBookmarkData(data);
-              renderBookmarksUI();
+              } catch (err) {}
             };
 
-            subContainer.appendChild(addSubBtn);
-            bmWrapper.appendChild(subContainer);
+            if (bm.type !== 'folder') {
+              bmCard.target = '_blank';
+              bmCard.rel = 'noopener';
+              var rawTargetUrl = bm.url ? (bm.url.startsWith('http') ? bm.url : 'https://' + bm.url) : '';
+              var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + rawTargetUrl;
+              bmCard.href = proxiedUrl;
+
+              bmCard.onclick = function (e) {
+                if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
+
+                if (bm.builtIn) {
+                  if (bm.id === 'bm_everythingmoe' || bm.id === 'bm_fmhy_movies' || bm.id === 'bm_fmhy_anime' || (bm.url && (bm.url.includes('everythingmoe.com') || bm.url.includes('fmhy.net')))) {
+                    e.preventDefault();
+                    openEverythingMoeNoticeModal(bm.title, rawTargetUrl, proxiedUrl);
+                    return;
+                  }
+
+                  var settings = {};
+                  try { settings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}'); } catch(err) {}
+                  if (settings.skipBuiltinTestPrompt) {
+                    return;
+                  }
+
+                  e.preventDefault();
+                  openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, true);
+                } else {
+                  e.preventDefault();
+                  openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, false);
+                }
+              };
+            } else {
+              bmCard.style.cursor = 'pointer';
+              bmCard.onclick = function (e) {
+                if (!e.target.closest('.drag-dots-handle') && !e.target.closest('.folder-expand-btn')) {
+                  expandedFolders[bm.id] = !expandedFolders[bm.id];
+                  renderBookmarksUI();
+                }
+              };
+            }
+
+            var bmLeft = document.createElement('div');
+            bmLeft.className = 'bookmark-card-left';
+
+            if (isFolderType) {
+              var expandBtn = document.createElement('button');
+              expandBtn.type = 'button';
+              expandBtn.className = 'folder-expand-btn';
+              expandBtn.title = isFolderExpanded ? 'Collapse folder' : 'Expand folder';
+              expandBtn.setAttribute('aria-label', (isFolderExpanded ? 'Collapse folder ' : 'Expand folder ') + bm.title);
+              expandBtn.style.background = 'none';
+              expandBtn.style.border = 'none';
+              expandBtn.style.color = '#38bdf8';
+              expandBtn.style.fontWeight = 'bold';
+              expandBtn.style.cursor = 'pointer';
+              expandBtn.style.fontSize = '0.9rem';
+              expandBtn.style.padding = '2px 4px';
+              expandBtn.style.transform = isFolderExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
+              expandBtn.style.transition = 'transform 0.2s ease';
+              expandBtn.textContent = '>';
+              expandBtn.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                expandedFolders[bm.id] = !expandedFolders[bm.id];
+                renderBookmarksUI();
+              };
+              bmLeft.appendChild(expandBtn);
+            }
+
+            var bmIconEl = renderIconElement(bm.icon, bm.url, bm.title);
+
+            var bmTitle = document.createElement('span');
+            bmTitle.className = 'bookmark-title';
+            bmTitle.textContent = bm.title;
+
+            bmLeft.appendChild(bmIconEl);
+            bmLeft.appendChild(bmTitle);
+
+            var bmHandle = document.createElement('div');
+            bmHandle.className = 'drag-dots-handle';
+            bmHandle.title = 'Drag to move or long-press/click for menu';
+            bmHandle.innerHTML = '<div class="dots-grid"><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div></div>';
+
+            var bmTimer = null;
+            var bmSX = 0, bmSY = 0;
+            var isTouchDraggingBm = false;
+
+            var startBmHandle = function (e) {
+              e.stopPropagation();
+              var touch = e.touches ? e.touches[0] : e;
+              bmSX = touch.clientX;
+              bmSY = touch.clientY;
+              isTouchDraggingBm = false;
+
+              bmTimer = setTimeout(function () {
+                if (!isTouchDraggingBm) {
+                  bmHandle.classList.add('selected');
+                  openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title });
+                }
+              }, 500);
+            };
+
+            var moveBmHandle = function (e) {
+              var touch = e.touches ? e.touches[0] : e;
+              if (Math.abs(touch.clientX - bmSX) > 8 || Math.abs(touch.clientY - bmSY) > 8) {
+                if (bmTimer) clearTimeout(bmTimer);
+                if (e.touches) {
+                  if (!isTouchDraggingBm) {
+                    isTouchDraggingBm = true;
+                    bmCard.classList.add('dragging');
+                    createPopoutAvatar(bmCard, touch.clientX, touch.clientY);
+                  } else {
+                    updatePopoutAvatar(touch.clientX, touch.clientY);
+                  }
+
+                  var target = document.elementFromPoint(touch.clientX, touch.clientY);
+                  if (target) {
+                    var targetBm = target.closest('.bookmark-card');
+                    var targetCat = target.closest('.section-card');
+                    var ghostBm = getBookmarkGhost();
+
+                    if (targetBm && targetBm !== bmCard) {
+                      var p = targetBm.parentNode;
+                      if (p) {
+                        var rect = targetBm.getBoundingClientRect();
+                        var isHorizontal = cat.side === 'bottom' || (getComputedStyle(p).display === 'grid');
+                        var isAfter = isHorizontal ? ((touch.clientX - rect.left) > (rect.width / 2)) : ((touch.clientY - rect.top) > (rect.height / 2));
+                        var targetPos = isAfter ? targetBm.nextSibling : targetBm;
+                        if (ghostBm.parentNode !== p || ghostBm.nextSibling !== targetPos) {
+                          p.insertBefore(ghostBm, targetPos);
+                        }
+                      }
+                    } else if (targetCat) {
+                      var listEl = targetCat.querySelector('.bookmarks-list');
+                      if (listEl && ghostBm.parentNode !== listEl) {
+                        listEl.appendChild(ghostBm);
+                      }
+                    }
+                  }
+                }
+              }
+            };
+
+            var endBmHandle = function (e) {
+              if (bmTimer) clearTimeout(bmTimer);
+              removePopoutAvatar();
+              clearDragGhosts();
+              if (isTouchDraggingBm && e.changedTouches) {
+                bmCard.classList.remove('dragging');
+                isTouchDraggingBm = false;
+                var endTouch = e.changedTouches[0];
+                var dropTarget = document.elementFromPoint(endTouch.clientX, endTouch.clientY);
+                if (dropTarget) {
+                  var targetBmCard = dropTarget.closest('.bookmark-card');
+                  var targetCatCard = dropTarget.closest('.section-card');
+                  var allData = loadBookmarkData();
+
+                  if (targetBmCard && targetBmCard !== bmCard) {
+                    var targetBmId = targetBmCard.getAttribute('data-bm-id');
+                    var sourceBm = allData.bookmarks.find(function (b) { return b.id === bm.id; });
+                    var targetBm = allData.bookmarks.find(function (b) { return b.id === targetBmId; });
+                    if (sourceBm && targetBm) {
+                      sourceBm.categoryId = targetBm.categoryId;
+                      var parentList = targetBmCard.parentNode;
+                      var rect = targetBmCard.getBoundingClientRect();
+                      var isHorizontal = cat.side === 'bottom' || (parentList && getComputedStyle(parentList).display === 'grid');
+                      var isAfter = isHorizontal ? ((endTouch.clientX - rect.left) > (rect.width / 2)) : ((endTouch.clientY - rect.top) > (rect.height / 2));
+
+                      allData.bookmarks = allData.bookmarks.filter(function (b) { return b.id !== sourceBm.id; });
+                      var targetIdx = allData.bookmarks.findIndex(function (b) { return b.id === targetBm.id; });
+                      if (targetIdx !== -1 && isAfter) {
+                        targetIdx += 1;
+                      }
+                      if (targetIdx === -1) targetIdx = allData.bookmarks.length;
+
+                      allData.bookmarks.splice(targetIdx, 0, sourceBm);
+                      allData.bookmarks.forEach(function (b, idx) { b.order = idx; });
+                      saveBookmarkData(allData);
+                      renderBookmarksUI();
+                    }
+                  } else if (targetCatCard) {
+                    var targetCatId = targetCatCard.getAttribute('data-category-id');
+                    var sourceBm2 = allData.bookmarks.find(function (b) { return b.id === bm.id; });
+                    if (sourceBm2 && sourceBm2.categoryId !== targetCatId) {
+                      sourceBm2.categoryId = targetCatId;
+                      sourceBm2.order = 999;
+                      saveBookmarkData(allData);
+                      renderBookmarksUI();
+                    }
+                  }
+                }
+              }
+            };
+
+            bmHandle.addEventListener('mousedown', startBmHandle);
+            bmHandle.addEventListener('mousemove', moveBmHandle);
+            bmHandle.addEventListener('mouseup', endBmHandle);
+            bmHandle.addEventListener('touchstart', startBmHandle, { passive: true });
+            bmHandle.addEventListener('touchmove', moveBmHandle, { passive: true });
+            bmHandle.addEventListener('touchend', endBmHandle);
+
+            bmHandle.onclick = function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              if (isTouchDraggingBm) return;
+              bmHandle.classList.add('selected');
+              openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title });
+            };
+
+            bmCard.appendChild(bmLeft);
+            bmCard.appendChild(bmHandle);
+            bmWrapper.appendChild(bmCard);
+
+            if (isFolderType && isFolderExpanded) {
+              var subContainer = document.createElement('div');
+              subContainer.style.display = 'flex';
+              subContainer.style.flexDirection = 'column';
+              subContainer.style.gap = '6px';
+              subContainer.style.paddingLeft = '18px';
+              subContainer.style.borderLeft = '2px dashed rgba(56, 189, 248, 0.3)';
+              subContainer.style.marginTop = '2px';
+
+              var subBms = bm.subBookmarks || [];
+              if (searchQuery) {
+                subBms = subBms.filter(function (sb) {
+                  return (sb.title || '').toLowerCase().includes(searchQuery) || (sb.url || '').toLowerCase().includes(searchQuery);
+                });
+              }
+
+              subBms.forEach(function (sb, sbIdx) {
+                var sbCard = document.createElement('a');
+                sbCard.className = 'bookmark-card';
+                sbCard.target = '_blank';
+                sbCard.rel = 'noopener';
+                sbCard.style.padding = '6px 10px';
+                sbCard.style.fontSize = '0.82rem';
+                sbCard.style.background = 'rgba(15, 23, 42, 0.6)';
+
+                var sbProxiedUrl = location.protocol + '//' + location.host + '/proxy/' + (sb.url.startsWith('http') ? sb.url : 'https://' + sb.url);
+                sbCard.href = sbProxiedUrl;
+
+                var sbLeft = document.createElement('div');
+                sbLeft.className = 'bookmark-card-left';
+
+                var sbIconEl = renderIconElement(sb.icon, sb.url, sb.title);
+
+                var sbTitle = document.createElement('span');
+                sbTitle.className = 'bookmark-title';
+                sbTitle.textContent = sb.title;
+
+                sbLeft.appendChild(sbIconEl);
+                sbLeft.appendChild(sbTitle);
+
+                var sbDelBtn = document.createElement('button');
+                sbDelBtn.type = 'button';
+                sbDelBtn.title = 'Delete sub-bookmark';
+                sbDelBtn.style.background = 'none';
+                sbDelBtn.style.border = 'none';
+                sbDelBtn.style.color = '#ef4444';
+                sbDelBtn.style.cursor = 'pointer';
+                sbDelBtn.style.fontSize = '0.85rem';
+                sbDelBtn.textContent = '✕';
+                sbDelBtn.onclick = function (e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  bm.subBookmarks.splice(sbIdx, 1);
+                  saveBookmarkData(data);
+                  renderBookmarksUI();
+                };
+
+                sbCard.appendChild(sbLeft);
+                sbCard.appendChild(sbDelBtn);
+                subContainer.appendChild(sbCard);
+              });
+
+              if (bm.id !== 'bm_ng') {
+                var addSubBtn = document.createElement('button');
+                addSubBtn.type = 'button';
+                addSubBtn.style.background = 'rgba(56, 189, 248, 0.12)';
+                addSubBtn.style.border = '1px dashed rgba(56, 189, 248, 0.3)';
+                addSubBtn.style.color = '#38bdf8';
+                addSubBtn.style.borderRadius = '8px';
+                addSubBtn.style.padding = '4px 8px';
+                addSubBtn.style.fontSize = '0.78rem';
+                addSubBtn.style.cursor = 'pointer';
+                addSubBtn.style.textAlign = 'center';
+                addSubBtn.textContent = '+ Add link to ' + bm.title;
+                addSubBtn.onclick = function (e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  var subTitle = prompt('Sub-Bookmark Title:');
+                  if (!subTitle) return;
+                  var subUrl = prompt('Sub-Bookmark URL:');
+                  if (!subUrl) return;
+
+                  if (!bm.subBookmarks) bm.subBookmarks = [];
+                  bm.subBookmarks.push({
+                    id: 'sub_' + Date.now(),
+                    title: subTitle,
+                    url: subUrl,
+                    icon: ''
+                  });
+                  saveBookmarkData(data);
+                  renderBookmarksUI();
+                };
+
+                subContainer.appendChild(addSubBtn);
+              }
+              bmWrapper.appendChild(subContainer);
+            }
+
+            targetContainer.appendChild(bmWrapper);
+          });
+        }
+
+        if (builtinBms.length > 0) {
+          var isBuiltinCollapsed = !!collapsedSubSections[cat.id + '_builtin'] && !searchQuery;
+
+          var builtinDiv = document.createElement('div');
+          builtinDiv.className = 'subsection-divider';
+          builtinDiv.title = 'Click to collapse/expand Built-In Bookmarks';
+
+          var builtinTitle = document.createElement('div');
+          builtinTitle.className = 'subsection-title';
+          builtinTitle.innerHTML = '<svg style="width:12px;height:12px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg><span>Built-In</span>';
+
+          var builtinArrow = document.createElement('span');
+          builtinArrow.className = 'subsection-arrow';
+          builtinArrow.textContent = isBuiltinCollapsed ? '▲' : '▼';
+
+          builtinDiv.appendChild(builtinTitle);
+          builtinDiv.appendChild(builtinArrow);
+
+          builtinDiv.onclick = function (e) {
+            e.stopPropagation();
+            collapsedSubSections[cat.id + '_builtin'] = !isBuiltinCollapsed;
+            renderBookmarksUI();
+          };
+
+          listContainer.appendChild(builtinDiv);
+
+          if (!isBuiltinCollapsed) {
+            var visibleBuiltin = isExpanded ? builtinBms : builtinBms.slice(0, limit);
+            renderBookmarkListSection(visibleBuiltin, listContainer);
           }
+        }
 
-          listContainer.appendChild(bmWrapper);
-        });
+        var isUserCollapsed = !!collapsedSubSections[cat.id + '_user'] && !searchQuery;
 
+        var userDiv = document.createElement('div');
+        userDiv.className = 'subsection-divider';
+        userDiv.title = 'Click to collapse/expand Your Bookmarks';
+
+        var userTitle = document.createElement('div');
+        userTitle.className = 'subsection-title';
+        userTitle.innerHTML = '<svg style="width:12px;height:12px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Your Bookmarks</span>';
+
+        var userArrow = document.createElement('span');
+        userArrow.className = 'subsection-arrow';
+        userArrow.textContent = isUserCollapsed ? '▲' : '▼';
+
+        userDiv.appendChild(userTitle);
+        userDiv.appendChild(userArrow);
+
+        userDiv.onclick = function (e) {
+          e.stopPropagation();
+          collapsedSubSections[cat.id + '_user'] = !isUserCollapsed;
+          renderBookmarksUI();
+        };
+
+        listContainer.appendChild(userDiv);
+
+        if (!isUserCollapsed) {
+          if (userBms.length > 0) {
+            renderBookmarkListSection(userBms, listContainer);
+          } else {
+            var emptyNotice = document.createElement('div');
+            emptyNotice.style.cssText = 'font-size: 0.78rem; color: #64748b; font-style: italic; padding: 4px 8px; text-align: center;';
+            emptyNotice.textContent = 'No user bookmarks added yet.';
+            listContainer.appendChild(emptyNotice);
+          }
+        }
         card.appendChild(listContainer);
 
         // Show More / Show Less Toggle Button

@@ -1528,7 +1528,8 @@
               { id: "sub_fnf", title: "Friday Night Funkin", url: "https://luckydog7.github.io/funkinmobile/game/index.html", icon: "" }
             ]
           },
-          { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_user_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: false, hidden: false, order: 99, subBookmarks: [] },
           { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
           { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
           { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
@@ -1562,23 +1563,49 @@
               }
             });
 
+            // Migration: Rename bm_ng title to "Newgrounds: Syshi" if needed
+            var ngBm = data.bookmarks.find(function (b) { return b.id === 'bm_ng'; });
+            if (ngBm && ngBm.title !== 'Newgrounds: Syshi') {
+              ngBm.title = 'Newgrounds: Syshi';
+              updated = true;
+            }
+
+            // Migration: Re-sort built-in anime bookmarks so FMHY: Anime is under EverythingMoe and above AniSnatch
+            var animeBms = data.bookmarks.filter(function (b) { return b.categoryId === 'cat_anime' && b.builtIn; });
+            if (animeBms.length > 0) {
+              var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_anify", "bm_anidb"];
+              desiredAnimeOrder.forEach(function (id, index) {
+                var found = animeBms.find(function (b) { return b.id === id; });
+                if (found && found.order !== index) {
+                  found.order = index;
+                  updated = true;
+                }
+              });
+            }
+
             DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
               var userBm = data.bookmarks.find(function (b) { return b.id === defBm.id; });
               if (!userBm) {
                 data.bookmarks.push(JSON.parse(JSON.stringify(defBm)));
                 updated = true;
-              } else if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
-                if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
-                  userBm.subBookmarks = [];
+              } else {
+                if (defBm.builtIn && userBm.title !== defBm.title) {
+                  userBm.title = defBm.title;
                   updated = true;
                 }
-                defBm.subBookmarks.forEach(function (defSub) {
-                  var subExists = userBm.subBookmarks.some(function (s) { return s.id === defSub.id; });
-                  if (!subExists) {
-                    userBm.subBookmarks.push(JSON.parse(JSON.stringify(defSub)));
+                if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
+                  if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
+                    userBm.subBookmarks = [];
                     updated = true;
                   }
-                });
+                  defBm.subBookmarks.forEach(function (defSub) {
+                    var subExists = userBm.subBookmarks.some(function (s) { return s.id === defSub.id; });
+                    if (!subExists) {
+                      userBm.subBookmarks.push(JSON.parse(JSON.stringify(defSub)));
+                      updated = true;
+                    }
+                  });
+                }
               }
             });
 
