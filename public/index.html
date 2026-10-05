@@ -1243,7 +1243,7 @@
 
       <form action="no-js" method="get" id="unblocker-form" class="search-form">
         <div class="input-wrapper">
-          <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autofocus="autofocus" autocomplete="off" aria-label="URL or search query" aria-expanded="false" aria-controls="history-dropdown" style="padding-right: 44px;" />
+          <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autocomplete="off" aria-label="URL or search query" aria-expanded="false" aria-controls="history-dropdown" style="padding-right: 44px;" />
           <button type="button" id="url-clear-btn" class="url-clear-btn" aria-label="Clear search input" title="Clear input">✕</button>
           <div id="history-dropdown" class="history-dropdown"></div>
         </div>
@@ -1412,7 +1412,7 @@
     </div>
   </div>
 
-  <!-- EverythingMoe Explanation Modal -->
+  <!-- Notice Modal for Testing Sites (EverythingMoe, FMHY: Movies, FMHY: Anime) -->
   <div id="everythingmoe-modal" class="modal-backdrop">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="everythingmoe-modal-title" style="max-width: 450px;">
       <div class="modal-header">
@@ -1424,11 +1424,12 @@
         </div>
         <button id="close-everythingmoe-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
-      <div style="font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 20px;">
+      <div style="font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 16px;">
         This website is for you to test other sites to see if they are unblocked where you are.
       </div>
-      <div style="display: flex; justify-content: flex-end;">
-        <button id="everythingmoe-ok-btn" type="button" class="modal-submit-btn" style="width: 100%;">Okay</button>
+      <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
+        <button id="everythingmoe-direct-btn" type="button" class="modal-submit-btn" style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; margin-top: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Test Direct Site</span></button>
+        <button id="everythingmoe-ok-btn" type="button" class="modal-submit-btn" style="flex: 1; margin-top: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span></button>
       </div>
     </div>
   </div>
@@ -1512,8 +1513,8 @@
         <label for="builtin-dont-ask" style="cursor: pointer; user-select: none;">Don't ask me again for default bookmarks</label>
       </div>
       <div style="display: flex; gap: 10px; justify-content: flex-end;">
-        <button id="builtin-test-direct-btn" type="button" class="modal-submit-btn" style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1;">Test Direct Site</button>
-        <button id="builtin-open-proxy-btn" type="button" class="modal-submit-btn" style="flex: 1;">Open with Proxy</button>
+        <button id="builtin-test-direct-btn" type="button" class="modal-submit-btn" style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Test Direct Site</span></button>
+        <button id="builtin-open-proxy-btn" type="button" class="modal-submit-btn" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span></button>
       </div>
     </div>
   </div>
@@ -2019,13 +2020,15 @@
       ],
       bookmarks: [
         { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-        { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-        { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-        { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
-        { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-        { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-        { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-        { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+        { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+        { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+        { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         {
           id: "bm_individual_games",
           categoryId: "cat_games",
@@ -2725,16 +2728,17 @@
           if (bm.type !== 'folder') {
             bmCard.target = '_blank';
             bmCard.rel = 'noopener';
-            var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + (bm.url.startsWith('http') ? bm.url : 'https://' + bm.url);
+            var rawTargetUrl = bm.url ? (bm.url.startsWith('http') ? bm.url : 'https://' + bm.url) : '';
+            var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + rawTargetUrl;
             bmCard.href = proxiedUrl;
 
             bmCard.onclick = function (e) {
               if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
 
               if (bm.builtIn) {
-                if (bm.id === 'bm_everythingmoe' || (bm.url && bm.url.includes('everythingmoe.com'))) {
+                if (bm.id === 'bm_everythingmoe' || bm.id === 'bm_fmhy_movies' || bm.id === 'bm_fmhy_anime' || (bm.url && (bm.url.includes('everythingmoe.com') || bm.url.includes('fmhy.net')))) {
                   e.preventDefault();
-                  openEverythingMoeNoticeModal(proxiedUrl);
+                  openEverythingMoeNoticeModal(bm.title, rawTargetUrl, proxiedUrl);
                   return;
                 }
 
@@ -3240,10 +3244,16 @@
     }
 
     var pendingBuiltinUrls = { rawUrl: '', proxiedUrl: '' };
-    var pendingEverythingMoeUrl = '';
+    var pendingEverythingMoeNotice = { title: '', rawUrl: '', proxiedUrl: '' };
 
-    function openEverythingMoeNoticeModal(proxiedUrl) {
-      pendingEverythingMoeUrl = proxiedUrl;
+    function openEverythingMoeNoticeModal(title, rawUrl, proxiedUrl) {
+      pendingEverythingMoeNotice.title = title || 'EverythingMoe';
+      pendingEverythingMoeNotice.rawUrl = rawUrl || '';
+      pendingEverythingMoeNotice.proxiedUrl = proxiedUrl || '';
+
+      var titleEl = $('everythingmoe-modal-title');
+      if (titleEl) titleEl.textContent = pendingEverythingMoeNotice.title;
+
       var modal = $('everythingmoe-modal');
       if (modal) modal.classList.add('active');
     }
@@ -3481,11 +3491,26 @@
           var out = $('share-code-output');
           if (out && out.value) {
             navigator.clipboard.writeText(out.value).then(function () {
-              $('share-copy-status').textContent = '✅ Share code copied to clipboard!';
+              $('share-copy-status').textContent = 'Share code copied to clipboard!';
             }).catch(function () {
               out.select();
               document.execCommand('copy');
-              $('share-copy-status').textContent = '✅ Share code copied!';
+              $('share-copy-status').textContent = 'Share code copied!';
+            });
+          }
+        };
+      }
+
+      var copyLinkBtn = $('copy-share-link-btn');
+      if (copyLinkBtn) {
+        copyLinkBtn.onclick = function () {
+          var out = $('share-code-output');
+          if (out && out.value) {
+            var fullUrl = window.location.origin + window.location.pathname + '?share_code=' + encodeURIComponent(out.value);
+            navigator.clipboard.writeText(fullUrl).then(function () {
+              $('share-copy-status').textContent = 'Share link copied to clipboard!';
+            }).catch(function () {
+              $('share-copy-status').textContent = 'Share link created!';
             });
           }
         };
@@ -3555,7 +3580,7 @@
           saveBookmarkData(data);
           closeShareModal();
           renderBookmarksUI();
-          alert('✅ Shared bookmarks imported successfully!');
+          alert('Shared bookmarks imported successfully!');
         };
       }
 
@@ -3700,10 +3725,20 @@
       $('close-everythingmoe-modal-btn').onclick = closeEverythingMoeNoticeModal;
       $('close-share-modal-btn').onclick = closeShareModal;
 
+      var emDirectBtn = $('everythingmoe-direct-btn');
+      if (emDirectBtn) {
+        emDirectBtn.onclick = function () {
+          closeEverythingMoeNoticeModal();
+          if (pendingEverythingMoeNotice.rawUrl) {
+            window.open(pendingEverythingMoeNotice.rawUrl, '_blank', 'noopener');
+          }
+        };
+      }
+
       $('everythingmoe-ok-btn').onclick = function () {
         closeEverythingMoeNoticeModal();
-        if (pendingEverythingMoeUrl) {
-          window.open(pendingEverythingMoeUrl, '_blank', 'noopener');
+        if (pendingEverythingMoeNotice.proxiedUrl) {
+          window.open(pendingEverythingMoeNotice.proxiedUrl, '_blank', 'noopener');
         }
       };
 
@@ -3943,7 +3978,6 @@
       initBookmarksManager();
       initShareBookmarkHandlers();
       checkError();
-      $('url').focus();
       setTimeout(hideLoadingScreen, 300);
     };
   </script>
