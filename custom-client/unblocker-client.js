@@ -804,8 +804,8 @@
         classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
         google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
         drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
-        elearn_lee: { title: "eLearn Lee College", icon: "https://elearn.lee.edu/favicon.ico" },
-        lee_college: { title: "Lee College", icon: "https://www.lee.edu/favicon.ico" },
+        elearn_lee: { title: "Courses", icon: "https://elearn.lee.edu/favicon.ico" },
+        lee_college: { title: "Home | Lee College", icon: "https://www.lee.edu/favicon.ico" },
         canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" },
         khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" }
       };
