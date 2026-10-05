@@ -183,6 +183,25 @@ function cloudflareMiddleware(data) {
     }
 }
 
+function stripIntegrityMiddleware(data) {
+    if (data.contentType == 'text/html' && data.stream) {
+        data.stream = data.stream.pipe(new Transform({
+            decodeStrings: false,
+            transform: function(chunk, encoding, next) {
+                var str = chunk.toString();
+                this.push(str.replace(/\s+integrity\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, ''));
+                next();
+            }
+        }));
+    }
+}
+
+function stripFrameHeadersMiddleware(data) {
+    if (data.headers) {
+        delete data.headers['x-frame-options'];
+    }
+}
+
 function responseRedirectMiddleware(data) {
     if (!data.headers || !data.headers['location']) return;
     var loc = data.headers['location'];
@@ -225,6 +244,8 @@ var unblockerConfig = {
         youtube.processRequest
     ],
     responseMiddleware: [
+        stripFrameHeadersMiddleware,
+        stripIntegrityMiddleware,
         responseRedirectMiddleware,
         responseLinkHeaderMiddleware,
         googleAnalyticsMiddleware,
@@ -628,6 +649,8 @@ app.headersMiddleware = headersMiddleware;
 app.responseLinkHeaderMiddleware = responseLinkHeaderMiddleware;
 app.newgroundsMiddleware = newgroundsMiddleware;
 app.cloudflareMiddleware = cloudflareMiddleware;
+app.stripIntegrityMiddleware = stripIntegrityMiddleware;
+app.stripFrameHeadersMiddleware = stripFrameHeadersMiddleware;
 app.responseRedirectMiddleware = responseRedirectMiddleware;
 app.serverErrorResponseMiddleware = serverErrorResponseMiddleware;
 app.heavenlyErrorMiddleware = heavenlyErrorMiddleware;

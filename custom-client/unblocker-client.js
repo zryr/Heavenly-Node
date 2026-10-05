@@ -77,6 +77,8 @@
       return urlStr;
     }
 
+    var isRootRelative = urlStr.substr(0, 1) === "/" && urlStr.substr(0, 2) !== "//";
+
     // Performance optimization: Fast-path check single-slash malformed URLs (e.g., https:/example.com)
     // avoids regex execution for standard absolute and relative URLs
     if (urlStr.indexOf(":/") !== -1 && urlStr.indexOf("://") === -1) {
@@ -89,14 +91,14 @@
     var currentRemoteHref;
     function getCurrentRemoteHref() {
       if (currentRemoteHref !== undefined) return currentRemoteHref;
-      if (location.pathname.substr(0, prefixLen) === prefix) {
+      if (location && location.pathname && location.pathname.substr(0, prefixLen) === prefix) {
         currentRemoteHref =
           location.pathname.substr(prefixLen) +
-          location.search +
-          location.hash;
+          (location.search || "") +
+          (location.hash || "");
       } else {
         // in case sites (such as youtube) manage to bypass our history wrapper
-        currentRemoteHref = config.url;
+        currentRemoteHref = (config && config.url) || "";
       }
       while (currentRemoteHref && currentRemoteHref.indexOf(prefix) !== -1) {
         var idx = currentRemoteHref.indexOf(prefix);
@@ -112,7 +114,25 @@
           "$1/$2"
         );
       }
+      if (currentRemoteHref && !currentRemoteHref.startsWith("http://") && !currentRemoteHref.startsWith("https://")) {
+        currentRemoteHref = "https://" + currentRemoteHref;
+      }
       return currentRemoteHref;
+    }
+
+    if (isRootRelative) {
+      var remoteHref = getCurrentRemoteHref();
+      var targetOrigin = "";
+      if (remoteHref) {
+        var sIdx = remoteHref.indexOf("://");
+        if (sIdx !== -1) {
+          var slIdx = remoteHref.indexOf("/", sIdx + 3);
+          targetOrigin = slIdx !== -1 ? remoteHref.substring(0, slIdx) : remoteHref;
+        } else {
+          targetOrigin = remoteHref.startsWith("http") ? remoteHref : "https://" + remoteHref;
+        }
+      }
+      return prefix + targetOrigin + urlStr;
     }
 
     // Performance optimization: Lazily pass base URL only for relative URLs
@@ -150,6 +170,206 @@
     return prefix + url.href;
   }
 
+  function unfixAttributeUrl(urlStr, config) {
+    if (!urlStr || typeof urlStr !== "string") return urlStr;
+    var prefix = (config && config.prefix) || "/proxy/";
+    var prefixLen = prefix.length;
+
+    var idx = urlStr.indexOf(prefix);
+    if (idx === -1) return urlStr;
+
+    var target = urlStr.substring(idx + prefixLen);
+    while (target.indexOf(prefix) !== -1) {
+      target = target.substring(target.indexOf(prefix) + prefixLen);
+    }
+
+    if (target.indexOf(":/") !== -1 && target.indexOf("://") === -1) {
+      target = target.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+    }
+
+    // Performance Optimization (unfixAttributeUrl): Extract path components
+    // using string searching (indexOf('://') and indexOf('/')) rather than instantiating
+    // new URL(...) to eliminate GC thrashing during heavy DOM traversals.
+    var schemeIdx = target.indexOf("://");
+    if (schemeIdx !== -1) {
+      var slashIdx = target.indexOf("/", schemeIdx + 3);
+      if (slashIdx !== -1) {
+        return target.substring(slashIdx);
+      } else {
+        return "/";
+      }
+    }
+    if (target.startsWith("/")) {
+      return target;
+    }
+    return "/" + target;
+  }
+
+  function initLocationPrototype(config, window) {
+    if (!window || !window.Location || !window.Location.prototype) return;
+
+    var proto = window.Location.prototype;
+    var prefix = (config && config.prefix) || "/proxy/";
+    var prefixLen = prefix.length;
+
+    var nativeGetters = {};
+    var nativeSetters = {};
+    var propsToWrap = ["pathname", "href", "origin", "host", "hostname", "search", "hash"];
+
+    propsToWrap.forEach(function (prop) {
+      var desc;
+      var p = proto;
+      while (p && !(desc = Object.getOwnPropertyDescriptor(p, prop))) {
+        p = Object.getPrototypeOf(p);
+      }
+      if (desc) {
+        if (desc.get) nativeGetters[prop] = desc.get;
+        if (desc.set) nativeSetters[prop] = desc.set;
+      }
+    });
+
+    function getNativeVal(loc, prop) {
+      if (nativeGetters[prop]) {
+        return nativeGetters[prop].call(loc);
+      }
+      return loc["_" + prop] || loc[prop];
+    }
+
+    function getTargetObj(loc) {
+      if (!loc) return null;
+      var nativePath = getNativeVal(loc, "pathname") || "";
+      var nativeSearch = getNativeVal(loc, "search") || "";
+      var nativeHash = getNativeVal(loc, "hash") || "";
+
+      if (nativePath.substr(0, prefixLen) !== prefix) {
+        return null;
+      }
+
+      var cacheKey = nativePath + "|" + nativeSearch + "|" + nativeHash;
+      if (loc._heavenlyTargetCacheKey === cacheKey && loc._heavenlyTargetObj) {
+        return loc._heavenlyTargetObj;
+      }
+
+      var targetStr = nativePath.substr(prefixLen) + nativeSearch + nativeHash;
+      while (targetStr.indexOf(prefix) !== -1) {
+        var idx = targetStr.indexOf(prefix);
+        targetStr = targetStr.substring(idx + prefixLen);
+      }
+      if (targetStr.indexOf(":/") !== -1 && targetStr.indexOf("://") === -1) {
+        targetStr = targetStr.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+      }
+      if (!targetStr.startsWith("http://") && !targetStr.startsWith("https://")) {
+        targetStr = "https://" + targetStr;
+      }
+
+      try {
+        var targetObj = new URL(targetStr);
+        loc._heavenlyTargetCacheKey = cacheKey;
+        loc._heavenlyTargetObj = targetObj;
+        return targetObj;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    ["pathname", "href", "origin", "host", "hostname"].forEach(function (prop) {
+      Object.defineProperty(proto, prop, {
+        get: function () {
+          var targetObj = getTargetObj(this);
+          if (targetObj) {
+            return targetObj[prop];
+          }
+          return nativeGetters[prop] ? nativeGetters[prop].call(this) : this[prop];
+        },
+        set: function (val) {
+          if (nativeSetters[prop]) {
+            var fixed = fixUrl(val, config, window.location);
+            return nativeSetters[prop].call(this, fixed);
+          }
+        },
+        configurable: true,
+        enumerable: true
+      });
+    });
+  }
+
+  function initDocumentPrototypes(config, window) {
+    if (!window || !window.Document || !window.Document.prototype) return;
+
+    var proto = window.Document.prototype;
+
+    function getCleanDocumentTarget(doc) {
+      var loc = window.location;
+      if (loc && loc.pathname && loc.pathname.substr(0, config.prefix.length) === config.prefix) {
+        var prefixLen = config.prefix.length;
+        var targetStr = loc.pathname.substr(prefixLen) + (loc.search || "") + (loc.hash || "");
+        while (targetStr.indexOf(config.prefix) !== -1) {
+          var idx = targetStr.indexOf(config.prefix);
+          targetStr = targetStr.substring(idx + prefixLen);
+        }
+        if (targetStr.indexOf(":/") !== -1 && targetStr.indexOf("://") === -1) {
+          targetStr = targetStr.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+        }
+        if (!targetStr.startsWith("http://") && !targetStr.startsWith("https://")) {
+          targetStr = "https://" + targetStr;
+        }
+        return targetStr;
+      }
+      return getDirectRemoteUrl(window, config);
+    }
+
+    function wrapDocProp(prop) {
+      var desc;
+      var p = proto;
+      while (p && !(desc = Object.getOwnPropertyDescriptor(p, prop))) {
+        p = Object.getPrototypeOf(p);
+      }
+      var nativeGet = desc && desc.get;
+
+      Object.defineProperty(proto, prop, {
+        get: function () {
+          var cleanTarget = getCleanDocumentTarget(this);
+          if (cleanTarget) {
+            return cleanTarget;
+          }
+          return nativeGet ? nativeGet.call(this) : this[prop];
+        },
+        configurable: true,
+        enumerable: true
+      });
+    }
+
+    ["URL", "documentURI", "baseURI"].forEach(function (prop) {
+      wrapDocProp(prop);
+    });
+  }
+
+  function initURLConstructor(config, window) {
+    if (!window || !window.URL) return;
+    var _URL = window.URL;
+
+    function WrappedURL(urlStr, base) {
+      if (typeof urlStr === "string" && urlStr.indexOf(config.prefix) !== -1) {
+        urlStr = extractTargetRemoteUrl(urlStr, window, config);
+      }
+      if (typeof base === "string" && base.indexOf(config.prefix) !== -1) {
+        base = extractTargetRemoteUrl(base, window, config);
+      }
+      return new _URL(urlStr, base);
+    }
+
+    WrappedURL.prototype = _URL.prototype;
+    for (var key in _URL) {
+      if (Object.prototype.hasOwnProperty.call(_URL, key)) {
+        WrappedURL[key] = _URL[key];
+      }
+    }
+    if (_URL.createObjectURL) WrappedURL.createObjectURL = _URL.createObjectURL;
+    if (_URL.revokeObjectURL) WrappedURL.revokeObjectURL = _URL.revokeObjectURL;
+
+    window.URL = WrappedURL;
+  }
+
   function initElementPrototypes(config, window) {
     function wrapProperty(proto, prop, fixFn) {
       if (!proto) return;
@@ -158,22 +378,47 @@
       while (p && !(desc = Object.getOwnPropertyDescriptor(p, prop))) {
         p = Object.getPrototypeOf(p);
       }
-      if (!desc || !desc.set) return;
+      if (!desc || (!desc.set && !desc.get)) return;
       var nativeSet = desc.set;
       var nativeGet = desc.get;
       Object.defineProperty(proto, prop, {
         get: function () {
-          var val = nativeGet.call(this);
+          var val = nativeGet ? nativeGet.call(this) : this["_" + prop];
           if (typeof val === "string" && val) {
+            if (prop === "href" && proto === window.HTMLAnchorElement.prototype) {
+              if (val.indexOf(config.prefix) !== -1) {
+                return extractTargetRemoteUrl(val, window, config);
+              }
+              return val;
+            }
             return fixFn(val, config, window.location);
           }
           return val;
         },
         set: function (val) {
-          return nativeSet.call(this, fixFn(val, config, window.location));
+          if (nativeSet) {
+            return nativeSet.call(this, fixFn(val, config, window.location));
+          }
         },
         configurable: true,
-        enumerable: desc.enumerable,
+        enumerable: desc ? desc.enumerable : true,
+      });
+    }
+
+    // Client-Side SRI Neutralization property on HTMLScriptElement and HTMLLinkElement prototypes
+    function disableIntegrityProperty(proto) {
+      if (!proto) return;
+      Object.defineProperty(proto, "integrity", {
+        get: function () {
+          return "";
+        },
+        set: function (val) {
+          if (this.removeAttribute) {
+            this.removeAttribute("integrity");
+          }
+        },
+        configurable: true,
+        enumerable: true
       });
     }
 
@@ -183,6 +428,7 @@
     }
     if (window.HTMLScriptElement && window.HTMLScriptElement.prototype) {
       wrapProperty(window.HTMLScriptElement.prototype, "src", fixUrl);
+      disableIntegrityProperty(window.HTMLScriptElement.prototype);
     }
     if (window.HTMLIFrameElement && window.HTMLIFrameElement.prototype) {
       wrapProperty(window.HTMLIFrameElement.prototype, "src", fixUrl);
@@ -195,13 +441,22 @@
     }
     if (window.HTMLLinkElement && window.HTMLLinkElement.prototype) {
       wrapProperty(window.HTMLLinkElement.prototype, "href", fixUrl);
+      disableIntegrityProperty(window.HTMLLinkElement.prototype);
     }
 
     if (window.Element && window.Element.prototype && window.Element.prototype.setAttribute) {
       var _setAttribute = window.Element.prototype.setAttribute;
+      var _getAttribute = window.Element.prototype.getAttribute;
+
       window.Element.prototype.setAttribute = function (name, value) {
         if (typeof name === "string") {
           var lowerName = name.toLowerCase();
+          if (lowerName === "integrity") {
+            if (this.removeAttribute) {
+              this.removeAttribute("integrity");
+            }
+            return;
+          }
           if (lowerName === "src" || lowerName === "href" || lowerName === "poster" || lowerName === "data-src" || lowerName === "data-href" || lowerName === "data-url") {
             value = fixUrl(value, config, window.location);
           } else if (lowerName === "srcset" || lowerName === "data-srcset") {
@@ -210,6 +465,21 @@
         }
         return _setAttribute.call(this, name, value);
       };
+
+      if (_getAttribute) {
+        window.Element.prototype.getAttribute = function (name) {
+          var val = _getAttribute.call(this, name);
+          if (typeof name === "string" && typeof val === "string" && val) {
+            var lowerName = name.toLowerCase();
+            if (lowerName === "href" || lowerName === "src") {
+              if (val.indexOf(config.prefix) !== -1) {
+                return unfixAttributeUrl(val, config);
+              }
+            }
+          }
+          return val;
+        };
+      }
     }
 
     if (window.open && !window.__nativeWinOpen) {
@@ -228,6 +498,10 @@
   function initMutationObserverAndClicks(config, window) {
     function processElementNode(el) {
       if (!el || el.nodeType !== 1) return;
+
+      if (el.hasAttribute && el.hasAttribute("integrity")) {
+        try { el.removeAttribute("integrity"); } catch (e) {}
+      }
 
       var tagName = el.tagName ? el.tagName.toLowerCase() : "";
       if (tagName === "img" || tagName === "script" || tagName === "iframe" || tagName === "video" || tagName === "audio") {
@@ -303,9 +577,11 @@
             }
           } else if (mut.type === "attributes" && mut.target && mut.target.nodeType === 1) {
             var attrName = mut.attributeName ? mut.attributeName.toLowerCase() : "";
-            if (attrName === "src" || attrName === "href" || attrName === "data-src" || attrName === "data-href" || attrName === "data-url") {
+            if (attrName === "integrity") {
+              try { mut.target.removeAttribute("integrity"); } catch (e) {}
+            } else if (attrName === "src" || attrName === "href" || attrName === "data-src" || attrName === "data-href" || attrName === "data-url") {
               var val = mut.target.getAttribute(mut.attributeName);
-              if (val) {
+              if (val && val.substr(0, config.prefix.length) !== config.prefix) {
                 var fixedVal = fixUrl(val, config, window.location);
                 if (fixedVal !== val) {
                   try { mut.target.setAttribute(mut.attributeName, fixedVal); } catch (e) {}
@@ -328,7 +604,7 @@
         childList: true,
         subtree: true,
         attributes: true,
-        attributeFilter: ["src", "href", "srcset", "data-src"]
+        attributeFilter: ["src", "href", "srcset", "data-src", "integrity"]
       });
     }
 
@@ -3033,6 +3309,9 @@
 
   function initForWindow(config, window) {
     console.log("begin unblocker client scripts", config, window);
+    initLocationPrototype(config, window);
+    initDocumentPrototypes(config, window);
+    initURLConstructor(config, window);
     initElementPrototypes(config, window);
     initMutationObserverAndClicks(config, window);
     initXMLHttpRequest(config, window);
@@ -3072,6 +3351,10 @@
       initForWindow: initForWindow,
       fixUrl: fixUrl,
       fixSrcset: fixSrcset,
+      unfixAttributeUrl: unfixAttributeUrl,
+      initLocationPrototype: initLocationPrototype,
+      initDocumentPrototypes: initDocumentPrototypes,
+      initURLConstructor: initURLConstructor,
     };
   }
 })(this); // window in a browser, global in node.js

@@ -119,5 +119,193 @@ describe('fmhy.net & proxy fixes', function() {
             var res = client.fixUrl('assets/chunks/theme.js', config, mockLocation);
             assert.strictEqual(res, '/proxy/https://fmhy.net/assets/chunks/theme.js');
         });
+
+        it('should perform fast-path root-relative URL rewriting', function() {
+            var config = { prefix: '/proxy/' };
+            var mockLocation = {
+                pathname: '/proxy/https://fmhy.net/beginners-guide',
+                search: '',
+                hash: '',
+                origin: 'https://heavenly-node.vercel.app',
+                hostname: 'heavenly-node.vercel.app'
+            };
+
+            var res = client.fixUrl('/gaming', config, mockLocation);
+            assert.strictEqual(res, '/proxy/https://fmhy.net/gaming');
+        });
+    });
+
+    describe('stripIntegrityMiddleware & stripFrameHeadersMiddleware (Server-side)', function() {
+        it('should strip X-Frame-Options header in stripFrameHeadersMiddleware', function() {
+            var data = {
+                headers: {
+                    'x-frame-options': 'DENY',
+                    'content-type': 'text/html'
+                }
+            };
+            app.stripFrameHeadersMiddleware(data);
+            assert.strictEqual(data.headers['x-frame-options'], undefined);
+        });
+
+        it('should transform HTML stream to strip integrity attributes', function(done) {
+            var Stream = require('stream');
+            var readable = new Stream.Readable();
+            readable._read = function() {};
+
+            var data = {
+                contentType: 'text/html',
+                stream: readable
+            };
+
+            app.stripIntegrityMiddleware(data);
+
+            var result = '';
+            data.stream.on('data', function(chunk) {
+                result += chunk.toString();
+            });
+            data.stream.on('end', function() {
+                assert.strictEqual(result, '<script src="/proxy/https://fmhy.net/app.js"></script>');
+                done();
+            });
+
+            readable.push('<script src="/proxy/https://fmhy.net/app.js" integrity="sha512-12345"></script>');
+            readable.push(null);
+        });
+    });
+
+    describe('Client SPA Route Un-Proxying & Attribute Un-Proxying', function() {
+        it('unfixAttributeUrl should extract relative route paths', function() {
+            var config = { prefix: '/proxy/' };
+            assert.strictEqual(
+                client.unfixAttributeUrl('/proxy/https://fmhy.net/beginners-guide', config),
+                '/beginners-guide'
+            );
+            assert.strictEqual(
+                client.unfixAttributeUrl('/proxy/https://fmhy.net/', config),
+                '/'
+            );
+        });
+
+        it('initLocationPrototype should un-proxy Location properties and memoize target URL object', function() {
+            var config = { prefix: '/proxy/' };
+            function MockLocation() {
+                this._pathname = '/proxy/https://fmhy.net/beginners-guide';
+                this._search = '?q=1';
+                this._hash = '#section';
+            }
+            Object.defineProperty(MockLocation.prototype, 'pathname', {
+                get: function() { return this._pathname; },
+                set: function(val) { this._pathname = val; },
+                configurable: true
+            });
+            Object.defineProperty(MockLocation.prototype, 'search', {
+                get: function() { return this._search; },
+                configurable: true
+            });
+            Object.defineProperty(MockLocation.prototype, 'hash', {
+                get: function() { return this._hash; },
+                configurable: true
+            });
+
+            var mockWin = {
+                Location: MockLocation,
+                location: new MockLocation()
+            };
+
+            client.initLocationPrototype(config, mockWin);
+
+            var loc = mockWin.location;
+            assert.strictEqual(loc.pathname, '/beginners-guide');
+            assert.strictEqual(loc.href, 'https://fmhy.net/beginners-guide?q=1#section');
+            assert.strictEqual(loc.origin, 'https://fmhy.net');
+            assert.strictEqual(loc.host, 'fmhy.net');
+            assert.strictEqual(loc.hostname, 'fmhy.net');
+
+            // Verify memoization
+            assert.ok(loc._heavenlyTargetObj);
+            assert.strictEqual(loc._heavenlyTargetCacheKey, '/proxy/https://fmhy.net/beginners-guide|?q=1|#section');
+        });
+
+        it('initDocumentPrototypes should un-proxy Document URL, documentURI, and baseURI', function() {
+            var config = { prefix: '/proxy/' };
+            function MockDocument() {}
+            MockDocument.prototype = {};
+
+            var mockWin = {
+                Document: MockDocument,
+                location: {
+                    pathname: '/proxy/https://fmhy.net/beginners-guide',
+                    search: '',
+                    hash: ''
+                }
+            };
+
+            client.initDocumentPrototypes(config, mockWin);
+
+            var doc = new MockDocument();
+            assert.strictEqual(doc.URL, 'https://fmhy.net/beginners-guide');
+            assert.strictEqual(doc.documentURI, 'https://fmhy.net/beginners-guide');
+            assert.strictEqual(doc.baseURI, 'https://fmhy.net/beginners-guide');
+        });
+
+        it('initURLConstructor should wrap window.URL constructor while preserving static methods', function() {
+            var config = { prefix: '/proxy/' };
+            var NativeURL = global.URL;
+            NativeURL.createObjectURL = function() { return 'blob:test'; };
+            NativeURL.revokeObjectURL = function() {};
+
+            var mockWin = {
+                URL: NativeURL,
+                location: {
+                    pathname: '/proxy/https://fmhy.net/',
+                    search: '',
+                    hash: ''
+                }
+            };
+
+            client.initURLConstructor(config, mockWin);
+
+            var parsed = new mockWin.URL('/proxy/https://fmhy.net/beginners-guide');
+            assert.strictEqual(parsed.href, 'https://fmhy.net/beginners-guide');
+            assert.strictEqual(parsed.pathname, '/beginners-guide');
+
+            assert.strictEqual(typeof mockWin.URL.createObjectURL, 'function');
+            assert.strictEqual(mockWin.URL.createObjectURL(), 'blob:test');
+        });
+
+        it('initElementPrototypes should neutralize integrity properties and setAttribute', function() {
+            var config = { prefix: '/proxy/' };
+            var removedAttr = '';
+            var storedAttr = {};
+
+            function MockElement() {}
+            MockElement.prototype = {
+                removeAttribute: function(name) { removedAttr = name; delete storedAttr[name]; },
+                setAttribute: function(name, val) { storedAttr[name] = val; },
+                getAttribute: function(name) { return storedAttr[name] || null; }
+            };
+
+            function MockScript() {}
+            Object.setPrototypeOf(MockScript.prototype, MockElement.prototype);
+
+            var mockWin = {
+                HTMLScriptElement: MockScript,
+                Element: MockElement,
+                location: { pathname: '/proxy/https://fmhy.net/' },
+                addEventListener: function() {},
+                document: { readyState: 'complete', documentElement: { addEventListener: function() {} } }
+            };
+
+            client.initForWindow(config, mockWin);
+
+            var script = new MockScript();
+            script.integrity = 'sha512-abcdef';
+            assert.strictEqual(script.integrity, '');
+            assert.strictEqual(removedAttr, 'integrity');
+
+            script.setAttribute('integrity', 'sha512-xyz');
+            assert.strictEqual(removedAttr, 'integrity');
+            assert.strictEqual(script.getAttribute('integrity'), null);
+        });
     });
 });
