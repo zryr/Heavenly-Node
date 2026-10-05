@@ -1905,10 +1905,16 @@
             '  background: linear-gradient(135deg, rgba(56, 189, 248, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);',
             '  color: #030712; border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 50%;',
             '  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;',
-            '  cursor: pointer; box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); outline: none;',
+            '  cursor: grab; box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); outline: none;',
             '  font-size: 14px; font-weight: 700; transition: transform 0.3s ease, box-shadow 0.3s ease; flex-shrink: 0;',
+            '  position: relative;',
             '}',
+            '.pull-tab:active { cursor: grabbing; }',
             '.pull-tab:hover { transform: scale(1.12); box-shadow: 0 0 22px rgba(56, 189, 248, 0.9); }',
+            '.pull-tab::after {',
+            '  content: ""; position: absolute; inset: -2px; border-radius: 50%;',
+            '  border: 1px dashed rgba(255, 255, 255, 0.6); pointer-events: none;',
+            '}',
             '/* Dock Positions */',
             '.dock-bottom { bottom: 12px; left: 50%; transform: translateX(-50%); flex-direction: column; }',
             '.dock-bottom.collapsed { transform: translate(-50%, calc(100% - 16px)); }',
@@ -1953,13 +1959,13 @@
           var items = [];
 
           if (showNavHome) {
-            items.push('<button type="button" class="btn-ctrl" id="dock-home-btn" title="Go Home">🏠 Home</button>');
+            items.push('<button type="button" class="btn-ctrl" id="dock-home-btn" title="Go Home"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
-          items.push('<button type="button" class="btn-ctrl" id="dock-direct-btn" title="Check Direct / Unproxied Site">🌐 Direct Site</button>');
+          items.push('<button type="button" class="btn-ctrl" id="dock-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
 
           if (showNavBookmark) {
-            items.push('<button type="button" class="btn-ctrl" id="dock-bm-btn" title="Bookmark Page">⭐ Bookmark</button>');
+            items.push('<button type="button" class="btn-ctrl" id="dock-bm-btn" title="Bookmark Page"><svg class="title-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>Bookmark</span></button>');
           }
 
           if (showNavSearch) {
@@ -1967,11 +1973,11 @@
           }
 
           if (showScrollLock) {
-            items.push('<div class="dock-item"><span style="font-size:12px;font-weight:600;color:#e0f2fe;">Scroll Lock</span><button type="button" class="btn-toggle" id="dock-scroll-btn"><span>🔓 OFF</span></button></div>');
+            items.push('<div class="dock-item"><span style="font-size:12px;font-weight:600;color:#e0f2fe;">Scroll Lock</span><button type="button" class="btn-toggle" id="dock-scroll-btn"><svg class="title-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg><span>OFF</span></button></div>');
           }
 
           if (showMagnifier) {
-            items.push('<div class="dock-item"><button type="button" class="btn-toggle" id="dock-mag-btn"><span>🔍 Mag OFF</span></button><button type="button" class="btn-ctrl" id="dock-zoom-out">-</button><span id="dock-zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span><button type="button" class="btn-ctrl" id="dock-zoom-in">+</button></div>');
+            items.push('<div class="dock-item"><button type="button" class="btn-toggle" id="dock-mag-btn"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>OFF</span></button><button type="button" class="btn-ctrl" id="dock-zoom-out">-</button><span id="dock-zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span><button type="button" class="btn-ctrl" id="dock-zoom-in">+</button></div>');
           }
 
           dockBar.innerHTML = items.join('<div class="dock-divider"></div>');
@@ -2702,14 +2708,14 @@
           }
 
           if (showNavBookmark) {
-            navHtml.push('<button type="button" class="btn-ctrl" id="nav-bm-btn" title="Bookmark Page">⭐ Bookmark</button>');
+            navHtml.push('<button type="button" class="btn-ctrl" id="nav-bm-btn" title="Bookmark Page"><svg class="title-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>Bookmark</span></button>');
           }
 
           if (showNavHome) {
-            navHtml.push('<button type="button" class="btn-ctrl" id="nav-home-btn" title="Go to Homepage">🏠 Home</button>');
+            navHtml.push('<button type="button" class="btn-ctrl" id="nav-home-btn" title="Go to Homepage"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
-          navHtml.push('<button type="button" class="btn-ctrl" id="nav-direct-btn" title="Check Direct / Unproxied Site">🌐 Direct Site</button>');
+          navHtml.push('<button type="button" class="btn-ctrl" id="nav-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
 
           navHtml.push('<button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>');
           navHtml.push('</div>');
@@ -3026,7 +3032,7 @@
         var btn = window.document.createElement('button');
         btn.type = 'button';
         btn.className = 'save-btn';
-        btn.innerHTML = '📁 Save to ' + matchedFolder.title;
+        btn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg><span>Save to ' + matchedFolder.title + '</span>';
 
         btn.onclick = function (e) {
           e.stopPropagation();

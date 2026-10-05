@@ -1057,7 +1057,8 @@
       <!-- Universal Bookmark Search -->
       <div style="margin-bottom: 24px;">
         <div style="position: relative; width: 100%; display: flex; align-items: center;">
-          <input type="text" id="bm-universal-search" placeholder="🔍 Search bookmarks, folders & categories..." autocomplete="off" aria-label="Search bookmarks and folders" style="padding-left: 16px; padding-right: 44px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); font-size: 0.9rem;" />
+          <svg style="position: absolute; left: 14px; width: 16px; height: 16px; fill: none; stroke: #94a3b8; stroke-width: 2; pointer-events: none;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="bm-universal-search" placeholder="Search bookmarks, folders & categories..." autocomplete="off" aria-label="Search bookmarks and folders" style="padding-left: 40px; padding-right: 44px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); font-size: 0.9rem;" />
           <button type="button" id="bm-search-clear-btn" class="url-clear-btn" aria-label="Clear bookmark search input" title="Clear search input">✕</button>
         </div>
       </div>
@@ -1292,8 +1293,8 @@
           <label for="share-code-output" style="font-size: 0.82rem; font-weight: 600; color: #cbd5e1;">Your Share Code / Link:</label>
           <input type="text" id="share-code-output" readonly placeholder="Generating code..." style="padding: 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(129, 140, 248, 0.4); border-radius: 10px; color: #a5b4fc; font-size: 0.82rem; font-family: monospace;" />
           <div style="display: flex; gap: 8px;">
-            <button id="copy-share-code-btn" type="button" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%); border: none; border-radius: 10px; color: #ffffff; font-weight: 700; font-size: 0.85rem; cursor: pointer;">📋 Copy Code</button>
-            <button id="copy-share-link-btn" type="button" style="flex: 1; padding: 10px; background: rgba(129, 140, 248, 0.18); border: 1px solid #818cf8; border-radius: 10px; color: #818cf8; font-weight: 600; font-size: 0.85rem; cursor: pointer;">🔗 Copy Link</button>
+            <button id="copy-share-code-btn" type="button" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%); border: none; border-radius: 10px; color: #ffffff; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Copy Code</span></button>
+            <button id="copy-share-link-btn" type="button" style="flex: 1; padding: 10px; background: rgba(129, 140, 248, 0.18); border: 1px solid #818cf8; border-radius: 10px; color: #818cf8; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>Copy Link</span></button>
           </div>
           <div id="share-copy-status" style="font-size: 0.8rem; text-align: center; color: #38bdf8; min-height: 1.2em;"></div>
         </div>
@@ -1612,7 +1613,7 @@
       var clearBtn = document.createElement('button');
       clearBtn.type = 'button';
       clearBtn.className = 'history-clear-btn';
-      clearBtn.textContent = '🗑️ Clear History';
+      clearBtn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;justify-content:center;"><svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg><span>Clear History</span></span>';
       clearBtn.onclick = function (e) {
         e.stopPropagation();
         saveHistory([]);
@@ -1969,7 +1970,7 @@
       if (!ghost) {
         ghost = document.createElement('div');
         ghost.className = 'section-drag-ghost';
-        ghost.textContent = '📁 Move Section Here';
+        ghost.innerHTML = '<svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;margin-right:6px;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>Move Section Here';
       }
       return ghost;
     }
@@ -1979,7 +1980,7 @@
       if (!ghost) {
         ghost = document.createElement('div');
         ghost.className = 'bookmark-drag-ghost';
-        ghost.textContent = '📌 Move Bookmark Here';
+        ghost.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;margin-right:6px;" viewBox="0 0 24 24"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>Move Bookmark Here';
       }
       return ghost;
     }
@@ -2327,8 +2328,8 @@
 
         if (cat.id === 'cat_anime' || cat.id === 'cat_movies') {
           var notice = document.createElement('div');
-          notice.style.cssText = 'font-size: 0.78rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 6px 10px; margin-top: 2px; margin-bottom: 2px; line-height: 1.4; font-weight: 500;';
-          notice.textContent = cat.id === 'cat_anime' ? '💡 Tip: Try different servers if an anime is blocked or not loading!' : '💡 Tip: Try different servers if a movie or show is blocked or not loading!';
+          notice.style.cssText = 'font-size: 0.78rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 6px 10px; margin-top: 2px; margin-bottom: 2px; line-height: 1.4; font-weight: 500; display: flex; align-items: center; gap: 6px;';
+          notice.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:#38bdf8;stroke-width:2;flex-shrink:0;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg><span>' + (cat.id === 'cat_anime' ? 'Try different servers if an anime is blocked or not loading!' : 'Try different servers if a movie or show is blocked or not loading!') + '</span>';
           card.appendChild(notice);
         }
 
@@ -3163,7 +3164,10 @@
             catCb.checked = true;
             catCb.style.cssText = 'width:15px;height:15px;accent-color:#818cf8;';
             catHeader.appendChild(catCb);
-            catHeader.appendChild(document.createTextNode(' 📁 ' + cat.title));
+            var folderIcon = document.createElement('span');
+            folderIcon.style.cssText = 'display:inline-flex;align-items:center;gap:6px;';
+            folderIcon.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>' + cat.title;
+            catHeader.appendChild(folderIcon);
 
             catCard.appendChild(catHeader);
 
@@ -3182,7 +3186,10 @@
                 bmCb.checked = true;
                 bmCb.style.cssText = 'width:14px;height:14px;accent-color:#818cf8;';
                 bmItem.appendChild(bmCb);
-                bmItem.appendChild(document.createTextNode(' ⭐ ' + bm.title));
+                var bmIcon = document.createElement('span');
+                bmIcon.style.cssText = 'display:inline-flex;align-items:center;gap:6px;';
+                bmIcon.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#a5b4fc;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>' + bm.title;
+                bmItem.appendChild(bmIcon);
                 bmsList.appendChild(bmItem);
               });
 
@@ -3305,7 +3312,7 @@
             bms.forEach(function (b) {
               var item = document.createElement('div');
               item.style.cssText = 'font-size:0.82rem;color:#f1f5f9;display:flex;align-items:center;gap:6px;';
-              item.textContent = '⭐ ' + b.title + ' (' + (b.url || 'Folder') + ')';
+              item.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#a5b4fc;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>' + b.title + ' (' + (b.url || 'Folder') + ')</span>';
               previewList.appendChild(item);
             });
             previewContainer.style.display = 'flex';
