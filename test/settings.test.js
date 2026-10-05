@@ -36,6 +36,7 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('id="set-panic-key-enable"'), 'set-panic-key-enable checkbox should exist');
         assert.ok(html.includes('id="set-touch-panic"'), 'set-touch-panic checkbox should exist');
         assert.ok(html.includes('id="set-panic-url"'), 'set-panic-url input should exist');
+        assert.ok(html.includes('id="set-disable-all-widgets"'), 'set-disable-all-widgets checkbox should exist');
         assert.ok(html.includes('id="set-show-scroll-lock"'), 'set-show-scroll-lock checkbox should exist');
         assert.ok(html.includes('id="set-show-magnifier"'), 'set-show-magnifier checkbox should exist');
         assert.ok(html.includes('id="set-use-widget-dock"'), 'set-use-widget-dock checkbox should exist');

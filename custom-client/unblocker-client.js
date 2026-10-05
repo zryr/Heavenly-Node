@@ -865,6 +865,7 @@
       persistentCloak: saved.persistentCloak || false,
       selectedPreset: saved.selectedPreset || 'classroom',
       customPresets: saved.customPresets || {},
+      disableAllWidgets: saved.disableAllWidgets || false,
       panicKeyEnable: saved.panicKeyEnable || false,
       panicKey: saved.panicKey || '`',
       touchPanic: saved.touchPanic || false,
@@ -1609,6 +1610,14 @@
 
       if (!settings) {
         settings = loadHeavenlySettings(window);
+      }
+
+      if (settings.disableAllWidgets) {
+        ['heavenly-scroll-lock-root', 'heavenly-magnifier-root', 'heavenly-nav-root', 'heavenly-dock-root'].forEach(function (id) {
+          var el = window.document && window.document.getElementById(id);
+          if (el) el.remove();
+        });
+        return;
       }
 
       var scrollLockEnabled = false;
@@ -2924,6 +2933,9 @@
   function initFolderQuickSaveWidget(config, window) {
     try {
       if (window !== window.top) return;
+      var settings = loadHeavenlySettings(window);
+      if (settings.disableAllWidgets) return;
+
       var targetUrl = (config && config.url) ? config.url : '';
       if (!targetUrl && window.location) {
         var path = window.location.pathname;
@@ -3162,6 +3174,9 @@
   function initNewgroundsPagination(config, window) {
     try {
       if (window !== window.top) return;
+      var settings = loadHeavenlySettings(window);
+      if (settings.disableAllWidgets) return;
+
       var targetUrl = (config && config.url) ? config.url : '';
       if (!targetUrl && window.location) targetUrl = window.location.href;
 
@@ -3322,9 +3337,11 @@
     initPushState(config, window);
     var settings = loadHeavenlySettings(window);
     initHeavenlyCloakAndPanic(window, settings, config);
-    initHeavenlyWidgets(window, settings, config);
-    initFolderQuickSaveWidget(config, window);
-    initNewgroundsPagination(config, window);
+    if (!settings.disableAllWidgets) {
+      initHeavenlyWidgets(window, settings, config);
+      initFolderQuickSaveWidget(config, window);
+      initNewgroundsPagination(config, window);
+    }
 
     if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {
       saveToHeavenlyHistory(window, config);

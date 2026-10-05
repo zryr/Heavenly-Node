@@ -708,6 +708,18 @@
 
         <div class="cards-grid">
 
+          <!-- Hero Card: Master Switch Disable All Widgets -->
+          <div class="hero-card" style="border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.06);">
+            <div class="hero-card-header">
+              <label for="set-disable-all-widgets" class="hero-card-title" style="color: #fca5a5;">Disable All Proxied Page Widgets</label>
+              <label class="switch-toggle">
+                <input type="checkbox" id="set-disable-all-widgets" role="switch">
+                <span class="slider-knob"></span>
+              </label>
+            </div>
+            <p class="hero-card-desc">Master Switch: Completely disables and removes all Heavenly widget overlays, dock bars, quick-save buttons, and pagination tools from proxied pages. Recommended for maximum compatibility with complex SPAs like fmhy.net.</p>
+          </div>
+
           <!-- Hero Card: Scroll Lock -->
           <div class="hero-card">
             <div class="hero-card-header">
@@ -968,6 +980,7 @@
         panicKey: saved.panicKey || '`',
         touchPanic: saved.touchPanic || false,
         panicUrl: saved.panicUrl || 'https://classroom.google.com',
+        disableAllWidgets: saved.disableAllWidgets || false,
         showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
         showMagnifier: saved.showMagnifier !== undefined ? saved.showMagnifier : true,
         showNavBookmark: saved.showNavBookmark !== undefined ? saved.showNavBookmark : true,
@@ -1144,6 +1157,7 @@
       $('set-panic-key').value = settings.panicKey;
       $('set-touch-panic').checked = settings.touchPanic;
       $('set-panic-url').value = settings.panicUrl;
+      $('set-disable-all-widgets').checked = settings.disableAllWidgets;
       $('set-show-scroll-lock').checked = settings.showScrollLock;
       $('set-show-magnifier').checked = settings.showMagnifier;
       $('set-show-nav-bookmark').checked = settings.showNavBookmark;
@@ -1272,6 +1286,7 @@
         settings.panicKey = $('set-panic-key').value.trim();
         settings.touchPanic = $('set-touch-panic').checked;
         settings.panicUrl = $('set-panic-url').value.trim() || 'https://classroom.google.com';
+        settings.disableAllWidgets = $('set-disable-all-widgets').checked;
         settings.showScrollLock = $('set-show-scroll-lock').checked;
         settings.showMagnifier = $('set-show-magnifier').checked;
         settings.showNavBookmark = $('set-show-nav-bookmark').checked;
@@ -1283,7 +1298,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'preset-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-panic-key-enable', 'set-touch-panic', 'set-disable-all-widgets', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'preset-select'].forEach(function (id) {
         $(id).onchange = function () {
           updateHandler();
           updateLivePreview();

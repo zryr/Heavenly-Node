@@ -307,5 +307,41 @@ describe('fmhy.net & proxy fixes', function() {
             assert.strictEqual(removedAttr, 'integrity');
             assert.strictEqual(script.getAttribute('integrity'), null);
         });
+
+        it('should bypass widget injection when disableAllWidgets is true', function() {
+            var config = { prefix: '/proxy/' };
+            var appendedIds = [];
+
+            var mockWin = {
+                location: { pathname: '/proxy/https://fmhy.net/' },
+                addEventListener: function() {},
+                document: {
+                    readyState: 'complete',
+                    body: {
+                        appendChild: function(el) {
+                            if (el && el.id) appendedIds.push(el.id);
+                        }
+                    },
+                    documentElement: { addEventListener: function() {} },
+                    getElementById: function() { return null; }
+                },
+                localStorage: {
+                    getItem: function(key) {
+                        if (key === 'heavenly_settings') {
+                            return JSON.stringify({ disableAllWidgets: true });
+                        }
+                        return '{}';
+                    }
+                }
+            };
+            mockWin.top = mockWin;
+
+            client.initForWindow(config, mockWin);
+
+            assert.strictEqual(appendedIds.includes('heavenly-scroll-lock-root'), false);
+            assert.strictEqual(appendedIds.includes('heavenly-magnifier-root'), false);
+            assert.strictEqual(appendedIds.includes('heavenly-nav-root'), false);
+            assert.strictEqual(appendedIds.includes('heavenly-dock-root'), false);
+        });
     });
 });
