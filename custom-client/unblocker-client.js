@@ -315,17 +315,18 @@
     var prefixLen = prefix.length;
     var s = urlStr.toString();
     var idx = s.indexOf(prefix);
-    if (idx !== -1) {
-      s = s.substring(idx + prefixLen);
-      while (s && s.indexOf(prefix) !== -1) {
-        s = s.substring(s.indexOf(prefix) + prefixLen);
-      }
-      if (s.indexOf(":/") !== -1 && s.indexOf("://") === -1) {
-        s = s.replace(/^(https?:\/)([^\/])/i, "$1/$2");
-      }
-      if (!s.startsWith("http://") && !s.startsWith("https://")) {
-        s = "https://" + s;
-      }
+    if (idx === -1) {
+      return s;
+    }
+    s = s.substring(idx + prefixLen);
+    while (s && s.indexOf(prefix) !== -1) {
+      s = s.substring(s.indexOf(prefix) + prefixLen);
+    }
+    if (s.indexOf(":/") !== -1 && s.indexOf("://") === -1) {
+      s = s.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+    }
+    if (!s.startsWith("http://") && !s.startsWith("https://")) {
+      s = "https://" + s;
     }
     return s;
   }
@@ -335,16 +336,20 @@
     var prefix = config.prefix;
     var prefixLen = prefix.length;
     var s = val.toString();
-    if (s.substr(0, prefixLen) === prefix) {
-      var unp = unfixUrl(s, config);
-      try {
-        var u = new URL(unp);
-        return u.pathname + u.search + u.hash;
-      } catch (e) {
-        return unp;
-      }
+    if (s.substr(0, prefixLen) !== prefix) {
+      return val;
     }
-    return val;
+    var unp = unfixUrl(s, config);
+    // Fast path: extract path component without creating expensive new URL() object
+    var schemeIdx = unp.indexOf("://");
+    if (schemeIdx !== -1) {
+      var slashIdx = unp.indexOf("/", schemeIdx + 3);
+      if (slashIdx !== -1) {
+        return unp.substring(slashIdx);
+      }
+      return "/";
+    }
+    return unp;
   }
 
   function initElementPrototypes(config, window) {
@@ -539,7 +544,7 @@
       var observer = new window.MutationObserver(function (mutations) {
         for (var i = 0; i < mutations.length; i++) {
           var mut = mutations[i];
-          if (mut.type === "childList" && mut.addedNodes) {
+          if (mut.type === "childList" && mut.addedNodes && mut.addedNodes.length > 0) {
             for (var j = 0; j < mut.addedNodes.length; j++) {
               var node = mut.addedNodes[j];
               if (node.nodeType === 1) {
@@ -550,7 +555,7 @@
             var attrName = mut.attributeName ? mut.attributeName.toLowerCase() : "";
             if (attrName === "src" || attrName === "href" || attrName === "data-src" || attrName === "data-href" || attrName === "data-url") {
               var val = mut.target.getAttribute(mut.attributeName);
-              if (val) {
+              if (val && val.substr(0, config.prefix.length) !== config.prefix) {
                 var fixedVal = fixUrl(val, config, window.location);
                 if (fixedVal !== val) {
                   try { mut.target.setAttribute(mut.attributeName, fixedVal); } catch (e) {}
@@ -558,7 +563,7 @@
               }
             } else if (attrName === "srcset") {
               var srcsetVal = mut.target.getAttribute("srcset");
-              if (srcsetVal) {
+              if (srcsetVal && srcsetVal.indexOf(config.prefix) === -1) {
                 var fixedSrcsetVal = fixSrcset(srcsetVal, config, window.location);
                 if (fixedSrcsetVal !== srcsetVal) {
                   try { mut.target.setAttribute("srcset", fixedSrcsetVal); } catch (e) {}
