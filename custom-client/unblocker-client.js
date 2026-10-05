@@ -115,6 +115,20 @@
       return currentRemoteHref;
     }
 
+    // Fast-path: root-relative or relative paths that don't reference proxy host
+    // avoid expensive new URL(...) object allocation on routine relative asset/link URLs
+    if (!isAbsoluteHttp && urlStr.charAt(0) === "/") {
+      var remoteHref = getCurrentRemoteHref();
+      if (remoteHref) {
+        var schemeIdx = remoteHref.indexOf("://");
+        if (schemeIdx !== -1) {
+          var slashIdx = remoteHref.indexOf("/", schemeIdx + 3);
+          var origin = slashIdx !== -1 ? remoteHref.substring(0, slashIdx) : remoteHref;
+          return prefix + origin + urlStr;
+        }
+      }
+    }
+
     // Performance optimization: Lazily pass base URL only for relative URLs
     var url;
     if (isAbsoluteHttp) {
@@ -258,7 +272,15 @@
         if (nativePath.substr(0, prefixLen) !== prefix) {
           return null;
         }
-        var rawTarget = nativePath.substr(prefixLen) + (loc.search || "") + (loc.hash || "");
+        var searchStr = loc.search || "";
+        var hashStr = loc.hash || "";
+        var cacheKey = nativePath + "|" + searchStr + "|" + hashStr;
+
+        if (loc._heavenlyTargetCacheKey === cacheKey && loc._heavenlyTargetObj) {
+          return loc._heavenlyTargetObj;
+        }
+
+        var rawTarget = nativePath.substr(prefixLen) + searchStr + hashStr;
         while (rawTarget && rawTarget.indexOf(prefix) !== -1) {
           var idx = rawTarget.indexOf(prefix);
           rawTarget = rawTarget.substring(idx + prefixLen);
@@ -269,7 +291,10 @@
         if (!rawTarget.startsWith("http://") && !rawTarget.startsWith("https://")) {
           rawTarget = "https://" + rawTarget;
         }
-        return new URL(rawTarget);
+        var targetObj = new URL(rawTarget);
+        loc._heavenlyTargetCacheKey = cacheKey;
+        loc._heavenlyTargetObj = targetObj;
+        return targetObj;
       } catch (e) {
         return null;
       }
