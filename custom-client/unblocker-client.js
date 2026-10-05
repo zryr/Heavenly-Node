@@ -783,8 +783,11 @@
 
       var DEFAULT_PRESETS = {
         classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
+        google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
         drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
-        canvas: { title: "Dashboard", icon: "https://du1ux2871uqvu.cloudfront.net/dist/images/favicon-e10d657a73.ico" },
+        elearn_lee: { title: "eLearn Lee College", icon: "https://elearn.lee.edu/favicon.ico" },
+        lee_college: { title: "Lee College", icon: "https://www.lee.edu/favicon.ico" },
+        canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" },
         khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" }
       };
 
@@ -1387,15 +1390,16 @@
       var DEFAULT_BOOKMARK_DATA = {
         categories: [
           { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false },
-          { id: "cat_anime", title: "Anime", side: "right", order: 0, builtIn: true, hidden: false },
+          { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false },
           { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false }
         ],
         bookmarks: [
           { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
           { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
           { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-          { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+          { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
           { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+          { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
           { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
           { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
           {
