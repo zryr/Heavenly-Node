@@ -43,7 +43,7 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('ArrowDown'), 'input should handle ArrowDown for history navigation');
         assert.ok(html.includes('ArrowUp'), 'input should handle ArrowUp for history navigation');
         assert.ok(html.includes('Delete'), 'input should handle Delete key for deleting history items');
-        assert.ok(html.includes('navigateAndSubmit'), 'should trigger navigation and submission on selection');
+        assert.ok(html.includes('input.value = item.url'), 'selecting history card should populate input value');
     });
 
     it('should include custom scrollbar styling for history dropdown matching Heavenly theme', function() {

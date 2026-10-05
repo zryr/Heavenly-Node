@@ -1590,7 +1590,20 @@
         };
 
         var selectCard = function () {
-          navigateAndSubmit(item.url);
+          var input = $('url');
+          if (input) {
+            input.value = item.url;
+            originalInputValue = item.url;
+            var clearBtn = $('url-clear-btn');
+            if (clearBtn) {
+              if (item.url.trim().length > 0) clearBtn.classList.add('visible');
+              else clearBtn.classList.remove('visible');
+            }
+            input.focus();
+          }
+          dropdown.classList.remove('active');
+          if (input) input.setAttribute('aria-expanded', 'false');
+          historyHighlightIndex = -1;
         };
 
         card.onclick = selectCard;
