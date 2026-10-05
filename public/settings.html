@@ -43,6 +43,79 @@
       50% { opacity: 0.9; }
     }
 
+    /* Ethereal Loading Screen Animation */
+    @keyframes spinPulse {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    @keyframes etherealFadeOut {
+      0% { opacity: 1; visibility: visible; }
+      100% { opacity: 0; visibility: hidden; pointer-events: none; }
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #030712;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .loading-overlay.fade-out {
+      animation: etherealFadeOut 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .loading-spinner-ring {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-spinner-ring::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      padding: 3px;
+      background: conic-gradient(from 0deg, #38bdf8, #818cf8, #3b82f6, transparent 60%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: spinPulse 1.8s ease-in-out infinite;
+    }
+
+    .loading-spinner-ring svg {
+      width: 32px;
+      height: 32px;
+      fill: none;
+      stroke: #38bdf8;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.8));
+    }
+
+    .loading-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      background: linear-gradient(135deg, #ffffff 0%, #bae6fd 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+
     /* Ambient heavenly background glow */
     .glow-orb {
       position: fixed;
@@ -387,63 +460,137 @@
       border-radius: 12px;
     }
 
-    /* Modal Backdrop & Dialog */
+    /* Modal Backdrop & Dialog Animations */
+    @keyframes modalBackdropFadeIn {
+      from { opacity: 0; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); }
+      to { opacity: 1; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    }
+
+    @keyframes modalPopIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(18px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
     .modal-backdrop {
       display: none;
       position: fixed;
       inset: 0;
       z-index: 3000;
-      background: rgba(3, 7, 18, 0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(3, 7, 18, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 20px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .modal-backdrop.active {
       display: flex;
+      animation: modalBackdropFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     .modal-card {
-      background: rgba(15, 23, 42, 0.95);
+      position: relative;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
       border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.25);
-      padding: 24px;
+      border-radius: 28px;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 30px 70px -10px rgba(0, 0, 0, 0.85),
+        0 0 45px -5px rgba(56, 189, 248, 0.3);
+      padding: 32px 28px;
       width: 100%;
       max-width: 520px;
       max-height: 85vh;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
       overflow-y: auto;
+      transform-origin: center center;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-backdrop.active .modal-card {
+      animation: modalPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .modal-card::before {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, rgba(129, 140, 248, 0.08) 50%, transparent 80%);
+      border-radius: 50%;
+      pointer-events: none;
     }
 
     .modal-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+      padding-bottom: 14px;
+    }
+
+    .modal-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-icon-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+      flex-shrink: 0;
     }
 
     .modal-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 700;
       color: #f8fafc;
+      letter-spacing: -0.01em;
     }
 
     .modal-close-btn {
-      background: none;
-      border: none;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.2);
       color: #94a3b8;
-      font-size: 1.2rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 0.95rem;
       cursor: pointer;
-      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .modal-close-btn:hover {
-      color: #ef4444;
+      color: #ffffff;
+      background: rgba(239, 68, 68, 0.25);
+      border-color: rgba(239, 68, 68, 0.5);
+      transform: scale(1.08) rotate(90deg);
     }
 
     .export-import-btn {
@@ -507,6 +654,20 @@
 </head>
 
 <body>
+
+  <!-- Ethereal Splash / Loading Screen Overlay -->
+  <div id="heavenly-loading-screen" class="loading-overlay">
+    <div class="loading-spinner-ring">
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 3a9 9 0 0 0 0 18"></path>
+        <path d="M3 12h18"></path>
+        <path d="M12 3c2.5 3 4 6.5 4 9s-1.5 6-4 9"></path>
+        <path d="M12 3c-2.5 3-4 6.5-4 9s1.5 6 4 9"></path>
+      </svg>
+    </div>
+    <div class="loading-title">HEAVENLY</div>
+  </div>
 
   <div class="glow-orb glow-orb-1"></div>
   <div class="glow-orb glow-orb-2"></div>
@@ -943,7 +1104,12 @@
   <div id="export-modal" class="modal-backdrop">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="export-modal-title">
       <div class="modal-header">
-        <span class="modal-title" id="export-modal-title">Export Backup Data</span>
+        <div class="modal-header-left">
+          <div class="modal-icon-badge">
+            <svg style="width:20px;height:20px;fill:none;stroke:#38bdf8;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          </div>
+          <span class="modal-title" id="export-modal-title">Export Backup Data</span>
+        </div>
         <button id="close-export-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
 
@@ -969,7 +1135,12 @@
   <div id="import-modal" class="modal-backdrop">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="import-modal-title">
       <div class="modal-header">
-        <span class="modal-title" id="import-modal-title">Import Backup Data</span>
+        <div class="modal-header-left">
+          <div class="modal-icon-badge" style="background: linear-gradient(135deg, rgba(129, 140, 248, 0.25) 0%, rgba(168, 85, 247, 0.25) 100%); border-color: rgba(129, 140, 248, 0.4);">
+            <svg style="width:20px;height:20px;fill:none;stroke:#818cf8;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          </div>
+          <span class="modal-title" id="import-modal-title">Import Backup Data</span>
+        </div>
         <button id="close-import-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
 
@@ -1016,25 +1187,39 @@
       return document.getElementById(id);
     }
 
+    function hideLoadingScreen() {
+      var loader = $('heavenly-loading-screen');
+      if (loader) {
+        loader.classList.add('fade-out');
+        setTimeout(function () {
+          loader.style.display = 'none';
+        }, 500);
+      }
+    }
+
     var DEFAULT_PRESETS = {
       classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
+      google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
       drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
-      canvas: { title: "Dashboard", icon: "https://du1ux2871uqvu.cloudfront.net/dist/images/favicon-e10d657a73.ico" },
+      elearn_lee: { title: "eLearn Lee College", icon: "https://elearn.lee.edu/favicon.ico" },
+      lee_college: { title: "Lee College", icon: "https://www.lee.edu/favicon.ico" },
+      canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" },
       khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" }
     };
 
     var DEFAULT_BOOKMARK_DATA = {
       categories: [
         { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false },
-        { id: "cat_anime", title: "Anime", side: "right", order: 0, builtIn: true, hidden: false },
+        { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false },
         { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false }
       ],
       bookmarks: [
         { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
         { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-        { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
         { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         {
@@ -1119,11 +1304,14 @@
 
         var updated = false;
 
-        // Merge missing default categories
+        // Merge missing default categories and update builtIn category titles
         DEFAULT_BOOKMARK_DATA.categories.forEach(function (defCat) {
-          var exists = data.categories.some(function (c) { return c.id === defCat.id; });
-          if (!exists) {
+          var userCat = data.categories.find(function (c) { return c.id === defCat.id; });
+          if (!userCat) {
             data.categories.push(JSON.parse(JSON.stringify(defCat)));
+            updated = true;
+          } else if (defCat.builtIn && userCat.title !== defCat.title) {
+            userCat.title = defCat.title;
             updated = true;
           }
         });
@@ -1360,13 +1548,24 @@
       var menuContainer = $('custom-preset-menu');
       if (menuContainer) {
         menuContainer.innerHTML = '';
-        for (var key in allPresets) {
-          (function (k, presetObj) {
+
+        var renderPresetGroup = function (groupTitle, keys, isCustomGroup) {
+          if (keys.length === 0) return;
+
+          var groupHeader = document.createElement('div');
+          groupHeader.style.cssText = 'padding: 6px 10px 4px 10px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: ' + (isCustomGroup ? '#a5b4fc' : '#38bdf8') + '; border-bottom: 1px solid rgba(148, 163, 184, 0.12); margin-top: 4px; margin-bottom: 2px; display: flex; align-items: center; gap: 6px;';
+          groupHeader.innerHTML = isCustomGroup
+            ? '<svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>' + groupTitle + '</span>'
+            : '<svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg><span>' + groupTitle + '</span>';
+          menuContainer.appendChild(groupHeader);
+
+          keys.forEach(function (k) {
+            var presetObj = allPresets[k];
             var isSelected = (k === settings.selectedPreset);
             var optItem = document.createElement('div');
             optItem.setAttribute('role', 'option');
             optItem.setAttribute('aria-selected', isSelected ? 'true' : 'false');
-            optItem.style.cssText = 'padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; transition: all 0.15s ease;' + (isSelected ? 'background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #ffffff;' : 'color: #cbd5e1;');
+            optItem.style.cssText = 'padding: 9px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; transition: all 0.15s ease;' + (isSelected ? 'background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #ffffff;' : 'color: #cbd5e1;');
 
             var leftGroup = document.createElement('div');
             leftGroup.style.cssText = 'display: flex; align-items: center; gap: 10px; overflow: hidden;';
@@ -1409,8 +1608,14 @@
             };
 
             menuContainer.appendChild(optItem);
-          })(key, allPresets[key]);
-        }
+          });
+        };
+
+        var builtInKeys = Object.keys(DEFAULT_PRESETS);
+        var customKeys = Object.keys(settings.customPresets || {});
+
+        renderPresetGroup('Built-in Presets', builtInKeys, false);
+        renderPresetGroup('Your Custom Presets', customKeys, true);
       }
 
       var deleteBtn = $('delete-custom-preset-btn');
@@ -2035,6 +2240,7 @@
     window.onload = function () {
       bindSettingsEvents();
       initCloak();
+      setTimeout(hideLoadingScreen, 300);
     };
   </script>
 
