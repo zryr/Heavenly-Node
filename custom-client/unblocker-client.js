@@ -1573,6 +1573,21 @@
               });
             }
 
+            // Prune removed built-in bookmarks (e.g. bm_mountaingames)
+            var defaultBmIds = DEFAULT_BOOKMARK_DATA.bookmarks.map(function (b) { return b.id; });
+            var filteredBms = [];
+            data.bookmarks.forEach(function (bm) {
+              if (bm.builtIn && defaultBmIds.indexOf(bm.id) === -1) {
+                updated = true;
+                return;
+              }
+              filteredBms.push(bm);
+            });
+            if (filteredBms.length !== data.bookmarks.length) {
+              data.bookmarks = filteredBms;
+            }
+
+            // Merge missing default bookmarks and update built-in bookmark properties
             DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
               var userBm = data.bookmarks.find(function (b) { return b.id === defBm.id; });
               if (!userBm) {
@@ -1588,12 +1603,21 @@
                     userBm.type = defBm.type;
                     updated = true;
                   }
+                  if (userBm.url !== defBm.url) {
+                    userBm.url = defBm.url;
+                    updated = true;
+                  }
+                  if (userBm.icon !== defBm.icon) {
+                    userBm.icon = defBm.icon;
+                    updated = true;
+                  }
+                } else {
+                  if ((!userBm.icon || userBm.icon.trim() === '') && defBm.icon && defBm.icon.trim() !== '') {
+                    userBm.icon = defBm.icon;
+                    updated = true;
+                  }
                 }
-                // Strict icon preservation: only backfill icon if stored userBm icon is strictly empty
-                if ((!userBm.icon || userBm.icon.trim() === '') && defBm.icon && defBm.icon.trim() !== '') {
-                  userBm.icon = defBm.icon;
-                  updated = true;
-                }
+
                 if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
                   if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
                     userBm.subBookmarks = [];
@@ -1605,9 +1629,15 @@
                       userBm.subBookmarks.push(JSON.parse(JSON.stringify(defSub)));
                       updated = true;
                     } else {
-                      if ((!userSub.icon || userSub.icon.trim() === '') && defSub.icon && defSub.icon.trim() !== '') {
-                        userSub.icon = defSub.icon;
-                        updated = true;
+                      if (defBm.builtIn) {
+                        if (userSub.title !== defSub.title) { userSub.title = defSub.title; updated = true; }
+                        if (userSub.url !== defSub.url) { userSub.url = defSub.url; updated = true; }
+                        if (userSub.icon !== defSub.icon) { userSub.icon = defSub.icon; updated = true; }
+                      } else {
+                        if ((!userSub.icon || userSub.icon.trim() === '') && defSub.icon && defSub.icon.trim() !== '') {
+                          userSub.icon = defSub.icon;
+                          updated = true;
+                        }
                       }
                     }
                   });
