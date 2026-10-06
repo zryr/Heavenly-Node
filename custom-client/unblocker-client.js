@@ -2924,6 +2924,231 @@
     }
   }
 
+  function detectActiveFavicon(window, config) {
+    try {
+      var head = window.document ? (window.document.head || window.document.getElementsByTagName('head')[0]) : null;
+      if (head) {
+        var links = head.querySelectorAll("link[rel*='icon'], link[data-heavenly-rel*='icon']");
+        for (var i = 0; i < links.length; i++) {
+          var href = links[i].getAttribute('href') || links[i].getAttribute('data-heavenly-href');
+          if (href) {
+            var extracted = extractTargetRemoteUrl(href, window, config);
+            if (extracted && extracted.startsWith('http')) {
+              return extracted;
+            }
+          }
+        }
+      }
+      var directUrl = getDirectRemoteUrl(window, config);
+      if (directUrl) {
+        var u = new URL(directUrl.startsWith('http') ? directUrl : 'https://' + directUrl);
+        return 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(u.hostname) + '&sz=64';
+      }
+    } catch (e) {}
+    return 'https://ssl.gstatic.com/classroom/favicon.png';
+  }
+
+  function initManualIconPickerWidget(config, window) {
+    try {
+      if (window !== window.top) return;
+      var settings = loadHeavenlySettings(window);
+      if (settings.disableAllWidgets || settings.disableAllFeatures) {
+        var existingPicker = window.document ? window.document.getElementById('heavenly-manual-icon-root') : null;
+        if (existingPicker) existingPicker.remove();
+        return;
+      }
+
+      var storage = window.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (!storage) return;
+
+      var rawPending = storage.getItem('heavenly_manual_icon_pending');
+      if (!rawPending) return;
+
+      var pending = null;
+      try {
+        pending = JSON.parse(rawPending);
+      } catch (e) {
+        storage.removeItem('heavenly_manual_icon_pending');
+        return;
+      }
+
+      if (!pending || !pending.bookmarkId) {
+        storage.removeItem('heavenly_manual_icon_pending');
+        return;
+      }
+
+      function setupOverlay() {
+        if (!window.document || !window.document.body) return;
+        if (window.document.getElementById('heavenly-manual-icon-root')) return;
+
+        var container = window.document.createElement('div');
+        container.id = 'heavenly-manual-icon-root';
+        container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:2147483647;user-select:none;-webkit-user-select:none;font-family:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
+
+        var shadow = container.attachShadow ? container.attachShadow({ mode: 'open' }) : container;
+
+        var style = window.document.createElement('style');
+        style.textContent = [
+          '.icon-picker-card {',
+          '  display: flex;',
+          '  flex-direction: column;',
+          '  gap: 10px;',
+          '  background: rgba(15, 23, 42, 0.94);',
+          '  backdrop-filter: blur(16px);',
+          '  -webkit-backdrop-filter: blur(16px);',
+          '  border: 1px solid rgba(56, 189, 248, 0.4);',
+          '  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.3);',
+          '  padding: 14px 18px;',
+          '  border-radius: 18px;',
+          '  color: #f8fafc;',
+          '  font-size: 13px;',
+          '  max-width: 320px;',
+          '}',
+          '.picker-header {',
+          '  display: flex;',
+          '  align-items: center;',
+          '  justify-content: space-between;',
+          '  gap: 8px;',
+          '  border-bottom: 1px solid rgba(148, 163, 184, 0.15);',
+          '  padding-bottom: 8px;',
+          '}',
+          '.picker-title {',
+          '  font-weight: 700;',
+          '  color: #38bdf8;',
+          '  display: flex;',
+          '  align-items: center;',
+          '  gap: 6px;',
+          '  font-size: 0.88rem;',
+          '}',
+          '.picker-close {',
+          '  background: none; border: none; color: #94a3b8; font-size: 14px;',
+          '  cursor: pointer; padding: 2px 4px; line-height: 1;',
+          '}',
+          '.picker-close:hover { color: #ef4444; }',
+          '.picker-prompt {',
+          '  font-size: 0.82rem;',
+          '  color: #cbd5e1;',
+          '  line-height: 1.4;',
+          '}',
+          '.picker-preview-row {',
+          '  display: flex;',
+          '  align-items: center;',
+          '  gap: 10px;',
+          '  background: rgba(30, 41, 59, 0.6);',
+          '  padding: 8px 12px;',
+          '  border-radius: 12px;',
+          '  border: 1px solid rgba(148, 163, 184, 0.2);',
+          '}',
+          '.preview-img {',
+          '  width: 24px;',
+          '  height: 24px;',
+          '  object-fit: contain;',
+          '  border-radius: 4px;',
+          '  flex-shrink: 0;',
+          '}',
+          '.preview-url-text {',
+          '  font-size: 0.75rem;',
+          '  color: #94a3b8;',
+          '  overflow: hidden;',
+          '  text-overflow: ellipsis;',
+          '  white-space: nowrap;',
+          '  flex: 1;',
+          '}',
+          '.save-icon-btn {',
+          '  background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 100%);',
+          '  color: #030712;',
+          '  border: none;',
+          '  padding: 8px 14px;',
+          '  border-radius: 10px;',
+          '  cursor: pointer;',
+          '  font-weight: 700;',
+          '  font-size: 0.82rem;',
+          '  transition: all 0.2s ease;',
+          '  display: inline-flex;',
+          '  align-items: center;',
+          '  justify-content: center;',
+          '  gap: 6px;',
+          '}',
+          '.save-icon-btn:hover {',
+          '  transform: translateY(-1px);',
+          '  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);',
+          '}'
+        ].join('\n');
+
+        var card = window.document.createElement('div');
+        card.className = 'icon-picker-card';
+
+        var currentIconUrl = detectActiveFavicon(window, config);
+
+        card.innerHTML = [
+          '<div class="picker-header">',
+          '  <span class="picker-title"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>Manual Icon Picker</span>',
+          '  <button type="button" class="picker-close" id="close-picker-btn">✕</button>',
+          '</div>',
+          '<div class="picker-prompt">Click \'Save\' once your desired icon appears in the tab.</div>',
+          '<div class="picker-preview-row">',
+          '  <img class="preview-img" id="live-icon-img" src="' + currentIconUrl + '" alt="Icon preview" />',
+          '  <span class="preview-url-text" id="live-icon-text">' + currentIconUrl + '</span>',
+          '</div>',
+          '<button type="button" class="save-icon-btn" id="save-icon-btn">Save</button>'
+        ].join('\n');
+
+        shadow.appendChild(style);
+        shadow.appendChild(card);
+        window.document.body.appendChild(container);
+
+        var imgEl = card.querySelector('#live-icon-img');
+        var textEl = card.querySelector('#live-icon-text');
+
+        function updatePreview() {
+          var detected = detectActiveFavicon(window, config);
+          if (detected && detected !== currentIconUrl) {
+            currentIconUrl = detected;
+            if (imgEl) imgEl.src = currentIconUrl;
+            if (textEl) textEl.textContent = currentIconUrl;
+          }
+        }
+
+        if (typeof MutationObserver !== 'undefined' && window.document.head) {
+          var obs = new MutationObserver(updatePreview);
+          obs.observe(window.document.head, { childList: true, subtree: true, attributes: true });
+        }
+        var pollInterval = setInterval(updatePreview, 1000);
+
+        card.querySelector('#close-picker-btn').onclick = function (e) {
+          e.stopPropagation();
+          clearInterval(pollInterval);
+          storage.removeItem('heavenly_manual_icon_pending');
+          container.remove();
+        };
+
+        card.querySelector('#save-icon-btn').onclick = function (e) {
+          e.stopPropagation();
+          clearInterval(pollInterval);
+          try {
+            var rawBms = storage.getItem('heavenly_bookmarks');
+            if (rawBms) {
+              var bmsData = JSON.parse(rawBms);
+              var bm = bmsData.bookmarks.find(function (b) { return b.id === pending.bookmarkId; });
+              if (bm) {
+                bm.icon = currentIconUrl;
+                storage.setItem('heavenly_bookmarks', JSON.stringify(bmsData));
+              }
+            }
+          } catch (err) {}
+          storage.removeItem('heavenly_manual_icon_pending');
+          container.remove();
+        };
+      }
+
+      if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {
+        setupOverlay();
+      } else if (window.document) {
+        window.document.addEventListener('DOMContentLoaded', setupOverlay);
+      }
+    } catch (e) {}
+  }
+
   function saveToHeavenlyHistory(window, config) {
     try {
       if (window !== window.top) return;
@@ -3385,7 +3610,7 @@
     }
     if (!settings.disableAllWidgets && !settings.disableAllFeatures) {
       initHeavenlyWidgets(window, settings, config);
-      initFolderQuickSaveWidget(config, window);
+      initManualIconPickerWidget(config, window);
       initNewgroundsPagination(config, window);
     }
 

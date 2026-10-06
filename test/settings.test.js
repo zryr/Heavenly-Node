@@ -81,4 +81,9 @@ describe('settings.html standalone page', function() {
         assert.ok(indexHtml.includes('(!userBm.icon || userBm.icon.trim() === \'\')'), 'loadBookmarkData should strictly backfill icons only when stored icon is empty');
         assert.ok(indexHtml.includes('settings.skipBuiltinTestPrompt'), 'index.html bookmark click handler should respect skipBuiltinTestPrompt');
     });
+
+    it('should deduplicate bookmarks and categories on reset in settings.html', function() {
+        assert.ok(html.includes('if (!freshData.bookmarks.some(function (fb) { return fb.id === b.id; }))'), 'reset action should deduplicate bookmarks by ID');
+        assert.ok(html.includes('if (!freshData.categories.some(function (fc) { return fc.id === c.id; }))'), 'reset action should deduplicate categories by ID');
+    });
 });
