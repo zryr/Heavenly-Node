@@ -860,6 +860,18 @@
             <p class="hero-card-desc">Prompts you to test direct connection or open with proxy when clicking built-in bookmarks. Enable this if you previously checked 'Don't ask me again'.</p>
           </div>
 
+          <!-- Open Bookmarks in New Tab Toggle -->
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-open-bookmarks-newtab" class="hero-card-title">Open Bookmarks in New Tab</label>
+              <label class="switch-toggle">
+                <input type="checkbox" id="set-open-bookmarks-newtab" role="switch" checked>
+                <span class="slider-knob"></span>
+              </label>
+            </div>
+            <p class="hero-card-desc">When enabled, clicking bookmark cards and sub-bookmarks opens target links in a new browser tab.</p>
+          </div>
+
           <!-- Open Search & Keyboard Enter in New Tab -->
           <div class="hero-card">
             <div class="hero-card-header">
@@ -1249,7 +1261,7 @@
         { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anify.to&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
         { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-        { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=rivestream.app&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=7movies.in&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         {
           id: "bm_individual_games",
@@ -1273,15 +1285,14 @@
         { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=cpsgames.org&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=emubrowser.com&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
         { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=gras2027.com&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-        { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=funkymods.github.io&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
-        { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=theooofficial.github.io&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
-        { id: "bm_mgalternative", categoryId: "cat_games", title: "MG Alternative", url: "https://mgalternative.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=mgalternative.github.io&sz=64", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
-        { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=masonsunblockedgames.github.io&sz=64", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
-        { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=geometryspot.com&sz=64", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
-        { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
-        { id: "bm_mountaingames", categoryId: "cat_games", title: "Mountain Games", url: "https://mountain-game-games.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=mountain-game-games.github.io&sz=64", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
-        { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
-        { id: "bm_bloxcraftstudios", categoryId: "cat_games", title: "Bloxcraft Studios", url: "https://5kh0.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=5kh0.github.io&sz=64", builtIn: true, hidden: false, order: 14, subBookmarks: [] }
+        { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+        { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
+        { id: "bm_mgalternative", categoryId: "cat_games", title: "MG Alternative", url: "https://mgalternative.github.io", type: "bookmark", icon: "preset:star", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
+        { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/favicon.ico", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
+        { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "preset:zap", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
+        { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
+        { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
+        { id: "bm_bloxcraftstudios", categoryId: "cat_games", title: "Bloxcraft", url: "https://bloxcraft-ubg.pages.dev/", type: "folder_bookmark", icon: "https://5kh0.github.io/bloxcraft_transparent.png", builtIn: true, hidden: false, order: 13, subBookmarks: [{ id: "sub_bloxcraft_fastly", title: "Bloxcraft (Fastly)", url: "https://bloxcraftubg.freetls.fastly.net/games/", icon: "https://5kh0.github.io/bloxcraft_transparent.png" }] }
       ]
     };
 
@@ -1297,6 +1308,7 @@
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
+        openBookmarksInNewTab: saved.openBookmarksInNewTab !== undefined ? saved.openBookmarksInNewTab : true,
         openSearchInNewTab: saved.openSearchInNewTab || false,
         mergeGoNewTab: saved.mergeGoNewTab || false,
         panicKeyEnable: saved.panicKeyEnable || false,
@@ -1597,6 +1609,7 @@
       $('set-auto-cloak').checked = settings.autoCloak;
       $('set-persistent-cloak').checked = settings.persistentCloak;
       $('set-show-builtin-prompt').checked = !settings.skipBuiltinTestPrompt;
+      $('set-open-bookmarks-newtab').checked = settings.openBookmarksInNewTab !== undefined ? settings.openBookmarksInNewTab : true;
       $('set-open-search-newtab').checked = !!settings.openSearchInNewTab;
       $('set-merge-go-newtab').checked = !!settings.mergeGoNewTab;
       $('set-panic-key-enable').checked = settings.panicKeyEnable;
@@ -1890,6 +1903,7 @@
         settings.autoCloak = $('set-auto-cloak').checked;
         settings.persistentCloak = $('set-persistent-cloak').checked;
         settings.skipBuiltinTestPrompt = !$('set-show-builtin-prompt').checked;
+        settings.openBookmarksInNewTab = $('set-open-bookmarks-newtab').checked;
         settings.openSearchInNewTab = $('set-open-search-newtab').checked;
         settings.mergeGoNewTab = $('set-merge-go-newtab').checked;
         settings.panicKeyEnable = $('set-panic-key-enable').checked;
@@ -1910,7 +1924,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-open-search-newtab', 'set-merge-go-newtab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-open-bookmarks-newtab', 'set-open-search-newtab', 'set-merge-go-newtab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
         var el = $(id);
         if (el) {
           el.onchange = function () {

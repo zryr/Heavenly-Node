@@ -1476,21 +1476,19 @@
           <div style="display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap;">
             <button type="button" id="icon-tab-favicon" class="icon-tab-btn active" style="flex: 1; min-width: 90px; padding: 6px; border-radius: 8px; background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.4); color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Auto Favicon</button>
             <button type="button" id="icon-tab-preset" class="icon-tab-btn" style="flex: 1; min-width: 90px; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Preset Icons</button>
-            <button type="button" id="icon-tab-custom" class="icon-tab-btn" style="flex: 1; min-width: 90px; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Image / GIF URL</button>
-            <button type="button" id="icon-tab-manual" class="icon-tab-btn" style="flex: 1; min-width: 110px; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Manually Select Icon</button>
+            <button type="button" id="icon-tab-manual" class="icon-tab-btn" style="flex: 1.2; min-width: 140px; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Manually Select Icon / Custom URL</button>
           </div>
 
           <!-- Preset Icons Container -->
           <div id="icon-preset-container" style="display: none; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 8px; background: rgba(30, 41, 59, 0.4); border-radius: 12px; border: 1px solid rgba(148,163,184,0.2);"></div>
 
-          <!-- Custom URL Container -->
-          <div id="icon-custom-container" style="display: none;">
-            <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="https://example.com/icon.png or .gif" />
-          </div>
-
-          <!-- Manual Icon Container -->
-          <div id="icon-manual-container" style="display: none; padding: 10px; background: rgba(30, 41, 59, 0.4); border-radius: 12px; border: 1px solid rgba(148,163,184,0.2); font-size: 0.78rem; color: #38bdf8; line-height: 1.4;">
-            Saves bookmark and launches site with a live icon picker overlay, where you can preview and save the page's icon in real-time.
+          <!-- Manual Icon & Custom URL Container -->
+          <div id="icon-manual-container" style="display: none; padding: 10px; background: rgba(30, 41, 59, 0.4); border-radius: 12px; border: 1px solid rgba(148,163,184,0.2); font-size: 0.78rem; color: #f8fafc; line-height: 1.4;">
+            <label class="form-label" for="bm-custom-icon-url" style="margin-bottom: 4px; font-size: 0.75rem;">Custom Image / GIF URL (Optional)</label>
+            <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="https://example.com/icon.png or .gif" style="margin-bottom: 8px;" />
+            <div style="font-size: 0.75rem; color: #38bdf8; line-height: 1.35;">
+              Optionally enter a custom image / GIF URL above, OR leave blank and click save to launch the site with a live icon picker widget overlay where you can select the icon in real-time.
+            </div>
           </div>
         </div>
 
@@ -1834,6 +1832,7 @@
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
+        openBookmarksInNewTab: saved.openBookmarksInNewTab !== undefined ? saved.openBookmarksInNewTab : true,
         openSearchInNewTab: saved.openSearchInNewTab || false,
         mergeGoNewTab: saved.mergeGoNewTab || false
       };
@@ -2271,7 +2270,7 @@
         { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anify.to&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
         { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-        { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=rivestream.app&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=7movies.in&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         {
           id: "bm_individual_games",
@@ -2295,15 +2294,14 @@
         { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=cpsgames.org&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=emubrowser.com&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
         { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=gras2027.com&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-        { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=funkymods.github.io&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
-        { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=theooofficial.github.io&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
-        { id: "bm_mgalternative", categoryId: "cat_games", title: "MG Alternative", url: "https://mgalternative.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=mgalternative.github.io&sz=64", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
-        { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=masonsunblockedgames.github.io&sz=64", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
-        { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=geometryspot.com&sz=64", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
-        { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
-        { id: "bm_mountaingames", categoryId: "cat_games", title: "Mountain Games", url: "https://mountain-game-games.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=mountain-game-games.github.io&sz=64", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
-        { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
-        { id: "bm_bloxcraftstudios", categoryId: "cat_games", title: "Bloxcraft Studios", url: "https://5kh0.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=5kh0.github.io&sz=64", builtIn: true, hidden: false, order: 14, subBookmarks: [] }
+        { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+        { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
+        { id: "bm_mgalternative", categoryId: "cat_games", title: "MG Alternative", url: "https://mgalternative.github.io", type: "bookmark", icon: "preset:star", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
+        { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/favicon.ico", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
+        { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "preset:zap", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
+        { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
+        { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
+        { id: "bm_bloxcraftstudios", categoryId: "cat_games", title: "Bloxcraft", url: "https://bloxcraft-ubg.pages.dev/", type: "folder_bookmark", icon: "https://5kh0.github.io/bloxcraft_transparent.png", builtIn: true, hidden: false, order: 13, subBookmarks: [{ id: "sub_bloxcraft_fastly", title: "Bloxcraft (Fastly)", url: "https://bloxcraftubg.freetls.fastly.net/games/", icon: "https://5kh0.github.io/bloxcraft_transparent.png" }] }
       ]
     };
 
@@ -3037,7 +3035,8 @@
             };
 
             if (bm.type !== 'folder') {
-              bmCard.target = '_blank';
+              var openInNewTab = settings.openBookmarksInNewTab !== undefined ? settings.openBookmarksInNewTab : true;
+              bmCard.target = openInNewTab ? '_blank' : '_self';
               bmCard.rel = 'noopener';
               var rawTargetUrl = bm.url ? (bm.url.startsWith('http') ? bm.url : 'https://' + bm.url) : '';
               var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + rawTargetUrl;
@@ -3046,14 +3045,20 @@
               bmCard.onclick = function (e) {
                 if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
 
-                var settings = {};
+                var currentSettings = {};
                 try {
-                  settings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
+                  currentSettings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
                 } catch (err) {}
 
-                if (settings.skipBuiltinTestPrompt) {
+                var inNewTab = currentSettings.openBookmarksInNewTab !== undefined ? currentSettings.openBookmarksInNewTab : true;
+
+                if (currentSettings.skipBuiltinTestPrompt) {
                   e.preventDefault();
-                  window.open(proxiedUrl, '_blank', 'noopener');
+                  if (inNewTab) {
+                    window.open(proxiedUrl, '_blank', 'noopener');
+                  } else {
+                    window.location.href = proxiedUrl;
+                  }
                   return;
                 }
 
@@ -3306,13 +3311,20 @@
                 };
 
                 sbCard.onclick = function (e) {
-                  var settings = {};
+                  var currentSettings = {};
                   try {
-                    settings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
+                    currentSettings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
                   } catch (err) {}
 
-                  if (settings.skipBuiltinTestPrompt) {
-                    window.open(sbProxiedUrl, '_blank', 'noopener');
+                  var inNewTab = currentSettings.openBookmarksInNewTab !== undefined ? currentSettings.openBookmarksInNewTab : true;
+
+                  if (currentSettings.skipBuiltinTestPrompt) {
+                    e.preventDefault();
+                    if (inNewTab) {
+                      window.open(sbProxiedUrl, '_blank', 'noopener');
+                    } else {
+                      window.location.href = sbProxiedUrl;
+                    }
                     return;
                   }
 
@@ -3521,10 +3533,8 @@
       selectedIconMode = mode;
       var btnFavicon = $('icon-tab-favicon');
       var btnPreset = $('icon-tab-preset');
-      var btnCustom = $('icon-tab-custom');
       var btnManual = $('icon-tab-manual');
       var presetContainer = $('icon-preset-container');
-      var customContainer = $('icon-custom-container');
       var manualContainer = $('icon-manual-container');
 
       var activeBg = 'rgba(56,189,248,0.2)';
@@ -3534,17 +3544,17 @@
       var inactiveBorder = '1px solid rgba(148,163,184,0.2)';
       var inactiveColor = '#94a3b8';
 
-      btnFavicon.style.background = mode === 'favicon' ? activeBg : inactiveBg;
-      btnFavicon.style.border = mode === 'favicon' ? activeBorder : inactiveBorder;
-      btnFavicon.style.color = mode === 'favicon' ? activeColor : inactiveColor;
+      if (btnFavicon) {
+        btnFavicon.style.background = mode === 'favicon' ? activeBg : inactiveBg;
+        btnFavicon.style.border = mode === 'favicon' ? activeBorder : inactiveBorder;
+        btnFavicon.style.color = mode === 'favicon' ? activeColor : inactiveColor;
+      }
 
-      btnPreset.style.background = mode === 'preset' ? activeBg : inactiveBg;
-      btnPreset.style.border = mode === 'preset' ? activeBorder : inactiveBorder;
-      btnPreset.style.color = mode === 'preset' ? activeColor : inactiveColor;
-
-      btnCustom.style.background = mode === 'custom' ? activeBg : inactiveBg;
-      btnCustom.style.border = mode === 'custom' ? activeBorder : inactiveBorder;
-      btnCustom.style.color = mode === 'custom' ? activeColor : inactiveColor;
+      if (btnPreset) {
+        btnPreset.style.background = mode === 'preset' ? activeBg : inactiveBg;
+        btnPreset.style.border = mode === 'preset' ? activeBorder : inactiveBorder;
+        btnPreset.style.color = mode === 'preset' ? activeColor : inactiveColor;
+      }
 
       if (btnManual) {
         btnManual.style.background = mode === 'manual' ? activeBg : inactiveBg;
@@ -3552,8 +3562,7 @@
         btnManual.style.color = mode === 'manual' ? activeColor : inactiveColor;
       }
 
-      presetContainer.style.display = mode === 'preset' ? 'grid' : 'none';
-      customContainer.style.display = mode === 'custom' ? 'block' : 'none';
+      if (presetContainer) presetContainer.style.display = mode === 'preset' ? 'grid' : 'none';
       if (manualContainer) manualContainer.style.display = mode === 'manual' ? 'block' : 'none';
 
       if (mode === 'preset') {
@@ -4252,7 +4261,14 @@
         emDirectBtn.onclick = function () {
           closeEverythingMoeNoticeModal();
           if (pendingEverythingMoeNotice.rawUrl) {
-            window.open(pendingEverythingMoeNotice.rawUrl, '_blank', 'noopener');
+            var currentSettings = {};
+            try { currentSettings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}'); } catch (err) {}
+            var inNewTab = currentSettings.openBookmarksInNewTab !== undefined ? currentSettings.openBookmarksInNewTab : true;
+            if (inNewTab) {
+              window.open(pendingEverythingMoeNotice.rawUrl, '_blank', 'noopener');
+            } else {
+              window.location.href = pendingEverythingMoeNotice.rawUrl;
+            }
           }
         };
       }
@@ -4260,7 +4276,14 @@
       $('everythingmoe-ok-btn').onclick = function () {
         closeEverythingMoeNoticeModal();
         if (pendingEverythingMoeNotice.proxiedUrl) {
-          window.open(pendingEverythingMoeNotice.proxiedUrl, '_blank', 'noopener');
+          var currentSettings = {};
+          try { currentSettings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}'); } catch (err) {}
+          var inNewTab = currentSettings.openBookmarksInNewTab !== undefined ? currentSettings.openBookmarksInNewTab : true;
+          if (inNewTab) {
+            window.open(pendingEverythingMoeNotice.proxiedUrl, '_blank', 'noopener');
+          } else {
+            window.location.href = pendingEverythingMoeNotice.proxiedUrl;
+          }
         }
       };
 
@@ -4269,7 +4292,14 @@
         saveQuickSaveWidgetTogglePref();
         closeBuiltinTestModal();
         if (pendingBuiltinUrls.rawUrl) {
-          window.open(pendingBuiltinUrls.rawUrl, '_blank', 'noopener');
+          var currentSettings = {};
+          try { currentSettings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}'); } catch (err) {}
+          var inNewTab = currentSettings.openBookmarksInNewTab !== undefined ? currentSettings.openBookmarksInNewTab : true;
+          if (inNewTab) {
+            window.open(pendingBuiltinUrls.rawUrl, '_blank', 'noopener');
+          } else {
+            window.location.href = pendingBuiltinUrls.rawUrl;
+          }
         }
       };
 
@@ -4278,20 +4308,23 @@
         saveQuickSaveWidgetTogglePref();
         closeBuiltinTestModal();
         if (pendingBuiltinUrls.proxiedUrl) {
-          window.open(pendingBuiltinUrls.proxiedUrl, '_blank', 'noopener');
+          var currentSettings = {};
+          try { currentSettings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}'); } catch (err) {}
+          var inNewTab = currentSettings.openBookmarksInNewTab !== undefined ? currentSettings.openBookmarksInNewTab : true;
+          if (inNewTab) {
+            window.open(pendingBuiltinUrls.proxiedUrl, '_blank', 'noopener');
+          } else {
+            window.location.href = pendingBuiltinUrls.proxiedUrl;
+          }
         }
       };
 
       $('tab-add-bm').onclick = function () { openAddModal('bookmark'); };
       $('tab-add-cat').onclick = function () { openAddModal('category'); };
 
-      $('icon-tab-favicon').onclick = function () { switchIconMode('favicon'); };
-      $('icon-tab-preset').onclick = function () { switchIconMode('preset'); };
-      $('icon-tab-custom').onclick = function () { switchIconMode('custom'); };
-      var btnIconManual = $('icon-tab-manual');
-      if (btnIconManual) {
-        btnIconManual.onclick = function () { switchIconMode('manual'); };
-      }
+      if ($('icon-tab-favicon')) $('icon-tab-favicon').onclick = function () { switchIconMode('favicon'); };
+      if ($('icon-tab-preset')) $('icon-tab-preset').onclick = function () { switchIconMode('preset'); };
+      if ($('icon-tab-manual')) $('icon-tab-manual').onclick = function () { switchIconMode('manual'); };
 
       var btnAddSubBm = $('btn-add-sub-bm');
       if (btnAddSubBm) {
@@ -4329,10 +4362,12 @@
         if (bmType !== 'folder' && !url) return;
 
         var iconVal = '';
+        var customUrl = $('bm-custom-icon-url') ? $('bm-custom-icon-url').value.trim() : '';
+
         if (selectedIconMode === 'preset') {
           iconVal = 'preset:' + selectedPresetIconId;
-        } else if (selectedIconMode === 'custom') {
-          iconVal = $('bm-custom-icon-url').value.trim();
+        } else if (selectedIconMode === 'manual' && customUrl) {
+          iconVal = customUrl;
         }
 
         var isQuickSaveEnabled = $('bm-quick-save-toggle') ? $('bm-quick-save-toggle').checked : true;
@@ -4369,7 +4404,7 @@
         closeAddModal();
         renderBookmarksUI();
 
-        if (selectedIconMode === 'manual' && url) {
+        if (selectedIconMode === 'manual' && !customUrl && url) {
           var cleanUrl = url.startsWith('http') ? url : 'https://' + url;
           try {
             localStorage.setItem('heavenly_manual_icon_pending', JSON.stringify({
