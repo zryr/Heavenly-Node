@@ -74,4 +74,11 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('deleteBtn.disabled = isBuiltIn'), 'deleteBtn should set disabled based on isBuiltIn');
         assert.ok(html.includes('Built-in presets cannot be deleted'), 'deleteBtn tooltip should explain built-in preset restriction');
     });
+
+    it('should configure Newgrounds authentic favicon and strict icon preservation in DEFAULT_BOOKMARK_DATA and loadBookmarkData', function() {
+        var indexHtml = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
+        assert.ok(indexHtml.includes('https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64'), 'Newgrounds should use authentic favicon URL');
+        assert.ok(indexHtml.includes('(!userBm.icon || userBm.icon.trim() === \'\')'), 'loadBookmarkData should strictly backfill icons only when stored icon is empty');
+        assert.ok(indexHtml.includes('settings.skipBuiltinTestPrompt'), 'index.html bookmark click handler should respect skipBuiltinTestPrompt');
+    });
 });

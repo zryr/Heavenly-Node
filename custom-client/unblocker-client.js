@@ -982,7 +982,8 @@
 
           // Restore position from localStorage
           try {
-            var savedPanicPos = localStorage.getItem('heavenly_panic_pos');
+            var st = window.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+            var savedPanicPos = st ? st.getItem('heavenly_panic_pos') : null;
             if (savedPanicPos) {
               var pos = JSON.parse(savedPanicPos);
               if (typeof pos.left === 'number' && typeof pos.top === 'number') {
@@ -1041,12 +1042,6 @@
             btn.querySelector('.btn-label').style.display = 'none';
           }, 10000);
 
-          // Long-press drag variables
-          var holdTimer = null;
-          var holdAnimFrame = null;
-          var startTime = 0;
-          var HOLD_DURATION = 1500; // 1.5 seconds
-          var canDrag = false;
           var isDragging = false;
           var startX = 0, startY = 0;
           var startLeft = 0, startTop = 0;
@@ -1055,43 +1050,14 @@
             window.location.href = settings.panicUrl || 'https://classroom.google.com';
           }
 
-          function cancelHold() {
-            if (holdTimer) clearTimeout(holdTimer);
-            if (holdAnimFrame) cancelAnimationFrame(holdAnimFrame);
-            holdTimer = null;
-            holdAnimFrame = null;
-            progSvg.classList.remove('active');
-            progCircle.style.strokeDashoffset = '138';
-          }
-
-          function updateProgress() {
-            var elapsed = Date.now() - startTime;
-            var progress = Math.min(1, elapsed / HOLD_DURATION);
-            var offset = 138 * (1 - progress);
-            progCircle.style.strokeDashoffset = offset.toString();
-
-            if (progress < 1) {
-              holdAnimFrame = requestAnimationFrame(updateProgress);
-            } else {
-              canDrag = true;
-              btn.classList.add('dragging');
-              progSvg.classList.remove('active');
-            }
-          }
-
           var onDown = function (e) {
-            canDrag = false;
             isDragging = false;
-            startX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-            startY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+            startX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+            startY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
 
             var rect = pContainer.getBoundingClientRect();
             startLeft = rect.left;
             startTop = rect.top;
-
-            startTime = Date.now();
-            progSvg.classList.add('active');
-            updateProgress();
 
             window.addEventListener('mousemove', onMove, true);
             window.addEventListener('mouseup', onUp, true);
@@ -1100,47 +1066,45 @@
           };
 
           var onMove = function (e) {
-            var currentX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-            var currentY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+            var currentX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+            var currentY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
             var dx = currentX - startX;
             var dy = currentY - startY;
 
-            if (!canDrag) {
-              if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
-                cancelHold();
-              }
-              return;
+            if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+              isDragging = true;
+              btn.classList.add('dragging');
+              pContainer.style.bottom = 'auto';
+              pContainer.style.right = 'auto';
+
+              var newLeft = startLeft + dx;
+              var newTop = startTop + dy;
+
+              var maxLeft = Math.max(0, (window.innerWidth || 800) - (pContainer.offsetWidth || 100));
+              var maxTop = Math.max(0, (window.innerHeight || 600) - (pContainer.offsetHeight || 40));
+
+              pContainer.style.left = Math.max(0, Math.min(newLeft, maxLeft)) + 'px';
+              pContainer.style.top = Math.max(0, Math.min(newTop, maxTop)) + 'px';
             }
-
-            isDragging = true;
-            pContainer.style.bottom = 'auto';
-            pContainer.style.right = 'auto';
-
-            var newLeft = startLeft + dx;
-            var newTop = startTop + dy;
-
-            var maxLeft = (window.innerWidth || 800) - pContainer.offsetWidth;
-            var maxTop = (window.innerHeight || 600) - pContainer.offsetHeight;
-
-            pContainer.style.left = Math.max(0, Math.min(newLeft, maxLeft)) + 'px';
-            pContainer.style.top = Math.max(0, Math.min(newTop, maxTop)) + 'px';
           };
 
           var onUp = function () {
-            cancelHold();
             window.removeEventListener('mousemove', onMove, true);
             window.removeEventListener('mouseup', onUp, true);
             window.removeEventListener('touchmove', onMove, true);
             window.removeEventListener('touchend', onUp, true);
 
-            if (canDrag && isDragging) {
+            if (isDragging) {
               btn.classList.remove('dragging');
               try {
                 var rect = pContainer.getBoundingClientRect();
-                localStorage.setItem('heavenly_panic_pos', JSON.stringify({ left: rect.left, top: rect.top }));
+                var st = window.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+                if (st) {
+                  st.setItem('heavenly_panic_pos', JSON.stringify({ left: rect.left, top: rect.top }));
+                }
               } catch (e) {}
-            } else if (!isDragging) {
-              // Tap/click triggers panic directly regardless of minimized circle state
+            } else {
+              // Tap/click triggers panic directly
               triggerPanic();
             }
           };
@@ -1504,14 +1468,14 @@
         bookmarks: [
           { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
           { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-          { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-          { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
-          { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-          { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-          { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+          { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anisnatch.top&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+          { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+          { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anify.to&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+          { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
           { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-          { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-          { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=rivestream.app&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=7movies.in&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
           {
             id: "bm_individual_games",
             categoryId: "cat_games",
@@ -1523,26 +1487,26 @@
             hidden: false,
             order: 0,
             subBookmarks: [
-              { id: "sub_slopeplus", title: "Slope Plus", url: "https://lonfro.github.io/SlopePlusWeb/", icon: "" },
-              { id: "sub_whatbeatsrock", title: "What Beats Rock", url: "https://www.whatbeatsrock.com/", icon: "" },
-              { id: "sub_fnf", title: "Friday Night Funkin", url: "https://luckydog7.github.io/funkinmobile/game/index.html", icon: "" }
+              { id: "sub_slopeplus", title: "Slope Plus", url: "https://lonfro.github.io/SlopePlusWeb/", icon: "https://www.google.com/s2/favicons?domain=lonfro.github.io&sz=64" },
+              { id: "sub_whatbeatsrock", title: "What Beats Rock", url: "https://www.whatbeatsrock.com/", icon: "https://www.google.com/s2/favicons?domain=whatbeatsrock.com&sz=64" },
+              { id: "sub_fnf", title: "Friday Night Funkin", url: "https://luckydog7.github.io/funkinmobile/game/index.html", icon: "https://www.google.com/s2/favicons?domain=luckydog7.github.io&sz=64" }
             ]
           },
-          { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-          { id: "bm_user_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.newgrounds.com/img/icons/favicon.ico", builtIn: false, hidden: false, order: 99, subBookmarks: [] },
-          { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-          { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
-          { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-          { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-          { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
-          { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
-          { id: "bm_mgalternative", categoryId: "cat_games", title: "MG Alternative", url: "https://mgalternative.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
-          { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
-          { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
-          { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
-          { id: "bm_mountaingames", categoryId: "cat_games", title: "Mountain Games", url: "https://mountain-game-games.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
-          { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
-          { id: "bm_bloxcraftstudios", categoryId: "cat_games", title: "Bloxcraft Studios", url: "https://5kh0.github.io", type: "bookmark", icon: "", builtIn: true, hidden: false, order: 14, subBookmarks: [] }
+          { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_user_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: false, hidden: false, order: 99, subBookmarks: [] },
+          { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=teddblue.github.io&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=cpsgames.org&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+          { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=emubrowser.com&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+          { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=gras2027.com&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+          { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=funkymods.github.io&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+          { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=theooofficial.github.io&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
+          { id: "bm_mgalternative", categoryId: "cat_games", title: "MG Alternative", url: "https://mgalternative.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=mgalternative.github.io&sz=64", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
+          { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=masonsunblockedgames.github.io&sz=64", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
+          { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=geometryspot.com&sz=64", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
+          { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
+          { id: "bm_mountaingames", categoryId: "cat_games", title: "Mountain Games", url: "https://mountain-game-games.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=mountain-game-games.github.io&sz=64", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
+          { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
+          { id: "bm_bloxcraftstudios", categoryId: "cat_games", title: "Bloxcraft Studios", url: "https://5kh0.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=5kh0.github.io&sz=64", builtIn: true, hidden: false, order: 14, subBookmarks: [] }
         ]
       };
 
@@ -1563,10 +1527,21 @@
               }
             });
 
-            // Migration: Rename bm_ng title to "Newgrounds: Syshi" if needed
+            // Migration: Update Newgrounds title/icon if needed
             var ngBm = data.bookmarks.find(function (b) { return b.id === 'bm_ng'; });
-            if (ngBm && ngBm.title !== 'Newgrounds: Syshi') {
-              ngBm.title = 'Newgrounds: Syshi';
+            if (ngBm) {
+              if (ngBm.title !== 'Newgrounds: Syshi') {
+                ngBm.title = 'Newgrounds: Syshi';
+                updated = true;
+              }
+              if (ngBm.icon === 'https://www.newgrounds.com/img/icons/favicon.ico') {
+                ngBm.icon = 'https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64';
+                updated = true;
+              }
+            }
+            var userNgBm = data.bookmarks.find(function (b) { return b.id === 'bm_user_ng'; });
+            if (userNgBm && userNgBm.icon === 'https://www.newgrounds.com/img/icons/favicon.ico') {
+              userNgBm.icon = 'https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64';
               updated = true;
             }
 
@@ -1599,16 +1574,26 @@
                     updated = true;
                   }
                 }
+                // Strict icon preservation: only backfill icon if stored userBm icon is strictly empty
+                if ((!userBm.icon || userBm.icon.trim() === '') && defBm.icon && defBm.icon.trim() !== '') {
+                  userBm.icon = defBm.icon;
+                  updated = true;
+                }
                 if (defBm.subBookmarks && Array.isArray(defBm.subBookmarks)) {
                   if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
                     userBm.subBookmarks = [];
                     updated = true;
                   }
                   defBm.subBookmarks.forEach(function (defSub) {
-                    var subExists = userBm.subBookmarks.some(function (s) { return s.id === defSub.id; });
-                    if (!subExists) {
+                    var userSub = userBm.subBookmarks.find(function (s) { return s.id === defSub.id; });
+                    if (!userSub) {
                       userBm.subBookmarks.push(JSON.parse(JSON.stringify(defSub)));
                       updated = true;
+                    } else {
+                      if ((!userSub.icon || userSub.icon.trim() === '') && defSub.icon && defSub.icon.trim() !== '') {
+                        userSub.icon = defSub.icon;
+                        updated = true;
+                      }
                     }
                   });
                 }
