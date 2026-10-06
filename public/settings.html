@@ -860,6 +860,18 @@
             <p class="hero-card-desc">Prompts you to test direct connection or open with proxy when clicking built-in bookmarks. Enable this if you previously checked 'Don't ask me again'.</p>
           </div>
 
+          <!-- Hero Card: Open New Tabs & Searches in about:blank Cloak -->
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-open-in-about-blank" class="hero-card-title">Open New Tabs & Searches in about:blank Cloak</label>
+              <label class="switch-toggle">
+                <input type="checkbox" id="set-open-in-about-blank" role="switch" checked>
+                <span class="slider-knob"></span>
+              </label>
+            </div>
+            <p class="hero-card-desc">When opening search results or bookmarks in a new tab, launch them inside an unblocked about:blank tab with a full-screen iframe cloak.</p>
+          </div>
+
           <!-- Hero Card: Open Search Results in New Tab -->
           <div class="hero-card">
             <div class="hero-card-header">
@@ -1322,6 +1334,7 @@
         openSearchInNewTab: saved.openSearchInNewTab || false,
         mergeGoNewTab: saved.mergeGoNewTab || false,
         openBookmarksInNewTab: saved.openBookmarksInNewTab !== undefined ? saved.openBookmarksInNewTab : true,
+        openInAboutBlank: saved.openInAboutBlank !== undefined ? saved.openInAboutBlank : true,
         panicKeyEnable: saved.panicKeyEnable || false,
         panicKey: saved.panicKey || '`',
         touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
@@ -1663,6 +1676,9 @@
       var bmsNewTabCb = $('set-bookmarks-new-tab');
       if (bmsNewTabCb) bmsNewTabCb.checked = settings.openBookmarksInNewTab;
 
+      var abTabCb = $('set-open-in-about-blank');
+      if (abTabCb) abTabCb.checked = settings.openInAboutBlank;
+
       $('set-panic-key-enable').checked = settings.panicKeyEnable;
       $('set-panic-key').value = settings.panicKey;
       $('set-touch-panic').checked = settings.touchPanic;
@@ -1937,6 +1953,7 @@
         settings.openSearchInNewTab = $('set-search-new-tab') ? $('set-search-new-tab').checked : false;
         settings.mergeGoNewTab = $('set-merge-go-newtab') ? $('set-merge-go-newtab').checked : false;
         settings.openBookmarksInNewTab = $('set-bookmarks-new-tab') ? $('set-bookmarks-new-tab').checked : true;
+        settings.openInAboutBlank = $('set-open-in-about-blank') ? $('set-open-in-about-blank').checked : true;
         settings.panicKeyEnable = $('set-panic-key-enable').checked;
         settings.panicKey = $('set-panic-key').value.trim();
         settings.touchPanic = $('set-touch-panic').checked;
@@ -1955,7 +1972,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-open-in-about-blank', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
         var el = $(id);
         if (el) {
           el.onchange = function () {

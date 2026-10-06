@@ -804,6 +804,7 @@
       showNavSearch: saved.showNavSearch !== undefined ? saved.showNavSearch : true,
       showNavHome: saved.showNavHome !== undefined ? saved.showNavHome : true,
       useWidgetDock: saved.useWidgetDock !== undefined ? saved.useWidgetDock : true,
+      openInAboutBlank: saved.openInAboutBlank !== undefined ? saved.openInAboutBlank : true,
       dockPosition: saved.dockPosition || 'bottom',
       expandDirection: saved.expandDirection || 'left',
       disableAllWidgets: saved.disableAllWidgets || false,
@@ -1381,6 +1382,23 @@
       return urlStr;
     } catch (e) {
       return (config && config.url) || '';
+    }
+  }
+
+  function openCurrentPageInAboutBlank(window) {
+    try {
+      var title = window.__heavenlyOriginalTitle || window.document.title || 'Classes';
+      var url = window.location.href;
+      var openFn = window.__nativeWinOpen || window.open;
+      var win = openFn.call(window, 'about:blank', '_blank');
+      if (win) {
+        var doc = win.document;
+        doc.open();
+        doc.write('<!DOCTYPE html><html><head><title>' + title + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}iframe{width:100%;height:100%;border:none;display:block;}</style></head><body><iframe src="' + url + '"></iframe></body></html>');
+        doc.close();
+      }
+    } catch (e) {
+      console.error('Error opening page in about:blank:', e);
     }
   }
 
@@ -2321,6 +2339,8 @@
             items.push('<button type="button" class="btn-ctrl" id="dock-home-btn" title="Go Home"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
+          items.push('<button type="button" class="btn-ctrl" id="dock-aboutblank-btn" title="Open in about:blank Cloak Tab"><svg class="title-icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg><span>about:blank</span></button>');
+
           items.push('<button type="button" class="btn-ctrl" id="dock-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
 
           if (showNavBookmark) {
@@ -2451,6 +2471,15 @@
               pullBtn.querySelector('span').style.transform = 'rotate(0deg)';
             }
           });
+
+          // Wire up about:blank button
+          var aboutBlankBtn = dockBar.querySelector('#dock-aboutblank-btn');
+          if (aboutBlankBtn) {
+            aboutBlankBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              openCurrentPageInAboutBlank(window);
+            });
+          }
 
           // Wire up Direct Site button
           var directDockBtn = dockBar.querySelector('#dock-direct-btn');
@@ -3075,6 +3104,8 @@
             navHtml.push('<button type="button" class="btn-ctrl" id="nav-home-btn" title="Go to Homepage"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
+          navHtml.push('<button type="button" class="btn-ctrl" id="nav-aboutblank-btn" title="Open in about:blank Cloak Tab"><svg class="title-icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg><span>about:blank</span></button>');
+
           navHtml.push('<button type="button" class="btn-ctrl" id="nav-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
 
           navHtml.push('<button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>');
@@ -3118,6 +3149,14 @@
             if (floatBmBtn) floatBmBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               promptBookmarkCurrentPage(window, config);
+            });
+          }
+
+          var floatAboutBlankBtn = navWidget.querySelector('#nav-aboutblank-btn') || (navShadow.querySelector ? navShadow.querySelector('#nav-aboutblank-btn') : null);
+          if (floatAboutBlankBtn) {
+            floatAboutBlankBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              openCurrentPageInAboutBlank(window);
             });
           }
 
