@@ -2992,6 +2992,24 @@
         return;
       }
 
+      // Expiration check (2 minutes expiration)
+      if (pending.timestamp && (Date.now() - pending.timestamp > 120000)) {
+        storage.removeItem('heavenly_manual_icon_pending');
+        return;
+      }
+
+      // Target URL match validation to prevent accidental triggering on unrelated pages
+      var currentDirect = getDirectRemoteUrl(window, config);
+      if (pending.targetUrl && currentDirect) {
+        try {
+          var pendingHost = new URL(pending.targetUrl.startsWith('http') ? pending.targetUrl : 'https://' + pending.targetUrl).hostname.toLowerCase();
+          var currentHost = new URL(currentDirect.startsWith('http') ? currentDirect : 'https://' + currentDirect).hostname.toLowerCase();
+          if (pendingHost !== currentHost && !currentHost.endsWith('.' + pendingHost) && !pendingHost.endsWith('.' + currentHost)) {
+            return;
+          }
+        } catch (err) {}
+      }
+
       function setupOverlay() {
         if (!window.document || !window.document.body) return;
         if (window.document.getElementById('heavenly-manual-icon-root')) return;
@@ -3013,11 +3031,12 @@
           '  -webkit-backdrop-filter: blur(16px);',
           '  border: 1px solid rgba(56, 189, 248, 0.4);',
           '  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.3);',
-          '  padding: 14px 18px;',
-          '  border-radius: 18px;',
+          '  padding: 16px 18px;',
+          '  border-radius: 20px;',
           '  color: #f8fafc;',
           '  font-size: 13px;',
-          '  max-width: 320px;',
+          '  width: 340px;',
+          '  max-width: 90vw;',
           '}',
           '.picker-header {',
           '  display: flex;',
@@ -3055,8 +3074,8 @@
           '  border: 1px solid rgba(148, 163, 184, 0.2);',
           '}',
           '.preview-img {',
-          '  width: 24px;',
-          '  height: 24px;',
+          '  width: 26px;',
+          '  height: 26px;',
           '  object-fit: contain;',
           '  border-radius: 4px;',
           '  flex-shrink: 0;',
@@ -3068,6 +3087,40 @@
           '  text-overflow: ellipsis;',
           '  white-space: nowrap;',
           '  flex: 1;',
+          '}',
+          '.copy-btns-row {',
+          '  display: flex;',
+          '  gap: 6px;',
+          '}',
+          '.copy-btn {',
+          '  flex: 1;',
+          '  padding: 6px 10px;',
+          '  background: rgba(56, 189, 248, 0.15);',
+          '  border: 1px solid rgba(56, 189, 248, 0.35);',
+          '  color: #38bdf8;',
+          '  border-radius: 8px;',
+          '  font-size: 0.75rem;',
+          '  font-weight: 600;',
+          '  cursor: pointer;',
+          '  transition: all 0.2s ease;',
+          '  display: inline-flex;',
+          '  align-items: center;',
+          '  justify-content: center;',
+          '  gap: 4px;',
+          '}',
+          '.copy-btn:hover {',
+          '  background: rgba(56, 189, 248, 0.3);',
+          '  color: #ffffff;',
+          '}',
+          '.picker-note {',
+          '  font-size: 0.72rem;',
+          '  color: #94a3b8;',
+          '  line-height: 1.35;',
+          '  font-style: italic;',
+          '  background: rgba(30, 41, 59, 0.4);',
+          '  padding: 6px 8px;',
+          '  border-radius: 8px;',
+          '  border: 1px dashed rgba(148, 163, 184, 0.2);',
           '}',
           '.save-icon-btn {',
           '  background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 100%);',
@@ -3087,6 +3140,12 @@
           '.save-icon-btn:hover {',
           '  transform: translateY(-1px);',
           '  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);',
+          '}',
+          '.copy-status-text {',
+          '  font-size: 0.75rem;',
+          '  color: #38bdf8;',
+          '  text-align: center;',
+          '  min-height: 1.2em;',
           '}'
         ].join('\n');
 
@@ -3094,6 +3153,8 @@
         card.className = 'icon-picker-card';
 
         var currentIconUrl = detectActiveFavicon(window, config);
+        var currentProxiedIconUrl = fixUrl(currentIconUrl, config, window.location);
+        var fullProxiedUrl = window.location.origin + (currentProxiedIconUrl.startsWith('/') ? currentProxiedIconUrl : '/' + currentProxiedIconUrl);
 
         card.innerHTML = [
           '<div class="picker-header">',
@@ -3102,9 +3163,15 @@
           '</div>',
           '<div class="picker-prompt">Click \'Save\' once your desired icon appears in the tab.</div>',
           '<div class="picker-preview-row">',
-          '  <img class="preview-img" id="live-icon-img" src="' + currentIconUrl + '" alt="Icon preview" />',
+          '  <img class="preview-img" id="live-icon-img" src="' + currentProxiedIconUrl + '" alt="Icon preview" />',
           '  <span class="preview-url-text" id="live-icon-text">' + currentIconUrl + '</span>',
           '</div>',
+          '<div class="copy-btns-row">',
+          '  <button type="button" class="copy-btn" id="copy-direct-btn"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy Direct Link</button>',
+          '  <button type="button" class="copy-btn" id="copy-proxy-btn"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy Proxied Link</button>',
+          '</div>',
+          '<div class="picker-note">Note: If one icon link is blocked or doesn\'t load, try copying or using the other link!</div>',
+          '<div class="copy-status-text" id="copy-status-msg"></div>',
           '<button type="button" class="save-icon-btn" id="save-icon-btn">Save</button>'
         ].join('\n');
 
@@ -3114,12 +3181,15 @@
 
         var imgEl = card.querySelector('#live-icon-img');
         var textEl = card.querySelector('#live-icon-text');
+        var statusEl = card.querySelector('#copy-status-msg');
 
         function updatePreview() {
           var detected = detectActiveFavicon(window, config);
           if (detected && detected !== currentIconUrl) {
             currentIconUrl = detected;
-            if (imgEl) imgEl.src = currentIconUrl;
+            currentProxiedIconUrl = fixUrl(currentIconUrl, config, window.location);
+            fullProxiedUrl = window.location.origin + (currentProxiedIconUrl.startsWith('/') ? currentProxiedIconUrl : '/' + currentProxiedIconUrl);
+            if (imgEl) imgEl.src = currentProxiedIconUrl;
             if (textEl) textEl.textContent = currentIconUrl;
           }
         }
@@ -3129,6 +3199,32 @@
           obs.observe(window.document.head, { childList: true, subtree: true, attributes: true });
         }
         var pollInterval = setInterval(updatePreview, 1000);
+
+        card.querySelector('#copy-direct-btn').onclick = function (e) {
+          e.stopPropagation();
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(currentIconUrl).then(function () {
+              if (statusEl) statusEl.textContent = 'Direct icon link copied!';
+            }).catch(function () {
+              if (statusEl) statusEl.textContent = 'Direct link: ' + currentIconUrl;
+            });
+          } else {
+            if (statusEl) statusEl.textContent = 'Direct link: ' + currentIconUrl;
+          }
+        };
+
+        card.querySelector('#copy-proxy-btn').onclick = function (e) {
+          e.stopPropagation();
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(fullProxiedUrl).then(function () {
+              if (statusEl) statusEl.textContent = 'Proxied icon link copied!';
+            }).catch(function () {
+              if (statusEl) statusEl.textContent = 'Proxied link: ' + fullProxiedUrl;
+            });
+          } else {
+            if (statusEl) statusEl.textContent = 'Proxied link: ' + fullProxiedUrl;
+          }
+        };
 
         card.querySelector('#close-picker-btn').onclick = function (e) {
           e.stopPropagation();
@@ -3146,7 +3242,8 @@
               var bmsData = JSON.parse(rawBms);
               var bm = bmsData.bookmarks.find(function (b) { return b.id === pending.bookmarkId; });
               if (bm) {
-                bm.icon = currentIconUrl;
+                // Save proxied icon URL so the bookmark icon loads through the proxy without being blocked
+                bm.icon = currentProxiedIconUrl;
                 storage.setItem('heavenly_bookmarks', JSON.stringify(bmsData));
               }
             }

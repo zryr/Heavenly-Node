@@ -1341,7 +1341,11 @@
           <button type="button" id="url-clear-btn" class="url-clear-btn" aria-label="Clear search input" title="Clear input">✕</button>
           <div id="history-dropdown" class="history-dropdown"></div>
         </div>
-        <input type="submit" value="Go" />
+        <input type="submit" id="search-go-btn" value="Go" />
+        <button type="button" id="search-newtab-btn" style="padding: 16px 20px; font-size: 1rem; font-weight: 600; font-family: inherit; color: #38bdf8; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; border-radius: 16px; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0;" title="Open search or URL in new tab">
+          <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          <span>New Tab</span>
+        </button>
       </form>
 
       <div class="header-actions-group" style="margin-top: 4px; margin-bottom: 24px;">
@@ -1688,7 +1692,43 @@
       }
     }
 
-    $('unblocker-form').onsubmit = function () {
+    var searchSubmitSource = 'go';
+
+    function initSearchForm() {
+      var form = $('unblocker-form');
+      var newTabBtn = $('search-newtab-btn');
+      var goBtn = $('search-go-btn');
+      var urlInput = $('url');
+
+      if (newTabBtn) {
+        newTabBtn.onclick = function () {
+          searchSubmitSource = 'newtab';
+          if (form) {
+            if (typeof form.requestSubmit === 'function') {
+              form.requestSubmit(newTabBtn);
+            } else {
+              form.onsubmit();
+            }
+          }
+        };
+      }
+
+      if (goBtn) {
+        goBtn.onclick = function () {
+          searchSubmitSource = 'go';
+        };
+      }
+
+      if (urlInput) {
+        urlInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.keyCode === 13) {
+            searchSubmitSource = 'enter';
+          }
+        });
+      }
+    }
+
+    $('unblocker-form').onsubmit = function (e) {
       var url = $('url').value.trim();
       if (!url) return false;
 
@@ -1699,8 +1739,22 @@
           url = "https://google.com/search?q=" + encodeURIComponent(url);
         }
       }
+
+      var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + url;
+      var settings = loadSettings();
+
+      var submitterId = e && e.submitter ? e.submitter.id : null;
+      var isNewTab = (submitterId === 'search-newtab-btn') || (searchSubmitSource === 'newtab') || (!submitterId && searchSubmitSource === 'enter' && settings.openSearchInNewTab);
+
+      if (isNewTab) {
+        window.open(proxiedUrl, '_blank', 'noopener');
+        searchSubmitSource = 'go';
+        return false;
+      }
+
       showLoadingScreen();
-      window.location = location.protocol + '//' + location.host + '/proxy/' + url;
+      window.location = proxiedUrl;
+      searchSubmitSource = 'go';
       return false;
     };
 
@@ -1756,7 +1810,9 @@
         autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : true,
         persistentCloak: saved.persistentCloak || false,
         selectedPreset: saved.selectedPreset || 'classroom',
-        customPresets: saved.customPresets || {}
+        customPresets: saved.customPresets || {},
+        skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
+        openSearchInNewTab: saved.openSearchInNewTab || false
       };
     }
 
@@ -1863,8 +1919,26 @@
     function navigateAndSubmit(url) {
       var input = $('url');
       if (input) input.value = url;
+
+      var settings = loadSettings();
+      var cleanUrl = url.trim();
+      if (cleanUrl.substr(0, 4) !== "http") {
+        if (cleanUrl.includes('.') && !cleanUrl.includes(' ')) {
+          cleanUrl = "https://" + cleanUrl;
+        } else {
+          cleanUrl = "https://google.com/search?q=" + encodeURIComponent(cleanUrl);
+        }
+      }
+      var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + cleanUrl;
+
+      if (settings.openSearchInNewTab) {
+        window.open(proxiedUrl, '_blank', 'noopener');
+        return;
+      }
+
       var form = $('unblocker-form');
       if (form) {
+        searchSubmitSource = 'go';
         if (form.onsubmit && form.onsubmit() === false) return;
         form.submit();
       }
@@ -3593,13 +3667,11 @@
 
           if (existingBm.icon && existingBm.icon.startsWith('preset:')) {
             selectedPresetIconId = existingBm.icon.replace('preset:', '');
-            switchIconMode('preset');
           } else if (existingBm.icon && (existingBm.icon.startsWith('http') || existingBm.icon.startsWith('data:'))) {
             $('bm-custom-icon-url').value = existingBm.icon;
-            switchIconMode('custom');
-          } else {
-            switchIconMode('favicon');
           }
+          // Default icon source tab to 'Manually Select Icon' when editing a bookmark
+          switchIconMode('manual');
         }
       }
       renderModalSubBookmarksList();
@@ -4447,6 +4519,7 @@
     }
 
     window.onload = function () {
+      initSearchForm();
       initLandingCloak();
       initHistoryDropdown();
       initBookmarksManager();
@@ -4454,6 +4527,16 @@
       checkError();
       setTimeout(hideLoadingScreen, 300);
     };
+
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) {
+        hideLoadingScreen();
+        initLandingCloak();
+        renderBookmarksUI();
+      } else {
+        hideLoadingScreen();
+      }
+    });
   </script>
 
 </body>

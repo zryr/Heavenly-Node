@@ -860,6 +860,18 @@
             <p class="hero-card-desc">Prompts you to test direct connection or open with proxy when clicking built-in bookmarks. Enable this if you previously checked 'Don't ask me again'.</p>
           </div>
 
+          <!-- Open Search & Keyboard Enter in New Tab -->
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-open-search-newtab" class="hero-card-title">Open Search & Keyboard Enter in New Tab</label>
+              <label class="switch-toggle">
+                <input type="checkbox" id="set-open-search-newtab" role="switch">
+                <span class="slider-knob"></span>
+              </label>
+            </div>
+            <p class="hero-card-desc">When enabled, pressing Enter in the search bar or clicking items in search history opens proxied URLs in a new tab (clicking the 'Go' button still opens in the current tab).</p>
+          </div>
+
           <div class="hero-card">
             <details style="width: 100%;">
               <summary style="cursor: pointer; list-style: none; font-size: 0.98rem; font-weight: 600; color: #f1f5f9; display: flex; align-items: center; justify-content: space-between; user-select: none;">
@@ -1270,6 +1282,7 @@
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
+        openSearchInNewTab: saved.openSearchInNewTab || false,
         panicKeyEnable: saved.panicKeyEnable || false,
         panicKey: saved.panicKey || '`',
         touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
@@ -1568,6 +1581,7 @@
       $('set-auto-cloak').checked = settings.autoCloak;
       $('set-persistent-cloak').checked = settings.persistentCloak;
       $('set-show-builtin-prompt').checked = !settings.skipBuiltinTestPrompt;
+      $('set-open-search-newtab').checked = !!settings.openSearchInNewTab;
       $('set-panic-key-enable').checked = settings.panicKeyEnable;
       $('set-panic-key').value = settings.panicKey;
       $('set-touch-panic').checked = settings.touchPanic;
@@ -1839,6 +1853,7 @@
         settings.autoCloak = $('set-auto-cloak').checked;
         settings.persistentCloak = $('set-persistent-cloak').checked;
         settings.skipBuiltinTestPrompt = !$('set-show-builtin-prompt').checked;
+        settings.openSearchInNewTab = $('set-open-search-newtab').checked;
         settings.panicKeyEnable = $('set-panic-key-enable').checked;
         settings.panicKey = $('set-panic-key').value.trim();
         settings.touchPanic = $('set-touch-panic').checked;
@@ -1857,7 +1872,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-open-search-newtab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
         var el = $(id);
         if (el) {
           el.onchange = function () {
