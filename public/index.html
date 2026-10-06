@@ -1694,11 +1694,31 @@
 
     var searchSubmitSource = 'go';
 
+    function syncSearchFormUI() {
+      var settings = loadSettings();
+      var goBtn = $('search-go-btn');
+      var newTabBtn = $('search-newtab-btn');
+
+      if (!goBtn || !newTabBtn) return;
+
+      if (settings.openSearchInNewTab && settings.mergeGoNewTab) {
+        newTabBtn.style.display = 'none';
+        goBtn.value = 'Go (New Tab)';
+        goBtn.title = 'Open search or URL in a new tab';
+      } else {
+        newTabBtn.style.display = 'inline-flex';
+        goBtn.value = 'Go';
+        goBtn.title = '';
+      }
+    }
+
     function initSearchForm() {
       var form = $('unblocker-form');
       var newTabBtn = $('search-newtab-btn');
       var goBtn = $('search-go-btn');
       var urlInput = $('url');
+
+      syncSearchFormUI();
 
       if (newTabBtn) {
         newTabBtn.onclick = function () {
@@ -1744,7 +1764,9 @@
       var settings = loadSettings();
 
       var submitterId = e && e.submitter ? e.submitter.id : null;
-      var isNewTab = (submitterId === 'search-newtab-btn') || (searchSubmitSource === 'newtab') || (!submitterId && searchSubmitSource === 'enter' && settings.openSearchInNewTab);
+      var isNewTab = (submitterId === 'search-newtab-btn') ||
+                    (searchSubmitSource === 'newtab') ||
+                    (settings.openSearchInNewTab && (settings.mergeGoNewTab || (!submitterId && searchSubmitSource === 'enter')));
 
       if (isNewTab) {
         window.open(proxiedUrl, '_blank', 'noopener');
@@ -1812,7 +1834,8 @@
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
-        openSearchInNewTab: saved.openSearchInNewTab || false
+        openSearchInNewTab: saved.openSearchInNewTab || false,
+        mergeGoNewTab: saved.mergeGoNewTab || false
       };
     }
 

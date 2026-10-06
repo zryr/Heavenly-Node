@@ -870,6 +870,21 @@
               </label>
             </div>
             <p class="hero-card-desc">When enabled, pressing Enter in the search bar or clicking items in search history opens proxied URLs in a new tab (clicking the 'Go' button still opens in the current tab).</p>
+
+            <!-- Conditional Sub-Setting: Merge Go Button Action -->
+            <div id="sub-setting-merge-go" style="display: none; opacity: 0; max-height: 0; overflow: hidden; transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); border-top: 1px dashed rgba(56, 189, 248, 0.25); padding-top: 12px; margin-top: 8px;">
+              <div class="hero-card-header">
+                <label for="set-merge-go-newtab" class="hero-card-title" style="font-size: 0.92rem; color: #38bdf8; display: flex; align-items: center; gap: 8px;">
+                  <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  <span>Streamline 'Go' Action (Merge New Tab Button)</span>
+                </label>
+                <label class="switch-toggle">
+                  <input type="checkbox" id="set-merge-go-newtab" role="switch">
+                  <span class="slider-knob"></span>
+                </label>
+              </div>
+              <p class="hero-card-desc" style="font-size: 0.81rem; margin-top: 4px;">Hides the extra 'New Tab' button on the search bar and turns the primary 'Go' button into a unified 'Go (New Tab)' button.</p>
+            </div>
           </div>
 
           <div class="hero-card">
@@ -1283,6 +1298,7 @@
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
         openSearchInNewTab: saved.openSearchInNewTab || false,
+        mergeGoNewTab: saved.mergeGoNewTab || false,
         panicKeyEnable: saved.panicKeyEnable || false,
         panicKey: saved.panicKey || '`',
         touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
@@ -1582,7 +1598,28 @@
       $('set-persistent-cloak').checked = settings.persistentCloak;
       $('set-show-builtin-prompt').checked = !settings.skipBuiltinTestPrompt;
       $('set-open-search-newtab').checked = !!settings.openSearchInNewTab;
+      $('set-merge-go-newtab').checked = !!settings.mergeGoNewTab;
       $('set-panic-key-enable').checked = settings.panicKeyEnable;
+
+      // Animate conditional sub-setting display
+      var mergeSubSetting = $('sub-setting-merge-go');
+      if (mergeSubSetting) {
+        if (settings.openSearchInNewTab) {
+          mergeSubSetting.style.display = 'block';
+          requestAnimationFrame(function () {
+            mergeSubSetting.style.opacity = '1';
+            mergeSubSetting.style.maxHeight = '140px';
+          });
+        } else {
+          mergeSubSetting.style.opacity = '0';
+          mergeSubSetting.style.maxHeight = '0';
+          setTimeout(function () {
+            if (!$('set-open-search-newtab').checked) {
+              mergeSubSetting.style.display = 'none';
+            }
+          }, 350);
+        }
+      }
       $('set-panic-key').value = settings.panicKey;
       $('set-touch-panic').checked = settings.touchPanic;
       $('set-panic-url').value = settings.panicUrl;
@@ -1854,6 +1891,7 @@
         settings.persistentCloak = $('set-persistent-cloak').checked;
         settings.skipBuiltinTestPrompt = !$('set-show-builtin-prompt').checked;
         settings.openSearchInNewTab = $('set-open-search-newtab').checked;
+        settings.mergeGoNewTab = $('set-merge-go-newtab').checked;
         settings.panicKeyEnable = $('set-panic-key-enable').checked;
         settings.panicKey = $('set-panic-key').value.trim();
         settings.touchPanic = $('set-touch-panic').checked;
@@ -1872,7 +1910,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-open-search-newtab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-open-search-newtab', 'set-merge-go-newtab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
         var el = $(id);
         if (el) {
           el.onchange = function () {
