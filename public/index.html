@@ -1469,10 +1469,11 @@
         </div>
         <div class="form-group">
           <label class="form-label">Icon Source</label>
-          <div style="display: flex; gap: 6px; margin-bottom: 6px;">
-            <button type="button" id="icon-tab-favicon" class="icon-tab-btn active" style="flex: 1; padding: 6px; border-radius: 8px; background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.4); color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Auto Favicon</button>
-            <button type="button" id="icon-tab-preset" class="icon-tab-btn" style="flex: 1; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Preset Icons</button>
-            <button type="button" id="icon-tab-custom" class="icon-tab-btn" style="flex: 1; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Image / GIF URL</button>
+          <div style="display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap;">
+            <button type="button" id="icon-tab-favicon" class="icon-tab-btn active" style="flex: 1; min-width: 90px; padding: 6px; border-radius: 8px; background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.4); color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Auto Favicon</button>
+            <button type="button" id="icon-tab-preset" class="icon-tab-btn" style="flex: 1; min-width: 90px; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Preset Icons</button>
+            <button type="button" id="icon-tab-custom" class="icon-tab-btn" style="flex: 1; min-width: 90px; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Image / GIF URL</button>
+            <button type="button" id="icon-tab-manual" class="icon-tab-btn" style="flex: 1; min-width: 110px; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Manually Select Icon</button>
           </div>
 
           <!-- Preset Icons Container -->
@@ -1481,6 +1482,11 @@
           <!-- Custom URL Container -->
           <div id="icon-custom-container" style="display: none;">
             <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="https://example.com/icon.png or .gif" />
+          </div>
+
+          <!-- Manual Icon Container -->
+          <div id="icon-manual-container" style="display: none; padding: 10px; background: rgba(30, 41, 59, 0.4); border-radius: 12px; border: 1px solid rgba(148,163,184,0.2); font-size: 0.78rem; color: #38bdf8; line-height: 1.4;">
+            Saves bookmark and launches site with a live icon picker overlay, where you can preview and save the page's icon in real-time.
           </div>
         </div>
 
@@ -1652,6 +1658,16 @@
   <script>
     function $(id) {
       return document.getElementById(id);
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     function showLoadingScreen() {
@@ -3409,8 +3425,10 @@
       var btnFavicon = $('icon-tab-favicon');
       var btnPreset = $('icon-tab-preset');
       var btnCustom = $('icon-tab-custom');
+      var btnManual = $('icon-tab-manual');
       var presetContainer = $('icon-preset-container');
       var customContainer = $('icon-custom-container');
+      var manualContainer = $('icon-manual-container');
 
       var activeBg = 'rgba(56,189,248,0.2)';
       var activeBorder = '1px solid rgba(56,189,248,0.4)';
@@ -3431,8 +3449,15 @@
       btnCustom.style.border = mode === 'custom' ? activeBorder : inactiveBorder;
       btnCustom.style.color = mode === 'custom' ? activeColor : inactiveColor;
 
+      if (btnManual) {
+        btnManual.style.background = mode === 'manual' ? activeBg : inactiveBg;
+        btnManual.style.border = mode === 'manual' ? activeBorder : inactiveBorder;
+        btnManual.style.color = mode === 'manual' ? activeColor : inactiveColor;
+      }
+
       presetContainer.style.display = mode === 'preset' ? 'grid' : 'none';
       customContainer.style.display = mode === 'custom' ? 'block' : 'none';
+      if (manualContainer) manualContainer.style.display = mode === 'manual' ? 'block' : 'none';
 
       if (mode === 'preset') {
         renderPresetIconPicker();
@@ -3633,8 +3658,9 @@
     }
 
     function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId) {
-      pendingBuiltinUrls.rawUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
-      pendingBuiltinUrls.proxiedUrl = proxiedUrl;
+      rawUrl = rawUrl || '';
+      pendingBuiltinUrls.rawUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) ? rawUrl : (rawUrl ? 'https://' + rawUrl : '');
+      pendingBuiltinUrls.proxiedUrl = proxiedUrl || '';
       pendingBuiltinUrls.targetBmId = targetBmId || null;
       if ($('builtin-site-name')) $('builtin-site-name').textContent = title || rawUrl;
       if ($('builtin-dont-ask')) $('builtin-dont-ask').checked = false;
@@ -3645,16 +3671,20 @@
       }
 
       var qsToggle = $('builtin-quick-save-toggle');
-      if (qsToggle) {
+      var qsContainer = $('builtin-quick-save-container');
+      if (qsToggle && qsContainer) {
+        var isFolderType = false;
         var isEnabled = true;
         if (targetBmId) {
           var data = loadBookmarkData();
           var bm = data.bookmarks.find(function (b) { return b.id === targetBmId; });
           if (bm) {
+            isFolderType = (bm.type === 'folder' || bm.type === 'folder_bookmark');
             isEnabled = bm.disableQuickSaveWidget !== true;
           }
         }
         qsToggle.checked = isEnabled;
+        qsContainer.style.display = isFolderType ? 'flex' : 'none';
       }
 
       var descEl = $('builtin-modal-desc');
@@ -4163,6 +4193,10 @@
       $('icon-tab-favicon').onclick = function () { switchIconMode('favicon'); };
       $('icon-tab-preset').onclick = function () { switchIconMode('preset'); };
       $('icon-tab-custom').onclick = function () { switchIconMode('custom'); };
+      var btnIconManual = $('icon-tab-manual');
+      if (btnIconManual) {
+        btnIconManual.onclick = function () { switchIconMode('manual'); };
+      }
 
       var btnAddSubBm = $('btn-add-sub-bm');
       if (btnAddSubBm) {
@@ -4208,8 +4242,9 @@
 
         var isQuickSaveEnabled = $('bm-quick-save-toggle') ? $('bm-quick-save-toggle').checked : true;
         var data = loadBookmarkData();
-        if (bmId) {
-          var bm = data.bookmarks.find(function (b) { return b.id === bmId; });
+        var targetBmId = bmId;
+        if (targetBmId) {
+          var bm = data.bookmarks.find(function (b) { return b.id === targetBmId; });
           if (bm) {
             bm.type = bmType;
             bm.title = title;
@@ -4220,8 +4255,9 @@
             bm.subBookmarks = modalSubBookmarks;
           }
         } else {
+          targetBmId = 'bm_' + Date.now();
           data.bookmarks.push({
-            id: 'bm_' + Date.now(),
+            id: targetBmId,
             categoryId: categoryId,
             type: bmType,
             title: title,
@@ -4237,6 +4273,19 @@
         saveBookmarkData(data);
         closeAddModal();
         renderBookmarksUI();
+
+        if (selectedIconMode === 'manual' && url) {
+          var cleanUrl = url.startsWith('http') ? url : 'https://' + url;
+          try {
+            localStorage.setItem('heavenly_manual_icon_pending', JSON.stringify({
+              bookmarkId: targetBmId,
+              targetUrl: cleanUrl,
+              timestamp: Date.now()
+            }));
+          } catch (err) {}
+          showLoadingScreen();
+          window.location = location.protocol + '//' + location.host + '/proxy/' + cleanUrl;
+        }
       };
 
       // Submit Category Form

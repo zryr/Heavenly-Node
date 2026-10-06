@@ -1935,8 +1935,18 @@
           var customBms = (current.bookmarks || []).filter(function (b) { return !b.builtIn; });
 
           var freshData = JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));
-          freshData.categories = freshData.categories.concat(customCats);
-          freshData.bookmarks = freshData.bookmarks.concat(customBms);
+
+          customCats.forEach(function (c) {
+            if (!freshData.categories.some(function (fc) { return fc.id === c.id; })) {
+              freshData.categories.push(c);
+            }
+          });
+
+          customBms.forEach(function (b) {
+            if (!freshData.bookmarks.some(function (fb) { return fb.id === b.id; })) {
+              freshData.bookmarks.push(b);
+            }
+          });
 
           saveBookmarkData(freshData);
           renderBookmarkManager();
