@@ -2939,6 +2939,8 @@
                 } catch (err) {}
 
                 if (settings.skipBuiltinTestPrompt) {
+                  e.preventDefault();
+                  window.open(proxiedUrl, '_blank', 'noopener');
                   return;
                 }
 
