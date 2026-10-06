@@ -3671,16 +3671,20 @@
       }
 
       var qsToggle = $('builtin-quick-save-toggle');
-      if (qsToggle) {
+      var qsContainer = $('builtin-quick-save-container');
+      if (qsToggle && qsContainer) {
+        var isFolderType = false;
         var isEnabled = true;
         if (targetBmId) {
           var data = loadBookmarkData();
           var bm = data.bookmarks.find(function (b) { return b.id === targetBmId; });
           if (bm) {
+            isFolderType = (bm.type === 'folder' || bm.type === 'folder_bookmark');
             isEnabled = bm.disableQuickSaveWidget !== true;
           }
         }
         qsToggle.checked = isEnabled;
+        qsContainer.style.display = isFolderType ? 'flex' : 'none';
       }
 
       var descEl = $('builtin-modal-desc');

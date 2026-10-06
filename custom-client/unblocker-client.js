@@ -3138,6 +3138,7 @@
           } catch (err) {}
           storage.removeItem('heavenly_manual_icon_pending');
           container.remove();
+          (window.top || window).location.href = window.location.origin + '/';
         };
       }
 
@@ -3235,6 +3236,7 @@
       // Find matching Folder or Folder-Bookmark
       var matchedFolder = data.bookmarks.find(function (bm) {
         if (bm.hidden) return false;
+        if (bm.disableQuickSaveWidget === true) return false;
         if (bm.type !== 'folder' && bm.type !== 'folder_bookmark') return false;
         if (!bm.url) return false;
         try {
@@ -3410,7 +3412,7 @@
               icon: ''
             });
             storage.setItem('heavenly_bookmarks', JSON.stringify(freshData));
-            window.alert("✅ Saved page to " + matchedFolder.title + "!");
+            (window.top || window).location.href = window.location.origin + '/';
           }
         };
 
@@ -3611,6 +3613,7 @@
     if (!settings.disableAllWidgets && !settings.disableAllFeatures) {
       initHeavenlyWidgets(window, settings, config);
       initManualIconPickerWidget(config, window);
+      initFolderQuickSaveWidget(config, window);
       initNewgroundsPagination(config, window);
     }
 
