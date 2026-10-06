@@ -1038,15 +1038,23 @@
     .modal-backdrop {
       display: none;
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       z-index: 3000;
-      background: rgba(3, 7, 18, 0.82);
+      background: rgba(3, 7, 18, 0.88);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       align-items: center;
       justify-content: center;
       padding: 20px;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+      margin: 0;
     }
 
     .modal-backdrop.active {
@@ -1619,6 +1627,52 @@
     </div>
   </div>
 
+  <!-- Edit Sub-Bookmark Modal -->
+  <div id="sub-bm-modal" class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="sub-bm-modal-title" style="max-width: 450px;">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-icon-badge">
+            <svg style="width:20px;height:20px;fill:none;stroke:#38bdf8;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          </div>
+          <span class="modal-title" id="sub-bm-modal-title">Edit Sub-Bookmark</span>
+        </div>
+        <button id="close-sub-bm-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="form-sub-bm" style="display: flex; flex-direction: column; gap: 12px; margin-top: 4px;">
+        <input type="hidden" id="sub-bm-parent-id" value="" />
+        <input type="hidden" id="sub-bm-idx" value="" />
+
+        <div>
+          <label for="sub-bm-title-input" style="font-size: 0.85rem; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Sub-Bookmark Title</label>
+          <input type="text" id="sub-bm-title-input" required placeholder="e.g. Server 1" style="width: 100%; padding: 10px 12px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; color: #f8fafc; font-size: 0.9rem;" />
+        </div>
+
+        <div>
+          <label for="sub-bm-url-input" style="font-size: 0.85rem; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Sub-Bookmark URL</label>
+          <input type="text" id="sub-bm-url-input" required placeholder="e.g. https://example.com" style="width: 100%; padding: 10px 12px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; color: #f8fafc; font-size: 0.9rem;" />
+        </div>
+
+        <div>
+          <label for="sub-bm-icon-input" style="font-size: 0.85rem; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Icon URL / Preset (Optional - uses parent icon if empty)</label>
+          <input type="text" id="sub-bm-icon-input" placeholder="Custom Icon URL or preset:gamepad" style="width: 100%; padding: 10px 12px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; color: #f8fafc; font-size: 0.9rem;" />
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 8px;">
+          <button id="sub-bm-delete-btn" type="button" class="modal-submit-btn" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; flex: 1; margin-top: 0; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+            <svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            <span>Delete Link</span>
+          </button>
+          <button id="sub-bm-save-btn" type="submit" class="modal-submit-btn" style="flex: 1.2; margin-top: 0; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+            <svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <span>Save Changes</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Direct Site Test Prompt Modal for Default & Custom Bookmarks -->
   <div id="builtin-test-modal" class="modal-backdrop">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="builtin-modal-title" style="max-width: 450px;">
@@ -2149,6 +2203,7 @@
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' || e.keyCode === 27) {
           var addModal = $('add-modal');
+          var subBmModal = $('sub-bm-modal');
           var builtinModal = $('builtin-test-modal');
           var emoeModal = $('everythingmoe-modal');
           var reorderBar = $('reorder-bar');
@@ -2157,6 +2212,8 @@
             closeEverythingMoeNoticeModal();
           } else if (builtinModal && builtinModal.classList.contains('active')) {
             closeBuiltinTestModal();
+          } else if (subBmModal && subBmModal.classList.contains('active')) {
+            closeSubBmModal();
           } else if (addModal && addModal.classList.contains('active')) {
             closeAddModal();
           } else if (reorderBar && reorderBar.classList.contains('active')) {
@@ -2202,7 +2259,6 @@
         { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anisnatch.top&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-        { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anify.to&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
         { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
         { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "/proxy/https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
@@ -2240,13 +2296,14 @@
           id: "bm_bloxcraftstudios",
           categoryId: "cat_games",
           title: "Bloxcraft Studios",
-          url: "https://5kh0.github.io",
+          url: "https://bloxcraft-ubg.pages.dev",
           type: "folder_bookmark",
           icon: "/proxy/https://5kh0.github.io/bloxcraft_transparent.png",
           builtIn: true,
           hidden: false,
           order: 14,
           subBookmarks: [
+            { id: "sub_bloxcraft_5kh0", title: "Bloxcraft (5kh0)", url: "https://5kh0.github.io", icon: "" },
             { id: "sub_bloxcraft_fastly", title: "Bloxcraft (Fastly)", url: "https://bloxcraftubg.freetls.fastly.net/games/", icon: "https://www.google.com/s2/favicons?domain=bloxcraftubg.freetls.fastly.net&sz=64" }
           ]
         }
@@ -2321,10 +2378,15 @@
           updated = true;
         }
 
+        // Migration: Remove pruned built-in bookmarks (like Anify)
+        var initLen = data.bookmarks.length;
+        data.bookmarks = data.bookmarks.filter(function (b) { return b.id !== 'bm_anify'; });
+        if (data.bookmarks.length !== initLen) updated = true;
+
         // Migration: Re-sort built-in anime bookmarks so FMHY: Anime is under EverythingMoe and above AniSnatch
         var animeBms = data.bookmarks.filter(function (b) { return b.categoryId === 'cat_anime' && b.builtIn; });
         if (animeBms.length > 0) {
-          var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_anify", "bm_anidb"];
+          var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_anidb"];
           desiredAnimeOrder.forEach(function (id, index) {
             var found = animeBms.find(function (b) { return b.id === id; });
             if (found && found.order !== index) {
@@ -3254,7 +3316,8 @@
                 var sbLeft = document.createElement('div');
                 sbLeft.className = 'bookmark-card-left';
 
-                var sbIconEl = renderIconElement(sb.icon, sb.url, sb.title);
+                var sbIconToUse = (sb.icon && sb.icon.trim()) ? sb.icon : (bm.icon || sb.icon);
+                var sbIconEl = renderIconElement(sbIconToUse, sb.url, sb.title);
 
                 var sbTitle = document.createElement('span');
                 sbTitle.className = 'bookmark-title';
@@ -3263,21 +3326,26 @@
                 sbLeft.appendChild(sbIconEl);
                 sbLeft.appendChild(sbTitle);
 
-                var sbDelBtn = document.createElement('button');
-                sbDelBtn.type = 'button';
-                sbDelBtn.title = 'Delete sub-bookmark';
-                sbDelBtn.style.background = 'none';
-                sbDelBtn.style.border = 'none';
-                sbDelBtn.style.color = '#ef4444';
-                sbDelBtn.style.cursor = 'pointer';
-                sbDelBtn.style.fontSize = '0.85rem';
-                sbDelBtn.textContent = '✕';
-                sbDelBtn.onclick = function (e) {
+                var sbEditBtn = document.createElement('button');
+                sbEditBtn.type = 'button';
+                sbEditBtn.title = 'Edit sub-bookmark';
+                sbEditBtn.style.background = 'none';
+                sbEditBtn.style.border = 'none';
+                sbEditBtn.style.color = '#94a3b8';
+                sbEditBtn.style.cursor = 'pointer';
+                sbEditBtn.style.padding = '2px 4px';
+                sbEditBtn.style.borderRadius = '4px';
+                sbEditBtn.style.display = 'inline-flex';
+                sbEditBtn.style.alignItems = 'center';
+                sbEditBtn.style.justifyContent = 'center';
+                sbEditBtn.style.transition = 'color 0.2s ease, background 0.2s ease';
+                sbEditBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>';
+                sbEditBtn.onmouseover = function () { sbEditBtn.style.color = '#38bdf8'; sbEditBtn.style.background = 'rgba(56, 189, 248, 0.15)'; };
+                sbEditBtn.onmouseout = function () { sbEditBtn.style.color = '#94a3b8'; sbEditBtn.style.background = 'none'; };
+                sbEditBtn.onclick = function (e) {
                   e.preventDefault();
                   e.stopPropagation();
-                  bm.subBookmarks.splice(sbIdx, 1);
-                  saveBookmarkData(data);
-                  renderBookmarksUI();
+                  openSubBmModal(bm.id, sbIdx, sb);
                 };
 
                 sbCard.onclick = function (e) {
@@ -3303,7 +3371,7 @@
                 };
 
                 sbCard.appendChild(sbLeft);
-                sbCard.appendChild(sbDelBtn);
+                sbCard.appendChild(sbEditBtn);
                 subContainer.appendChild(sbCard);
               });
 
@@ -4122,6 +4190,27 @@
       } catch (e) {}
     }
 
+    function openSubBmModal(parentBmId, subIdx, subItem) {
+      $('sub-bm-parent-id').value = parentBmId || '';
+      $('sub-bm-idx').value = subIdx !== undefined && subIdx !== null ? subIdx : '';
+      $('sub-bm-title-input').value = subItem ? (subItem.title || '') : '';
+      $('sub-bm-url-input').value = subItem ? (subItem.url || '') : '';
+      $('sub-bm-icon-input').value = subItem ? (subItem.icon || '') : '';
+
+      var modal = $('sub-bm-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeSubBmModal() {
+      var modal = $('sub-bm-modal');
+      if (modal) modal.classList.remove('active');
+      $('sub-bm-parent-id').value = '';
+      $('sub-bm-idx').value = '';
+      $('sub-bm-title-input').value = '';
+      $('sub-bm-url-input').value = '';
+      $('sub-bm-icon-input').value = '';
+    }
+
     function closeAddModal() {
       var modal = $('add-modal');
       if (modal) modal.classList.remove('active');
@@ -4241,7 +4330,45 @@
       }
 
       $('close-modal-btn').onclick = closeAddModal;
+      $('close-sub-bm-modal-btn').onclick = closeSubBmModal;
       $('close-builtin-modal-btn').onclick = closeBuiltinTestModal;
+
+      $('sub-bm-delete-btn').onclick = function () {
+        var parentBmId = $('sub-bm-parent-id').value;
+        var subIdx = parseInt($('sub-bm-idx').value, 10);
+        if (!parentBmId || isNaN(subIdx)) return;
+
+        var data = loadBookmarkData();
+        var bm = data.bookmarks.find(function (b) { return b.id === parentBmId; });
+        if (bm && bm.subBookmarks && subIdx >= 0 && subIdx < bm.subBookmarks.length) {
+          bm.subBookmarks.splice(subIdx, 1);
+          saveBookmarkData(data);
+          closeSubBmModal();
+          renderBookmarksUI();
+        }
+      };
+
+      $('form-sub-bm').onsubmit = function (e) {
+        e.preventDefault();
+        var parentBmId = $('sub-bm-parent-id').value;
+        var subIdx = parseInt($('sub-bm-idx').value, 10);
+        var title = $('sub-bm-title-input').value.trim();
+        var url = $('sub-bm-url-input').value.trim();
+        var icon = $('sub-bm-icon-input').value.trim();
+
+        if (!parentBmId || isNaN(subIdx) || !title || !url) return;
+
+        var data = loadBookmarkData();
+        var bm = data.bookmarks.find(function (b) { return b.id === parentBmId; });
+        if (bm && bm.subBookmarks && subIdx >= 0 && subIdx < bm.subBookmarks.length) {
+          bm.subBookmarks[subIdx].title = title;
+          bm.subBookmarks[subIdx].url = url;
+          bm.subBookmarks[subIdx].icon = icon;
+          saveBookmarkData(data);
+          closeSubBmModal();
+          renderBookmarksUI();
+        }
+      };
       $('close-everythingmoe-modal-btn').onclick = closeEverythingMoeNoticeModal;
       $('close-share-modal-btn').onclick = closeShareModal;
 

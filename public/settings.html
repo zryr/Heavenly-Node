@@ -1254,8 +1254,7 @@
         { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anisnatch.top&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-        { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anify.to&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-        { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+        { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
         { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "/proxy/https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=7movies.in&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
@@ -1292,13 +1291,14 @@
           id: "bm_bloxcraftstudios",
           categoryId: "cat_games",
           title: "Bloxcraft Studios",
-          url: "https://5kh0.github.io",
+          url: "https://bloxcraft-ubg.pages.dev",
           type: "folder_bookmark",
           icon: "/proxy/https://5kh0.github.io/bloxcraft_transparent.png",
           builtIn: true,
           hidden: false,
           order: 14,
           subBookmarks: [
+            { id: "sub_bloxcraft_5kh0", title: "Bloxcraft (5kh0)", url: "https://5kh0.github.io", icon: "" },
             { id: "sub_bloxcraft_fastly", title: "Bloxcraft (Fastly)", url: "https://bloxcraftubg.freetls.fastly.net/games/", icon: "https://www.google.com/s2/favicons?domain=bloxcraftubg.freetls.fastly.net&sz=64" }
           ]
         }
@@ -1402,10 +1402,15 @@
           updated = true;
         }
 
+        // Migration: Remove pruned built-in bookmarks (like Anify)
+        var initLen = data.bookmarks.length;
+        data.bookmarks = data.bookmarks.filter(function (b) { return b.id !== 'bm_anify'; });
+        if (data.bookmarks.length !== initLen) updated = true;
+
         // Migration: Re-sort built-in anime bookmarks so FMHY: Anime is under EverythingMoe and above AniSnatch
         var animeBms = data.bookmarks.filter(function (b) { return b.categoryId === 'cat_anime' && b.builtIn; });
         if (animeBms.length > 0) {
-          var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_anify", "bm_anidb"];
+          var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_anidb"];
           desiredAnimeOrder.forEach(function (id, index) {
             var found = animeBms.find(function (b) { return b.id === id; });
             if (found && found.order !== index) {
