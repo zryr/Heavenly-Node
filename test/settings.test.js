@@ -86,4 +86,11 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('if (!freshData.bookmarks.some(function (fb) { return fb.id === b.id; }))'), 'reset action should deduplicate bookmarks by ID');
         assert.ok(html.includes('if (!freshData.categories.some(function (fc) { return fc.id === c.id; }))'), 'reset action should deduplicate categories by ID');
     });
+
+    it('should attach keydown Escape key listener to close export/import modals and custom preset dropdown menu', function() {
+        assert.ok(html.includes("if (e.key === 'Escape' || e.keyCode === 27)"), 'settings.html should listen for Escape key');
+        assert.ok(html.includes('closeExportModal()'), 'Escape key should close export modal if active');
+        assert.ok(html.includes('closeImportModal()'), 'Escape key should close import modal if active');
+        assert.ok(html.includes('closePresetDropdown()'), 'Escape key should close custom preset dropdown menu if active');
+    });
 });
