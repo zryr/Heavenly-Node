@@ -1489,7 +1489,7 @@
           { id: "bm_anify", categoryId: "cat_anime", title: "Anify", url: "https://anify.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anify.to&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
           { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
           { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-          { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "/proxy/https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
           { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=7movies.in&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
           {
             id: "bm_individual_games",
@@ -1516,7 +1516,7 @@
           { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
           { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
           { id: "bm_mgalternative", categoryId: "cat_games", title: "MG Alternative", url: "https://mgalternative.github.io", type: "bookmark", icon: "preset:star", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
-          { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=masonsunblockedgames.github.io&sz=64", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
+          { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "/proxy/https://masonsunblockedgames.github.io/MasonsUnblockedGames/favicon.ico", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
           { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=geometryspot.com&sz=64", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
           { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
           { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
@@ -1526,7 +1526,7 @@
             title: "Bloxcraft Studios",
             url: "https://5kh0.github.io",
             type: "folder_bookmark",
-            icon: "https://www.google.com/s2/favicons?domain=5kh0.github.io&sz=64",
+            icon: "/proxy/https://5kh0.github.io/bloxcraft_transparent.png",
             builtIn: true,
             hidden: false,
             order: 14,
@@ -3190,6 +3190,11 @@
 
         var directRawIconUrl = detectActiveFavicon(window, config);
         var proxiedIconUrl = fixUrl(directRawIconUrl, config, window.location);
+        function getFullProxiedUrl(relOrAbsUrl) {
+          if (!relOrAbsUrl) return '';
+          if (relOrAbsUrl.startsWith('http://') || relOrAbsUrl.startsWith('https://')) return relOrAbsUrl;
+          return window.location.origin + (relOrAbsUrl.startsWith('/') ? '' : '/') + relOrAbsUrl;
+        }
 
         card.innerHTML = [
           '<div class="picker-header">',
@@ -3253,8 +3258,9 @@
 
         card.querySelector('#copy-proxied-btn').onclick = function (e) {
           e.stopPropagation();
+          var fullProxied = getFullProxiedUrl(proxiedIconUrl);
           if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(proxiedIconUrl).then(function () {
+            navigator.clipboard.writeText(fullProxied).then(function () {
               if (statusEl) statusEl.textContent = 'Proxied icon link copied!';
             });
           }
