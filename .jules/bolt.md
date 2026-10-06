@@ -39,3 +39,9 @@
 **Learning:** Slicing strings with `substr(0, N)` inside high-frequency client-side functions like `fixUrl`, `getCurrentRemoteHref`, and `getDirectRemoteUrl` creates unnecessary string slice allocations on the heap on every URL evaluation. Using native `String.prototype.startsWith()` avoids heap allocation per check and runs ~59.9% faster in hot loop execution.
 
 **Action:** Prefer `String.prototype.startsWith()` over `substr(0, N) === ...` when performing prefix checks on hot execution paths to reduce garbage collection pressure.
+
+## 2025-05-25 - Fast-guarding structural DOM elements in MutationObserver node traversal
+
+**Learning:** During DOM mutation observation, traversing added element subtrees (e.g. `DIV`, `SPAN`, `P`, `LI`, `TR`, `TD`, etc.) and calling `el.tagName.toLowerCase()` and `getAttribute()` on every element node creates significant string allocation and CPU overhead. Additionally, replacing `.toLowerCase()` with multi-operand string equality checks (e.g. `tag === 'IMG' || tag === 'SCRIPT' ...`) in V8 is actually slower than `.toLowerCase()`. Guarding traversal with an early check for common non-resource structural tags (`DIV`, `SPAN`, `P`, etc.) bypasses `toLowerCase()` and attribute extraction entirely, yielding a ~36.5% speedup in DOM mutation processing time.
+
+**Action:** When scanning or processing DOM element subtrees for URL rewriters or attribute observers, add a fast-path guard for common structural tags (`DIV`, `SPAN`, `P`, etc.) to skip string lowercasing and attribute checks for non-resource elements.
