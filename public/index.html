@@ -1757,6 +1757,24 @@
       }
     }
 
+    function openInAboutBlank(url, title) {
+      if (!url) return;
+      var win = window.open('about:blank', '_blank');
+      if (win) {
+        try {
+          var doc = win.document;
+          doc.open();
+          doc.write('<!DOCTYPE html><html><head><title>' + (title || 'Classes') + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}iframe{width:100%;height:100%;border:none;display:block;}</style></head><body><iframe src="' + url + '"></iframe></body></html>');
+          doc.close();
+        } catch (e) {
+          win.location.href = url;
+        }
+      } else {
+        showLoadingScreen();
+        window.location.href = url;
+      }
+    }
+
     function processSearchSubmission(inNewTab) {
       var url = $('url').value.trim();
       if (!url) return false;
@@ -1771,7 +1789,7 @@
 
       var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + url;
       if (inNewTab) {
-        window.open(proxiedUrl, '_blank', 'noopener');
+        openInAboutBlank(proxiedUrl, 'Google Search');
       } else {
         showLoadingScreen();
         window.location = proxiedUrl;
@@ -2293,6 +2311,7 @@
         { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "/proxy/https://masonsunblockedgames.github.io/MasonsUnblockedGames/favicon.ico", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
         { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=geometryspot.com&sz=64", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
         { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
+        { id: "bm_interdimensional_lite", categoryId: "cat_games", title: "Interdimensional Lite", url: "https://pinkdev.d13qic2f6zga3.amplifyapp.com", type: "folder_bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
         { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
         {
           id: "bm_bloxcraftstudios",
@@ -3092,7 +3111,7 @@
                 if (settings.skipBuiltinTestPrompt) {
                   e.preventDefault();
                   if (targetMode === '_blank') {
-                    window.open(proxiedUrl, '_blank', 'noopener');
+                    openInAboutBlank(proxiedUrl, bm.title);
                   } else {
                     showLoadingScreen();
                     window.location.href = proxiedUrl;
@@ -3366,7 +3385,7 @@
                   if (settings.skipBuiltinTestPrompt) {
                     e.preventDefault();
                     if (targetMode === '_blank') {
-                      window.open(sbProxiedUrl, '_blank', 'noopener');
+                      openInAboutBlank(sbProxiedUrl, sb.title);
                     } else {
                       showLoadingScreen();
                       window.location.href = sbProxiedUrl;
@@ -4383,11 +4402,11 @@
       $('close-everythingmoe-modal-btn').onclick = closeEverythingMoeNoticeModal;
       $('close-share-modal-btn').onclick = closeShareModal;
 
-      function openTargetUrlWithSetting(targetUrl) {
+      function openTargetUrlWithSetting(targetUrl, title) {
         if (!targetUrl) return;
         var settings = loadSettings();
         if (settings.openBookmarksInNewTab !== false) {
-          window.open(targetUrl, '_blank', 'noopener');
+          openInAboutBlank(targetUrl, title || 'Classes');
         } else {
           showLoadingScreen();
           window.location.href = targetUrl;

@@ -242,7 +242,7 @@ describe('unblocker-client.js Heavenly Widgets', function () {
                 mockListeners[evt] = fn;
             },
             localStorage: {
-                getItem: function () { return null; },
+                getItem: function () { return JSON.stringify({ useWidgetDock: false }); },
                 setItem: function () {}
             },
             innerWidth: 1024,
