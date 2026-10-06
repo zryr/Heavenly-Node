@@ -1481,8 +1481,12 @@
 
           <!-- Unified Manual / Custom URL Container -->
           <div id="icon-manual-container" style="display: none; padding: 10px; background: rgba(30, 41, 59, 0.4); border-radius: 12px; border: 1px solid rgba(148,163,184,0.2); font-size: 0.78rem; color: #cbd5e1; line-height: 1.4; display: flex; flex-direction: column; gap: 8px;">
-            <div>Enter an image / GIF URL directly below, or leave empty and save to launch the site with a live icon picker overlay widget:</div>
+            <div>Enter an image / GIF URL directly below, or click the Live Icon Picker button to detect icons on the target site:</div>
             <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="Custom Icon URL (e.g. https://example.com/icon.png)" style="font-size: 0.82rem; padding: 8px 10px;" />
+            <button type="button" id="btn-launch-live-picker" style="padding: 8px 12px; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 10px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;">
+              <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <span>Launch Live Icon Picker Overlay</span>
+            </button>
           </div>
         </div>
 
@@ -2414,7 +2418,7 @@
       var img = document.createElement('img');
       img.className = 'bookmark-icon';
       img.alt = altText || 'Bookmark icon';
-      if (iconVal && (iconVal.startsWith('http') || iconVal.startsWith('data:'))) {
+      if (iconVal && (iconVal.startsWith('http') || iconVal.startsWith('data:') || iconVal.startsWith('/proxy/'))) {
         img.src = iconVal;
       } else {
         try {
@@ -4295,17 +4299,15 @@
         };
       }
 
-      // Submit Bookmark Form
-      $('form-add-bm').onsubmit = function (e) {
-        e.preventDefault();
+      function saveBookmarkForm() {
         var bmId = $('bm-id').value;
         var bmType = $('bm-type').value;
         var title = $('bm-title').value.trim();
         var url = $('bm-url').value.trim();
         var categoryId = $('bm-category').value;
 
-        if (!title || !categoryId) return;
-        if (bmType !== 'folder' && !url) return;
+        if (!title || !categoryId) return null;
+        if (bmType !== 'folder' && !url) return null;
 
         var iconVal = '';
         var customIconInput = $('bm-custom-icon-url').value.trim();
@@ -4346,20 +4348,45 @@
           });
         }
         saveBookmarkData(data);
-        closeAddModal();
-        renderBookmarksUI();
+        return { id: targetBmId, url: url };
+      }
 
-        if (selectedIconMode === 'manual' && !customIconInput && url) {
-          var cleanUrl = url.startsWith('http') ? url : 'https://' + url;
+      var btnLaunchLivePicker = $('btn-launch-live-picker');
+      if (btnLaunchLivePicker) {
+        btnLaunchLivePicker.onclick = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var res = saveBookmarkForm();
+          if (!res) {
+            alert('Please enter a Bookmark Title and URL first.');
+            return;
+          }
+          var urlToLaunch = res.url;
+          if (!urlToLaunch) {
+            alert('Please enter a Bookmark URL to launch the Live Icon Picker.');
+            return;
+          }
+          var cleanUrl = urlToLaunch.startsWith('http') ? urlToLaunch : 'https://' + urlToLaunch;
           try {
             localStorage.setItem('heavenly_manual_icon_pending', JSON.stringify({
-              bookmarkId: targetBmId,
+              bookmarkId: res.id,
               targetUrl: cleanUrl,
               timestamp: Date.now()
             }));
           } catch (err) {}
+          closeAddModal();
           showLoadingScreen();
           window.location = location.protocol + '//' + location.host + '/proxy/' + cleanUrl;
+        };
+      }
+
+      // Submit Bookmark Form
+      $('form-add-bm').onsubmit = function (e) {
+        e.preventDefault();
+        var res = saveBookmarkForm();
+        if (res) {
+          closeAddModal();
+          renderBookmarksUI();
         }
       };
 
