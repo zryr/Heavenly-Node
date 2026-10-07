@@ -1757,24 +1757,6 @@
       }
     }
 
-    function openInAboutBlank(url, title) {
-      if (!url) return;
-      var win = window.open('about:blank', '_blank');
-      if (win) {
-        try {
-          var doc = win.document;
-          doc.open();
-          doc.write('<!DOCTYPE html><html><head><title>' + (title || 'Classes') + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}iframe{width:100%;height:100%;border:none;display:block;}</style></head><body><iframe src="' + url + '"></iframe></body></html>');
-          doc.close();
-        } catch (e) {
-          win.location.href = url;
-        }
-      } else {
-        showLoadingScreen();
-        window.location.href = url;
-      }
-    }
-
     function processSearchSubmission(inNewTab) {
       var url = $('url').value.trim();
       if (!url) return false;
@@ -1789,7 +1771,7 @@
 
       var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + url;
       if (inNewTab) {
-        openInAboutBlank(proxiedUrl, 'Google Search');
+        window.open(proxiedUrl, '_blank', 'noopener');
       } else {
         showLoadingScreen();
         window.location = proxiedUrl;
@@ -3112,7 +3094,7 @@
                 if (settings.skipBuiltinTestPrompt) {
                   e.preventDefault();
                   if (targetMode === '_blank') {
-                    openInAboutBlank(proxiedUrl, bm.title);
+                    window.open(proxiedUrl, '_blank', 'noopener');
                   } else {
                     showLoadingScreen();
                     window.location.href = proxiedUrl;
@@ -3386,7 +3368,7 @@
                   if (settings.skipBuiltinTestPrompt) {
                     e.preventDefault();
                     if (targetMode === '_blank') {
-                      openInAboutBlank(sbProxiedUrl, sb.title);
+                      window.open(sbProxiedUrl, '_blank', 'noopener');
                     } else {
                       showLoadingScreen();
                       window.location.href = sbProxiedUrl;
@@ -4403,11 +4385,11 @@
       $('close-everythingmoe-modal-btn').onclick = closeEverythingMoeNoticeModal;
       $('close-share-modal-btn').onclick = closeShareModal;
 
-      function openTargetUrlWithSetting(targetUrl, title) {
+      function openTargetUrlWithSetting(targetUrl) {
         if (!targetUrl) return;
         var settings = loadSettings();
         if (settings.openBookmarksInNewTab !== false) {
-          openInAboutBlank(targetUrl, title || 'Classes');
+          window.open(targetUrl, '_blank', 'noopener');
         } else {
           showLoadingScreen();
           window.location.href = targetUrl;

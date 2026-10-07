@@ -804,7 +804,6 @@
       showNavSearch: saved.showNavSearch !== undefined ? saved.showNavSearch : true,
       showNavHome: saved.showNavHome !== undefined ? saved.showNavHome : true,
       useWidgetDock: saved.useWidgetDock !== undefined ? saved.useWidgetDock : true,
-      openInAboutBlank: saved.openInAboutBlank !== undefined ? saved.openInAboutBlank : true,
       dockPosition: saved.dockPosition || 'bottom',
       expandDirection: saved.expandDirection || 'left',
       disableAllWidgets: saved.disableAllWidgets || false,
@@ -1385,21 +1384,23 @@
     }
   }
 
-  function openCurrentPageInAboutBlank(window) {
-    try {
-      var title = window.__heavenlyOriginalTitle || window.document.title || 'Classes';
-      var url = window.location.href;
-      var openFn = window.__nativeWinOpen || window.open;
-      var win = openFn.call(window, 'about:blank', '_blank');
-      if (win) {
-        var doc = win.document;
-        doc.open();
-        doc.write('<!DOCTYPE html><html><head><title>' + title + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}iframe{width:100%;height:100%;border:none;display:block;}</style></head><body><iframe src="' + url + '"></iframe></body></html>');
-        doc.close();
-      }
-    } catch (e) {
-      console.error('Error opening page in about:blank:', e);
-    }
+  function getPresetSvg(key, size) {
+    var sz = size || '18px';
+    var svgMap = {
+      'preset:sparkles': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>',
+      'preset:gamepad': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><circle cx="15" cy="13" r="1"></circle><circle cx="18" cy="11" r="1"></circle><rect x="2" y="6" width="20" height="12" rx="5"></rect></svg>',
+      'preset:star': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>',
+      'preset:folder': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>',
+      'preset:list': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>',
+      'preset:globe': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>',
+      'preset:bookmark': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>',
+      'preset:film': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>',
+      'preset:tv': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>',
+      'preset:zap': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>',
+      'preset:shield': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
+      'preset:heart': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>'
+    };
+    return svgMap[key] || null;
   }
 
   function openDirectSitePreview(window, directUrl) {
@@ -1719,19 +1720,34 @@
       var existingModal = window.document.getElementById('heavenly-bookmark-prompt-modal');
       if (existingModal) existingModal.remove();
 
+      // Read bookmark data
+      var data = { categories: [], bookmarks: [] };
+      try {
+        var raw = storage.getItem('heavenly_bookmarks');
+        if (raw) data = JSON.parse(raw);
+      } catch (e) {}
+      if (!data.categories || data.categories.length === 0) {
+        data.categories = [
+          { id: "cat_movies", title: "Movies/Shows" },
+          { id: "cat_anime", title: "Anime/Manga" },
+          { id: "cat_games", title: "Games" }
+        ];
+      }
+      if (!data.bookmarks) data.bookmarks = [];
+
       var backdrop = window.document.createElement('div');
       backdrop.id = 'heavenly-bookmark-prompt-modal';
-      backdrop.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:16px;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
+      backdrop.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:16px;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
 
       var card = window.document.createElement('div');
-      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:500px;padding:24px;display:flex;flex-direction:column;gap:16px;color:#f8fafc;max-height:90vh;overflow-y:auto;';
+      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:520px;padding:24px;display:flex;flex-direction:column;gap:16px;color:#f8fafc;max-height:90vh;overflow-y:auto;';
 
       var header = window.document.createElement('div');
       header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(148,163,184,0.15);padding-bottom:12px;';
 
-      var titleEl = window.document.createElement('span');
-      titleEl.style.cssText = 'font-size:1.15rem;font-weight:700;color:#f8fafc;display:flex;align-items:center;gap:8px;';
-      titleEl.innerHTML = '<svg style="width:18px;height:18px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>Bookmark Current Page</span>';
+      var titleEl = window.document.createElement('div');
+      titleEl.style.cssText = 'display:flex;align-items:center;gap:10px;';
+      titleEl.innerHTML = '<div style="width:36px;height:36px;border-radius:10px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.4);display:flex;align-items:center;justify-content:center;"><svg style="width:20px;height:20px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div><div><div style="font-size:1.15rem;font-weight:700;color:#f8fafc;">Bookmark Current Page</div><div style="font-size:0.8rem;color:#94a3b8;">Save page to your Heavenly bookmarks</div></div>';
 
       var closeBtn = window.document.createElement('button');
       closeBtn.type = 'button';
@@ -1743,7 +1759,7 @@
       header.appendChild(closeBtn);
 
       var body = window.document.createElement('div');
-      body.style.cssText = 'display:flex;flex-direction:column;gap:12px;font-size:0.88rem;color:#cbd5e1;';
+      body.style.cssText = 'display:flex;flex-direction:column;gap:14px;font-size:0.88rem;color:#cbd5e1;';
 
       // Category field
       var catLabel = window.document.createElement('label');
@@ -1781,47 +1797,115 @@
       urlInput.style.cssText = 'padding:10px 12px;background:rgba(30,41,59,0.8);border:1px solid rgba(56,189,248,0.3);border-radius:12px;color:#f8fafc;font-size:0.9rem;outline:none;font-family:inherit;';
       urlLabel.appendChild(urlInput);
 
-      // Icon Selection field
-      var iconLabel = window.document.createElement('label');
-      iconLabel.style.cssText = 'font-weight:600;color:#e0f2fe;display:flex;flex-direction:column;gap:6px;';
-      iconLabel.textContent = 'Bookmark Icon:';
+      // Icon Selection Section
+      var iconSection = window.document.createElement('div');
+      iconSection.style.cssText = 'display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(148,163,184,0.15);padding-top:12px;';
+
+      var iconHeaderRow = window.document.createElement('div');
+      iconHeaderRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
+
+      var iconLabelTitle = window.document.createElement('span');
+      iconLabelTitle.style.cssText = 'font-weight:600;color:#e0f2fe;font-size:0.9rem;';
+      iconLabelTitle.textContent = 'Bookmark Icon & Preview:';
+
+      var previewBox = window.document.createElement('div');
+      previewBox.style.cssText = 'width:42px;height:44px;border-radius:12px;background:rgba(30,41,59,0.9);border:1px solid rgba(56,189,248,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 15px rgba(56,189,248,0.2);overflow:hidden;';
+
+      function updateIconPreview(val) {
+        previewBox.innerHTML = '';
+        var svg = getPresetSvg(val, '22px');
+        if (svg) {
+          previewBox.innerHTML = svg;
+        } else if (val) {
+          var img = window.document.createElement('img');
+          img.src = val;
+          img.style.cssText = 'width:26px;height:26px;object-fit:contain;border-radius:6px;';
+          img.onerror = function () {
+            previewBox.innerHTML = getPresetSvg('preset:globe', '22px');
+          };
+          previewBox.appendChild(img);
+        } else {
+          previewBox.innerHTML = getPresetSvg('preset:star', '22px');
+        }
+      }
+
+      iconHeaderRow.appendChild(iconLabelTitle);
+      iconHeaderRow.appendChild(previewBox);
+
+      // Icon Input Field
       var iconInput = window.document.createElement('input');
       iconInput.type = 'text';
-      iconInput.placeholder = 'Favicon URL or preset:sparkles...';
+      iconInput.placeholder = 'Icon image URL or preset:sparkles...';
       iconInput.value = defaultFavicon;
       iconInput.style.cssText = 'padding:10px 12px;background:rgba(30,41,59,0.8);border:1px solid rgba(56,189,248,0.3);border-radius:12px;color:#f8fafc;font-size:0.9rem;outline:none;font-family:inherit;';
+      iconInput.oninput = function () { updateIconPreview(iconInput.value.trim()); };
 
-      var presetContainer = window.document.createElement('div');
-      presetContainer.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;';
-      var presets = [
-        { label: 'Favicon', val: defaultFavicon },
-        { label: '✨ Sparkles', val: 'preset:sparkles' },
-        { label: '🎮 Gamepad', val: 'preset:gamepad' },
-        { label: '⭐ Star', val: 'preset:star' },
-        { label: '📁 Folder', val: 'preset:folder' },
-        { label: '📋 List', val: 'preset:list' }
+      // Presets Grid
+      var presetSubTitle = window.document.createElement('span');
+      presetSubTitle.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;';
+      presetSubTitle.textContent = 'Select Preset Icon or Favicon:';
+
+      var presetGrid = window.document.createElement('div');
+      presetGrid.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+
+      var presetList = [
+        { name: 'Favicon', val: defaultFavicon, iconSvg: getPresetSvg('preset:globe', '15px') },
+        { name: 'Sparkles', val: 'preset:sparkles', iconSvg: getPresetSvg('preset:sparkles', '15px') },
+        { name: 'Gamepad', val: 'preset:gamepad', iconSvg: getPresetSvg('preset:gamepad', '15px') },
+        { name: 'Star', val: 'preset:star', iconSvg: getPresetSvg('preset:star', '15px') },
+        { name: 'Folder', val: 'preset:folder', iconSvg: getPresetSvg('preset:folder', '15px') },
+        { name: 'List', val: 'preset:list', iconSvg: getPresetSvg('preset:list', '15px') },
+        { name: 'Globe', val: 'preset:globe', iconSvg: getPresetSvg('preset:globe', '15px') },
+        { name: 'Bookmark', val: 'preset:bookmark', iconSvg: getPresetSvg('preset:bookmark', '15px') },
+        { name: 'Film', val: 'preset:film', iconSvg: getPresetSvg('preset:film', '15px') },
+        { name: 'TV', val: 'preset:tv', iconSvg: getPresetSvg('preset:tv', '15px') },
+        { name: 'Zap', val: 'preset:zap', iconSvg: getPresetSvg('preset:zap', '15px') },
+        { name: 'Shield', val: 'preset:shield', iconSvg: getPresetSvg('preset:shield', '15px') },
+        { name: 'Heart', val: 'preset:heart', iconSvg: getPresetSvg('preset:heart', '15px') }
       ];
-      presets.forEach(function (p) {
+
+      presetList.forEach(function (p) {
         var pBtn = window.document.createElement('button');
         pBtn.type = 'button';
-        pBtn.style.cssText = 'padding:6px 10px;border-radius:8px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;';
-        pBtn.textContent = p.label;
+        pBtn.style.cssText = 'padding:6px 10px;border-radius:8px;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;';
+        pBtn.innerHTML = p.iconSvg + '<span>' + p.name + '</span>';
         pBtn.onclick = function () {
           iconInput.value = p.val;
+          updateIconPreview(p.val);
         };
-        presetContainer.appendChild(pBtn);
+        presetGrid.appendChild(pBtn);
       });
 
-      iconLabel.appendChild(iconInput);
-      iconLabel.appendChild(presetContainer);
+      // Live Page Icon Picker Overlay Launcher Button
+      var pickerBtn = window.document.createElement('button');
+      pickerBtn.type = 'button';
+      pickerBtn.style.cssText = 'padding:8px 12px;border-radius:10px;background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.4);color:#c084fc;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;margin-top:2px;';
+      pickerBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>Launch Live Icon Picker on Page</span>';
+      pickerBtn.onclick = function () {
+        backdrop.remove();
+        storage.setItem('heavenly_manual_icon_pending', JSON.stringify({
+          domain: domain,
+          targetUrl: unproxiedUrl,
+          timestamp: Date.now()
+        }));
+        window.location.reload();
+      };
+
+      updateIconPreview(defaultFavicon);
+
+      iconSection.appendChild(iconHeaderRow);
+      iconSection.appendChild(iconInput);
+      iconSection.appendChild(presetSubTitle);
+      iconSection.appendChild(presetGrid);
+      iconSection.appendChild(pickerBtn);
 
       body.appendChild(catLabel);
       body.appendChild(titleLabel);
       body.appendChild(urlLabel);
-      body.appendChild(iconLabel);
+      body.appendChild(iconSection);
 
       var actions = window.document.createElement('div');
-      actions.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;margin-top:8px;';
+      actions.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;margin-top:6px;';
 
       var cancelBtn = window.document.createElement('button');
       cancelBtn.type = 'button';
@@ -1831,7 +1915,7 @@
 
       var saveBtn = window.document.createElement('button');
       saveBtn.type = 'button';
-      saveBtn.style.cssText = 'padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;';
+      saveBtn.style.cssText = 'padding:10px 22px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;box-shadow:0 0 15px rgba(56,189,248,0.4);';
       saveBtn.textContent = 'Save Bookmark';
       saveBtn.onclick = function () {
         var finalCat = catSelect.value || data.categories[0].id;
@@ -2339,8 +2423,6 @@
             items.push('<button type="button" class="btn-ctrl" id="dock-home-btn" title="Go Home"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
-          items.push('<button type="button" class="btn-ctrl" id="dock-aboutblank-btn" title="Open in about:blank Cloak Tab"><svg class="title-icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg><span>about:blank</span></button>');
-
           items.push('<button type="button" class="btn-ctrl" id="dock-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
 
           if (showNavBookmark) {
@@ -2471,15 +2553,6 @@
               pullBtn.querySelector('span').style.transform = 'rotate(0deg)';
             }
           });
-
-          // Wire up about:blank button
-          var aboutBlankBtn = dockBar.querySelector('#dock-aboutblank-btn');
-          if (aboutBlankBtn) {
-            aboutBlankBtn.addEventListener('click', function (e) {
-              e.stopPropagation();
-              openCurrentPageInAboutBlank(window);
-            });
-          }
 
           // Wire up Direct Site button
           var directDockBtn = dockBar.querySelector('#dock-direct-btn');
@@ -3104,8 +3177,6 @@
             navHtml.push('<button type="button" class="btn-ctrl" id="nav-home-btn" title="Go to Homepage"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
-          navHtml.push('<button type="button" class="btn-ctrl" id="nav-aboutblank-btn" title="Open in about:blank Cloak Tab"><svg class="title-icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg><span>about:blank</span></button>');
-
           navHtml.push('<button type="button" class="btn-ctrl" id="nav-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
 
           navHtml.push('<button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>');
@@ -3149,14 +3220,6 @@
             if (floatBmBtn) floatBmBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               promptBookmarkCurrentPage(window, config);
-            });
-          }
-
-          var floatAboutBlankBtn = navWidget.querySelector('#nav-aboutblank-btn') || (navShadow.querySelector ? navShadow.querySelector('#nav-aboutblank-btn') : null);
-          if (floatAboutBlankBtn) {
-            floatAboutBlankBtn.addEventListener('click', function (e) {
-              e.stopPropagation();
-              openCurrentPageInAboutBlank(window);
             });
           }
 
