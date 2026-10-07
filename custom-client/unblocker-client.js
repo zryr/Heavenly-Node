@@ -2328,10 +2328,399 @@
         var useWidgetDock = settings.useWidgetDock !== undefined ? settings.useWidgetDock : true;
         var dockPosition = settings.dockPosition || 'bottom';
 
+        // --- MAGNIFIER COMMON STATE & HOST INITIALIZATION ---
+        var magContainer = window.document.getElementById('heavenly-magnifier-root');
+        var magShadow = magContainer ? (magContainer.shadowRoot || magContainer) : null;
+        var magEnabled = false;
+        var zoomLevel = 2.0;
+        var lensWidth = 260;
+        var lensHeight = 220;
+        var lensPos = { left: Math.max(50, Math.floor((window.innerWidth || 800) / 2 - 130)), top: Math.max(50, Math.floor((window.innerHeight || 600) / 2 - 110)) };
+
+        try {
+          var savedLens = localStorage.getItem('heavenly_lens_pos');
+          if (savedLens) {
+            var lp = JSON.parse(savedLens);
+            if (typeof lp.left === 'number') lensPos.left = lp.left;
+            if (typeof lp.top === 'number') lensPos.top = lp.top;
+            if (typeof lp.zoom === 'number') zoomLevel = lp.zoom;
+            if (typeof lp.width === 'number') lensWidth = Math.max(150, lp.width);
+            if (typeof lp.height === 'number') lensHeight = Math.max(100, lp.height);
+            else if (typeof lp.size === 'number') { lensWidth = lp.size; lensHeight = lp.size; }
+          }
+        } catch (e) {}
+
+        var lensFrame = null;
+        var mirrorNode = null;
+
+        function saveLensState() {
+          try {
+            localStorage.setItem('heavenly_lens_pos', JSON.stringify({
+              left: lensPos.left,
+              top: lensPos.top,
+              width: lensWidth,
+              height: lensHeight,
+              zoom: zoomLevel
+            }));
+          } catch (e) {}
+        }
+
+        function updateMirrorPosition() {
+          if (!lensFrame || !mirrorNode) return;
+          var centerX = lensPos.left + lensWidth / 2;
+          var centerY = lensPos.top + 14 + (lensHeight - 28) / 2;
+          var scrollX = window.scrollX || window.pageXOffset || 0;
+          var scrollY = window.scrollY || window.pageYOffset || 0;
+
+          var mirrorLeft = (lensWidth / 2) - ((centerX + scrollX) * zoomLevel);
+          var mirrorTop = ((lensHeight - 28) / 2) - ((centerY + scrollY) * zoomLevel);
+
+          mirrorNode.style.transform = 'scale(' + zoomLevel + ')';
+          mirrorNode.style.left = mirrorLeft + 'px';
+          mirrorNode.style.top = mirrorTop + 'px';
+        }
+
+        function createLensFrame() {
+          if (lensFrame || !magShadow) return;
+
+          lensFrame = window.document.createElement('div');
+          lensFrame.className = 'lens-frame';
+          lensFrame.style.width = lensWidth + 'px';
+          lensFrame.style.height = lensHeight + 'px';
+          lensFrame.style.left = lensPos.left + 'px';
+          lensFrame.style.top = lensPos.top + 'px';
+
+          lensFrame.innerHTML = [
+            '<div class="lens-header" id="lens-header">',
+            '  <span>🔍 Lens (' + zoomLevel.toFixed(1) + 'x)</span>',
+            '  <button type="button" class="btn-close-lens" id="close-lens-btn">✕</button>',
+            '</div>',
+            '<div class="lens-view" id="lens-view"></div>',
+            '<div class="resize-handle resize-handle-n" data-handle="n"></div>',
+            '<div class="resize-handle resize-handle-s" data-handle="s"></div>',
+            '<div class="resize-handle resize-handle-e" data-handle="e"></div>',
+            '<div class="resize-handle resize-handle-w" data-handle="w"></div>',
+            '<div class="resize-handle resize-handle-nw" data-handle="nw"></div>',
+            '<div class="resize-handle resize-handle-ne" data-handle="ne"></div>',
+            '<div class="resize-handle resize-handle-sw" data-handle="sw"></div>',
+            '<div class="resize-handle resize-handle-se" data-handle="se"></div>'
+          ].join('\n');
+
+          magShadow.appendChild(lensFrame);
+
+          var viewEl = lensFrame.querySelector('#lens-view');
+
+          var baseEl = window.document.querySelector('base');
+          if (baseEl) viewEl.appendChild(baseEl.cloneNode(true));
+
+          var styleEls = window.document.querySelectorAll('style, link[rel="stylesheet"]');
+          for (var sIdx = 0; sIdx < styleEls.length; sIdx++) {
+            viewEl.appendChild(styleEls[sIdx].cloneNode(true));
+          }
+
+          var clone = window.document.body.cloneNode(true);
+          var roots = clone.querySelectorAll('#heavenly-scroll-lock-root, #heavenly-magnifier-root, #heavenly-nav-root, #heavenly-touch-panic-root, #heavenly-dock-root');
+          for (var rIdx = 0; rIdx < roots.length; rIdx++) {
+            var rootEl = roots[rIdx];
+            if (rootEl.remove) rootEl.remove();
+            else if (rootEl.parentNode) rootEl.parentNode.removeChild(rootEl);
+          }
+
+          var origCanvases = window.document.body.querySelectorAll('canvas');
+          var cloneCanvases = clone.querySelectorAll('canvas');
+          for (var cIdx = 0; cIdx < origCanvases.length && cIdx < cloneCanvases.length; cIdx++) {
+            try {
+              var ctx = cloneCanvases[cIdx].getContext('2d');
+              if (ctx) ctx.drawImage(origCanvases[cIdx], 0, 0);
+            } catch (e) {}
+          }
+
+          mirrorNode = window.document.createElement('div');
+          mirrorNode.className = 'lens-mirror';
+          mirrorNode.style.width = Math.max(window.document.documentElement.scrollWidth, window.innerWidth) + 'px';
+          mirrorNode.style.height = Math.max(window.document.documentElement.scrollHeight, window.innerHeight) + 'px';
+          mirrorNode.appendChild(clone);
+          viewEl.appendChild(mirrorNode);
+
+          updateMirrorPosition();
+
+          lensFrame.querySelector('#close-lens-btn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            toggleMagnifier(false);
+          });
+
+          var headerEl = lensFrame.querySelector('#lens-header');
+          var isDraggingLens = false;
+          var startX = 0, startY = 0;
+          var startLeft = 0, startTop = 0;
+
+          var onLensDragStart = function (e) {
+            if (e.target.tagName === 'BUTTON') return;
+            var touch = e.touches ? e.touches[0] : e;
+            if (!touch) return;
+
+            isDraggingLens = true;
+            startX = touch.clientX;
+            startY = touch.clientY;
+            startLeft = lensPos.left;
+            startTop = lensPos.top;
+
+            var onMove = function (me) {
+              if (!isDraggingLens) return;
+              var touchMove = me.touches ? me.touches[0] : me;
+              if (!touchMove) return;
+
+              if (me.cancelable && me.touches) me.preventDefault();
+              var dx = touchMove.clientX - startX;
+              var dy = touchMove.clientY - startY;
+              lensPos.left = Math.max(0, Math.min(startLeft + dx, (window.innerWidth || 800) - lensWidth));
+              lensPos.top = Math.max(0, Math.min(startTop + dy, (window.innerHeight || 600) - lensHeight));
+              lensFrame.style.left = lensPos.left + 'px';
+              lensFrame.style.top = lensPos.top + 'px';
+              updateMirrorPosition();
+            };
+
+            var onUp = function () {
+              isDraggingLens = false;
+              window.removeEventListener('mousemove', onMove, true);
+              window.removeEventListener('mouseup', onUp, true);
+              window.removeEventListener('touchmove', onMove, true);
+              window.removeEventListener('touchend', onUp, true);
+              saveLensState();
+            };
+
+            window.addEventListener('mousemove', onMove, { passive: false, capture: true });
+            window.addEventListener('mouseup', onUp, { capture: true });
+            window.addEventListener('touchmove', onMove, { passive: false, capture: true });
+            window.addEventListener('touchend', onUp, { capture: true });
+          };
+
+          headerEl.addEventListener('mousedown', onLensDragStart);
+          headerEl.addEventListener('touchstart', onLensDragStart, { passive: false });
+
+          var handles = lensFrame.querySelectorAll('.resize-handle');
+          for (var hIdx = 0; hIdx < handles.length; hIdx++) {
+            (function (hEl) {
+              var onResizeStart = function (e) {
+                e.stopPropagation();
+                if (e.cancelable) e.preventDefault();
+                var handleType = hEl.getAttribute('data-handle');
+                var touch = e.touches ? e.touches[0] : e;
+                if (!touch) return;
+
+                var rStartX = touch.clientX;
+                var rStartY = touch.clientY;
+                var startW = lensWidth;
+                var startH = lensHeight;
+                var startL = lensPos.left;
+                var startT = lensPos.top;
+
+                var onResizing = function (me) {
+                  var touchMove = me.touches ? me.touches[0] : me;
+                  if (!touchMove) return;
+                  if (me.cancelable && me.touches) me.preventDefault();
+
+                  var dx = touchMove.clientX - rStartX;
+                  var dy = touchMove.clientY - rStartY;
+
+                  var newW = startW;
+                  var newH = startH;
+                  var newL = startL;
+                  var newT = startT;
+
+                  if (handleType.includes('e')) {
+                    newW = Math.max(150, startW + dx);
+                  }
+                  if (handleType.includes('s')) {
+                    newH = Math.max(100, startH + dy);
+                  }
+                  if (handleType.includes('w')) {
+                    var calcW = startW - dx;
+                    if (calcW >= 150) {
+                      newW = calcW;
+                      newL = startL + dx;
+                    }
+                  }
+                  if (handleType.includes('n')) {
+                    var calcH = startH - dy;
+                    if (calcH >= 100) {
+                      newH = calcH;
+                      newT = startT + dy;
+                    }
+                  }
+
+                  lensWidth = newW;
+                  lensHeight = newH;
+                  lensPos.left = newL;
+                  lensPos.top = newT;
+
+                  lensFrame.style.width = lensWidth + 'px';
+                  lensFrame.style.height = lensHeight + 'px';
+                  lensFrame.style.left = lensPos.left + 'px';
+                  lensFrame.style.top = lensPos.top + 'px';
+
+                  updateMirrorPosition();
+                };
+
+                var onResizeEnd = function () {
+                  window.removeEventListener('mousemove', onResizing, true);
+                  window.removeEventListener('mouseup', onResizeEnd, true);
+                  window.removeEventListener('touchmove', onResizing, true);
+                  window.removeEventListener('touchend', onResizeEnd, true);
+                  saveLensState();
+                };
+
+                window.addEventListener('mousemove', onResizing, { passive: false, capture: true });
+                window.addEventListener('mouseup', onResizeEnd, { capture: true });
+                window.addEventListener('touchmove', onResizing, { passive: false, capture: true });
+                window.addEventListener('touchend', onResizeEnd, { capture: true });
+              };
+
+              hEl.addEventListener('mousedown', onResizeStart);
+              hEl.addEventListener('touchstart', onResizeStart, { passive: false });
+            })(handles[hIdx]);
+          }
+        }
+
+        function destroyLensFrame() {
+          if (lensFrame) {
+            lensFrame.remove();
+            lensFrame = null;
+            mirrorNode = null;
+          }
+        }
+
+        if (showMagnifier) {
+          if (!magContainer) {
+            magContainer = window.document.createElement('div');
+            magContainer.id = 'heavenly-magnifier-root';
+            magContainer.style.cssText = 'position:fixed;z-index:2147483646;user-select:none;-webkit-user-select:none;font-family:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
+
+            magShadow = magContainer.attachShadow ? magContainer.attachShadow({ mode: 'open' }) : magContainer;
+
+            var magStyle = window.document.createElement('style');
+            magStyle.textContent = widgetCss + [
+              '.lens-frame {',
+              '  position: fixed;',
+              '  border: 2px solid #38bdf8;',
+              '  border-radius: 16px;',
+              '  box-shadow: 0 0 25px rgba(56, 189, 248, 0.4), 0 10px 30px rgba(0, 0, 0, 0.5);',
+              '  background: rgba(15, 23, 42, 0.95);',
+              '  overflow: hidden;',
+              '  z-index: 2147483645;',
+              '  display: flex;',
+              '  flex-direction: column;',
+              '}',
+              '.lens-header {',
+              '  height: 28px;',
+              '  background: rgba(30, 41, 59, 0.95);',
+              '  border-bottom: 1px solid rgba(56, 189, 248, 0.3);',
+              '  display: flex;',
+              '  align-items: center;',
+              '  justify-content: space-between;',
+              '  padding: 0 8px;',
+              '  font-size: 11px;',
+              '  font-weight: 600;',
+              '  color: #e0f2fe;',
+              '  cursor: grab;',
+              '}',
+              '.lens-header:active { cursor: grabbing; }',
+              '.lens-view {',
+              '  flex: 1;',
+              '  position: relative;',
+              '  overflow: hidden;',
+              '  background: #ffffff;',
+              '}',
+              '.lens-mirror {',
+              '  position: absolute;',
+              '  transform-origin: 0 0;',
+              '  pointer-events: none;',
+              '}',
+              '.btn-close-lens {',
+              '  background: none; border: none; color: #94a3b8; font-size: 14px;',
+              '  cursor: pointer; padding: 0 4px; line-height: 1;',
+              '}',
+              '.btn-close-lens:hover { color: #ef4444; }',
+              '/* Resize Handles */',
+              '.resize-handle { position: absolute; z-index: 20; background: transparent; }',
+              '.resize-handle-n { top: -4px; left: 8px; right: 8px; height: 8px; cursor: ns-resize; }',
+              '.resize-handle-s { bottom: -4px; left: 8px; right: 8px; height: 8px; cursor: ns-resize; }',
+              '.resize-handle-e { top: 8px; right: -4px; bottom: 8px; width: 8px; cursor: ew-resize; }',
+              '.resize-handle-w { top: 8px; left: -4px; bottom: 8px; width: 8px; cursor: ew-resize; }',
+              '.resize-handle-nw { top: -4px; left: -4px; width: 12px; height: 12px; cursor: nwse-resize; }',
+              '.resize-handle-ne { top: -4px; right: -4px; width: 12px; height: 12px; cursor: nesw-resize; }',
+              '.resize-handle-sw { bottom: -4px; left: -4px; width: 12px; height: 12px; cursor: nesw-resize; }',
+              '.resize-handle-se {',
+              '  bottom: 2px; right: 2px; width: 14px; height: 14px; cursor: nwse-resize; z-index: 25;',
+              '  background: linear-gradient(135deg, transparent 40%, rgba(56, 189, 248, 0.7) 40%, rgba(56, 189, 248, 0.7) 50%, transparent 50%, transparent 65%, rgba(56, 189, 248, 0.7) 65%, rgba(56, 189, 248, 0.7) 75%, transparent 75%);',
+              '  border-bottom-right-radius: 6px; transition: opacity 0.2s ease;',
+              '}',
+              '.resize-handle-se:hover { opacity: 1; filter: drop-shadow(0 0 4px #38bdf8); }'
+            ].join('\n');
+
+            magShadow.appendChild(magStyle);
+            (window.document.body || window.document.documentElement).appendChild(magContainer);
+          }
+        }
+
+        function updateZoomUI() {
+          var dockRoot = window.document.getElementById('heavenly-dock-root');
+          var dockLabel = dockRoot && dockRoot.shadowRoot ? dockRoot.shadowRoot.querySelector('#dock-zoom-label') : null;
+          if (dockLabel) dockLabel.textContent = zoomLevel.toFixed(1) + 'x';
+          if (magShadow) {
+            var widgetLabel = magShadow.querySelector('#zoom-label');
+            if (widgetLabel) widgetLabel.textContent = zoomLevel.toFixed(1) + 'x';
+          }
+          if (lensFrame) {
+            var headerSpan = lensFrame.querySelector('#lens-header span');
+            if (headerSpan) headerSpan.textContent = '🔍 Lens (' + zoomLevel.toFixed(1) + 'x)';
+            updateMirrorPosition();
+          }
+        }
+
+        function toggleMagnifier(enable) {
+          magEnabled = enable !== undefined ? enable : !magEnabled;
+
+          var dockRoot = window.document.getElementById('heavenly-dock-root');
+          var dockBtn = dockRoot && dockRoot.shadowRoot ? dockRoot.shadowRoot.querySelector('#dock-mag-btn') : null;
+          if (dockBtn) {
+            if (magEnabled) {
+              dockBtn.classList.add('active');
+              dockBtn.innerHTML = '<span>🔍 Mag ON</span>';
+            } else {
+              dockBtn.classList.remove('active');
+              dockBtn.innerHTML = '<span>🔍 Mag OFF</span>';
+            }
+          }
+
+          if (magShadow) {
+            var widgetBtn = magShadow.querySelector('#mag-toggle-btn');
+            if (widgetBtn) {
+              if (magEnabled) {
+                widgetBtn.classList.add('active');
+                widgetBtn.innerHTML = '<span>🔍 ON</span>';
+              } else {
+                widgetBtn.classList.remove('active');
+                widgetBtn.innerHTML = '<span>🔍 OFF</span>';
+              }
+            }
+          }
+
+          if (magEnabled) {
+            createLensFrame();
+          } else {
+            destroyLensFrame();
+          }
+        }
+
+        window.addEventListener('scroll', function () {
+          if (magEnabled) updateMirrorPosition();
+        }, { passive: true });
+
         // --- COLLAPSIBLE WIDGET DOCK BAR MODE ---
         if (useWidgetDock) {
-          // Remove floating widgets if present when dock is active
-          ['heavenly-scroll-lock-root', 'heavenly-magnifier-root', 'heavenly-nav-root'].forEach(function (id) {
+          // Remove floating widgets if present when dock is active (keep magnifier root for lens frame)
+          ['heavenly-scroll-lock-root', 'heavenly-nav-root'].forEach(function (id) {
             var el = window.document.getElementById(id);
             if (el) el.remove();
           });
@@ -2459,6 +2848,8 @@
           var isDraggingDock = false;
           var hasMovedDock = false;
           var startX = 0, startY = 0;
+          var ghostEl = null;
+          var snapIndicatorEl = null;
 
           var onDockStart = function (e) {
             var target = e.target;
@@ -2490,10 +2881,75 @@
             if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
               hasMovedDock = true;
               if (e.cancelable) e.preventDefault();
+
+              if (!ghostEl) {
+                ghostEl = window.document.createElement('div');
+                ghostEl.className = 'dock-drag-ghost';
+                ghostEl.style.cssText = 'position:fixed;z-index:2147483647;pointer-events:none;opacity:0.75;filter:drop-shadow(0 0 16px rgba(56, 189, 248, 0.8));transform:translate(-50%, -50%);';
+                var ghostInner = dockBar.cloneNode(true);
+                ghostInner.style.border = '2px dashed #38bdf8';
+                ghostInner.style.boxShadow = '0 0 24px rgba(56, 189, 248, 0.8)';
+                ghostInner.style.background = 'rgba(11, 19, 41, 0.9)';
+                ghostEl.appendChild(ghostInner);
+                dockShadow.appendChild(ghostEl);
+              }
+
+              ghostEl.style.left = touch.clientX + 'px';
+              ghostEl.style.top = touch.clientY + 'px';
+
+              if (!snapIndicatorEl) {
+                snapIndicatorEl = window.document.createElement('div');
+                snapIndicatorEl.className = 'dock-snap-indicator';
+                snapIndicatorEl.style.cssText = 'position:fixed;z-index:2147483646;pointer-events:none;background:linear-gradient(90deg, rgba(56,189,248,0.6), rgba(59,130,246,0.9), rgba(56,189,248,0.6));box-shadow:0 0 24px rgba(56,189,248,0.9);border-radius:12px;transition:all 0.15s ease-out;';
+                dockShadow.appendChild(snapIndicatorEl);
+              }
+
+              var winW = window.innerWidth || 800;
+              var winH = window.innerHeight || 600;
+              var distLeft = touch.clientX;
+              var distRight = winW - touch.clientX;
+              var distTop = touch.clientY;
+              var distBottom = winH - touch.clientY;
+              var minDist = Math.min(distLeft, distRight, distTop, distBottom);
+
+              if (minDist === distBottom) {
+                snapIndicatorEl.style.left = '10vw';
+                snapIndicatorEl.style.right = '10vw';
+                snapIndicatorEl.style.bottom = '6px';
+                snapIndicatorEl.style.top = 'auto';
+                snapIndicatorEl.style.width = 'auto';
+                snapIndicatorEl.style.height = '10px';
+              } else if (minDist === distTop) {
+                snapIndicatorEl.style.left = '10vw';
+                snapIndicatorEl.style.right = '10vw';
+                snapIndicatorEl.style.top = '6px';
+                snapIndicatorEl.style.bottom = 'auto';
+                snapIndicatorEl.style.width = 'auto';
+                snapIndicatorEl.style.height = '10px';
+              } else if (minDist === distLeft) {
+                snapIndicatorEl.style.top = '10vh';
+                snapIndicatorEl.style.bottom = '10vh';
+                snapIndicatorEl.style.left = '6px';
+                snapIndicatorEl.style.right = 'auto';
+                snapIndicatorEl.style.height = 'auto';
+                snapIndicatorEl.style.width = '10px';
+              } else if (minDist === distRight) {
+                snapIndicatorEl.style.top = '10vh';
+                snapIndicatorEl.style.bottom = '10vh';
+                snapIndicatorEl.style.right = '6px';
+                snapIndicatorEl.style.left = 'auto';
+                snapIndicatorEl.style.height = 'auto';
+                snapIndicatorEl.style.width = '10px';
+              }
             }
           };
 
           var onDockEnd = function (e) {
+            if (ghostEl && ghostEl.parentNode) ghostEl.remove();
+            if (snapIndicatorEl && snapIndicatorEl.parentNode) snapIndicatorEl.remove();
+            ghostEl = null;
+            snapIndicatorEl = null;
+
             if (isDraggingDock && hasMovedDock) {
               var touch = e.changedTouches ? e.changedTouches[0] : (e.touches ? e.touches[0] : e);
               var curX = touch ? touch.clientX : startX;
@@ -2709,74 +3165,8 @@
           attachWidgetBehaviors(lockContainer, lockWidget, 'heavenly_scroll_lock_pos', 20, 20);
         }
 
-        // --- 2. MAGNIFIER WIDGET & LENS FRAME ---
-        if (showMagnifier) {
-          var magContainer = window.document.createElement('div');
-          magContainer.id = 'heavenly-magnifier-root';
-          magContainer.style.cssText = 'position:fixed;z-index:2147483646;user-select:none;-webkit-user-select:none;font-family:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
-
-          var magShadow = magContainer.attachShadow ? magContainer.attachShadow({ mode: 'open' }) : magContainer;
-
-          var magStyle = window.document.createElement('style');
-          magStyle.textContent = widgetCss + [
-            '.lens-frame {',
-            '  position: fixed;',
-            '  border: 2px solid #38bdf8;',
-            '  border-radius: 16px;',
-            '  box-shadow: 0 0 25px rgba(56, 189, 248, 0.4), 0 10px 30px rgba(0, 0, 0, 0.5);',
-            '  background: rgba(15, 23, 42, 0.95);',
-            '  overflow: hidden;',
-            '  z-index: 2147483645;',
-            '  display: flex;',
-            '  flex-direction: column;',
-            '}',
-            '.lens-header {',
-            '  height: 28px;',
-            '  background: rgba(30, 41, 59, 0.95);',
-            '  border-bottom: 1px solid rgba(56, 189, 248, 0.3);',
-            '  display: flex;',
-            '  align-items: center;',
-            '  justify-content: space-between;',
-            '  padding: 0 8px;',
-            '  font-size: 11px;',
-            '  font-weight: 600;',
-            '  color: #e0f2fe;',
-            '  cursor: grab;',
-            '}',
-            '.lens-header:active { cursor: grabbing; }',
-            '.lens-view {',
-            '  flex: 1;',
-            '  position: relative;',
-            '  overflow: hidden;',
-            '  background: #ffffff;',
-            '}',
-            '.lens-mirror {',
-            '  position: absolute;',
-            '  transform-origin: 0 0;',
-            '  pointer-events: none;',
-            '}',
-            '.btn-close-lens {',
-            '  background: none; border: none; color: #94a3b8; font-size: 14px;',
-            '  cursor: pointer; padding: 0 4px; line-height: 1;',
-            '}',
-            '.btn-close-lens:hover { color: #ef4444; }',
-            '/* Resize Handles */',
-            '.resize-handle { position: absolute; z-index: 20; background: transparent; }',
-            '.resize-handle-n { top: -4px; left: 8px; right: 8px; height: 8px; cursor: ns-resize; }',
-            '.resize-handle-s { bottom: -4px; left: 8px; right: 8px; height: 8px; cursor: ns-resize; }',
-            '.resize-handle-e { top: 8px; right: -4px; bottom: 8px; width: 8px; cursor: ew-resize; }',
-            '.resize-handle-w { top: 8px; left: -4px; bottom: 8px; width: 8px; cursor: ew-resize; }',
-            '.resize-handle-nw { top: -4px; left: -4px; width: 12px; height: 12px; cursor: nwse-resize; }',
-            '.resize-handle-ne { top: -4px; right: -4px; width: 12px; height: 12px; cursor: nesw-resize; }',
-            '.resize-handle-sw { bottom: -4px; left: -4px; width: 12px; height: 12px; cursor: nesw-resize; }',
-            '.resize-handle-se {',
-            '  bottom: 2px; right: 2px; width: 14px; height: 14px; cursor: nwse-resize; z-index: 25;',
-            '  background: linear-gradient(135deg, transparent 40%, rgba(56, 189, 248, 0.7) 40%, rgba(56, 189, 248, 0.7) 50%, transparent 50%, transparent 65%, rgba(56, 189, 248, 0.7) 65%, rgba(56, 189, 248, 0.7) 75%, transparent 75%);',
-            '  border-bottom-right-radius: 6px; transition: opacity 0.2s ease;',
-            '}',
-            '.resize-handle-se:hover { opacity: 1; filter: drop-shadow(0 0 4px #38bdf8); }'
-          ].join('\n');
-
+        // --- 2. MAGNIFIER FLOATING WIDGET (IF NOT USING DOCK) ---
+        if (showMagnifier && magShadow && !magShadow.querySelector('.heavenly-widget')) {
           var magWidget = window.document.createElement('div');
           magWidget.className = 'heavenly-widget';
           magWidget.innerHTML = [
@@ -2790,355 +3180,58 @@
             '  </div>',
             '  <button type="button" class="btn-toggle" id="mag-toggle-btn"><span>🔍 OFF</span></button>',
             '  <button type="button" class="btn-ctrl" id="zoom-out-btn" title="Zoom Out">-</button>',
-            '  <span id="zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span>',
+            '  <span id="zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">' + zoomLevel.toFixed(1) + 'x</span>',
             '  <button type="button" class="btn-ctrl" id="zoom-in-btn" title="Zoom In">+</button>',
             '  <button type="button" class="btn-ctrl" id="size-btn" title="Lens Size">Size</button>',
             '  <button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>',
             '</div>'
           ].join('\n');
 
-          magShadow.appendChild(magStyle);
           magShadow.appendChild(magWidget);
-          window.document.body.appendChild(magContainer);
-
           attachWidgetBehaviors(magContainer, magWidget, 'heavenly_magnifier_pos', 70, 20);
-        }
 
-        // --- Magnifier Lens Frame Logic ---
-        var magEnabled = false;
-        var zoomLevel = 2.0;
-        var lensWidth = 260;
-        var lensHeight = 220;
-        var lensPos = { left: Math.max(50, Math.floor((window.innerWidth || 800) / 2 - 130)), top: Math.max(50, Math.floor((window.innerHeight || 600) / 2 - 110)) };
-
-        try {
-          var savedLens = localStorage.getItem('heavenly_lens_pos');
-          if (savedLens) {
-            var lp = JSON.parse(savedLens);
-            if (typeof lp.left === 'number') lensPos.left = lp.left;
-            if (typeof lp.top === 'number') lensPos.top = lp.top;
-            if (typeof lp.zoom === 'number') zoomLevel = lp.zoom;
-            if (typeof lp.width === 'number') lensWidth = Math.max(150, lp.width);
-            if (typeof lp.height === 'number') lensHeight = Math.max(100, lp.height);
-            else if (typeof lp.size === 'number') { lensWidth = lp.size; lensHeight = lp.size; }
-          }
-        } catch (e) {}
-
-        var lensFrame = null;
-        var mirrorNode = null;
-
-        function saveLensState() {
-          try {
-            localStorage.setItem('heavenly_lens_pos', JSON.stringify({
-              left: lensPos.left,
-              top: lensPos.top,
-              width: lensWidth,
-              height: lensHeight,
-              zoom: zoomLevel
-            }));
-          } catch (e) {}
-        }
-
-        function updateMirrorPosition() {
-          if (!lensFrame || !mirrorNode) return;
-          var centerX = lensPos.left + lensWidth / 2;
-          var centerY = lensPos.top + 14 + (lensHeight - 28) / 2;
-          var scrollX = window.scrollX || window.pageXOffset || 0;
-          var scrollY = window.scrollY || window.pageYOffset || 0;
-
-          var mirrorLeft = (lensWidth / 2) - ((centerX + scrollX) * zoomLevel);
-          var mirrorTop = ((lensHeight - 28) / 2) - ((centerY + scrollY) * zoomLevel);
-
-          mirrorNode.style.transform = 'scale(' + zoomLevel + ')';
-          mirrorNode.style.left = mirrorLeft + 'px';
-          mirrorNode.style.top = mirrorTop + 'px';
-        }
-
-        function createLensFrame() {
-          if (lensFrame) return;
-
-          lensFrame = window.document.createElement('div');
-          lensFrame.className = 'lens-frame';
-          lensFrame.style.width = lensWidth + 'px';
-          lensFrame.style.height = lensHeight + 'px';
-          lensFrame.style.left = lensPos.left + 'px';
-          lensFrame.style.top = lensPos.top + 'px';
-
-          lensFrame.innerHTML = [
-            '<div class="lens-header" id="lens-header">',
-            '  <span>🔍 Lens (' + zoomLevel.toFixed(1) + 'x)</span>',
-            '  <button type="button" class="btn-close-lens" id="close-lens-btn">✕</button>',
-            '</div>',
-            '<div class="lens-view" id="lens-view"></div>',
-            '<div class="resize-handle resize-handle-n" data-handle="n"></div>',
-            '<div class="resize-handle resize-handle-s" data-handle="s"></div>',
-            '<div class="resize-handle resize-handle-e" data-handle="e"></div>',
-            '<div class="resize-handle resize-handle-w" data-handle="w"></div>',
-            '<div class="resize-handle resize-handle-nw" data-handle="nw"></div>',
-            '<div class="resize-handle resize-handle-ne" data-handle="ne"></div>',
-            '<div class="resize-handle resize-handle-sw" data-handle="sw"></div>',
-            '<div class="resize-handle resize-handle-se" data-handle="se"></div>'
-          ].join('\n');
-
-          magShadow.appendChild(lensFrame);
-
-          var viewEl = lensFrame.querySelector('#lens-view');
-
-          // Copy head stylesheets & inline styles into lens view so CSS rules apply inside Shadow DOM
-          var baseEl = window.document.querySelector('base');
-          if (baseEl) viewEl.appendChild(baseEl.cloneNode(true));
-
-          var styleEls = window.document.querySelectorAll('style, link[rel="stylesheet"]');
-          for (var sIdx = 0; sIdx < styleEls.length; sIdx++) {
-            viewEl.appendChild(styleEls[sIdx].cloneNode(true));
-          }
-
-          // Mirror clone of document body
-          var clone = window.document.body.cloneNode(true);
-          // Remove heavenly roots from clone to avoid infinite duplication
-          var roots = clone.querySelectorAll('#heavenly-scroll-lock-root, #heavenly-magnifier-root, #heavenly-nav-root, #heavenly-touch-panic-root, #heavenly-dock-root');
-          for (var rIdx = 0; rIdx < roots.length; rIdx++) {
-            var rootEl = roots[rIdx];
-            if (rootEl.remove) rootEl.remove();
-            else if (rootEl.parentNode) rootEl.parentNode.removeChild(rootEl);
-          }
-
-          // Copy canvas content if present
-          var origCanvases = window.document.body.querySelectorAll('canvas');
-          var cloneCanvases = clone.querySelectorAll('canvas');
-          for (var cIdx = 0; cIdx < origCanvases.length && cIdx < cloneCanvases.length; cIdx++) {
-            try {
-              var ctx = cloneCanvases[cIdx].getContext('2d');
-              if (ctx) ctx.drawImage(origCanvases[cIdx], 0, 0);
-            } catch (e) {}
-          }
-
-          mirrorNode = window.document.createElement('div');
-          mirrorNode.className = 'lens-mirror';
-          mirrorNode.style.width = Math.max(window.document.documentElement.scrollWidth, window.innerWidth) + 'px';
-          mirrorNode.style.height = Math.max(window.document.documentElement.scrollHeight, window.innerHeight) + 'px';
-          mirrorNode.appendChild(clone);
-          viewEl.appendChild(mirrorNode);
-
-          updateMirrorPosition();
-
-          // Close button inside header
-          lensFrame.querySelector('#close-lens-btn').addEventListener('click', function (e) {
+          magShadow.querySelector('#mag-toggle-btn').addEventListener('click', function (e) {
             e.stopPropagation();
-            toggleMagnifier(false);
+            toggleMagnifier();
           });
 
-          // Draggable header for lens frame
-          var headerEl = lensFrame.querySelector('#lens-header');
-          var isDraggingLens = false;
-          var startX = 0, startY = 0;
-          var startLeft = 0, startTop = 0;
+          magShadow.querySelector('#zoom-in-btn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (zoomLevel < 4.0) {
+              zoomLevel = Math.round((zoomLevel + 0.5) * 10) / 10;
+              updateZoomUI();
+            }
+          });
 
-          var onLensDragStart = function (e) {
-            if (e.target.tagName === 'BUTTON') return;
-            var touch = e.touches ? e.touches[0] : e;
-            if (!touch) return;
+          magShadow.querySelector('#zoom-out-btn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (zoomLevel > 1.5) {
+              zoomLevel = Math.round((zoomLevel - 0.5) * 10) / 10;
+              updateZoomUI();
+            }
+          });
 
-            isDraggingLens = true;
-            startX = touch.clientX;
-            startY = touch.clientY;
-            startLeft = lensPos.left;
-            startTop = lensPos.top;
+          magShadow.querySelector('#size-btn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (lensWidth <= 200) {
+              lensWidth = 320;
+              lensHeight = 260;
+            } else if (lensWidth <= 320) {
+              lensWidth = 450;
+              lensHeight = 350;
+            } else {
+              lensWidth = 200;
+              lensHeight = 160;
+            }
 
-            var onMove = function (me) {
-              if (!isDraggingLens) return;
-              var touchMove = me.touches ? me.touches[0] : me;
-              if (!touchMove) return;
-
-              if (me.cancelable && me.touches) me.preventDefault();
-              var dx = touchMove.clientX - startX;
-              var dy = touchMove.clientY - startY;
-              lensPos.left = Math.max(0, Math.min(startLeft + dx, (window.innerWidth || 800) - lensWidth));
-              lensPos.top = Math.max(0, Math.min(startTop + dy, (window.innerHeight || 600) - lensHeight));
-              lensFrame.style.left = lensPos.left + 'px';
-              lensFrame.style.top = lensPos.top + 'px';
+            if (lensFrame) {
+              lensFrame.style.width = lensWidth + 'px';
+              lensFrame.style.height = lensHeight + 'px';
               updateMirrorPosition();
-            };
-
-            var onUp = function () {
-              isDraggingLens = false;
-              window.removeEventListener('mousemove', onMove, true);
-              window.removeEventListener('mouseup', onUp, true);
-              window.removeEventListener('touchmove', onMove, true);
-              window.removeEventListener('touchend', onUp, true);
               saveLensState();
-            };
-
-            window.addEventListener('mousemove', onMove, { passive: false, capture: true });
-            window.addEventListener('mouseup', onUp, { capture: true });
-            window.addEventListener('touchmove', onMove, { passive: false, capture: true });
-            window.addEventListener('touchend', onUp, { capture: true });
-          };
-
-          headerEl.addEventListener('mousedown', onLensDragStart);
-          headerEl.addEventListener('touchstart', onLensDragStart, { passive: false });
-
-          // Resizing Handles Logic (Edges & Corners)
-          var handles = lensFrame.querySelectorAll('.resize-handle');
-          for (var hIdx = 0; hIdx < handles.length; hIdx++) {
-            (function (hEl) {
-              var onResizeStart = function (e) {
-                e.stopPropagation();
-                if (e.cancelable) e.preventDefault();
-                var handleType = hEl.getAttribute('data-handle');
-                var touch = e.touches ? e.touches[0] : e;
-                if (!touch) return;
-
-                var rStartX = touch.clientX;
-                var rStartY = touch.clientY;
-                var startW = lensWidth;
-                var startH = lensHeight;
-                var startL = lensPos.left;
-                var startT = lensPos.top;
-
-                var onResizing = function (me) {
-                  var touchMove = me.touches ? me.touches[0] : me;
-                  if (!touchMove) return;
-                  if (me.cancelable && me.touches) me.preventDefault();
-
-                  var dx = touchMove.clientX - rStartX;
-                  var dy = touchMove.clientY - rStartY;
-
-                  var newW = startW;
-                  var newH = startH;
-                  var newL = startL;
-                  var newT = startT;
-
-                  if (handleType.includes('e')) {
-                    newW = Math.max(150, startW + dx);
-                  }
-                  if (handleType.includes('s')) {
-                    newH = Math.max(100, startH + dy);
-                  }
-                  if (handleType.includes('w')) {
-                    var calcW = startW - dx;
-                    if (calcW >= 150) {
-                      newW = calcW;
-                      newL = startL + dx;
-                    }
-                  }
-                  if (handleType.includes('n')) {
-                    var calcH = startH - dy;
-                    if (calcH >= 100) {
-                      newH = calcH;
-                      newT = startT + dy;
-                    }
-                  }
-
-                  lensWidth = newW;
-                  lensHeight = newH;
-                  lensPos.left = newL;
-                  lensPos.top = newT;
-
-                  lensFrame.style.width = lensWidth + 'px';
-                  lensFrame.style.height = lensHeight + 'px';
-                  lensFrame.style.left = lensPos.left + 'px';
-                  lensFrame.style.top = lensPos.top + 'px';
-
-                  updateMirrorPosition();
-                };
-
-                var onResizeEnd = function () {
-                  window.removeEventListener('mousemove', onResizing, true);
-                  window.removeEventListener('mouseup', onResizeEnd, true);
-                  window.removeEventListener('touchmove', onResizing, true);
-                  window.removeEventListener('touchend', onResizeEnd, true);
-                  saveLensState();
-                };
-
-                window.addEventListener('mousemove', onResizing, { passive: false, capture: true });
-                window.addEventListener('mouseup', onResizeEnd, { capture: true });
-                window.addEventListener('touchmove', onResizing, { passive: false, capture: true });
-                window.addEventListener('touchend', onResizeEnd, { capture: true });
-              };
-
-              hEl.addEventListener('mousedown', onResizeStart);
-              hEl.addEventListener('touchstart', onResizeStart, { passive: false });
-            })(handles[hIdx]);
-          }
-        }
-
-        function destroyLensFrame() {
-          if (lensFrame) {
-            lensFrame.remove();
-            lensFrame = null;
-            mirrorNode = null;
-          }
-        }
-
-        function toggleMagnifier(enable) {
-          magEnabled = enable !== undefined ? enable : !magEnabled;
-          var btn = magShadow.querySelector('#mag-toggle-btn');
-          if (magEnabled) {
-            btn.classList.add('active');
-            btn.innerHTML = '<span>🔍 ON</span>';
-            createLensFrame();
-          } else {
-            btn.classList.remove('active');
-            btn.innerHTML = '<span>🔍 OFF</span>';
-            destroyLensFrame();
-          }
-        }
-
-        magShadow.querySelector('#mag-toggle-btn').addEventListener('click', function (e) {
-          e.stopPropagation();
-          toggleMagnifier();
-        });
-
-        magShadow.querySelector('#zoom-in-btn').addEventListener('click', function (e) {
-          e.stopPropagation();
-          if (zoomLevel < 4.0) {
-            zoomLevel = Math.round((zoomLevel + 0.5) * 10) / 10;
-            magShadow.querySelector('#zoom-label').textContent = zoomLevel.toFixed(1) + 'x';
-            if (lensFrame) {
-              lensFrame.querySelector('#lens-header span').textContent = '🔍 Lens (' + zoomLevel.toFixed(1) + 'x)';
-              updateMirrorPosition();
             }
-          }
-        });
-
-        magShadow.querySelector('#zoom-out-btn').addEventListener('click', function (e) {
-          e.stopPropagation();
-          if (zoomLevel > 1.5) {
-            zoomLevel = Math.round((zoomLevel - 0.5) * 10) / 10;
-            magShadow.querySelector('#zoom-label').textContent = zoomLevel.toFixed(1) + 'x';
-            if (lensFrame) {
-              lensFrame.querySelector('#lens-header span').textContent = '🔍 Lens (' + zoomLevel.toFixed(1) + 'x)';
-              updateMirrorPosition();
-            }
-          }
-        });
-
-        magShadow.querySelector('#size-btn').addEventListener('click', function (e) {
-          e.stopPropagation();
-          if (lensWidth <= 200) {
-            lensWidth = 320;
-            lensHeight = 260;
-          } else if (lensWidth <= 320) {
-            lensWidth = 450;
-            lensHeight = 350;
-          } else {
-            lensWidth = 200;
-            lensHeight = 160;
-          }
-
-          if (lensFrame) {
-            lensFrame.style.width = lensWidth + 'px';
-            lensFrame.style.height = lensHeight + 'px';
-            updateMirrorPosition();
-            saveLensState();
-          }
-        });
-
-        // Sync mirror on page scroll
-        window.addEventListener('scroll', function () {
-          if (magEnabled) updateMirrorPosition();
-        }, { passive: true });
+          });
+        }
 
         // --- 3. NAVIGATION WIDGET (Search Bar, Bookmark & Home Button) ---
         if (showNavSearch || showNavHome || showNavBookmark) {
