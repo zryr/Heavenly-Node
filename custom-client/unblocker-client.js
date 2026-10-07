@@ -862,9 +862,26 @@
     return newWin;
   }
 
+  function isTopOrAboutBlankIframe(window) {
+    if (!window) return false;
+    if (window === window.top) return true;
+    try {
+      if (window.parent && window.parent === window.top) {
+        var pDoc = window.parent.document;
+        if (pDoc) {
+          var iframe = pDoc.querySelector('iframe');
+          if (iframe && pDoc.body && pDoc.body.children.length === 1 && pDoc.body.children[0] === iframe) {
+            return true;
+          }
+        }
+      }
+    } catch (e) {}
+    return false;
+  }
+
   function initHeavenlyCloakAndPanic(window, settings, config) {
     try {
-      if (window !== window.top) return;
+      if (!isTopOrAboutBlankIframe(window)) return;
 
       var DEFAULT_PRESETS = {
         classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
@@ -2017,7 +2034,7 @@
 
   function initHeavenlyWidgets(window, settings, config) {
     try {
-      if (window !== window.top) return; // Only show in main top window
+      if (!isTopOrAboutBlankIframe(window)) return; // Only show in main top window or about:blank wrapper iframe
 
       if (!settings) {
         settings = loadHeavenlySettings(window);
@@ -3355,7 +3372,7 @@
 
   function initManualIconPickerWidget(config, window) {
     try {
-      if (window !== window.top) return;
+      if (!isTopOrAboutBlankIframe(window)) return;
       var settings = loadHeavenlySettings(window);
       if (settings.disableAllWidgets || settings.disableAllFeatures) {
         var existingPicker = window.document ? window.document.getElementById('heavenly-manual-icon-root') : null;
@@ -3705,7 +3722,7 @@
 
   function initFolderQuickSaveWidget(config, window) {
     try {
-      if (window !== window.top) return;
+      if (!isTopOrAboutBlankIframe(window)) return;
       var settings = loadHeavenlySettings(window);
       if (settings.disableAllWidgets || settings.disableAllFeatures) {
         var existingSave = window.document ? window.document.getElementById('heavenly-folder-save-root') : null;
@@ -3950,7 +3967,7 @@
 
   function initNewgroundsPagination(config, window) {
     try {
-      if (window !== window.top) return;
+      if (!isTopOrAboutBlankIframe(window)) return;
       var settings = loadHeavenlySettings(window);
       if (settings.disableAllWidgets || settings.disableAllFeatures) {
         var existingNg = window.document ? window.document.getElementById('heavenly-ng-pagination-root') : null;
