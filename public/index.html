@@ -1055,7 +1055,8 @@
       box-sizing: border-box;
       margin: 0;
       overflow-y: auto;
-      overscroll-behavior: contain;
+      overscroll-behavior: none;
+      overscroll-behavior-y: none;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -1086,7 +1087,8 @@
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       overflow-y: auto;
       overflow-x: hidden;
-      overscroll-behavior: contain;
+      overscroll-behavior: none;
+      overscroll-behavior-y: none;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       -ms-overflow-style: none;
@@ -4745,6 +4747,42 @@
       renderBookmarksUI();
       syncSearchFormUI();
     });
+    // Touch event guard for modal dialogues to prevent overscroll / elastic bounce top empty space
+    (function initModalTouchGuard() {
+      var startY = 0;
+
+      document.addEventListener('touchstart', function (e) {
+        if (e.touches && e.touches.length === 1) {
+          startY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchmove', function (e) {
+        if (!e.touches || e.touches.length !== 1) return;
+        var activeBackdrop = document.querySelector('.modal-backdrop.active');
+        if (!activeBackdrop) return;
+
+        var currentY = e.touches[0].clientY;
+        var deltaY = currentY - startY;
+
+        // If touch event originated within a modal-card or inside active backdrop
+        var card = e.target.closest('.modal-card');
+        if (card) {
+          // Downward pull at top boundary
+          if (card.scrollTop <= 0 && deltaY > 0) {
+            e.preventDefault();
+            card.scrollTop = 0;
+          }
+          // Upward pull at bottom boundary
+          else if (card.scrollTop + card.clientHeight >= card.scrollHeight - 1 && deltaY < 0) {
+            e.preventDefault();
+          }
+        } else if (e.target.closest('.modal-backdrop')) {
+          // Touching backdrop overlay area directly
+          e.preventDefault();
+        }
+      }, { passive: false });
+    })();
   </script>
 
 </body>

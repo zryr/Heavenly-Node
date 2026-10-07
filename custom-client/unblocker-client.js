@@ -1201,10 +1201,10 @@
 
       var backdrop = window.document.createElement('div');
       backdrop.id = 'heavenly-fmhy-link-modal';
-      backdrop.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:100dvh;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:clamp(12px, 3vh, 24px) 16px;box-sizing:border-box;margin:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
+      backdrop.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:100dvh;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:clamp(12px, 3vh, 24px) 16px;box-sizing:border-box;margin:0;overflow-y:auto;overscroll-behavior:none;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
 
       var card = window.document.createElement('div');
-      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:500px;padding:clamp(18px, 3vh, 24px) clamp(16px, 3vw, 24px);display:flex;flex-direction:column;gap:16px;color:#f8fafc;max-height:min(88dvh, calc(100vh - 32px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;';
+      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:500px;padding:clamp(18px, 3vh, 24px) clamp(16px, 3vw, 24px);display:flex;flex-direction:column;gap:16px;color:#f8fafc;max-height:min(88dvh, calc(100vh - 32px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;';
 
       var header = window.document.createElement('div');
       header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(148,163,184,0.15);padding-bottom:12px;';
@@ -1280,10 +1280,10 @@
 
       var backdrop = window.document.createElement('div');
       backdrop.id = 'heavenly-em-link-modal';
-      backdrop.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:100dvh;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:clamp(12px, 3vh, 24px) 16px;box-sizing:border-box;margin:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
+      backdrop.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:100dvh;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:clamp(12px, 3vh, 24px) 16px;box-sizing:border-box;margin:0;overflow-y:auto;overscroll-behavior:none;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
 
       var card = window.document.createElement('div');
-      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:500px;padding:clamp(18px, 3vh, 24px) clamp(16px, 3vw, 24px);display:flex;flex-direction:column;gap:16px;color:#f8fafc;max-height:min(88dvh, calc(100vh - 32px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;';
+      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:500px;padding:clamp(18px, 3vh, 24px) clamp(16px, 3vw, 24px);display:flex;flex-direction:column;gap:16px;color:#f8fafc;max-height:min(88dvh, calc(100vh - 32px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;';
 
       var header = window.document.createElement('div');
       header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(148,163,184,0.15);padding-bottom:12px;';
@@ -1414,10 +1414,10 @@
 
       var backdrop = window.document.createElement('div');
       backdrop.id = 'heavenly-direct-preview-modal';
-      backdrop.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:100dvh;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:clamp(12px, 3vh, 24px) 16px;box-sizing:border-box;margin:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
+      backdrop.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:100dvh;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:clamp(12px, 3vh, 24px) 16px;box-sizing:border-box;margin:0;overflow-y:auto;overscroll-behavior:none;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
 
       var card = window.document.createElement('div');
-      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:540px;padding:clamp(18px, 3vh, 24px) clamp(16px, 3vw, 24px);display:flex;flex-direction:column;gap:16px;color:#f8fafc;max-height:min(88dvh, calc(100vh - 32px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;';
+      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:540px;padding:clamp(18px, 3vh, 24px) clamp(16px, 3vw, 24px);display:flex;flex-direction:column;gap:16px;color:#f8fafc;max-height:min(88dvh, calc(100vh - 32px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;';
 
       var header = window.document.createElement('div');
       header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(148,163,184,0.15);padding-bottom:12px;';
@@ -1737,10 +1737,10 @@
 
       var backdrop = window.document.createElement('div');
       backdrop.id = 'heavenly-bookmark-prompt-modal';
-      backdrop.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:100dvh;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:clamp(12px, 3vh, 24px) 16px;box-sizing:border-box;margin:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
+      backdrop.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:100dvh;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:clamp(12px, 3vh, 24px) 16px;box-sizing:border-box;margin:0;overflow-y:auto;overscroll-behavior:none;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
 
       var card = window.document.createElement('div');
-      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:520px;padding:clamp(18px, 3vh, 24px) clamp(16px, 3vw, 24px);display:flex;flex-direction:column;gap:16px;color:#f8fafc;max-height:min(88dvh, calc(100vh - 32px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;';
+      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:520px;padding:clamp(18px, 3vh, 24px) clamp(16px, 3vw, 24px);display:flex;flex-direction:column;gap:16px;color:#f8fafc;max-height:min(88dvh, calc(100vh - 32px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;';
 
       var header = window.document.createElement('div');
       header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(148,163,184,0.15);padding-bottom:12px;';
@@ -4149,6 +4149,40 @@
         saveToHeavenlyHistory(window, config);
       });
     }
+
+    // Touch event guard for injected client modal dialogues to prevent top overscroll / elastic bounce
+    (function initClientModalTouchGuard() {
+      if (!window.document || typeof window.document.addEventListener !== 'function') return;
+      var startY = 0;
+
+      window.document.addEventListener('touchstart', function (e) {
+        if (e.touches && e.touches.length === 1) {
+          startY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      window.document.addEventListener('touchmove', function (e) {
+        if (!e.touches || e.touches.length !== 1) return;
+        if (typeof window.document.querySelector !== 'function') return;
+        var activeBackdrop = window.document.querySelector('#heavenly-fmhy-link-modal, #heavenly-em-link-modal, #heavenly-direct-preview-modal, #heavenly-bookmark-prompt-modal');
+        if (!activeBackdrop) return;
+
+        var currentY = e.touches[0].clientY;
+        var deltaY = currentY - startY;
+
+        var card = e.target && typeof e.target.closest === 'function' ? e.target.closest('div[style*="max-height"]') : null;
+        if (card) {
+          if (card.scrollTop <= 0 && deltaY > 0) {
+            if (typeof e.preventDefault === 'function') e.preventDefault();
+            card.scrollTop = 0;
+          } else if (card.scrollTop + card.clientHeight >= card.scrollHeight - 1 && deltaY < 0) {
+            if (typeof e.preventDefault === 'function') e.preventDefault();
+          }
+        } else {
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+        }
+      }, { passive: false });
+    })();
 
     if (window === global) {
       // leave no trace
