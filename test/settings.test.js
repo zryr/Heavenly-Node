@@ -82,6 +82,24 @@ describe('settings.html standalone page', function() {
         assert.ok(indexHtml.includes('settings.skipBuiltinTestPrompt'), 'index.html bookmark click handler should respect skipBuiltinTestPrompt');
     });
 
+    it('should configure UBG98, UBGames, and Unbleeked in DEFAULT_BOOKMARK_DATA across client files', function() {
+        var indexHtml = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
+        var clientJs = fs.readFileSync(path.join(__dirname, '../custom-client/unblocker-client.js'), 'utf8');
+
+        [indexHtml, html, clientJs].forEach(function(content, i) {
+            var label = i === 0 ? 'index.html' : (i === 1 ? 'settings.html' : 'unblocker-client.js');
+            assert.ok(content.includes('id: "bm_ubg98"'), label + ' should contain bm_ubg98');
+            assert.ok(content.includes('title: "UBG98"'), label + ' should contain UBG98 title');
+            assert.ok(content.includes('https://ubg98.com'), label + ' should contain ubg98 URL');
+            assert.ok(content.includes('id: "bm_ubgames"'), label + ' should contain bm_ubgames');
+            assert.ok(content.includes('title: "UBGames"'), label + ' should contain UBGames title');
+            assert.ok(content.includes('https://ubgames.uk'), label + ' should contain ubgames URL');
+            assert.ok(content.includes('id: "bm_unbleeked"'), label + ' should contain bm_unbleeked');
+            assert.ok(content.includes('title: "Unbleeked"'), label + ' should contain Unbleeked title');
+            assert.ok(content.includes('https://unbleeked.vercel.app/'), label + ' should contain unbleeked URL');
+        });
+    });
+
     it('should deduplicate bookmarks and categories on reset in settings.html', function() {
         assert.ok(html.includes('if (!freshData.bookmarks.some(function (fb) { return fb.id === b.id; }))'), 'reset action should deduplicate bookmarks by ID');
         assert.ok(html.includes('if (!freshData.categories.some(function (fc) { return fc.id === c.id; }))'), 'reset action should deduplicate categories by ID');
