@@ -4104,18 +4104,24 @@
       if (qsToggle && qsContainer) {
         var isFolderType = false;
         var isEnabled = true;
+        var isLockedDisabled = false;
         if (targetBmId) {
           var data = loadBookmarkData();
           var bm = data.bookmarks.find(function (b) { return b.id === targetBmId; });
           if (bm) {
             isFolderType = (bm.type === 'folder' || bm.type === 'folder_bookmark');
-            isEnabled = bm.disableQuickSaveWidget !== true;
-            if (bm.id === 'bm_ng') {
-              isFolderType = false;
+            if (bm.disableQuickSaveWidget === true || bm.id === 'bm_ng') {
+              isLockedDisabled = true;
+              isEnabled = false;
+            } else {
+              isEnabled = true;
             }
           }
         }
         qsToggle.checked = isEnabled;
+        qsToggle.disabled = isLockedDisabled;
+        qsContainer.style.opacity = isLockedDisabled ? '0.5' : '1';
+        qsContainer.style.pointerEvents = isLockedDisabled ? 'none' : 'auto';
         qsContainer.style.display = isFolderType ? 'flex' : 'none';
       }
 
