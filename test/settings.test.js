@@ -82,6 +82,32 @@ describe('settings.html standalone page', function() {
         assert.ok(indexHtml.includes('settings.skipBuiltinTestPrompt'), 'index.html bookmark click handler should respect skipBuiltinTestPrompt');
     });
 
+    it('should configure UBG98, UBGames, Unbleeked, and disableQuickSaveWidget for Movish in DEFAULT_BOOKMARK_DATA across client files', function() {
+        var indexHtml = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
+        var clientJs = fs.readFileSync(path.join(__dirname, '../custom-client/unblocker-client.js'), 'utf8');
+
+        [indexHtml, html, clientJs].forEach(function(content, i) {
+            var label = i === 0 ? 'index.html' : (i === 1 ? 'settings.html' : 'unblocker-client.js');
+            assert.ok(content.includes('id: "bm_ubg98"'), label + ' should contain bm_ubg98');
+            assert.ok(content.includes('title: "UBG98"'), label + ' should contain UBG98 title');
+            assert.ok(content.includes('https://ubg98.com'), label + ' should contain ubg98 URL');
+            assert.ok(content.includes('id: "bm_ubgames"'), label + ' should contain bm_ubgames');
+            assert.ok(content.includes('title: "UBGames"'), label + ' should contain UBGames title');
+            assert.ok(content.includes('https://ubgames.uk'), label + ' should contain ubgames URL');
+            assert.ok(content.includes('id: "bm_unbleeked"'), label + ' should contain bm_unbleeked');
+            assert.ok(content.includes('title: "Unbleeked"'), label + ' should contain Unbleeked title');
+            assert.ok(content.includes('https://unbleeked.vercel.app/'), label + ' should contain unbleeked URL');
+            assert.ok(content.includes('id: "bm_duckmath"'), label + ' should contain bm_duckmath');
+            assert.ok(content.includes('title: "DuckMath"'), label + ' should contain DuckMath title');
+            assert.ok(content.includes('https://duckmath.org/'), label + ' should contain duckmath URL');
+            assert.ok(content.includes('title: "DuckMath a1"'), label + ' should contain DuckMath a1 sub-bookmark');
+            assert.ok(content.includes('https://classroom-a1.b-cdn.net/'), label + ' should contain DuckMath a1 URL');
+            assert.ok(content.includes('id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: []'), label + ' should have type: "bookmark" and empty subBookmarks on bm_movish_anime');
+            assert.ok(content.includes('id: "bm_movish_movies", categoryId: "cat_movies", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: []'), label + ' should have type: "bookmark" and empty subBookmarks on bm_movish_movies');
+            assert.ok(content.includes('id: "bm_bloxcraftstudios"') && content.includes('type: "bookmark"'), label + ' should contain bm_bloxcraftstudios as type bookmark');
+        });
+    });
+
     it('should deduplicate bookmarks and categories on reset in settings.html', function() {
         assert.ok(html.includes('if (!freshData.bookmarks.some(function (fb) { return fb.id === b.id; }))'), 'reset action should deduplicate bookmarks by ID');
         assert.ok(html.includes('if (!freshData.categories.some(function (fc) { return fc.id === c.id; }))'), 'reset action should deduplicate categories by ID');

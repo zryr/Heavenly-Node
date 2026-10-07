@@ -1802,7 +1802,8 @@
         <input type="checkbox" id="builtin-dont-ask" style="accent-color: #38bdf8; cursor: pointer; width: 16px; height: 16px;" />
         <label for="builtin-dont-ask" style="cursor: pointer; user-select: none;">Don't ask me again for default bookmarks</label>
       </div>
-      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+      <div id="builtin-alt-versions-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;"></div>
+      <div id="builtin-default-actions-container" style="display: flex; gap: 10px; justify-content: flex-end;">
         <button id="builtin-test-direct-btn" type="button" class="modal-submit-btn" style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Test Direct Site</span></button>
         <button id="builtin-open-proxy-btn" type="button" class="modal-submit-btn" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span></button>
       </div>
@@ -2408,10 +2409,10 @@
         { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
         { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
-        { id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [{ id: "sub_latestmovies_anime", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }] },
+        { id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
         { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
         { id: "bm_streamopro", categoryId: "cat_movies", title: "Streamo", url: "https://streamo.pro/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=streamo.pro&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-        { id: "bm_movish_movies", categoryId: "cat_movies", title: "Movish", url: "https://movish.to/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [{ id: "sub_latestmovies_movies", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }] },
+        { id: "bm_movish_movies", categoryId: "cat_movies", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=7movies.in&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "/proxy/https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
         {
@@ -2434,27 +2435,31 @@
         { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_user_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: false, hidden: false, order: 99, subBookmarks: [] },
         { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=teddblue.github.io&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-        { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=cpsgames.org&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
-        { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=emubrowser.com&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-        { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=gras2027.com&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-        { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
-        { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "folder_bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
-        { id: "bm_mgalternative", categoryId: "cat_games", title: "Mountain Games", url: "https://mgalternative.github.io", type: "folder_bookmark", icon: "preset:star", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
-        { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "/proxy/https://masonsunblockedgames.github.io/MasonsUnblockedGames/favicon.ico", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
-        { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=geometryspot.com&sz=64", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
-        { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
-        { id: "bm_interdimensional_lite", categoryId: "cat_games", title: "Interdimensional Lite", url: "https://pinkdev.d13qic2f6zga3.amplifyapp.com", type: "folder_bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
-        { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
+        { id: "bm_ubg98", categoryId: "cat_games", title: "UBG98", url: "https://ubg98.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=ubg98.com&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=cpsgames.org&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_ubgames", categoryId: "cat_games", title: "UBGames", url: "https://ubgames.uk", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=ubgames.uk&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+        { id: "bm_unbleeked", categoryId: "cat_games", title: "Unbleeked", url: "https://unbleeked.vercel.app/", type: "folder_bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+        { id: "bm_duckmath", categoryId: "cat_games", title: "DuckMath", url: "https://duckmath.org/", type: "folder_bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 7, disableQuickSaveWidget: true, subBookmarks: [{ id: "sub_duckmath_a1", title: "DuckMath a1", url: "https://classroom-a1.b-cdn.net/", icon: "preset:gamepad" }] },
+        { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=emubrowser.com&sz=64", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
+        { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=gras2027.com&sz=64", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
+        { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
+        { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "folder_bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
+        { id: "bm_mgalternative", categoryId: "cat_games", title: "Mountain Games", url: "https://mgalternative.github.io", type: "folder_bookmark", icon: "preset:star", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
+        { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "/proxy/https://masonsunblockedgames.github.io/MasonsUnblockedGames/favicon.ico", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
+        { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=geometryspot.com&sz=64", builtIn: true, hidden: false, order: 14, subBookmarks: [] },
+        { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 15, subBookmarks: [] },
+        { id: "bm_interdimensional_lite", categoryId: "cat_games", title: "Interdimensional Lite", url: "https://pinkdev.d13qic2f6zga3.amplifyapp.com", type: "folder_bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 16, subBookmarks: [] },
+        { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 17, subBookmarks: [] },
         {
           id: "bm_bloxcraftstudios",
           categoryId: "cat_games",
           title: "Bloxcraft Studios",
           url: "https://bloxcraft-ubg.pages.dev",
-          type: "folder_bookmark",
+          type: "bookmark",
           icon: "/proxy/https://5kh0.github.io/bloxcraft_transparent.png",
           builtIn: true,
           hidden: false,
-          order: 14,
+          order: 18,
           subBookmarks: [
             { id: "sub_bloxcraft_5kh0", title: "Bloxcraft (5kh0)", url: "https://5kh0.github.io", icon: "" },
             { id: "sub_bloxcraft_fastly", title: "Bloxcraft (Fastly)", url: "https://bloxcraftubg.freetls.fastly.net/games/", icon: "https://www.google.com/s2/favicons?domain=bloxcraftubg.freetls.fastly.net&sz=64" }
@@ -2623,6 +2628,13 @@
               if (!userBm.subBookmarks || !Array.isArray(userBm.subBookmarks)) {
                 userBm.subBookmarks = [];
                 updated = true;
+              }
+              if (defBm.builtIn) {
+                var initSubLen = userBm.subBookmarks.length;
+                userBm.subBookmarks = userBm.subBookmarks.filter(function (userSub) {
+                  return defBm.subBookmarks.some(function (defSub) { return defSub.id === userSub.id; });
+                });
+                if (userBm.subBookmarks.length !== initSubLen) updated = true;
               }
               defBm.subBookmarks.forEach(function (defSub) {
                 var userSub = userBm.subBookmarks.find(function (s) { return s.id === defSub.id; });
@@ -4083,6 +4095,27 @@
       if (modal) modal.classList.remove('active');
     }
 
+    function getBrokenLinksMap() {
+      try {
+        return JSON.parse(localStorage.getItem('heavenly_broken_links') || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function toggleBrokenLinkState(url) {
+      if (!url) return;
+      var map = getBrokenLinksMap();
+      if (map[url]) {
+        delete map[url];
+      } else {
+        map[url] = true;
+      }
+      try {
+        localStorage.setItem('heavenly_broken_links', JSON.stringify(map));
+      } catch (e) {}
+    }
+
     function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId) {
       rawUrl = rawUrl || '';
       pendingBuiltinUrls.rawUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) ? rawUrl : (rawUrl ? 'https://' + rawUrl : '');
@@ -4101,18 +4134,24 @@
       if (qsToggle && qsContainer) {
         var isFolderType = false;
         var isEnabled = true;
+        var isLockedDisabled = false;
         if (targetBmId) {
           var data = loadBookmarkData();
           var bm = data.bookmarks.find(function (b) { return b.id === targetBmId; });
           if (bm) {
             isFolderType = (bm.type === 'folder' || bm.type === 'folder_bookmark');
-            isEnabled = bm.disableQuickSaveWidget !== true;
-            if (bm.id === 'bm_ng') {
-              isFolderType = false;
+            if (bm.disableQuickSaveWidget === true || bm.id === 'bm_ng') {
+              isLockedDisabled = true;
+              isEnabled = false;
+            } else {
+              isEnabled = true;
             }
           }
         }
         qsToggle.checked = isEnabled;
+        qsToggle.disabled = isLockedDisabled;
+        qsContainer.style.opacity = isLockedDisabled ? '0.5' : '1';
+        qsContainer.style.pointerEvents = isLockedDisabled ? 'none' : 'auto';
         qsContainer.style.display = isFolderType ? 'flex' : 'none';
       }
 
@@ -4123,6 +4162,132 @@
         } else {
           descEl.innerHTML = 'Opening <strong id="builtin-site-name" style="color: #38bdf8;">' + escapeHtml(title || rawUrl) + '</strong>. Choose how you would like to open this bookmark:';
         }
+      }
+
+      var altContainer = $('builtin-alt-versions-container');
+      var defActionsContainer = $('builtin-default-actions-container');
+      if (altContainer) altContainer.innerHTML = '';
+
+      var data = loadBookmarkData();
+      var targetBm = targetBmId ? data.bookmarks.find(function (b) { return b.id === targetBmId; }) : null;
+      var hasAltVersions = targetBm && targetBm.subBookmarks && targetBm.subBookmarks.length > 0;
+
+      if (hasAltVersions && altContainer) {
+        if (defActionsContainer) defActionsContainer.style.display = 'none';
+        altContainer.style.display = 'flex';
+
+        var brokenMap = getBrokenLinksMap();
+        var allVersions = [];
+        if (targetBm.url) {
+          allVersions.push({
+            title: targetBm.title + ' (Main)',
+            url: targetBm.url,
+            isBroken: !!brokenMap[targetBm.url]
+          });
+        }
+        targetBm.subBookmarks.forEach(function (sub) {
+          allVersions.push({
+            title: sub.title,
+            url: sub.url,
+            isBroken: !!brokenMap[sub.url]
+          });
+        });
+
+        // Sort: Working links first, broken/not working links pushed to the bottom
+        allVersions.sort(function (a, b) {
+          if (a.isBroken === b.isBroken) return 0;
+          return a.isBroken ? 1 : -1;
+        });
+
+        allVersions.forEach(function (ver) {
+          var card = document.createElement('div');
+          var isBroken = ver.isBroken;
+
+          card.style.cssText = isBroken
+            ? 'background: rgba(30, 41, 59, 0.35); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0.65; transition: all 0.2s ease;'
+            : 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;';
+
+          var topRow = document.createElement('div');
+          topRow.style.cssText = 'display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;';
+
+          var titleBox = document.createElement('div');
+          titleBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
+          var titleText = '<div style="font-weight: 700; font-size: 0.9rem; color: ' + (isBroken ? '#94a3b8' : '#f8fafc') + ';">' + escapeHtml(ver.title) + '</div>';
+          if (isBroken) {
+            titleText += '<span style="font-size: 0.7rem; font-weight: 700; color: #fca5a5; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 6px; padding: 1px 6px;">Not Working</span>';
+          }
+          titleBox.innerHTML = titleText;
+
+          var rightBox = document.createElement('div');
+          rightBox.style.cssText = 'display: flex; align-items: center; gap: 8px;';
+
+          var urlBadge = document.createElement('div');
+          urlBadge.style.cssText = 'font-size: 0.75rem; color: ' + (isBroken ? '#64748b' : '#38bdf8') + '; font-family: monospace; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+          urlBadge.textContent = ver.url;
+
+          var toggleBrokenBtn = document.createElement('button');
+          toggleBrokenBtn.type = 'button';
+          toggleBrokenBtn.title = isBroken ? 'Mark this link as working' : 'Mark this link as not working';
+          toggleBrokenBtn.style.cssText = isBroken
+            ? 'background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;'
+            : 'background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;';
+
+          toggleBrokenBtn.innerHTML = isBroken
+            ? '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Mark Working</span>'
+            : '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Mark Broken</span>';
+
+          toggleBrokenBtn.onclick = function (e) {
+            e.stopPropagation();
+            toggleBrokenLinkState(ver.url);
+            openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+          };
+
+          rightBox.appendChild(urlBadge);
+          rightBox.appendChild(toggleBrokenBtn);
+
+          topRow.appendChild(titleBox);
+          topRow.appendChild(rightBox);
+
+          var btnRow = document.createElement('div');
+          btnRow.style.cssText = 'display: flex; gap: 8px;';
+
+          var verRawUrl = (ver.url.startsWith('http://') || ver.url.startsWith('https://')) ? ver.url : 'https://' + ver.url;
+          var verProxiedUrl = location.protocol + '//' + location.host + '/proxy/' + verRawUrl;
+
+          var directBtn = document.createElement('button');
+          directBtn.type = 'button';
+          directBtn.className = 'modal-submit-btn';
+          directBtn.style.cssText = 'background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;';
+          directBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Test Direct Site</span>';
+          directBtn.onclick = function () {
+            saveBuiltinPromptPref();
+            saveQuickSaveWidgetTogglePref();
+            closeBuiltinTestModal();
+            openTargetUrlWithSetting(verRawUrl);
+          };
+
+          var proxyBtn = document.createElement('button');
+          proxyBtn.type = 'button';
+          proxyBtn.className = 'modal-submit-btn';
+          proxyBtn.style.cssText = 'flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;';
+          proxyBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span>';
+          proxyBtn.onclick = function () {
+            saveBuiltinPromptPref();
+            saveQuickSaveWidgetTogglePref();
+            closeBuiltinTestModal();
+            openTargetUrlWithSetting(verProxiedUrl);
+          };
+
+          btnRow.appendChild(directBtn);
+          btnRow.appendChild(proxyBtn);
+
+          card.appendChild(topRow);
+          card.appendChild(btnRow);
+          altContainer.appendChild(card);
+        });
+      } else {
+        if (defActionsContainer) defActionsContainer.style.display = 'flex';
+        if (altContainer) altContainer.style.display = 'none';
       }
 
       var modal = $('builtin-test-modal');
