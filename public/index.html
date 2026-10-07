@@ -4088,6 +4088,27 @@
       if (modal) modal.classList.remove('active');
     }
 
+    function getBrokenLinksMap() {
+      try {
+        return JSON.parse(localStorage.getItem('heavenly_broken_links') || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function toggleBrokenLinkState(url) {
+      if (!url) return;
+      var map = getBrokenLinksMap();
+      if (map[url]) {
+        delete map[url];
+      } else {
+        map[url] = true;
+      }
+      try {
+        localStorage.setItem('heavenly_broken_links', JSON.stringify(map));
+      } catch (e) {}
+    }
+
     function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId) {
       rawUrl = rawUrl || '';
       pendingBuiltinUrls.rawUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) ? rawUrl : (rawUrl ? 'https://' + rawUrl : '');
@@ -4148,27 +4169,77 @@
         if (defActionsContainer) defActionsContainer.style.display = 'none';
         altContainer.style.display = 'flex';
 
+        var brokenMap = getBrokenLinksMap();
         var allVersions = [];
         if (targetBm.url) {
           allVersions.push({
             title: targetBm.title + ' (Main)',
-            url: targetBm.url
+            url: targetBm.url,
+            isBroken: !!brokenMap[targetBm.url]
           });
         }
         targetBm.subBookmarks.forEach(function (sub) {
           allVersions.push({
             title: sub.title,
-            url: sub.url
+            url: sub.url,
+            isBroken: !!brokenMap[sub.url]
           });
+        });
+
+        // Sort: Working links first, broken/not working links pushed to the bottom
+        allVersions.sort(function (a, b) {
+          if (a.isBroken === b.isBroken) return 0;
+          return a.isBroken ? 1 : -1;
         });
 
         allVersions.forEach(function (ver) {
           var card = document.createElement('div');
-          card.style.cssText = 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;';
+          var isBroken = ver.isBroken;
+
+          card.style.cssText = isBroken
+            ? 'background: rgba(30, 41, 59, 0.35); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0.65; transition: all 0.2s ease;'
+            : 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;';
 
           var topRow = document.createElement('div');
-          topRow.style.cssText = 'display: flex; align-items: center; justify-content: space-between; gap: 8px;';
-          topRow.innerHTML = '<div style="font-weight: 700; font-size: 0.9rem; color: #f8fafc;">' + escapeHtml(ver.title) + '</div><div style="font-size: 0.75rem; color: #38bdf8; font-family: monospace;">' + escapeHtml(ver.url) + '</div>';
+          topRow.style.cssText = 'display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;';
+
+          var titleBox = document.createElement('div');
+          titleBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
+          var titleText = '<div style="font-weight: 700; font-size: 0.9rem; color: ' + (isBroken ? '#94a3b8' : '#f8fafc') + ';">' + escapeHtml(ver.title) + '</div>';
+          if (isBroken) {
+            titleText += '<span style="font-size: 0.7rem; font-weight: 700; color: #fca5a5; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 6px; padding: 1px 6px;">Not Working</span>';
+          }
+          titleBox.innerHTML = titleText;
+
+          var rightBox = document.createElement('div');
+          rightBox.style.cssText = 'display: flex; align-items: center; gap: 8px;';
+
+          var urlBadge = document.createElement('div');
+          urlBadge.style.cssText = 'font-size: 0.75rem; color: ' + (isBroken ? '#64748b' : '#38bdf8') + '; font-family: monospace;';
+          urlBadge.textContent = ver.url;
+
+          var toggleBrokenBtn = document.createElement('button');
+          toggleBrokenBtn.type = 'button';
+          toggleBrokenBtn.title = isBroken ? 'Mark this link as working' : 'Mark this link as not working';
+          toggleBrokenBtn.style.cssText = isBroken
+            ? 'background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;'
+            : 'background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;';
+
+          toggleBrokenBtn.innerHTML = isBroken
+            ? '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Mark Working</span>'
+            : '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Mark Broken</span>';
+
+          toggleBrokenBtn.onclick = function (e) {
+            e.stopPropagation();
+            toggleBrokenLinkState(ver.url);
+            openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+          };
+
+          rightBox.appendChild(urlBadge);
+          rightBox.appendChild(toggleBrokenBtn);
+
+          topRow.appendChild(titleBox);
+          topRow.appendChild(rightBox);
 
           var btnRow = document.createElement('div');
           btnRow.style.cssText = 'display: flex; gap: 8px;';
