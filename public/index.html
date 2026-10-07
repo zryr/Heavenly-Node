@@ -1757,6 +1757,46 @@
       }
     }
 
+    function openInAboutBlankWindow(proxiedUrl, win, settings) {
+      if (!win) win = (typeof window !== 'undefined' ? window : null);
+      if (!win) return null;
+      if (!settings) settings = loadSettings();
+
+      var openFn = win.__nativeWinOpen || win.open;
+      var newWin = null;
+      try {
+        newWin = openFn.call(win, 'about:blank', '_blank');
+      } catch (e) {
+        newWin = null;
+      }
+
+      if (!newWin) {
+        if (win.alert) {
+          win.alert('Popup blocked! Please allow popups for Heavenly to open pages in about:blank.');
+        }
+        return null;
+      }
+
+      var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets || {});
+      var preset = allPresets[settings.selectedPreset] || DEFAULT_PRESETS.classroom;
+
+      var doc = newWin.document;
+      if (doc) {
+        doc.open();
+        doc.write(
+          '<!DOCTYPE html><html><head>' +
+          '<title>' + (preset.title || 'Google Classroom') + '</title>' +
+          '<link rel="shortcut icon" href="' + (preset.icon || 'https://ssl.gstatic.com/classroom/favicon.png') + '" type="image/x-icon" />' +
+          '<style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}iframe{width:100vw;height:100vh;border:none;margin:0;padding:0;position:fixed;top:0;left:0;}</style>' +
+          '</head><body>' +
+          '<iframe src="' + proxiedUrl + '" allowfullscreen style="width:100vw;height:100vh;border:none;margin:0;padding:0;position:fixed;top:0;left:0;"></iframe>' +
+          '</body></html>'
+        );
+        doc.close();
+      }
+      return newWin;
+    }
+
     function processSearchSubmission(inNewTab) {
       var url = $('url').value.trim();
       if (!url) return false;
@@ -1770,7 +1810,10 @@
       }
 
       var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + url;
-      if (inNewTab) {
+      var settings = loadSettings();
+      if (settings.openInAboutBlank) {
+        openInAboutBlankWindow(proxiedUrl, window, settings);
+      } else if (inNewTab) {
         window.open(proxiedUrl, '_blank', 'noopener');
       } else {
         showLoadingScreen();
@@ -1842,7 +1885,7 @@
         openSearchInNewTab: saved.openSearchInNewTab || false,
         mergeGoNewTab: saved.mergeGoNewTab || false,
         openBookmarksInNewTab: saved.openBookmarksInNewTab !== undefined ? saved.openBookmarksInNewTab : true,
-        openInAboutBlank: saved.openInAboutBlank !== undefined ? saved.openInAboutBlank : true
+        openInAboutBlank: saved.openInAboutBlank || false
       };
     }
 
@@ -4388,7 +4431,9 @@
       function openTargetUrlWithSetting(targetUrl) {
         if (!targetUrl) return;
         var settings = loadSettings();
-        if (settings.openBookmarksInNewTab !== false) {
+        if (settings.openInAboutBlank) {
+          openInAboutBlankWindow(targetUrl, window, settings);
+        } else if (settings.openBookmarksInNewTab !== false) {
           window.open(targetUrl, '_blank', 'noopener');
         } else {
           showLoadingScreen();

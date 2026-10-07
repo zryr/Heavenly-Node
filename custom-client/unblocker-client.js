@@ -794,6 +794,7 @@
       persistentCloak: saved.persistentCloak || false,
       selectedPreset: saved.selectedPreset || 'classroom',
       customPresets: saved.customPresets || {},
+      openInAboutBlank: saved.openInAboutBlank || false,
       panicKeyEnable: saved.panicKeyEnable || false,
       panicKey: saved.panicKey || '`',
       touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
@@ -809,6 +810,56 @@
       disableAllWidgets: saved.disableAllWidgets || false,
       disableAllFeatures: saved.disableAllFeatures || false
     };
+  }
+
+  function openInAboutBlankWindow(proxiedUrl, win, settings) {
+    if (!win) win = (typeof window !== 'undefined' ? window : null);
+    if (!win) return null;
+    if (!settings) settings = loadHeavenlySettings(win);
+
+    var openFn = win.__nativeWinOpen || win.open;
+    var newWin = null;
+    try {
+      newWin = openFn.call(win, 'about:blank', '_blank');
+    } catch (e) {
+      newWin = null;
+    }
+
+    if (!newWin) {
+      if (win.alert) {
+        win.alert('Popup blocked! Please allow popups for Heavenly to open pages in about:blank.');
+      }
+      return null;
+    }
+
+    var DEFAULT_PRESETS = {
+      classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
+      google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
+      drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
+      elearn_lee: { title: "Courses", icon: "https://elearn.lee.edu/favicon.ico" },
+      lee_college: { title: "Home | Lee College", icon: "https://www.lee.edu/favicon.ico" },
+      canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" },
+      khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" }
+    };
+
+    var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets || {});
+    var preset = allPresets[settings.selectedPreset] || DEFAULT_PRESETS.classroom;
+
+    var doc = newWin.document;
+    if (doc) {
+      doc.open();
+      doc.write(
+        '<!DOCTYPE html><html><head>' +
+        '<title>' + (preset.title || 'Google Classroom') + '</title>' +
+        '<link rel="shortcut icon" href="' + (preset.icon || 'https://ssl.gstatic.com/classroom/favicon.png') + '" type="image/x-icon" />' +
+        '<style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}iframe{width:100vw;height:100vh;border:none;margin:0;padding:0;position:fixed;top:0;left:0;}</style>' +
+        '</head><body>' +
+        '<iframe src="' + proxiedUrl + '" allowfullscreen style="width:100vw;height:100vh;border:none;margin:0;padding:0;position:fixed;top:0;left:0;"></iframe>' +
+        '</body></html>'
+      );
+      doc.close();
+    }
+    return newWin;
   }
 
   function initHeavenlyCloakAndPanic(window, settings, config) {
@@ -1053,8 +1104,11 @@
           var isMinimized = false;
           var autoMinTimer = setTimeout(function () {
             isMinimized = true;
-            btn.classList.add('minimized');
-            btn.querySelector('.btn-label').style.display = 'none';
+            if (btn) {
+              btn.classList.add('minimized');
+              var lbl = btn.querySelector('.btn-label');
+              if (lbl) lbl.style.display = 'none';
+            }
           }, 10000);
 
           var isDragging = false;
@@ -1124,8 +1178,10 @@
             }
           };
 
-          btn.addEventListener('mousedown', onDown);
-          btn.addEventListener('touchstart', onDown);
+          if (btn) {
+            btn.addEventListener('mousedown', onDown);
+            btn.addEventListener('touchstart', onDown);
+          }
         }
 
         if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {
@@ -2424,6 +2480,7 @@
           }
 
           items.push('<button type="button" class="btn-ctrl" id="dock-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
+          items.push('<button type="button" class="btn-ctrl" id="dock-blank-btn" title="Open Page in about:blank Tab"><svg class="title-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg><span>about:blank</span></button>');
 
           if (showNavBookmark) {
             items.push('<button type="button" class="btn-ctrl" id="dock-bm-btn" title="Bookmark Page"><svg class="title-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>Bookmark</span></button>');
@@ -2560,6 +2617,15 @@
             directDockBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               openDirectSitePreview(window, getDirectRemoteUrl(window, config));
+            });
+          }
+
+          // Wire up about:blank button
+          var blankDockBtn = dockBar.querySelector('#dock-blank-btn');
+          if (blankDockBtn) {
+            blankDockBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              openInAboutBlankWindow(window.location.href, window, settings);
             });
           }
 
@@ -3178,6 +3244,7 @@
           }
 
           navHtml.push('<button type="button" class="btn-ctrl" id="nav-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
+          navHtml.push('<button type="button" class="btn-ctrl" id="nav-blank-btn" title="Open Page in about:blank Tab"><svg class="title-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg><span>about:blank</span></button>');
 
           navHtml.push('<button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>');
           navHtml.push('</div>');
@@ -3228,6 +3295,14 @@
             floatDirectBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               openDirectSitePreview(window, getDirectRemoteUrl(window, config));
+            });
+          }
+
+          var floatBlankBtn = navWidget.querySelector('#nav-blank-btn') || (navShadow.querySelector ? navShadow.querySelector('#nav-blank-btn') : null);
+          if (floatBlankBtn) {
+            floatBlankBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              openInAboutBlankWindow(window.location.href, window, settings);
             });
           }
 
@@ -4069,11 +4144,13 @@
   /*globals module*/
   if (typeof module === "undefined") {
     global.unblockerInit = initForWindow;
+    global.openInAboutBlankWindow = openInAboutBlankWindow;
   } else {
     module.exports = {
       initForWindow: initForWindow,
       fixUrl: fixUrl,
       fixSrcset: fixSrcset,
+      openInAboutBlankWindow: openInAboutBlankWindow,
     };
   }
 })(this); // window in a browser, global in node.js

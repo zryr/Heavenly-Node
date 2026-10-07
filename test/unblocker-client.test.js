@@ -360,4 +360,141 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       assert.strictEqual(typeof parsedPos.top, 'number');
     });
   });
+
+  describe('about:blank Tab Cloaking & Launcher', function () {
+    const { openInAboutBlankWindow } = require('../custom-client/unblocker-client.js');
+
+    it('should export openInAboutBlankWindow function', function () {
+      assert.strictEqual(typeof openInAboutBlankWindow, 'function');
+    });
+
+    it('should open about:blank window, write full-screen iframe and apply cloaking preset', function () {
+      let writtenHtml = '';
+      let isDocOpened = false;
+      let isDocClosed = false;
+
+      const mockTargetWin = {
+        document: {
+          open: function () { isDocOpened = true; },
+          write: function (html) { writtenHtml += html; },
+          close: function () { isDocClosed = true; }
+        }
+      };
+
+      let openedUrl = '';
+      let openedTarget = '';
+
+      const mockWindow = {
+        open: function (url, target) {
+          openedUrl = url;
+          openedTarget = target;
+          return mockTargetWin;
+        },
+        localStorage: {
+          getItem: function (key) {
+            if (key === 'heavenly_settings') {
+              return JSON.stringify({
+                selectedPreset: 'drive',
+                openInAboutBlank: true
+              });
+            }
+            return null;
+          }
+        }
+      };
+
+      const proxiedUrl = 'http://localhost:8080/proxy/https://example.com';
+      const resultWin = openInAboutBlankWindow(proxiedUrl, mockWindow);
+
+      assert.strictEqual(resultWin, mockTargetWin);
+      assert.strictEqual(openedUrl, 'about:blank');
+      assert.strictEqual(openedTarget, '_blank');
+      assert.strictEqual(isDocOpened, true);
+      assert.strictEqual(isDocClosed, true);
+
+      assert.ok(writtenHtml.includes('<title>My Drive - Google Drive</title>'), 'Should include selected preset title');
+      assert.ok(writtenHtml.includes('https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png'), 'Should include selected preset icon');
+      assert.ok(writtenHtml.includes('<iframe src="http://localhost:8080/proxy/https://example.com" allowfullscreen'), 'Should include full-screen iframe pointing to proxied URL');
+      assert.ok(writtenHtml.includes('width:100vw;height:100vh;border:none'), 'Should style iframe as full-screen');
+    });
+
+    it('should handle popup blocker gracefully when window.open returns null', function () {
+      let alertMsg = '';
+      const mockWindow = {
+        open: function () { return null; },
+        alert: function (msg) { alertMsg = msg; },
+        localStorage: { getItem: function () { return '{}'; } }
+      };
+
+      const result = openInAboutBlankWindow('http://localhost:8080/proxy/https://example.com', mockWindow);
+      assert.strictEqual(result, null);
+      assert.ok(alertMsg.includes('Popup blocked'), 'Should alert user that popup was blocked');
+    });
+
+    it('should render about:blank action button in dock bar and floating navigation widget', function () {
+      const mockDoc = {
+        readyState: 'complete',
+        body: {
+          appendChild: function (child) { this.children.push(child); },
+          children: []
+        },
+        createElement: function (tag) {
+          const el = {
+            tagName: tag.toUpperCase(),
+            style: {},
+            children: [],
+            attachShadow: function () { return this; },
+            appendChild: function (child) { this.children.push(child); },
+            querySelector: function () { return null; },
+            querySelectorAll: function () { return []; },
+            getBoundingClientRect: function () { return { left: 0, top: 0, width: 100, height: 100 }; },
+            classList: { add: function () {}, remove: function () {} },
+            addEventListener: function () {}
+          };
+          return el;
+        },
+        getElementById: function () { return null; },
+        getElementsByTagName: function () { return []; },
+        querySelectorAll: function () { return []; },
+        documentElement: { addEventListener: function () {} }
+      };
+
+      const mockWindow = {
+        innerWidth: 800,
+        innerHeight: 600,
+        location: { href: 'http://localhost:8080/proxy/https://example.com', pathname: '/proxy/https://example.com', search: '', hash: '' },
+        document: mockDoc,
+        addEventListener: function () {},
+        localStorage: {
+          getItem: function (key) {
+            if (key === 'heavenly_settings') {
+              return JSON.stringify({
+                useWidgetDock: true,
+                dockPosition: 'bottom',
+                showNavSearch: true,
+                showNavBookmark: true,
+                showNavHome: true
+              });
+            }
+            return null;
+          }
+        }
+      };
+      mockWindow.top = mockWindow;
+
+      initForWindow(config, mockWindow);
+
+      const dockRoot = mockDoc.body.children.find(c => c.id === 'heavenly-dock-root');
+      assert.ok(dockRoot, 'Dock root element should be injected');
+      assert.ok(dockRoot.children && dockRoot.children.length > 0);
+
+      // Verify that dock inner HTML includes about:blank button
+      const dockWrapper = dockRoot.children.find(c => c.className && c.className.includes('dock-wrapper'));
+      assert.ok(dockWrapper);
+      const dockBar = dockWrapper.children.find(c => c.className === 'dock-bar');
+      assert.ok(dockBar);
+      assert.ok(dockBar.innerHTML.includes('id="dock-blank-btn"'), 'Dock bar should include dock-blank-btn button');
+      assert.ok(dockBar.innerHTML.includes('<span>about:blank</span>'), 'Dock bar should include about:blank label');
+    });
+  });
 });
