@@ -1517,9 +1517,9 @@
 
       var DEFAULT_BOOKMARK_DATA = {
         categories: [
-          { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false },
-          { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false },
-          { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false }
+          { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
+          { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
+          { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] }
         ],
         bookmarks: [
           { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
@@ -1605,9 +1605,24 @@
             if (data.bookmarks.length !== initialBmCount) updated = true;
 
             DEFAULT_BOOKMARK_DATA.categories.forEach(function (defCat) {
-              var exists = data.categories.some(function (c) { return c.id === defCat.id; });
-              if (!exists) {
+              var userCat = data.categories.find(function (c) { return c.id === defCat.id; });
+              if (!userCat) {
                 data.categories.push(JSON.parse(JSON.stringify(defCat)));
+                updated = true;
+              } else {
+                if (!userCat.subSections || !Array.isArray(userCat.subSections)) {
+                  userCat.subSections = JSON.parse(JSON.stringify(defCat.subSections));
+                  updated = true;
+                }
+              }
+            });
+
+            data.categories.forEach(function (cat) {
+              if (!cat.subSections || !Array.isArray(cat.subSections)) {
+                cat.subSections = [
+                  { id: "builtin", title: "Built-In", builtIn: true },
+                  { id: "user", title: "Your Bookmarks", builtIn: true }
+                ];
                 updated = true;
               }
             });
@@ -1647,6 +1662,13 @@
                 }
               });
             }
+
+            data.bookmarks.forEach(function (bm) {
+              if (!bm.subSectionId) {
+                bm.subSectionId = bm.builtIn ? 'builtin' : 'user';
+                updated = true;
+              }
+            });
 
             DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
               var userBm = data.bookmarks.find(function (b) { return b.id === defBm.id; });

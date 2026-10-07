@@ -1460,10 +1460,11 @@
         <button id="close-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
 
-      <!-- Tab selection between Add Bookmark & Add Category -->
+      <!-- Tab selection between Add Bookmark, Add Category & Add Sub-Section -->
       <div style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
         <button id="tab-add-bm" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600; cursor: pointer;">Add Bookmark</button>
         <button id="tab-add-cat" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">Add Category</button>
+        <button id="tab-add-subsec" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">Add Sub-Section</button>
       </div>
 
       <!-- Add Bookmark Form -->
@@ -1491,6 +1492,10 @@
         <div class="form-group">
           <label class="form-label" for="bm-category">Category Section</label>
           <select id="bm-category" class="form-select"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="bm-subsection">Sub-Section</label>
+          <select id="bm-subsection" class="form-select"></select>
         </div>
         <div class="form-group">
           <label class="form-label">Icon Source</label>
@@ -1557,6 +1562,19 @@
           </select>
         </div>
         <button type="submit" class="modal-submit-btn">Create Category</button>
+      </form>
+
+      <!-- Add Sub-Section Form -->
+      <form id="form-add-subsec" style="display: none; flex-direction: column; gap: 12px;">
+        <div class="form-group">
+          <label class="form-label" for="subsec-cat-select">Parent Category Section</label>
+          <select id="subsec-cat-select" class="form-select"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="subsec-title">Sub-Section Name</label>
+          <input type="text" id="subsec-title" class="form-input" placeholder="e.g. Recommended / Classics" required />
+        </div>
+        <button type="submit" class="modal-submit-btn">Create Sub-Section</button>
       </form>
 
     </div>
@@ -2266,9 +2284,9 @@
 
     var DEFAULT_BOOKMARK_DATA = {
       categories: [
-        { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false },
-        { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false },
-        { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false }
+        { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
+        { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
+        { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] }
       ],
       bookmarks: [
         { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
@@ -2367,14 +2385,42 @@
         });
         if (data.bookmarks.length !== initialBmCount) updated = true;
 
-        // Merge missing default categories and update builtIn category titles
+        // Merge missing default categories and update builtIn category titles & subSections
         DEFAULT_BOOKMARK_DATA.categories.forEach(function (defCat) {
           var userCat = data.categories.find(function (c) { return c.id === defCat.id; });
           if (!userCat) {
             data.categories.push(JSON.parse(JSON.stringify(defCat)));
             updated = true;
-          } else if (defCat.builtIn && userCat.title !== defCat.title) {
-            userCat.title = defCat.title;
+          } else {
+            if (defCat.builtIn && userCat.title !== defCat.title) {
+              userCat.title = defCat.title;
+              updated = true;
+            }
+            if (!userCat.subSections || !Array.isArray(userCat.subSections)) {
+              userCat.subSections = JSON.parse(JSON.stringify(defCat.subSections));
+              updated = true;
+            } else {
+              defCat.subSections.forEach(function (defSub) {
+                var userSub = userCat.subSections.find(function (s) { return s.id === defSub.id; });
+                if (!userSub) {
+                  userCat.subSections.push(JSON.parse(JSON.stringify(defSub)));
+                  updated = true;
+                } else if (defSub.builtIn && userSub.title !== defSub.title) {
+                  userSub.title = defSub.title;
+                  updated = true;
+                }
+              });
+            }
+          }
+        });
+
+        // Ensure all categories have a valid subSections array
+        data.categories.forEach(function (cat) {
+          if (!cat.subSections || !Array.isArray(cat.subSections)) {
+            cat.subSections = [
+              { id: "builtin", title: "Built-In", builtIn: true },
+              { id: "user", title: "Your Bookmarks", builtIn: true }
+            ];
             updated = true;
           }
         });
@@ -2414,6 +2460,14 @@
             }
           });
         }
+
+        // Ensure all bookmarks have subSectionId
+        data.bookmarks.forEach(function (bm) {
+          if (!bm.subSectionId) {
+            bm.subSectionId = bm.builtIn ? 'builtin' : 'user';
+            updated = true;
+          }
+        });
 
         // Merge missing default bookmarks and folder sub-bookmarks
         DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
@@ -3440,108 +3494,149 @@
           });
         }
 
-        if (builtinBms.length > 0) {
-          var isBuiltinCollapsed = !!collapsedSubSections[cat.id + '_builtin'] && !searchQuery;
+        var subSectionsToRender = cat.subSections && cat.subSections.length > 0 ? cat.subSections : [
+          { id: "builtin", title: "Built-In", builtIn: true },
+          { id: "user", title: "Your Bookmarks", builtIn: true }
+        ];
 
-          var builtinDiv = document.createElement('div');
-          builtinDiv.className = 'subsection-divider';
-          builtinDiv.title = 'Click to collapse/expand Built-In Bookmarks';
+        subSectionsToRender.forEach(function (subSec) {
+          var subBms = bms.filter(function (b) {
+            if (b.subSectionId) return b.subSectionId === subSec.id;
+            return subSec.id === 'builtin' ? b.builtIn === true : !b.builtIn;
+          });
 
-          var builtinTitle = document.createElement('div');
-          builtinTitle.className = 'subsection-title';
-          builtinTitle.innerHTML = '<svg style="width:12px;height:12px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg><span>Built-In</span>';
+          // Skip empty user-made sub-sections when searching or rendering unless it's the default 'user' sub-section
+          if (subSec.builtIn && subSec.id === 'builtin' && subBms.length === 0) return;
 
-          var builtinArrow = document.createElement('span');
-          builtinArrow.className = 'subsection-arrow';
-          builtinArrow.textContent = '>';
-          builtinArrow.style.display = 'inline-block';
-          builtinArrow.style.transition = 'transform 0.2s ease';
-          builtinArrow.style.transform = isBuiltinCollapsed ? 'rotate(0deg)' : 'rotate(90deg)';
+          var isSubCollapsed = !!collapsedSubSections[cat.id + '_' + subSec.id] && !searchQuery;
 
-          builtinDiv.appendChild(builtinTitle);
-          builtinDiv.appendChild(builtinArrow);
+          var subDiv = document.createElement('div');
+          subDiv.className = 'subsection-divider';
+          subDiv.title = 'Click to collapse/expand ' + subSec.title;
+          subDiv.setAttribute('role', 'button');
+          subDiv.setAttribute('tabindex', '0');
+          subDiv.setAttribute('aria-expanded', isSubCollapsed ? 'false' : 'true');
 
-          builtinDiv.onclick = function (e) {
+          var subTitleEl = document.createElement('div');
+          subTitleEl.className = 'subsection-title';
+
+          var subIconSvg = subSec.id === 'builtin'
+            ? '<svg style="width:12px;height:12px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>'
+            : '<svg style="width:12px;height:12px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+
+          subTitleEl.innerHTML = subIconSvg + '<span>' + escapeHtml(subSec.title) + '</span>';
+
+          var subRightGroup = document.createElement('div');
+          subRightGroup.style.cssText = 'display:flex; align-items:center; gap:6px;';
+
+          if (!subSec.builtIn) {
+            // Edit Sub-Section Name Button
+            var editSubSecBtn = document.createElement('button');
+            editSubSecBtn.type = 'button';
+            editSubSecBtn.title = 'Edit sub-section name';
+            editSubSecBtn.style.cssText = 'background:none; border:none; color:#94a3b8; cursor:pointer; padding:2px 4px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; transition:all 0.2s ease;';
+            editSubSecBtn.innerHTML = '<svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>';
+            editSubSecBtn.onmouseover = function () { editSubSecBtn.style.color = '#38bdf8'; editSubSecBtn.style.background = 'rgba(56,189,248,0.15)'; };
+            editSubSecBtn.onmouseout = function () { editSubSecBtn.style.color = '#94a3b8'; editSubSecBtn.style.background = 'none'; };
+            editSubSecBtn.onclick = function (e) {
+              e.stopPropagation();
+              var newName = prompt('Edit sub-section name:', subSec.title);
+              if (newName && newName.trim() && newName.trim() !== subSec.title) {
+                subSec.title = newName.trim();
+                saveBookmarkData(data);
+                renderBookmarksUI();
+              }
+            };
+            subRightGroup.appendChild(editSubSecBtn);
+
+            // Delete Sub-Section Button
+            var delSubSecBtn = document.createElement('button');
+            delSubSecBtn.type = 'button';
+            delSubSecBtn.title = 'Delete sub-section';
+            delSubSecBtn.style.cssText = 'background:none; border:none; color:#94a3b8; cursor:pointer; padding:2px 4px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; transition:all 0.2s ease;';
+            delSubSecBtn.innerHTML = '<svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
+            delSubSecBtn.onmouseover = function () { delSubSecBtn.style.color = '#ef4444'; delSubSecBtn.style.background = 'rgba(239,68,68,0.15)'; };
+            delSubSecBtn.onmouseout = function () { delSubSecBtn.style.color = '#94a3b8'; delSubSecBtn.style.background = 'none'; };
+            delSubSecBtn.onclick = function (e) {
+              e.stopPropagation();
+              if (confirm("Delete sub-section '" + subSec.title + "'? Bookmarks inside will be moved to Your Bookmarks.")) {
+                cat.subSections = cat.subSections.filter(function (s) { return s.id !== subSec.id; });
+                data.bookmarks.forEach(function (b) {
+                  if (b.categoryId === cat.id && b.subSectionId === subSec.id) {
+                    b.subSectionId = 'user';
+                  }
+                });
+                saveBookmarkData(data);
+                renderBookmarksUI();
+              }
+            };
+            subRightGroup.appendChild(delSubSecBtn);
+          }
+
+          var subArrow = document.createElement('span');
+          subArrow.className = 'subsection-arrow';
+          subArrow.textContent = '>';
+          subArrow.style.display = 'inline-block';
+          subArrow.style.transition = 'transform 0.2s ease';
+          subArrow.style.transform = isSubCollapsed ? 'rotate(0deg)' : 'rotate(90deg)';
+          subRightGroup.appendChild(subArrow);
+
+          subDiv.appendChild(subTitleEl);
+          subDiv.appendChild(subRightGroup);
+
+          var toggleSubSection = function (e) {
             e.stopPropagation();
-            collapsedSubSections[cat.id + '_builtin'] = !isBuiltinCollapsed;
+            collapsedSubSections[cat.id + '_' + subSec.id] = !isSubCollapsed;
             renderBookmarksUI();
           };
 
-          listContainer.appendChild(builtinDiv);
+          subDiv.onclick = toggleSubSection;
+          subDiv.onkeydown = function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggleSubSection(e);
+            }
+          };
 
-          if (!isBuiltinCollapsed) {
-            var isBuiltinExpanded = !!expandedSubSections[cat.id + '_builtin'] || !!searchQuery;
-            var visibleBuiltin = isBuiltinExpanded ? builtinBms : builtinBms.slice(0, limit);
-            renderBookmarkListSection(visibleBuiltin, listContainer);
+          listContainer.appendChild(subDiv);
 
-            if (builtinBms.length > limit && !searchQuery) {
-              var builtinShowMoreBtn = document.createElement('button');
-              builtinShowMoreBtn.type = 'button';
-              builtinShowMoreBtn.className = 'show-more-btn';
-              builtinShowMoreBtn.innerHTML = '<span>' + (isBuiltinExpanded ? 'Show Less' : 'Show More (' + (builtinBms.length - limit) + ' more)') + '</span> <span style="margin-left:4px; display:inline-block; transition:transform 0.2s ease; transform:' + (isBuiltinExpanded ? 'rotate(-90deg)' : 'rotate(0deg)') + ';">&gt;</span>';
-              builtinShowMoreBtn.onclick = function (e) {
-                e.stopPropagation();
-                expandedSubSections[cat.id + '_builtin'] = !isBuiltinExpanded;
-                renderBookmarksUI();
-              };
-              listContainer.appendChild(builtinShowMoreBtn);
+          if (!isSubCollapsed) {
+            if (subBms.length > 0) {
+              var isSubExpanded = !!expandedSubSections[cat.id + '_' + subSec.id] || !!searchQuery;
+              var visibleSubBms = isSubExpanded ? subBms : subBms.slice(0, limit);
+              renderBookmarkListSection(visibleSubBms, listContainer);
+
+              if (subBms.length > limit && !searchQuery) {
+                var showMoreBtn = document.createElement('button');
+                showMoreBtn.type = 'button';
+                showMoreBtn.className = 'show-more-btn';
+                showMoreBtn.innerHTML = '<span>' + (isSubExpanded ? 'Show Less' : 'Show More (' + (subBms.length - limit) + ' more)') + '</span> <span style="margin-left:4px; display:inline-block; transition:transform 0.2s ease; transform:' + (isSubExpanded ? 'rotate(-90deg)' : 'rotate(0deg)') + ';">&gt;</span>';
+                showMoreBtn.onclick = function (e) {
+                  e.stopPropagation();
+                  expandedSubSections[cat.id + '_' + subSec.id] = !isSubExpanded;
+                  renderBookmarksUI();
+                };
+                listContainer.appendChild(showMoreBtn);
+              }
+            } else {
+              var emptyNotice = document.createElement('div');
+              emptyNotice.style.cssText = 'font-size: 0.78rem; color: #64748b; font-style: italic; padding: 4px 8px; text-align: center; grid-column: 1 / -1; width: 100%;';
+              emptyNotice.textContent = 'No bookmarks in ' + subSec.title + ' yet.';
+              listContainer.appendChild(emptyNotice);
             }
           }
-        }
+        });
 
-        var isUserCollapsed = !!collapsedSubSections[cat.id + '_user'] && !searchQuery;
-
-        var userDiv = document.createElement('div');
-        userDiv.className = 'subsection-divider';
-        userDiv.title = 'Click to collapse/expand Your Bookmarks';
-
-        var userTitle = document.createElement('div');
-        userTitle.className = 'subsection-title';
-        userTitle.innerHTML = '<svg style="width:12px;height:12px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Your Bookmarks</span>';
-
-        var userArrow = document.createElement('span');
-        userArrow.className = 'subsection-arrow';
-        userArrow.textContent = '>';
-        userArrow.style.display = 'inline-block';
-        userArrow.style.transition = 'transform 0.2s ease';
-        userArrow.style.transform = isUserCollapsed ? 'rotate(0deg)' : 'rotate(90deg)';
-
-        userDiv.appendChild(userTitle);
-        userDiv.appendChild(userArrow);
-
-        userDiv.onclick = function (e) {
+        // Inline + Add Sub-Section button per category card
+        var addSubSecQuickBtn = document.createElement('button');
+        addSubSecQuickBtn.type = 'button';
+        addSubSecQuickBtn.style.cssText = 'background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(56, 189, 248, 0.3); color: #38bdf8; border-radius: 10px; padding: 6px 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s ease; margin-top: 6px; width: 100%;';
+        addSubSecQuickBtn.innerHTML = '<span style="display:inline-flex; align-items:center; gap:4px; justify-content:center;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>Add Sub-Section to ' + escapeHtml(cat.title) + '</span></span>';
+        addSubSecQuickBtn.onclick = function (e) {
           e.stopPropagation();
-          collapsedSubSections[cat.id + '_user'] = !isUserCollapsed;
-          renderBookmarksUI();
+          openAddModal('subsection', cat.id);
         };
-
-        listContainer.appendChild(userDiv);
-
-        if (!isUserCollapsed) {
-          if (userBms.length > 0) {
-            var isUserExpanded = !!expandedSubSections[cat.id + '_user'] || !!searchQuery;
-            var visibleUser = isUserExpanded ? userBms : userBms.slice(0, limit);
-            renderBookmarkListSection(visibleUser, listContainer);
-
-            if (userBms.length > limit && !searchQuery) {
-              var userShowMoreBtn = document.createElement('button');
-              userShowMoreBtn.type = 'button';
-              userShowMoreBtn.className = 'show-more-btn';
-              userShowMoreBtn.innerHTML = '<span>' + (isUserExpanded ? 'Show Less' : 'Show More (' + (userBms.length - limit) + ' more)') + '</span> <span style="margin-left:4px; display:inline-block; transition:transform 0.2s ease; transform:' + (isUserExpanded ? 'rotate(-90deg)' : 'rotate(0deg)') + ';">&gt;</span>';
-              userShowMoreBtn.onclick = function (e) {
-                e.stopPropagation();
-                expandedSubSections[cat.id + '_user'] = !isUserExpanded;
-                renderBookmarksUI();
-              };
-              listContainer.appendChild(userShowMoreBtn);
-            }
-          } else {
-            var emptyNotice = document.createElement('div');
-            emptyNotice.style.cssText = 'font-size: 0.78rem; color: #64748b; font-style: italic; padding: 4px 8px; text-align: center; grid-column: 1 / -1; width: 100%;';
-            emptyNotice.textContent = 'No user bookmarks added yet.';
-            listContainer.appendChild(emptyNotice);
-          }
-        }
+        listContainer.appendChild(addSubSecQuickBtn);
         card.appendChild(listContainer);
 
         // Apply entrance animation
@@ -3719,31 +3814,74 @@
       });
     }
 
+    function updateSubSectionSelect(selectedCatId, targetSubSectionId) {
+      var subSelect = $('bm-subsection');
+      if (!subSelect) return;
+      subSelect.innerHTML = '';
+
+      var data = loadBookmarkData();
+      var cat = data.categories.find(function (c) { return c.id === selectedCatId; });
+      var subSecs = (cat && cat.subSections && cat.subSections.length > 0) ? cat.subSections : [
+        { id: 'builtin', title: 'Built-In' },
+        { id: 'user', title: 'Your Bookmarks' }
+      ];
+
+      subSecs.forEach(function (s) {
+        var opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = s.title;
+        if (s.id === targetSubSectionId) opt.selected = true;
+        subSelect.appendChild(opt);
+      });
+    }
+
     function openAddModal(type, targetCatId, editBmId) {
       var modal = $('add-modal');
       var tabBm = $('tab-add-bm');
       var tabCat = $('tab-add-cat');
+      var tabSubSec = $('tab-add-subsec');
       var formBm = $('form-add-bm');
       var formCat = $('form-add-cat');
+      var formSubSec = $('form-add-subsec');
       var catSelect = $('bm-category');
+      var subsecCatSelect = $('subsec-cat-select');
 
       if (!modal) return;
 
       var data = loadBookmarkData();
       catSelect.innerHTML = '';
-      data.categories.filter(function (c) { return !c.hidden; }).forEach(function (c) {
+      if (subsecCatSelect) subsecCatSelect.innerHTML = '';
+
+      var availCats = data.categories.filter(function (c) { return !c.hidden; });
+      availCats.forEach(function (c) {
         var opt = document.createElement('option');
         opt.value = c.id;
         opt.textContent = c.title;
         if (c.id === targetCatId) opt.selected = true;
         catSelect.appendChild(opt);
+
+        if (subsecCatSelect) {
+          var opt2 = document.createElement('option');
+          opt2.value = c.id;
+          opt2.textContent = c.title;
+          if (c.id === targetCatId) opt2.selected = true;
+          subsecCatSelect.appendChild(opt2);
+        }
       });
+
+      var currentCatId = catSelect.value || (availCats[0] ? availCats[0].id : '');
+      updateSubSectionSelect(currentCatId, 'user');
+
+      catSelect.onchange = function () {
+        updateSubSectionSelect(catSelect.value, 'user');
+      };
 
       $('bm-id').value = '';
       $('bm-title').value = '';
       $('bm-url').value = '';
       $('bm-custom-icon-url').value = '';
       $('bm-type').value = 'bookmark';
+      if ($('subsec-title')) $('subsec-title').value = '';
       modalSubBookmarks = [];
       if ($('bm-quick-save-toggle')) $('bm-quick-save-toggle').checked = true;
       updateBmTypeExplanation();
@@ -3756,6 +3894,7 @@
           $('bm-title').value = existingBm.title;
           $('bm-url').value = existingBm.url || '';
           $('bm-type').value = existingBm.type || 'bookmark';
+          updateSubSectionSelect(existingBm.categoryId, existingBm.subSectionId || (existingBm.builtIn ? 'builtin' : 'user'));
           modalSubBookmarks = existingBm.subBookmarks ? JSON.parse(JSON.stringify(existingBm.subBookmarks)) : [];
           if ($('bm-quick-save-toggle')) $('bm-quick-save-toggle').checked = existingBm.disableQuickSaveWidget !== true;
           updateBmTypeExplanation();
@@ -3794,32 +3933,41 @@
         lastFocusedElement = document.activeElement;
       }
 
-      if (type === 'category') {
-        tabBm.style.background = 'rgba(30, 41, 59, 0.6)';
-        tabBm.style.color = '#94a3b8';
-        tabCat.style.background = 'rgba(56, 189, 248, 0.2)';
-        tabCat.style.color = '#38bdf8';
-        formBm.style.display = 'none';
-        formCat.style.display = 'flex';
-        $('modal-title').textContent = 'Add Category Section';
-      } else {
-        tabBm.style.background = 'rgba(56, 189, 248, 0.2)';
-        tabBm.style.color = '#38bdf8';
-        tabCat.style.background = 'rgba(30, 41, 59, 0.6)';
-        tabCat.style.color = '#94a3b8';
-        formBm.style.display = 'flex';
-        formCat.style.display = 'none';
-        $('modal-title').textContent = editBmId ? 'Edit Bookmark / Folder' : 'Add Bookmark / Folder';
+      var activeTabBg = 'rgba(56, 189, 248, 0.2)';
+      var activeTabBorder = '1px solid rgba(56, 189, 248, 0.4)';
+      var activeTabColor = '#38bdf8';
+      var inactiveTabBg = 'rgba(30, 41, 59, 0.6)';
+      var inactiveTabBorder = '1px solid rgba(148, 163, 184, 0.2)';
+      var inactiveTabColor = '#94a3b8';
+
+      tabBm.style.background = type === 'bookmark' ? activeTabBg : inactiveTabBg;
+      tabBm.style.border = type === 'bookmark' ? activeTabBorder : inactiveTabBorder;
+      tabBm.style.color = type === 'bookmark' ? activeTabColor : inactiveTabColor;
+
+      tabCat.style.background = type === 'category' ? activeTabBg : inactiveTabBg;
+      tabCat.style.border = type === 'category' ? activeTabBorder : inactiveTabBorder;
+      tabCat.style.color = type === 'category' ? activeTabColor : inactiveTabColor;
+
+      if (tabSubSec) {
+        tabSubSec.style.background = type === 'subsection' ? activeTabBg : inactiveTabBg;
+        tabSubSec.style.border = type === 'subsection' ? activeTabBorder : inactiveTabBorder;
+        tabSubSec.style.color = type === 'subsection' ? activeTabColor : inactiveTabColor;
       }
+
+      formBm.style.display = type === 'bookmark' ? 'flex' : 'none';
+      formCat.style.display = type === 'category' ? 'flex' : 'none';
+      if (formSubSec) formSubSec.style.display = type === 'subsection' ? 'flex' : 'none';
+
+      if (type === 'category') $('modal-title').textContent = 'Add Category Section';
+      else if (type === 'subsection') $('modal-title').textContent = 'Add Sub-Section';
+      else $('modal-title').textContent = editBmId ? 'Edit Bookmark / Folder' : 'Add Bookmark / Folder';
 
       modal.classList.add('active');
 
       setTimeout(function () {
-        if (type === 'category') {
-          if ($('cat-title')) $('cat-title').focus();
-        } else {
-          if ($('bm-title')) $('bm-title').focus();
-        }
+        if (type === 'category' && $('cat-title')) $('cat-title').focus();
+        else if (type === 'subsection' && $('subsec-title')) $('subsec-title').focus();
+        else if ($('bm-title')) $('bm-title').focus();
       }, 50);
     }
 
@@ -4440,6 +4588,8 @@
 
       $('tab-add-bm').onclick = function () { openAddModal('bookmark'); };
       $('tab-add-cat').onclick = function () { openAddModal('category'); };
+      var tabAddSubSec = $('tab-add-subsec');
+      if (tabAddSubSec) tabAddSubSec.onclick = function () { openAddModal('subsection'); };
 
       var btnIconFavicon = $('icon-tab-favicon');
       if (btnIconFavicon) btnIconFavicon.onclick = function () { switchIconMode('favicon'); };
@@ -4477,6 +4627,7 @@
         var title = $('bm-title').value.trim();
         var url = $('bm-url').value.trim();
         var categoryId = $('bm-category').value;
+        var subSectionId = $('bm-subsection') ? $('bm-subsection').value : 'user';
 
         if (!title || !categoryId) return null;
         if (bmType !== 'folder' && !url) return null;
@@ -4501,6 +4652,7 @@
               bm.url = bmType === 'folder' ? '' : url;
             }
             bm.categoryId = categoryId;
+            bm.subSectionId = subSectionId || 'user';
             bm.icon = iconVal;
             bm.disableQuickSaveWidget = !isQuickSaveEnabled;
             bm.subBookmarks = modalSubBookmarks;
@@ -4510,6 +4662,7 @@
           data.bookmarks.push({
             id: targetBmId,
             categoryId: categoryId,
+            subSectionId: subSectionId || 'user',
             type: bmType,
             title: title,
             url: bmType === 'folder' ? '' : url,
@@ -4579,12 +4732,48 @@
           side: side,
           order: data.categories.length,
           builtIn: false,
-          hidden: false
+          hidden: false,
+          subSections: [
+            { id: "builtin", title: "Built-In", builtIn: true },
+            { id: "user", title: "Your Bookmarks", builtIn: true }
+          ]
         });
         saveBookmarkData(data);
         closeAddModal();
         renderBookmarksUI();
       };
+
+      // Submit Sub-Section Form
+      var formAddSubSec = $('form-add-subsec');
+      if (formAddSubSec) {
+        formAddSubSec.onsubmit = function (e) {
+          e.preventDefault();
+          var parentCatId = $('subsec-cat-select').value;
+          var subTitle = $('subsec-title').value.trim();
+
+          if (!parentCatId || !subTitle) return;
+
+          var data = loadBookmarkData();
+          var targetCat = data.categories.find(function (c) { return c.id === parentCatId; });
+          if (targetCat) {
+            if (!targetCat.subSections) {
+              targetCat.subSections = [
+                { id: "builtin", title: "Built-In", builtIn: true },
+                { id: "user", title: "Your Bookmarks", builtIn: true }
+              ];
+            }
+            var newSubId = 'subsec_' + Date.now();
+            targetCat.subSections.push({
+              id: newSubId,
+              title: subTitle,
+              builtIn: false
+            });
+            saveBookmarkData(data);
+            closeAddModal();
+            renderBookmarksUI();
+          }
+        };
+      }
 
       // Bottom Bar Action Listeners
       $('bar-close').onclick = closeReorderBar;
