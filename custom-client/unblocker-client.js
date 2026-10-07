@@ -2814,49 +2814,55 @@
           var dockCss = widgetCss + [
             '.dock-wrapper {',
             '  position: fixed; display: flex; align-items: center; justify-content: center;',
-            '  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: auto; max-width: 98vw; max-height: 98vh;',
+            '  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), bottom 0.2s ease, top 0.2s ease, left 0.2s ease, right 0.2s ease;',
+            '  pointer-events: auto; max-width: 98vw; max-height: 98vh; max-height: 98dvh;',
+            '  overscroll-behavior: none;',
             '}',
             '.dock-bar {',
-            '  background: rgba(11, 19, 41, 0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);',
-            '  border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 24px;',
-            '  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7), 0 0 24px rgba(56, 189, 248, 0.3);',
+            '  background: rgba(11, 19, 41, 0.94); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);',
+            '  border: 1px solid rgba(56, 189, 248, 0.45); border-radius: 24px;',
+            '  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(56, 189, 248, 0.35);',
             '  padding: 10px 16px; display: flex; align-items: center; gap: 10px; color: #f8fafc;',
-            '  max-width: calc(100vw - 32px); max-height: calc(100vh - 32px); overflow: auto;',
+            '  max-width: calc(100vw - 32px); max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow: auto;',
             '  scrollbar-width: none; -ms-overflow-style: none;',
             '}',
             '.pull-tab {',
             '  background: linear-gradient(135deg, rgba(56, 189, 248, 0.95) 0%, rgba(59, 130, 246, 0.95) 100%);',
             '  color: #030712; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50%;',
-            '  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;',
-            '  cursor: grab; box-shadow: 0 0 16px rgba(56, 189, 248, 0.6); outline: none;',
+            '  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;',
+            '  cursor: grab; box-shadow: 0 0 18px rgba(56, 189, 248, 0.7); outline: none;',
             '  font-size: 14px; font-weight: 700; transition: transform 0.3s ease, box-shadow 0.3s ease; flex-shrink: 0;',
             '  position: relative;',
             '}',
             '.pull-tab:active { cursor: grabbing; }',
-            '.pull-tab:hover { transform: scale(1.12); box-shadow: 0 0 24px rgba(56, 189, 248, 0.9); }',
+            '.pull-tab:hover { transform: scale(1.12); box-shadow: 0 0 24px rgba(56, 189, 248, 0.95); }',
             '.pull-tab::after {',
             '  content: ""; position: absolute; inset: -2px; border-radius: 50%;',
             '  border: 1px dashed rgba(255, 255, 255, 0.6); pointer-events: none;',
             '}',
-            '/* Dock Positions */',
-            '.dock-bottom { bottom: 12px; left: 50%; transform: translateX(-50%); flex-direction: column; }',
+            '/* Dock Positions with Safe Insets for Mobile/iPad Browsers */',
+            '.dock-bottom { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); flex-direction: column; }',
             '.dock-bottom.collapsed { transform: translate(-50%, calc(100% - 18px)); }',
             '.dock-bottom .pull-tab { margin-bottom: 6px; }',
-            '.dock-top { top: 12px; left: 50%; transform: translateX(-50%); flex-direction: column-reverse; }',
+            '.dock-top { top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); flex-direction: column-reverse; }',
             '.dock-top.collapsed { transform: translate(-50%, calc(-100% + 18px)); }',
             '.dock-top .pull-tab { margin-top: 6px; }',
-            '.dock-left { left: 12px; top: 50%; transform: translateY(-50%); flex-direction: row-reverse; }',
-            '.dock-left .dock-bar { flex-direction: column; align-items: center; }',
+            '.dock-left { left: calc(12px + env(safe-area-inset-left, 0px)); top: 50%; transform: translateY(-50%); flex-direction: row-reverse; }',
+            '.dock-left .dock-bar { flex-direction: column; align-items: center; padding: 14px 10px; border-radius: 28px; gap: 12px; }',
             '.dock-left.collapsed { transform: translate(calc(-100% + 18px), -50%); }',
             '.dock-left .pull-tab { margin-left: 6px; }',
-            '.dock-right { right: 12px; top: 50%; transform: translateY(-50%); flex-direction: row; }',
-            '.dock-right .dock-bar { flex-direction: column; align-items: center; }',
+            '.dock-right { right: calc(12px + env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); flex-direction: row; }',
+            '.dock-right .dock-bar { flex-direction: column; align-items: center; padding: 14px 10px; border-radius: 28px; gap: 12px; }',
             '.dock-right.collapsed { transform: translate(calc(100% - 18px), -50%); }',
             '.dock-right .pull-tab { margin-right: 6px; }',
             '.dock-item { display: flex; align-items: center; gap: 8px; }',
-            '.dock-left .dock-item, .dock-right .dock-item { flex-direction: column; gap: 6px; width: 100%; justify-content: center; }',
+            '.dock-left .dock-item, .dock-right .dock-item { flex-direction: column; gap: 6px; width: 100%; align-items: center; justify-content: center; }',
+            '.dock-left .btn-ctrl, .dock-right .btn-ctrl { flex-direction: column; padding: 8px 6px; min-width: 44px; min-height: 44px; justify-content: center; border-radius: 12px; }',
+            '.dock-left .btn-ctrl span, .dock-right .btn-ctrl span { font-size: 10px; font-weight: 600; line-height: 1; }',
+            '.dock-left .btn-toggle, .dock-right .btn-toggle { padding: 6px 8px; border-radius: 12px; font-size: 11px; min-width: 44px; justify-content: center; }',
+            '.dock-left .nav-input, .dock-right .nav-input { width: 60px; font-size: 10px; padding: 5px 4px; text-align: center; }',
             '.dock-divider { width: 1px; height: 24px; background: rgba(148, 163, 184, 0.25); flex-shrink: 0; }',
-            '.dock-left .dock-divider, .dock-right .dock-divider { width: 28px; height: 1px; }',
+            '.dock-left .dock-divider, .dock-right .dock-divider { width: 32px; height: 1px; background: rgba(56, 189, 248, 0.25); margin: 2px 0; }',
             '@media (max-width: 640px) {',
             '  .dock-bar { padding: 8px 12px; gap: 8px; border-radius: 20px; }',
             '  .dock-bar .btn-ctrl span, .dock-bar .btn-toggle span { display: none; }',
@@ -2918,6 +2924,28 @@
 
           var targetParent = window.document.body || window.document.documentElement;
           if (targetParent) targetParent.appendChild(dockContainer);
+
+          // Handle visualViewport adjustments on iPad/mobile Chrome/Safari scrolling
+          var updateDockViewportPosition = function () {
+            if (!window.visualViewport) return;
+            var vv = window.visualViewport;
+            var offsetTop = vv.offsetTop || 0;
+            var pageHeight = window.document.documentElement ? window.document.documentElement.clientHeight : window.innerHeight;
+            var vvHeight = vv.height || pageHeight;
+
+            // Adjust top or bottom offsets if visualViewport differs from full layout height
+            if (dockPosition === 'bottom') {
+              var bottomShift = pageHeight - (offsetTop + vvHeight);
+              wrapper.style.bottom = 'calc(' + (12 + Math.max(0, bottomShift)) + 'px + env(safe-area-inset-bottom, 0px))';
+            } else if (dockPosition === 'top') {
+              wrapper.style.top = 'calc(' + (12 + Math.max(0, offsetTop)) + 'px + env(safe-area-inset-top, 0px))';
+            }
+          };
+
+          if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', updateDockViewportPosition);
+            window.visualViewport.addEventListener('scroll', updateDockViewportPosition);
+          }
 
           var isCollapsed = true;
           wrapper.classList.add('collapsed');
