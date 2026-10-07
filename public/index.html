@@ -3625,7 +3625,7 @@
               var addBmInEmptySubSecBtn = document.createElement('button');
               addBmInEmptySubSecBtn.type = 'button';
               addBmInEmptySubSecBtn.style.cssText = 'background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(56, 189, 248, 0.3); color: #38bdf8; border-radius: 10px; padding: 6px 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s ease; width: 100%; grid-column: 1 / -1;';
-              addBmInEmptySubSecBtn.innerHTML = '<span style="display:inline-flex; align-items:center; gap:4px; justify-content:center;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>Add Bookmark to ' + escapeHtml(subSec.title) + '</span></span>';
+              addBmInEmptySubSecBtn.innerHTML = '<span style="display:inline-flex; align-items:center; gap:4px; justify-content:center;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>Add Bookmark</span></span>';
               addBmInEmptySubSecBtn.onclick = function (e) {
                 e.stopPropagation();
                 openAddModal('bookmark', cat.id, null, subSec.id);
