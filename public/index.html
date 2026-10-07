@@ -697,6 +697,11 @@
       border-color: rgba(56, 189, 248, 0.25);
     }
 
+    .subsection-divider:focus-visible {
+      outline: 2px solid #38bdf8;
+      outline-offset: 2px;
+    }
+
     .subsection-title {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 0.75rem;
@@ -3431,6 +3436,10 @@
           var builtinDiv = document.createElement('div');
           builtinDiv.className = 'subsection-divider';
           builtinDiv.title = 'Click to collapse/expand Built-In Bookmarks';
+          builtinDiv.setAttribute('role', 'button');
+          builtinDiv.setAttribute('tabindex', '0');
+          builtinDiv.setAttribute('aria-expanded', isBuiltinCollapsed ? 'false' : 'true');
+          builtinDiv.setAttribute('aria-label', (isBuiltinCollapsed ? 'Expand' : 'Collapse') + ' Built-In Bookmarks in ' + cat.title);
 
           var builtinTitle = document.createElement('div');
           builtinTitle.className = 'subsection-title';
@@ -3450,6 +3459,12 @@
             e.stopPropagation();
             collapsedSubSections[cat.id + '_builtin'] = !isBuiltinCollapsed;
             renderBookmarksUI();
+          };
+          builtinDiv.onkeydown = function (e) {
+            if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+              e.preventDefault();
+              builtinDiv.click();
+            }
           };
 
           listContainer.appendChild(builtinDiv);
@@ -3479,6 +3494,10 @@
         var userDiv = document.createElement('div');
         userDiv.className = 'subsection-divider';
         userDiv.title = 'Click to collapse/expand Your Bookmarks';
+        userDiv.setAttribute('role', 'button');
+        userDiv.setAttribute('tabindex', '0');
+        userDiv.setAttribute('aria-expanded', isUserCollapsed ? 'false' : 'true');
+        userDiv.setAttribute('aria-label', (isUserCollapsed ? 'Expand' : 'Collapse') + ' Your Bookmarks in ' + cat.title);
 
         var userTitle = document.createElement('div');
         userTitle.className = 'subsection-title';
@@ -3498,6 +3517,12 @@
           e.stopPropagation();
           collapsedSubSections[cat.id + '_user'] = !isUserCollapsed;
           renderBookmarksUI();
+        };
+        userDiv.onkeydown = function (e) {
+          if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+            e.preventDefault();
+            userDiv.click();
+          }
         };
 
         listContainer.appendChild(userDiv);

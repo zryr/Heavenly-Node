@@ -81,4 +81,18 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('addBmBtn.setAttribute(\'aria-label\', \'Add bookmark to \' + cat.title)'), 'quick-add button should set aria-label with category title');
         assert.ok(html.includes('expandBtn.setAttribute(\'aria-label\', (isFolderExpanded ? \'Collapse folder \' : \'Expand folder \') + bm.title)'), 'folder expand button should set aria-label with expand/collapse state and folder title');
     });
+
+    it('should configure subsection dividers with role="button", tabindex="0", aria-expanded, aria-label, onkeydown, and focus-visible styling', function() {
+        assert.ok(html.includes('builtinDiv.setAttribute(\'role\', \'button\')'), 'builtinDiv should set role="button"');
+        assert.ok(html.includes('builtinDiv.setAttribute(\'tabindex\', \'0\')'), 'builtinDiv should set tabindex="0"');
+        assert.ok(html.includes('builtinDiv.setAttribute(\'aria-expanded\''), 'builtinDiv should set aria-expanded');
+        assert.ok(html.includes('builtinDiv.setAttribute(\'aria-label\''), 'builtinDiv should set aria-label');
+        assert.ok(html.includes('builtinDiv.onkeydown'), 'builtinDiv should handle onkeydown');
+        assert.ok(html.includes('userDiv.setAttribute(\'role\', \'button\')'), 'userDiv should set role="button"');
+        assert.ok(html.includes('userDiv.setAttribute(\'tabindex\', \'0\')'), 'userDiv should set tabindex="0"');
+        assert.ok(html.includes('userDiv.setAttribute(\'aria-expanded\''), 'userDiv should set aria-expanded');
+        assert.ok(html.includes('userDiv.setAttribute(\'aria-label\''), 'userDiv should set aria-label');
+        assert.ok(html.includes('userDiv.onkeydown'), 'userDiv should handle onkeydown');
+        assert.ok(html.includes('.subsection-divider:focus-visible'), 'CSS should include .subsection-divider:focus-visible rule');
+    });
 });

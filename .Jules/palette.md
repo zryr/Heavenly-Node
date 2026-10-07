@@ -13,3 +13,7 @@
 ## 2026-10-06 - Search Input Clear Button & Escape Key Dismissal UX
 **Learning:** Search inputs without an inline clear button and `Escape` key listener force users to manually select and backspace text to clear search filters or dismiss overlays.
 **Action:** Always provide an accessible clear button with `aria-label` and `title`, toggle its visibility on input, and attach `Escape` key handlers to reset search filters and refocus inputs.
+
+## 2026-10-07 - Collapsible Section Header Accordion Accessibility
+**Learning:** Collapsible section divider `<div>` headers without `role="button"`, `tabindex="0"`, `aria-expanded`, and keyboard listeners cannot be reached by Tab navigation or toggled by keyboard/screen reader users.
+**Action:** When rendering collapsible subsection dividers or accordion headers, assign `role="button"`, `tabindex="0"`, dynamic `aria-expanded` ("true"|"false"), descriptive `aria-label`, an `onkeydown` handler for `Enter` and `Space` keys, and `:focus-visible` outline styles.
