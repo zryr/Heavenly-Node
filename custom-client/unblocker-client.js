@@ -1401,7 +1401,22 @@
       'preset:tv': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>',
       'preset:zap': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>',
       'preset:shield': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
-      'preset:heart': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>'
+      'preset:heart': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>',
+      'preset:flame': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>',
+      'preset:code': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>',
+      'preset:music': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>',
+      'preset:camera': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>',
+      'preset:book': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>',
+      'preset:tag': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 2H2v10l11.29 11.29a1 1 0 0 0 1.41 0l7.29-7.29a1 1 0 0 0 0-1.41L12 2z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>',
+      'preset:grid': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>',
+      'preset:layers': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>',
+      'preset:terminal': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>',
+      'preset:rocket': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-3.05 11a22.35 22.35 0 0 1-3.95 2z"></path></svg>',
+      'preset:user': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
+      'preset:lock': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>',
+      'preset:cpu': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="15" x2="23" y2="15"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="15" x2="4" y2="15"></line></svg>',
+      'preset:wrench': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>',
+      'preset:coffee': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>'
     };
     return svgMap[key] || null;
   }
@@ -1886,7 +1901,22 @@
         { name: 'TV', val: 'preset:tv', iconSvg: getPresetSvg('preset:tv', '15px') },
         { name: 'Zap', val: 'preset:zap', iconSvg: getPresetSvg('preset:zap', '15px') },
         { name: 'Shield', val: 'preset:shield', iconSvg: getPresetSvg('preset:shield', '15px') },
-        { name: 'Heart', val: 'preset:heart', iconSvg: getPresetSvg('preset:heart', '15px') }
+        { name: 'Heart', val: 'preset:heart', iconSvg: getPresetSvg('preset:heart', '15px') },
+        { name: 'Flame', val: 'preset:flame', iconSvg: getPresetSvg('preset:flame', '15px') },
+        { name: 'Code', val: 'preset:code', iconSvg: getPresetSvg('preset:code', '15px') },
+        { name: 'Music', val: 'preset:music', iconSvg: getPresetSvg('preset:music', '15px') },
+        { name: 'Camera', val: 'preset:camera', iconSvg: getPresetSvg('preset:camera', '15px') },
+        { name: 'Book', val: 'preset:book', iconSvg: getPresetSvg('preset:book', '15px') },
+        { name: 'Tag', val: 'preset:tag', iconSvg: getPresetSvg('preset:tag', '15px') },
+        { name: 'Grid', val: 'preset:grid', iconSvg: getPresetSvg('preset:grid', '15px') },
+        { name: 'Layers', val: 'preset:layers', iconSvg: getPresetSvg('preset:layers', '15px') },
+        { name: 'Terminal', val: 'preset:terminal', iconSvg: getPresetSvg('preset:terminal', '15px') },
+        { name: 'Rocket', val: 'preset:rocket', iconSvg: getPresetSvg('preset:rocket', '15px') },
+        { name: 'User', val: 'preset:user', iconSvg: getPresetSvg('preset:user', '15px') },
+        { name: 'Lock', val: 'preset:lock', iconSvg: getPresetSvg('preset:lock', '15px') },
+        { name: 'CPU', val: 'preset:cpu', iconSvg: getPresetSvg('preset:cpu', '15px') },
+        { name: 'Wrench', val: 'preset:wrench', iconSvg: getPresetSvg('preset:wrench', '15px') },
+        { name: 'Coffee', val: 'preset:coffee', iconSvg: getPresetSvg('preset:coffee', '15px') }
       ];
 
       presetList.forEach(function (p) {
