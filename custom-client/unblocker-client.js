@@ -790,8 +790,9 @@
     } catch (e) {}
 
     return {
-      autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : true,
+      autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
       persistentCloak: saved.persistentCloak || false,
+      randomizePresetEachSession: saved.randomizePresetEachSession || false,
       selectedPreset: saved.selectedPreset || 'classroom',
       customPresets: saved.customPresets || {},
       panicKeyEnable: saved.panicKeyEnable || false,
@@ -843,7 +844,27 @@
 
       function getPresetData() {
         var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
-        return allPresets[settings.selectedPreset] || DEFAULT_PRESETS.classroom;
+        var selectedKey = settings.selectedPreset;
+
+        if (settings.randomizePresetEachSession) {
+          try {
+            var sessStorage = window.sessionStorage || (typeof sessionStorage !== 'undefined' ? sessionStorage : null);
+            if (sessStorage) {
+              var sessionPreset = sessStorage.getItem('heavenly_session_preset');
+              if (sessionPreset && allPresets[sessionPreset]) {
+                selectedKey = sessionPreset;
+              } else {
+                var keys = Object.keys(allPresets);
+                if (keys.length > 0) {
+                  selectedKey = keys[Math.floor(Math.random() * keys.length)];
+                  sessStorage.setItem('heavenly_session_preset', selectedKey);
+                }
+              }
+            }
+          } catch (e) {}
+        }
+
+        return allPresets[selectedKey] || DEFAULT_PRESETS.classroom;
       }
 
       function applyCloak(isCloaked) {
@@ -1543,10 +1564,12 @@
           { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
           { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
           { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+          { id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [{ id: "sub_latestmovies_anime", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }] },
           { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
           { id: "bm_streamopro", categoryId: "cat_movies", title: "Streamo", url: "https://streamo.pro/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=streamo.pro&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-          { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "/proxy/https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_movish_movies", categoryId: "cat_movies", title: "Movish", url: "https://movish.to/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [{ id: "sub_latestmovies_movies", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }] },
           { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=7movies.in&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+          { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "/proxy/https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
           {
             id: "bm_individual_games",
             categoryId: "cat_games",
@@ -1560,7 +1583,8 @@
             subBookmarks: [
               { id: "sub_slopeplus", title: "Slope Plus", url: "https://lonfro.github.io/SlopePlusWeb/", icon: "https://www.google.com/s2/favicons?domain=lonfro.github.io&sz=64" },
               { id: "sub_whatbeatsrock", title: "What Beats Rock", url: "https://www.whatbeatsrock.com/", icon: "https://www.google.com/s2/favicons?domain=whatbeatsrock.com&sz=64" },
-              { id: "sub_fnf", title: "Friday Night Funkin", url: "https://luckydog7.github.io/funkinmobile/game/index.html", icon: "https://www.google.com/s2/favicons?domain=luckydog7.github.io&sz=64" }
+              { id: "sub_fnf", title: "Friday Night Funkin", url: "https://luckydog7.github.io/funkinmobile/game/index.html", icon: "https://www.google.com/s2/favicons?domain=luckydog7.github.io&sz=64" },
+              { id: "sub_geometrydash", title: "Geometry Dash", url: "https://web-dashers.github.io/", icon: "https://www.google.com/s2/favicons?domain=web-dashers.github.io&sz=64" }
             ]
           },
           { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: true, hidden: false, order: 1, disableQuickSaveWidget: true, subBookmarks: [] },
