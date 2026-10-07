@@ -3529,8 +3529,8 @@
           var subRightGroup = document.createElement('div');
           subRightGroup.style.cssText = 'display:flex; align-items:center; gap:6px;';
 
-          if (!subSec.builtIn) {
-            // Edit Sub-Section Name Button
+          // Allow editing custom sub-sections and "Your Bookmarks" sub-section
+          if (!subSec.builtIn || subSec.id === 'user') {
             var editSubSecBtn = document.createElement('button');
             editSubSecBtn.type = 'button';
             editSubSecBtn.title = 'Edit sub-section name';
@@ -3548,7 +3548,9 @@
               }
             };
             subRightGroup.appendChild(editSubSecBtn);
+          }
 
+          if (!subSec.builtIn) {
             // Delete Sub-Section Button
             var delSubSecBtn = document.createElement('button');
             delSubSecBtn.type = 'button';
@@ -3619,24 +3621,19 @@
                 listContainer.appendChild(showMoreBtn);
               }
             } else {
-              var emptyNotice = document.createElement('div');
-              emptyNotice.style.cssText = 'font-size: 0.78rem; color: #64748b; font-style: italic; padding: 4px 8px; text-align: center; grid-column: 1 / -1; width: 100%;';
-              emptyNotice.textContent = 'No bookmarks in ' + subSec.title + ' yet.';
-              listContainer.appendChild(emptyNotice);
+              // Add Bookmark button when sub-section has no bookmarks
+              var addBmInEmptySubSecBtn = document.createElement('button');
+              addBmInEmptySubSecBtn.type = 'button';
+              addBmInEmptySubSecBtn.style.cssText = 'background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(56, 189, 248, 0.3); color: #38bdf8; border-radius: 10px; padding: 6px 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s ease; width: 100%; grid-column: 1 / -1;';
+              addBmInEmptySubSecBtn.innerHTML = '<span style="display:inline-flex; align-items:center; gap:4px; justify-content:center;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>Add Bookmark to ' + escapeHtml(subSec.title) + '</span></span>';
+              addBmInEmptySubSecBtn.onclick = function (e) {
+                e.stopPropagation();
+                openAddModal('bookmark', cat.id, null, subSec.id);
+              };
+              listContainer.appendChild(addBmInEmptySubSecBtn);
             }
           }
         });
-
-        // Inline + Add Sub-Section button per category card
-        var addSubSecQuickBtn = document.createElement('button');
-        addSubSecQuickBtn.type = 'button';
-        addSubSecQuickBtn.style.cssText = 'background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(56, 189, 248, 0.3); color: #38bdf8; border-radius: 10px; padding: 6px 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s ease; margin-top: 6px; width: 100%;';
-        addSubSecQuickBtn.innerHTML = '<span style="display:inline-flex; align-items:center; gap:4px; justify-content:center;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>Add Sub-Section to ' + escapeHtml(cat.title) + '</span></span>';
-        addSubSecQuickBtn.onclick = function (e) {
-          e.stopPropagation();
-          openAddModal('subsection', cat.id);
-        };
-        listContainer.appendChild(addSubSecQuickBtn);
         card.appendChild(listContainer);
 
         // Apply entrance animation
@@ -3835,7 +3832,7 @@
       });
     }
 
-    function openAddModal(type, targetCatId, editBmId) {
+    function openAddModal(type, targetCatId, editBmId, targetSubSecId) {
       var modal = $('add-modal');
       var tabBm = $('tab-add-bm');
       var tabCat = $('tab-add-cat');
@@ -3870,7 +3867,7 @@
       });
 
       var currentCatId = catSelect.value || (availCats[0] ? availCats[0].id : '');
-      updateSubSectionSelect(currentCatId, 'user');
+      updateSubSectionSelect(currentCatId, targetSubSecId || 'user');
 
       catSelect.onchange = function () {
         updateSubSectionSelect(catSelect.value, 'user');

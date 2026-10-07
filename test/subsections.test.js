@@ -25,9 +25,10 @@ describe("Sub-Sections Functionality & Data Model", function () {
     assert.strictEqual(clientJs.includes("bm.subSectionId = bm.builtIn ? 'builtin' : 'user';"), true);
   });
 
-  it("should support adding custom sub-sections in index.html form and quick inline action", function () {
+  it("should support adding custom sub-sections in index.html form and empty-state bookmark creation", function () {
     assert.strictEqual(indexHtml.includes('id="tab-add-subsec"'), true);
     assert.strictEqual(indexHtml.includes('id="form-add-subsec"'), true);
-    assert.strictEqual(indexHtml.includes('Add Sub-Section to'), true);
+    assert.strictEqual(indexHtml.includes('Add Bookmark to'), true);
+    assert.strictEqual(indexHtml.includes("!subSec.builtIn || subSec.id === 'user'"), true);
   });
 });
