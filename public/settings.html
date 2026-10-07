@@ -794,6 +794,18 @@
             <p class="hero-card-desc">Continuously keeps your browser tab title and favicon disguised regardless of tab visibility.</p>
           </div>
 
+          <!-- Hero Card: Session Random Preset -->
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-randomize-preset-session" class="hero-card-title">Randomize Preset Each Session</label>
+              <label class="switch-toggle">
+                <input type="checkbox" id="set-randomize-preset-session" role="switch">
+                <span class="slider-knob"></span>
+              </label>
+            </div>
+            <p class="hero-card-desc">Automatically selects a random cloaking preset each time you start a new browser session.</p>
+          </div>
+
           <!-- Hero Card: Custom Styled Preset Dropdown -->
           <div class="hero-card">
             <div style="margin-bottom: 8px;">
@@ -1277,10 +1289,12 @@
         { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
         { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+        { id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [{ id: "sub_latestmovies_anime", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }] },
         { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
         { id: "bm_streamopro", categoryId: "cat_movies", title: "Streamo", url: "https://streamo.pro/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=streamo.pro&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "/proxy/https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=7movies.in&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_movish_movies", categoryId: "cat_movies", title: "Movish", url: "https://movish.to/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [{ id: "sub_latestmovies_movies", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }] },
         {
           id: "bm_individual_games",
           categoryId: "cat_games",
@@ -1294,7 +1308,8 @@
           subBookmarks: [
             { id: "sub_slopeplus", title: "Slope Plus", url: "https://lonfro.github.io/SlopePlusWeb/", icon: "https://www.google.com/s2/favicons?domain=lonfro.github.io&sz=64" },
             { id: "sub_whatbeatsrock", title: "What Beats Rock", url: "https://www.whatbeatsrock.com/", icon: "https://www.google.com/s2/favicons?domain=whatbeatsrock.com&sz=64" },
-            { id: "sub_fnf", title: "Friday Night Funkin", url: "https://luckydog7.github.io/funkinmobile/game/index.html", icon: "https://www.google.com/s2/favicons?domain=luckydog7.github.io&sz=64" }
+            { id: "sub_fnf", title: "Friday Night Funkin", url: "https://luckydog7.github.io/funkinmobile/game/index.html", icon: "https://www.google.com/s2/favicons?domain=luckydog7.github.io&sz=64" },
+            { id: "sub_geometrydash", title: "Geometry Dash", url: "https://web-dashers.github.io/", icon: "https://www.google.com/s2/favicons?domain=web-dashers.github.io&sz=64" }
           ]
         },
         { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: true, hidden: false, order: 1, disableQuickSaveWidget: true, subBookmarks: [] },
@@ -1336,8 +1351,9 @@
       } catch (e) {}
 
       return {
-        autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : true,
+        autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
         persistentCloak: saved.persistentCloak || false,
+        randomizePresetEachSession: saved.randomizePresetEachSession || false,
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
@@ -1709,6 +1725,7 @@
       var settings = loadSettings();
       $('set-auto-cloak').checked = settings.autoCloak;
       $('set-persistent-cloak').checked = settings.persistentCloak;
+      if ($('set-randomize-preset-session')) $('set-randomize-preset-session').checked = settings.randomizePresetEachSession;
       $('set-show-builtin-prompt').checked = !settings.skipBuiltinTestPrompt;
 
       var searchNewTabCb = $('set-search-new-tab');
@@ -1843,10 +1860,34 @@
     // --- Tab Cloaking ---
     var originalTitle = document.title;
 
-    function applyCloak(isCloaked, settings) {
+    function resolveActivePreset(settings) {
       if (!settings) settings = loadSettings();
       var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
-      var preset = allPresets[settings.selectedPreset] || DEFAULT_PRESETS.classroom;
+      var selectedKey = settings.selectedPreset;
+
+      if (settings.randomizePresetEachSession) {
+        try {
+          var sessionPreset = sessionStorage.getItem('heavenly_session_preset');
+          if (sessionPreset && allPresets[sessionPreset]) {
+            selectedKey = sessionPreset;
+          } else {
+            var keys = Object.keys(allPresets);
+            if (keys.length > 0) {
+              selectedKey = keys[Math.floor(Math.random() * keys.length)];
+              sessionStorage.setItem('heavenly_session_preset', selectedKey);
+            }
+          }
+        } catch (e) {}
+      } else {
+        try { sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {}
+      }
+
+      return allPresets[selectedKey] || DEFAULT_PRESETS.classroom;
+    }
+
+    function applyCloak(isCloaked, settings) {
+      if (!settings) settings = loadSettings();
+      var preset = resolveActivePreset(settings);
       var head = document.head || document.getElementsByTagName('head')[0];
 
       if (isCloaked) {
@@ -1991,6 +2032,7 @@
         var settings = loadSettings();
         settings.autoCloak = $('set-auto-cloak').checked;
         settings.persistentCloak = $('set-persistent-cloak').checked;
+        if ($('set-randomize-preset-session')) settings.randomizePresetEachSession = $('set-randomize-preset-session').checked;
         settings.skipBuiltinTestPrompt = !$('set-show-builtin-prompt').checked;
         settings.openSearchInNewTab = $('set-search-new-tab') ? $('set-search-new-tab').checked : false;
         settings.mergeGoNewTab = $('set-merge-go-newtab') ? $('set-merge-go-newtab').checked : false;
@@ -2013,7 +2055,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-show-builtin-prompt', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-randomize-preset-session', 'set-show-builtin-prompt', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
         var el = $(id);
         if (el) {
           el.onchange = function () {
