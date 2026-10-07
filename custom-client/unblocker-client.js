@@ -367,13 +367,29 @@
     if (window.HTMLLinkElement && window.HTMLLinkElement.prototype) {
       wrapProperty(window.HTMLLinkElement.prototype, "href", fixUrl);
     }
+    if (window.HTMLObjectElement && window.HTMLObjectElement.prototype) {
+      wrapProperty(window.HTMLObjectElement.prototype, "data", fixUrl);
+    }
+    if (window.HTMLEmbedElement && window.HTMLEmbedElement.prototype) {
+      wrapProperty(window.HTMLEmbedElement.prototype, "src", fixUrl);
+    }
 
     if (window.Element && window.Element.prototype && window.Element.prototype.setAttribute) {
       var _setAttribute = window.Element.prototype.setAttribute;
       window.Element.prototype.setAttribute = function (name, value) {
         if (typeof name === "string") {
           var lowerName = name.toLowerCase();
-          if (lowerName === "src" || lowerName === "href" || lowerName === "poster" || lowerName === "data-src" || lowerName === "data-href" || lowerName === "data-url") {
+          if (
+            lowerName === "src" ||
+            lowerName === "href" ||
+            lowerName === "data" ||
+            lowerName === "poster" ||
+            lowerName === "data-src" ||
+            lowerName === "data-href" ||
+            lowerName === "data-url" ||
+            lowerName === "swf" ||
+            lowerName === "value"
+          ) {
             value = fixUrl(value, config, window.location);
           } else if (lowerName === "srcset" || lowerName === "data-srcset") {
             value = fixSrcset(value, config, window.location);
@@ -415,7 +431,7 @@
         // Skip attribute checks for structural non-resource tags
       } else {
         var tagName = tag.toLowerCase();
-        if (tagName === "img" || tagName === "script" || tagName === "iframe" || tagName === "video" || tagName === "audio") {
+        if (tagName === "img" || tagName === "script" || tagName === "iframe" || tagName === "video" || tagName === "audio" || tagName === "embed" || tagName === "ruffle-embed") {
           var src = el.getAttribute("src");
           if (src) {
             var fixedSrc = fixUrl(src, config, window.location);
@@ -466,6 +482,25 @@
               try { el.setAttribute("data-url", fixedDataUrl2); } catch (e) {}
             }
           }
+        } else if (tagName === "object") {
+          var dataAttr = el.getAttribute("data");
+          if (dataAttr) {
+            var fixedData = fixUrl(dataAttr, config, window.location);
+            if (fixedData !== dataAttr) {
+              try { el.setAttribute("data", fixedData); } catch (e) {}
+            }
+          }
+        } else if (tagName === "param") {
+          var paramName = el.getAttribute("name");
+          if (paramName && /^(movie|src|filename)$/i.test(paramName)) {
+            var paramVal = el.getAttribute("value");
+            if (paramVal) {
+              var fixedParamVal = fixUrl(paramVal, config, window.location);
+              if (fixedParamVal !== paramVal) {
+                try { el.setAttribute("value", fixedParamVal); } catch (e) {}
+              }
+            }
+          }
         }
       }
 
@@ -514,7 +549,7 @@
         childList: true,
         subtree: true,
         attributes: true,
-        attributeFilter: ["src", "href", "srcset", "data-src"]
+        attributeFilter: ["src", "href", "srcset", "data-src", "data", "value", "swf"]
       });
     }
 
@@ -4131,8 +4166,57 @@
     } catch (e) {}
   }
 
+  function initRuffleProxyConfig(config, window) {
+    try {
+      var prefix = config.prefix || '/proxy/';
+
+      function patchRuffleConfigObject(cfgObj) {
+        if (!cfgObj || typeof cfgObj !== 'object') return;
+
+        // Force urlRewriter function on cfgObj
+        var originalRewriter = cfgObj.urlRewriter;
+        cfgObj.urlRewriter = function (url) {
+          if (!url) return url;
+          var rewritten = url;
+          if (typeof originalRewriter === 'function') {
+            try {
+              rewritten = originalRewriter(url);
+            } catch (e) {
+              rewritten = url;
+            }
+          }
+          return fixUrl(rewritten, config, window.location);
+        };
+      }
+
+      var existingRuffle = window.RufflePlayer || {};
+      existingRuffle.config = existingRuffle.config || {};
+      patchRuffleConfigObject(existingRuffle.config);
+
+      Object.defineProperty(window, 'RufflePlayer', {
+        get: function () {
+          return existingRuffle;
+        },
+        set: function (val) {
+          if (val && typeof val === 'object') {
+            val.config = val.config || {};
+            patchRuffleConfigObject(val.config);
+            existingRuffle = val;
+          } else {
+            existingRuffle = val;
+          }
+        },
+        configurable: true,
+        enumerable: true
+      });
+    } catch (e) {
+      console.error('Error initializing Ruffle proxy configuration:', e);
+    }
+  }
+
   function initForWindow(config, window) {
     console.log("[Heavenly Debug] Initializing unblocker client scripts for window", config, window);
+    initRuffleProxyConfig(config, window);
     initLocationPrototype(config, window);
     initElementPrototypes(config, window);
     initMutationObserverAndClicks(config, window);

@@ -104,6 +104,13 @@ function headersMiddleware(data) {
     }
 }
 
+function responseCorsMiddleware(data) {
+    if (data.headers) {
+        data.headers['access-control-allow-origin'] = '*';
+        data.headers['access-control-allow-credentials'] = 'true';
+    }
+}
+
 function responseLinkHeaderMiddleware(data) {
     if (data.headers && data.headers['link']) {
         var link = data.headers['link'];
@@ -225,6 +232,7 @@ var unblockerConfig = {
         youtube.processRequest
     ],
     responseMiddleware: [
+        responseCorsMiddleware,
         responseRedirectMiddleware,
         responseLinkHeaderMiddleware,
         googleAnalyticsMiddleware,
@@ -625,6 +633,7 @@ function serverErrorResponseMiddleware(data) {
 app.addGa = addGa;
 app.googleAnalyticsMiddleware = googleAnalyticsMiddleware;
 app.headersMiddleware = headersMiddleware;
+app.responseCorsMiddleware = responseCorsMiddleware;
 app.responseLinkHeaderMiddleware = responseLinkHeaderMiddleware;
 app.newgroundsMiddleware = newgroundsMiddleware;
 app.cloudflareMiddleware = cloudflareMiddleware;
