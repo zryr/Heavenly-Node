@@ -82,7 +82,7 @@ describe('settings.html standalone page', function() {
         assert.ok(indexHtml.includes('settings.skipBuiltinTestPrompt'), 'index.html bookmark click handler should respect skipBuiltinTestPrompt');
     });
 
-    it('should configure UBG98, UBGames, and Unbleeked in DEFAULT_BOOKMARK_DATA across client files', function() {
+    it('should configure UBG98, UBGames, Unbleeked, and disableQuickSaveWidget for Movish in DEFAULT_BOOKMARK_DATA across client files', function() {
         var indexHtml = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
         var clientJs = fs.readFileSync(path.join(__dirname, '../custom-client/unblocker-client.js'), 'utf8');
 
@@ -97,6 +97,8 @@ describe('settings.html standalone page', function() {
             assert.ok(content.includes('id: "bm_unbleeked"'), label + ' should contain bm_unbleeked');
             assert.ok(content.includes('title: "Unbleeked"'), label + ' should contain Unbleeked title');
             assert.ok(content.includes('https://unbleeked.vercel.app/'), label + ' should contain unbleeked URL');
+            assert.ok(content.includes('id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, disableQuickSaveWidget: true'), label + ' should have disableQuickSaveWidget: true on bm_movish_anime');
+            assert.ok(content.includes('id: "bm_movish_movies", categoryId: "cat_movies", title: "Movish", url: "https://movish.to/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 2, disableQuickSaveWidget: true'), label + ' should have disableQuickSaveWidget: true on bm_movish_movies');
         });
     });
 
