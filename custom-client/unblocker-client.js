@@ -803,7 +803,7 @@
       showNavBookmark: saved.showNavBookmark !== undefined ? saved.showNavBookmark : true,
       showNavSearch: saved.showNavSearch !== undefined ? saved.showNavSearch : true,
       showNavHome: saved.showNavHome !== undefined ? saved.showNavHome : true,
-      useWidgetDock: saved.useWidgetDock || false,
+      useWidgetDock: saved.useWidgetDock !== undefined ? saved.useWidgetDock : true,
       dockPosition: saved.dockPosition || 'bottom',
       expandDirection: saved.expandDirection || 'left',
       disableAllWidgets: saved.disableAllWidgets || false,
@@ -1384,6 +1384,25 @@
     }
   }
 
+  function getPresetSvg(key, size) {
+    var sz = size || '18px';
+    var svgMap = {
+      'preset:sparkles': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>',
+      'preset:gamepad': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><circle cx="15" cy="13" r="1"></circle><circle cx="18" cy="11" r="1"></circle><rect x="2" y="6" width="20" height="12" rx="5"></rect></svg>',
+      'preset:star': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>',
+      'preset:folder': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>',
+      'preset:list': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>',
+      'preset:globe': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>',
+      'preset:bookmark': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>',
+      'preset:film': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>',
+      'preset:tv': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>',
+      'preset:zap': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>',
+      'preset:shield': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
+      'preset:heart': '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>'
+    };
+    return svgMap[key] || null;
+  }
+
   function openDirectSitePreview(window, directUrl) {
     try {
       if (!directUrl || directUrl === 'undefined' || directUrl === 'https://' || directUrl === 'http://') {
@@ -1448,6 +1467,25 @@
         backdrop.remove();
       };
 
+      var copyUrlBtn = window.document.createElement('button');
+      copyUrlBtn.type = 'button';
+      copyUrlBtn.style.cssText = 'padding:10px 18px;border-radius:12px;background:rgba(148,163,184,0.15);border:1px solid rgba(148,163,184,0.3);color:#e2e8f0;font-weight:600;font-size:0.88rem;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;';
+      copyUrlBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Copy URL</span>';
+      copyUrlBtn.onclick = function () {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(directUrl);
+          var sp = copyUrlBtn.querySelector('span');
+          if (sp) sp.textContent = 'Copied!';
+          setTimeout(function () {
+            var s = copyUrlBtn.querySelector('span');
+            if (s) s.textContent = 'Copy URL';
+          }, 2000);
+        } else {
+          window.prompt('Copy Direct URL:', directUrl);
+        }
+      };
+
+      actions.appendChild(copyUrlBtn);
       actions.appendChild(openTabBtn);
       actions.appendChild(openPopupBtn);
 
@@ -1519,6 +1557,7 @@
           { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "/proxy/https://masonsunblockedgames.github.io/MasonsUnblockedGames/favicon.ico", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
           { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=geometryspot.com&sz=64", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
           { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
+          { id: "bm_interdimensional_lite", categoryId: "cat_games", title: "Interdimensional Lite", url: "https://pinkdev.d13qic2f6zga3.amplifyapp.com", type: "folder_bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
           { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
           {
             id: "bm_bloxcraftstudios",
@@ -1671,28 +1710,250 @@
       var prefix = (config && config.prefix) ? config.prefix : '/proxy/';
       var unproxiedUrl = path.startsWith(prefix) ? path.substr(prefix.length) + window.location.search + window.location.hash : window.location.href;
       var title = window.__heavenlyOriginalTitle || window.document.title || unproxiedUrl;
+      var domain = '';
+      try {
+        var u = new URL(unproxiedUrl.startsWith('http') ? unproxiedUrl : 'https://' + unproxiedUrl);
+        domain = u.hostname;
+      } catch (e) {}
+      var defaultFavicon = domain ? 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(domain) + '&sz=64' : 'preset:star';
 
-      var catTitles = data.categories.filter(function (c) { return !c.hidden; }).map(function (c) { return c.title; });
-      if (catTitles.length === 0) catTitles = ["Games", "Movies/Shows", "Anime"];
+      var existingModal = window.document.getElementById('heavenly-bookmark-prompt-modal');
+      if (existingModal) existingModal.remove();
 
-      var selectedCatTitle = window.prompt("Bookmark this page:\nURL: " + unproxiedUrl + "\n\nEnter Category (" + catTitles.join(", ") + "):", catTitles[0]);
-      if (!selectedCatTitle) return;
+      // Read bookmark data
+      var data = { categories: [], bookmarks: [] };
+      try {
+        var raw = storage.getItem('heavenly_bookmarks');
+        if (raw) data = JSON.parse(raw);
+      } catch (e) {}
+      if (!data.categories || data.categories.length === 0) {
+        data.categories = [
+          { id: "cat_movies", title: "Movies/Shows" },
+          { id: "cat_anime", title: "Anime/Manga" },
+          { id: "cat_games", title: "Games" }
+        ];
+      }
+      if (!data.bookmarks) data.bookmarks = [];
 
-      var matchedCat = data.categories.find(function (c) { return c.title.toLowerCase() === selectedCatTitle.trim().toLowerCase(); });
-      var catId = matchedCat ? matchedCat.id : data.categories[0].id;
+      var backdrop = window.document.createElement('div');
+      backdrop.id = 'heavenly-bookmark-prompt-modal';
+      backdrop.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:rgba(3,7,18,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:16px;font-family:"Outfit",-apple-system,BlinkMacSystemFont,sans-serif;';
 
-      data.bookmarks.push({
-        id: 'bm_' + Date.now(),
-        categoryId: catId,
-        title: title,
-        url: unproxiedUrl,
-        builtIn: false,
-        hidden: false,
-        order: data.bookmarks.length
+      var card = window.document.createElement('div');
+      card.style.cssText = 'background:rgba(15,23,42,0.96);border:1px solid rgba(56,189,248,0.4);border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(56,189,248,0.3);width:100%;max-width:520px;padding:24px;display:flex;flex-direction:column;gap:16px;color:#f8fafc;max-height:90vh;overflow-y:auto;';
+
+      var header = window.document.createElement('div');
+      header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(148,163,184,0.15);padding-bottom:12px;';
+
+      var titleEl = window.document.createElement('div');
+      titleEl.style.cssText = 'display:flex;align-items:center;gap:10px;';
+      titleEl.innerHTML = '<div style="width:36px;height:36px;border-radius:10px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.4);display:flex;align-items:center;justify-content:center;"><svg style="width:20px;height:20px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div><div><div style="font-size:1.15rem;font-weight:700;color:#f8fafc;">Bookmark Current Page</div><div style="font-size:0.8rem;color:#94a3b8;">Save page to your Heavenly bookmarks</div></div>';
+
+      var closeBtn = window.document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.style.cssText = 'background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;padding:4px;';
+      closeBtn.textContent = '✕';
+      closeBtn.onclick = function () { backdrop.remove(); };
+
+      header.appendChild(titleEl);
+      header.appendChild(closeBtn);
+
+      var body = window.document.createElement('div');
+      body.style.cssText = 'display:flex;flex-direction:column;gap:14px;font-size:0.88rem;color:#cbd5e1;';
+
+      // Category field
+      var catLabel = window.document.createElement('label');
+      catLabel.style.cssText = 'font-weight:600;color:#e0f2fe;display:flex;flex-direction:column;gap:6px;';
+      catLabel.textContent = 'Category:';
+      var catSelect = window.document.createElement('select');
+      catSelect.style.cssText = 'padding:10px 12px;background:rgba(30,41,59,0.8);border:1px solid rgba(56,189,248,0.3);border-radius:12px;color:#f8fafc;font-size:0.9rem;outline:none;font-family:inherit;';
+      data.categories.forEach(function (c) {
+        if (!c.hidden) {
+          var opt = window.document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = c.title;
+          catSelect.appendChild(opt);
+        }
+      });
+      catLabel.appendChild(catSelect);
+
+      // Title field
+      var titleLabel = window.document.createElement('label');
+      titleLabel.style.cssText = 'font-weight:600;color:#e0f2fe;display:flex;flex-direction:column;gap:6px;';
+      titleLabel.textContent = 'Title:';
+      var titleInput = window.document.createElement('input');
+      titleInput.type = 'text';
+      titleInput.value = title;
+      titleInput.style.cssText = 'padding:10px 12px;background:rgba(30,41,59,0.8);border:1px solid rgba(56,189,248,0.3);border-radius:12px;color:#f8fafc;font-size:0.9rem;outline:none;font-family:inherit;';
+      titleLabel.appendChild(titleInput);
+
+      // URL field
+      var urlLabel = window.document.createElement('label');
+      urlLabel.style.cssText = 'font-weight:600;color:#e0f2fe;display:flex;flex-direction:column;gap:6px;';
+      urlLabel.textContent = 'URL:';
+      var urlInput = window.document.createElement('input');
+      urlInput.type = 'text';
+      urlInput.value = unproxiedUrl;
+      urlInput.style.cssText = 'padding:10px 12px;background:rgba(30,41,59,0.8);border:1px solid rgba(56,189,248,0.3);border-radius:12px;color:#f8fafc;font-size:0.9rem;outline:none;font-family:inherit;';
+      urlLabel.appendChild(urlInput);
+
+      // Icon Selection Section
+      var iconSection = window.document.createElement('div');
+      iconSection.style.cssText = 'display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(148,163,184,0.15);padding-top:12px;';
+
+      var iconHeaderRow = window.document.createElement('div');
+      iconHeaderRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
+
+      var iconLabelTitle = window.document.createElement('span');
+      iconLabelTitle.style.cssText = 'font-weight:600;color:#e0f2fe;font-size:0.9rem;';
+      iconLabelTitle.textContent = 'Bookmark Icon & Preview:';
+
+      var previewBox = window.document.createElement('div');
+      previewBox.style.cssText = 'width:42px;height:44px;border-radius:12px;background:rgba(30,41,59,0.9);border:1px solid rgba(56,189,248,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 15px rgba(56,189,248,0.2);overflow:hidden;';
+
+      function updateIconPreview(val) {
+        previewBox.innerHTML = '';
+        var svg = getPresetSvg(val, '22px');
+        if (svg) {
+          previewBox.innerHTML = svg;
+        } else if (val) {
+          var img = window.document.createElement('img');
+          img.src = val;
+          img.style.cssText = 'width:26px;height:26px;object-fit:contain;border-radius:6px;';
+          img.onerror = function () {
+            previewBox.innerHTML = getPresetSvg('preset:globe', '22px');
+          };
+          previewBox.appendChild(img);
+        } else {
+          previewBox.innerHTML = getPresetSvg('preset:star', '22px');
+        }
+      }
+
+      iconHeaderRow.appendChild(iconLabelTitle);
+      iconHeaderRow.appendChild(previewBox);
+
+      // Icon Input Field
+      var iconInput = window.document.createElement('input');
+      iconInput.type = 'text';
+      iconInput.placeholder = 'Icon image URL or preset:sparkles...';
+      iconInput.value = defaultFavicon;
+      iconInput.style.cssText = 'padding:10px 12px;background:rgba(30,41,59,0.8);border:1px solid rgba(56,189,248,0.3);border-radius:12px;color:#f8fafc;font-size:0.9rem;outline:none;font-family:inherit;';
+      iconInput.oninput = function () { updateIconPreview(iconInput.value.trim()); };
+
+      // Presets Grid
+      var presetSubTitle = window.document.createElement('span');
+      presetSubTitle.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;';
+      presetSubTitle.textContent = 'Select Preset Icon or Favicon:';
+
+      var presetGrid = window.document.createElement('div');
+      presetGrid.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+
+      var presetList = [
+        { name: 'Favicon', val: defaultFavicon, iconSvg: getPresetSvg('preset:globe', '15px') },
+        { name: 'Sparkles', val: 'preset:sparkles', iconSvg: getPresetSvg('preset:sparkles', '15px') },
+        { name: 'Gamepad', val: 'preset:gamepad', iconSvg: getPresetSvg('preset:gamepad', '15px') },
+        { name: 'Star', val: 'preset:star', iconSvg: getPresetSvg('preset:star', '15px') },
+        { name: 'Folder', val: 'preset:folder', iconSvg: getPresetSvg('preset:folder', '15px') },
+        { name: 'List', val: 'preset:list', iconSvg: getPresetSvg('preset:list', '15px') },
+        { name: 'Globe', val: 'preset:globe', iconSvg: getPresetSvg('preset:globe', '15px') },
+        { name: 'Bookmark', val: 'preset:bookmark', iconSvg: getPresetSvg('preset:bookmark', '15px') },
+        { name: 'Film', val: 'preset:film', iconSvg: getPresetSvg('preset:film', '15px') },
+        { name: 'TV', val: 'preset:tv', iconSvg: getPresetSvg('preset:tv', '15px') },
+        { name: 'Zap', val: 'preset:zap', iconSvg: getPresetSvg('preset:zap', '15px') },
+        { name: 'Shield', val: 'preset:shield', iconSvg: getPresetSvg('preset:shield', '15px') },
+        { name: 'Heart', val: 'preset:heart', iconSvg: getPresetSvg('preset:heart', '15px') }
+      ];
+
+      presetList.forEach(function (p) {
+        var pBtn = window.document.createElement('button');
+        pBtn.type = 'button';
+        pBtn.style.cssText = 'padding:6px 10px;border-radius:8px;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;';
+        pBtn.innerHTML = p.iconSvg + '<span>' + p.name + '</span>';
+        pBtn.onclick = function () {
+          iconInput.value = p.val;
+          updateIconPreview(p.val);
+        };
+        presetGrid.appendChild(pBtn);
       });
 
-      storage.setItem('heavenly_bookmarks', JSON.stringify(data));
-      window.alert("Page bookmarked under " + (matchedCat ? matchedCat.title : "Default Category") + "!");
+      // Live Page Icon Picker Overlay Launcher Button
+      var pickerBtn = window.document.createElement('button');
+      pickerBtn.type = 'button';
+      pickerBtn.style.cssText = 'padding:8px 12px;border-radius:10px;background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.4);color:#c084fc;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;margin-top:2px;';
+      pickerBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>Launch Live Icon Picker on Page</span>';
+      pickerBtn.onclick = function () {
+        backdrop.remove();
+        storage.setItem('heavenly_manual_icon_pending', JSON.stringify({
+          domain: domain,
+          targetUrl: unproxiedUrl,
+          timestamp: Date.now()
+        }));
+        window.location.reload();
+      };
+
+      updateIconPreview(defaultFavicon);
+
+      iconSection.appendChild(iconHeaderRow);
+      iconSection.appendChild(iconInput);
+      iconSection.appendChild(presetSubTitle);
+      iconSection.appendChild(presetGrid);
+      iconSection.appendChild(pickerBtn);
+
+      body.appendChild(catLabel);
+      body.appendChild(titleLabel);
+      body.appendChild(urlLabel);
+      body.appendChild(iconSection);
+
+      var actions = window.document.createElement('div');
+      actions.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;margin-top:6px;';
+
+      var cancelBtn = window.document.createElement('button');
+      cancelBtn.type = 'button';
+      cancelBtn.style.cssText = 'padding:10px 18px;border-radius:12px;background:rgba(148,163,184,0.15);border:1px solid rgba(148,163,184,0.3);color:#e2e8f0;font-weight:600;font-size:0.88rem;cursor:pointer;font-family:inherit;';
+      cancelBtn.textContent = 'Cancel';
+      cancelBtn.onclick = function () { backdrop.remove(); };
+
+      var saveBtn = window.document.createElement('button');
+      saveBtn.type = 'button';
+      saveBtn.style.cssText = 'padding:10px 22px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;box-shadow:0 0 15px rgba(56,189,248,0.4);';
+      saveBtn.textContent = 'Save Bookmark';
+      saveBtn.onclick = function () {
+        var finalCat = catSelect.value || data.categories[0].id;
+        var finalTitle = titleInput.value.trim() || unproxiedUrl;
+        var finalUrl = urlInput.value.trim() || unproxiedUrl;
+        var finalIcon = iconInput.value.trim() || defaultFavicon;
+
+        data.bookmarks.push({
+          id: 'bm_' + Date.now(),
+          categoryId: finalCat,
+          title: finalTitle,
+          url: finalUrl,
+          icon: finalIcon,
+          builtIn: false,
+          hidden: false,
+          order: data.bookmarks.length,
+          subBookmarks: []
+        });
+
+        storage.setItem('heavenly_bookmarks', JSON.stringify(data));
+        backdrop.remove();
+        window.alert('Page bookmarked successfully!');
+      };
+
+      actions.appendChild(cancelBtn);
+      actions.appendChild(saveBtn);
+
+      card.appendChild(header);
+      card.appendChild(body);
+      card.appendChild(actions);
+      backdrop.appendChild(card);
+
+      backdrop.onclick = function (e) {
+        if (e.target === backdrop) backdrop.remove();
+      };
+
+      var targetParent = window.document.body || window.document.documentElement;
+      if (targetParent) targetParent.appendChild(backdrop);
     } catch (e) {
       console.error("Error bookmarking page:", e);
     }
@@ -2064,7 +2325,7 @@
         var showNavBookmark = settings.showNavBookmark !== undefined ? settings.showNavBookmark : true;
         var showNavSearch = settings.showNavSearch !== undefined ? settings.showNavSearch : true;
         var showNavHome = settings.showNavHome !== undefined ? settings.showNavHome : true;
-        var useWidgetDock = settings.useWidgetDock || false;
+        var useWidgetDock = settings.useWidgetDock !== undefined ? settings.useWidgetDock : true;
         var dockPosition = settings.dockPosition || 'bottom';
 
         // --- COLLAPSIBLE WIDGET DOCK BAR MODE ---
@@ -2085,46 +2346,54 @@
           var dockCss = widgetCss + [
             '.dock-wrapper {',
             '  position: fixed; display: flex; align-items: center; justify-content: center;',
-            '  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: auto;',
+            '  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: auto; max-width: 98vw; max-height: 98vh;',
             '}',
             '.dock-bar {',
-            '  background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);',
-            '  border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 20px;',
-            '  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.25);',
-            '  padding: 10px 16px; display: flex; align-items: center; gap: 12px; color: #f8fafc;',
+            '  background: rgba(11, 19, 41, 0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);',
+            '  border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 24px;',
+            '  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7), 0 0 24px rgba(56, 189, 248, 0.3);',
+            '  padding: 10px 16px; display: flex; align-items: center; gap: 10px; color: #f8fafc;',
+            '  max-width: calc(100vw - 32px); max-height: calc(100vh - 32px); overflow: auto;',
+            '  scrollbar-width: thin; scrollbar-color: rgba(56, 189, 248, 0.5) transparent;',
             '}',
             '.pull-tab {',
-            '  background: linear-gradient(135deg, rgba(56, 189, 248, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);',
-            '  color: #030712; border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 50%;',
-            '  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;',
-            '  cursor: grab; box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); outline: none;',
+            '  background: linear-gradient(135deg, rgba(56, 189, 248, 0.95) 0%, rgba(59, 130, 246, 0.95) 100%);',
+            '  color: #030712; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50%;',
+            '  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;',
+            '  cursor: grab; box-shadow: 0 0 16px rgba(56, 189, 248, 0.6); outline: none;',
             '  font-size: 14px; font-weight: 700; transition: transform 0.3s ease, box-shadow 0.3s ease; flex-shrink: 0;',
             '  position: relative;',
             '}',
             '.pull-tab:active { cursor: grabbing; }',
-            '.pull-tab:hover { transform: scale(1.12); box-shadow: 0 0 22px rgba(56, 189, 248, 0.9); }',
+            '.pull-tab:hover { transform: scale(1.12); box-shadow: 0 0 24px rgba(56, 189, 248, 0.9); }',
             '.pull-tab::after {',
             '  content: ""; position: absolute; inset: -2px; border-radius: 50%;',
             '  border: 1px dashed rgba(255, 255, 255, 0.6); pointer-events: none;',
             '}',
             '/* Dock Positions */',
             '.dock-bottom { bottom: 12px; left: 50%; transform: translateX(-50%); flex-direction: column; }',
-            '.dock-bottom.collapsed { transform: translate(-50%, calc(100% - 16px)); }',
+            '.dock-bottom.collapsed { transform: translate(-50%, calc(100% - 18px)); }',
             '.dock-bottom .pull-tab { margin-bottom: 6px; }',
             '.dock-top { top: 12px; left: 50%; transform: translateX(-50%); flex-direction: column-reverse; }',
-            '.dock-top.collapsed { transform: translate(-50%, calc(-100% + 16px)); }',
+            '.dock-top.collapsed { transform: translate(-50%, calc(-100% + 18px)); }',
             '.dock-top .pull-tab { margin-top: 6px; }',
             '.dock-left { left: 12px; top: 50%; transform: translateY(-50%); flex-direction: row-reverse; }',
-            '.dock-left .dock-bar { flex-direction: column; }',
-            '.dock-left.collapsed { transform: translate(calc(-100% + 16px), -50%); }',
+            '.dock-left .dock-bar { flex-direction: column; align-items: center; }',
+            '.dock-left.collapsed { transform: translate(calc(-100% + 18px), -50%); }',
             '.dock-left .pull-tab { margin-left: 6px; }',
             '.dock-right { right: 12px; top: 50%; transform: translateY(-50%); flex-direction: row; }',
-            '.dock-right .dock-bar { flex-direction: column; }',
-            '.dock-right.collapsed { transform: translate(calc(100% - 16px), -50%); }',
+            '.dock-right .dock-bar { flex-direction: column; align-items: center; }',
+            '.dock-right.collapsed { transform: translate(calc(100% - 18px), -50%); }',
             '.dock-right .pull-tab { margin-right: 6px; }',
             '.dock-item { display: flex; align-items: center; gap: 8px; }',
-            '.dock-divider { width: 1px; height: 24px; background: rgba(148, 163, 184, 0.2); }',
-            '.dock-left .dock-divider, .dock-right .dock-divider { width: 24px; height: 1px; }'
+            '.dock-left .dock-item, .dock-right .dock-item { flex-direction: column; gap: 6px; width: 100%; justify-content: center; }',
+            '.dock-divider { width: 1px; height: 24px; background: rgba(148, 163, 184, 0.25); flex-shrink: 0; }',
+            '.dock-left .dock-divider, .dock-right .dock-divider { width: 28px; height: 1px; }',
+            '@media (max-width: 640px) {',
+            '  .dock-bar { padding: 8px 12px; gap: 8px; border-radius: 20px; }',
+            '  .dock-bar .btn-ctrl span, .dock-bar .btn-toggle span { display: none; }',
+            '  .dock-bar .nav-input { width: 110px; font-size: 11px; padding: 4px 8px; }',
+            '}'
           ].join('\n');
 
           var dockStyle = window.document.createElement('style');
@@ -2184,7 +2453,8 @@
 
           var isCollapsed = true;
           wrapper.classList.add('collapsed');
-          pullBtn.querySelector('span').style.transform = 'rotate(180deg)';
+          var pullSpan = pullBtn.querySelector('span');
+          if (pullSpan) pullSpan.style.transform = 'rotate(180deg)';
 
           var isDraggingDock = false;
           var hasMovedDock = false;
