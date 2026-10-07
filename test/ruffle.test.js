@@ -29,7 +29,7 @@ describe('Ruffle Proxy Support', function () {
     var testSwfUrl = 'https://masonsunblockedgames.github.io/MasonsUnblockedGames/age_of_war.swf';
     var rewritten = mockWin.RufflePlayer.config.urlRewriter(testSwfUrl);
 
-    assert.strictEqual(rewritten, '/proxy/https://masonsunblockedgames.github.io/MasonsUnblockedGames/age_of_war.swf');
+    assert.strictEqual(rewritten, 'https://heavenly-node.vercel.app/proxy/https://masonsunblockedgames.github.io/MasonsUnblockedGames/age_of_war.swf');
   });
 
   it('should preserve RufflePlayer setter and patch config when updated dynamically', function () {
@@ -64,7 +64,7 @@ describe('Ruffle Proxy Support', function () {
     var rawUrl = '  https://masonsunblockedgames.github.io/MasonsUnblockedGames/age_of_war.swf  ';
     var rewritten = mockWin.RufflePlayer.config.urlRewriter(rawUrl);
 
-    assert.strictEqual(rewritten, '/proxy/https://masonsunblockedgames.github.io/MasonsUnblockedGames/age_of_war.swf');
+    assert.strictEqual(rewritten, 'https://heavenly-node.vercel.app/proxy/https://masonsunblockedgames.github.io/MasonsUnblockedGames/age_of_war.swf');
   });
 
   it('should proxy HTMLObjectElement and HTMLEmbedElement attributes', function () {

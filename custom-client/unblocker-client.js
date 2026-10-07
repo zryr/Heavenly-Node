@@ -124,7 +124,16 @@
       url = new URL(urlStr, getCurrentRemoteHref());
     }
 
-    // check if it's already proxied (absolute)
+    // check if it's already proxied (absolute or relative with prefix)
+    if (
+      urlStr.indexOf(prefix + "http://") !== -1 ||
+      urlStr.indexOf(prefix + "https://") !== -1 ||
+      urlStr.indexOf(prefix + "http:/") !== -1 ||
+      urlStr.indexOf(prefix + "https:/") !== -1
+    ) {
+      return urlStr;
+    }
+
     if (
       url.origin === location.origin &&
       url.pathname.substr(0, prefixLen) === prefix
@@ -4166,7 +4175,7 @@
     } catch (e) {}
   }
 
-  function initRuffleProxyConfig(config, window) {
+  function initRuffleProxyConfig(config, window, realOrigin) {
     try {
       var prefix = config.prefix || '/proxy/';
 
@@ -4185,7 +4194,21 @@
               rewritten = url;
             }
           }
-          return fixUrl(rewritten, config, window.location);
+          var fixed = fixUrl(rewritten, config, window.location);
+          if (fixed && !fixed.startsWith('http://') && !fixed.startsWith('https://')) {
+            var originBase = realOrigin;
+            if (!originBase && window.location) {
+              if (window.location.origin) {
+                originBase = window.location.origin;
+              } else if (window.location.protocol && window.location.host) {
+                originBase = window.location.protocol + '//' + window.location.host;
+              }
+            }
+            if (originBase && fixed.startsWith('/')) {
+              fixed = originBase + fixed;
+            }
+          }
+          return fixed;
         };
       }
 
@@ -4216,7 +4239,18 @@
 
   function initForWindow(config, window) {
     console.log("[Heavenly Debug] Initializing unblocker client scripts for window", config, window);
-    initRuffleProxyConfig(config, window);
+    var realOrigin = '';
+    try {
+      if (window && window.location) {
+        if (window.location.origin) {
+          realOrigin = window.location.origin;
+        } else if (window.location.protocol && window.location.host) {
+          realOrigin = window.location.protocol + '//' + window.location.host;
+        }
+      }
+    } catch (e) {}
+
+    initRuffleProxyConfig(config, window, realOrigin);
     initLocationPrototype(config, window);
     initElementPrototypes(config, window);
     initMutationObserverAndClicks(config, window);
