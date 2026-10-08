@@ -26,11 +26,13 @@
         radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);
       color: #f8fafc;
       min-height: 100vh;
+      height: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 24px 16px;
+      padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom)) 16px;
+      overflow-y: auto;
       overflow-x: hidden;
     }
 
@@ -3168,8 +3170,8 @@
           syshiBtn.className = 'syshi-notes-btn';
           syshiBtn.title = "Syshi's Notes";
           syshiBtn.setAttribute('aria-label', "Open Syshi's Notes for Anime/Manga");
-          syshiBtn.style.cssText = 'background: rgba(129, 140, 248, 0.18); border: 1px solid rgba(129, 140, 248, 0.45); color: #a5b4fc; border-radius: 10px; padding: 3px 8px; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; transition: all 0.2s ease;';
-          syshiBtn.innerHTML = '<svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg><span>Syshi\'s Notes</span>';
+          syshiBtn.style.cssText = 'background: rgba(129, 140, 248, 0.18); border: 1px solid rgba(129, 140, 248, 0.45); color: #a5b4fc; border-radius: 8px; width: 26px; height: 26px; padding: 0; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; transition: all 0.2s ease; flex-shrink: 0;';
+          syshiBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
           syshiBtn.onmouseover = function () { syshiBtn.style.background = 'rgba(129, 140, 248, 0.3)'; syshiBtn.style.color = '#ffffff'; };
           syshiBtn.onmouseout = function () { syshiBtn.style.background = 'rgba(129, 140, 248, 0.18)'; syshiBtn.style.color = '#a5b4fc'; };
           syshiBtn.onclick = function (e) {
