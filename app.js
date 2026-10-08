@@ -254,7 +254,7 @@ app.get('/proxy/client/unblocker-client.js', function(req, res) {
 });
 
 // Middleware to normalize collapsed single-slash proxy URLs (e.g., /proxy/https:/ -> /proxy/https://)
-app.use(function normalizeProxyUrl(req, res, next) {
+function normalizeProxyUrl(req, res, next) {
     if (req.url && req.url.indexOf('/proxy/') === 0) {
         var urlStr = req.url;
         while (urlStr.indexOf('/proxy/', 7) !== -1) {
@@ -272,7 +272,9 @@ app.use(function normalizeProxyUrl(req, res, next) {
         req.url = urlStr;
     }
     next();
-});
+}
+
+app.use(normalizeProxyUrl);
 
 function renderHeavenlyErrorPage(opts) {
     opts = opts || {};
@@ -654,6 +656,7 @@ app.cloudflareMiddleware = cloudflareMiddleware;
 app.responseRedirectMiddleware = responseRedirectMiddleware;
 app.serverErrorResponseMiddleware = serverErrorResponseMiddleware;
 app.heavenlyErrorMiddleware = heavenlyErrorMiddleware;
+app.normalizeProxyUrl = normalizeProxyUrl;
 
 module.exports = app;
 
