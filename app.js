@@ -10,7 +10,6 @@
  */
 
 var url = require('url');
-var querystring = require('querystring');
 var express = require('express');
 var Unblocker = require('unblocker');
 var Transform = require('stream').Transform;
