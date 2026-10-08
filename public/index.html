@@ -26,11 +26,13 @@
         radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);
       color: #f8fafc;
       min-height: 100vh;
+      height: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 24px 16px;
+      padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom)) 16px;
+      overflow-y: auto;
       overflow-x: hidden;
     }
 
@@ -1819,6 +1821,52 @@
     </div>
   </div>
 
+  <!-- Syshi's Notes Modal for Anime/Manga -->
+  <div id="syshis-notes-modal" class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="syshis-notes-modal-title" style="max-width: 480px;">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-icon-badge" style="background: linear-gradient(135deg, rgba(129, 140, 248, 0.25) 0%, rgba(99, 102, 241, 0.25) 100%); border-color: rgba(129, 140, 248, 0.4);">
+            <svg style="width:20px;height:20px;fill:none;stroke:#818cf8;stroke-width:2.2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </div>
+          <span class="modal-title" id="syshis-notes-modal-title">Syshi's Notes</span>
+        </div>
+        <button id="close-syshis-notes-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 6px;">
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(129, 140, 248, 0.3); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <span style="color: #38bdf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
+            <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
+              Use <strong>Isshonime</strong> to help decide what anime to watch next when you have no idea what to pick.
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end;">
+            <button id="syshi-open-isshonime-btn" type="button" class="modal-submit-btn" style="padding: 6px 12px; font-size: 0.8rem; margin-top: 0; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; display: inline-flex; align-items: center; gap: 6px;">
+              <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              <span>Open Isshonime</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(129, 140, 248, 0.3); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <span style="color: #818cf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
+            <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
+              Recommended: Use <strong>AniList</strong> to keep track of your watched anime and ratings.
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end;">
+            <button id="syshi-open-anilist-btn" type="button" class="modal-submit-btn" style="padding: 6px 12px; font-size: 0.8rem; margin-top: 0; background: rgba(129, 140, 248, 0.18); border: 1px solid #818cf8; color: #a5b4fc; display: inline-flex; align-items: center; gap: 6px;">
+              <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              <span>Open AniList</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     function $(id) {
       return document.getElementById(id);
@@ -2359,11 +2407,14 @@
           var subBmModal = $('sub-bm-modal');
           var subSecModal = $('subsec-modal');
           var subSecDelModal = $('subsec-delete-modal');
+          var syshiModal = $('syshis-notes-modal');
           var builtinModal = $('builtin-test-modal');
           var emoeModal = $('everythingmoe-modal');
           var reorderBar = $('reorder-bar');
           var bmSearch = $('bm-universal-search');
-          if (emoeModal && emoeModal.classList.contains('active')) {
+          if (syshiModal && syshiModal.classList.contains('active')) {
+            closeSyshisNotesModal();
+          } else if (emoeModal && emoeModal.classList.contains('active')) {
             closeEverythingMoeNoticeModal();
           } else if (builtinModal && builtinModal.classList.contains('active')) {
             closeBuiltinTestModal();
@@ -2434,6 +2485,7 @@
         { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anisnatch.top&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_isshonime", categoryId: "cat_anime", title: "Isshonime", url: "https://www.isshonime.com/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=isshonime.com&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
         { id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [
           { id: "sub_movish_latestmovies_anime", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }
@@ -2610,7 +2662,7 @@
         // Migration: Re-sort built-in anime bookmarks so FMHY: Anime is under EverythingMoe and above AniSnatch
         var animeBms = data.bookmarks.filter(function (b) { return b.categoryId === 'cat_anime' && b.builtIn; });
         if (animeBms.length > 0) {
-          var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_anidb"];
+          var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_isshonime", "bm_anidb"];
           desiredAnimeOrder.forEach(function (id, index) {
             var found = animeBms.find(function (b) { return b.id === id; });
             if (found && found.order !== index) {
@@ -3112,6 +3164,23 @@
         titleGroup.appendChild(handle);
         titleGroup.appendChild(titleText);
 
+        if (cat.id === 'cat_anime') {
+          var syshiBtn = document.createElement('button');
+          syshiBtn.type = 'button';
+          syshiBtn.className = 'syshi-notes-btn';
+          syshiBtn.title = "Syshi's Notes";
+          syshiBtn.setAttribute('aria-label', "Open Syshi's Notes for Anime/Manga");
+          syshiBtn.style.cssText = 'background: rgba(129, 140, 248, 0.18); border: 1px solid rgba(129, 140, 248, 0.45); color: #a5b4fc; border-radius: 8px; width: 26px; height: 26px; padding: 0; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; transition: all 0.2s ease; flex-shrink: 0;';
+          syshiBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
+          syshiBtn.onmouseover = function () { syshiBtn.style.background = 'rgba(129, 140, 248, 0.3)'; syshiBtn.style.color = '#ffffff'; };
+          syshiBtn.onmouseout = function () { syshiBtn.style.background = 'rgba(129, 140, 248, 0.18)'; syshiBtn.style.color = '#a5b4fc'; };
+          syshiBtn.onclick = function (e) {
+            e.stopPropagation();
+            openSyshisNotesModal();
+          };
+          titleGroup.appendChild(syshiBtn);
+        }
+
         var addBmBtn = document.createElement('button');
         addBmBtn.type = 'button';
         addBmBtn.className = 'btn-add-bm-quick';
@@ -3565,6 +3634,7 @@
               subContainer.style.borderLeft = '2px dashed rgba(56, 189, 248, 0.3)';
               subContainer.style.marginTop = '2px';
 
+              var brokenMap = getBrokenLinksMap();
               var subBms = bm.subBookmarks || [];
               if (searchQuery) {
                 subBms = subBms.filter(function (sb) {
@@ -3573,13 +3643,22 @@
               }
 
               subBms.forEach(function (sb, sbIdx) {
+                var isSbBroken = !!brokenMap[sb.url];
                 var sbCard = document.createElement('a');
                 sbCard.className = 'bookmark-card';
                 sbCard.target = '_blank';
                 sbCard.rel = 'noopener';
                 sbCard.style.padding = '6px 10px';
                 sbCard.style.fontSize = '0.82rem';
-                sbCard.style.background = 'rgba(15, 23, 42, 0.6)';
+
+                if (isSbBroken) {
+                  sbCard.style.background = 'rgba(15, 23, 42, 0.35)';
+                  sbCard.style.opacity = '0.45';
+                  sbCard.style.filter = 'grayscale(50%)';
+                  sbCard.style.border = '1px dashed rgba(148, 163, 184, 0.2)';
+                } else {
+                  sbCard.style.background = 'rgba(15, 23, 42, 0.6)';
+                }
 
                 var sbProxiedUrl = location.protocol + '//' + location.host + '/proxy/' + (sb.url.startsWith('http') ? sb.url : 'https://' + sb.url);
                 sbCard.href = sbProxiedUrl;
@@ -3595,7 +3674,10 @@
 
                 var sbTitle = document.createElement('span');
                 sbTitle.className = 'bookmark-title';
-                sbTitle.textContent = sb.title;
+                sbTitle.textContent = sb.title + (isSbBroken ? ' (Not Working)' : '');
+                if (isSbBroken) {
+                  sbTitle.style.color = '#64748b';
+                }
 
                 sbLeft.appendChild(sbTitle);
 
@@ -4186,6 +4268,16 @@
       if (modal) modal.classList.add('active');
     }
 
+    function openSyshisNotesModal() {
+      var modal = $('syshis-notes-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeSyshisNotesModal() {
+      var modal = $('syshis-notes-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
     function closeEverythingMoeNoticeModal() {
       var modal = $('everythingmoe-modal');
       if (modal) modal.classList.remove('active');
@@ -4311,7 +4403,7 @@
           var isBroken = ver.isBroken;
 
           card.style.cssText = isBroken
-            ? 'background: rgba(30, 41, 59, 0.35); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0.65; transition: all 0.2s ease;'
+            ? 'background: rgba(15, 23, 42, 0.35); border: 1px dashed rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0.45; filter: grayscale(50%); transition: all 0.2s ease;'
             : 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;';
 
           var topRow = document.createElement('div');
@@ -4319,9 +4411,9 @@
 
           var titleBox = document.createElement('div');
           titleBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
-          var titleText = '<div style="font-weight: 700; font-size: 0.9rem; color: ' + (isBroken ? '#94a3b8' : '#f8fafc') + ';">' + escapeHtml(ver.title) + '</div>';
+          var titleText = '<div style="font-weight: 700; font-size: 0.9rem; color: ' + (isBroken ? '#64748b' : '#f8fafc') + ';">' + escapeHtml(ver.title) + '</div>';
           if (isBroken) {
-            titleText += '<span style="font-size: 0.7rem; font-weight: 700; color: #fca5a5; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 6px; padding: 1px 6px;">Not Working</span>';
+            titleText += '<span style="font-size: 0.7rem; font-weight: 600; color: #94a3b8; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 1px 6px;">Not Working</span>';
           }
           titleBox.innerHTML = titleText;
 
@@ -4364,7 +4456,9 @@
           var directBtn = document.createElement('button');
           directBtn.type = 'button';
           directBtn.className = 'modal-submit-btn';
-          directBtn.style.cssText = 'background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;';
+          directBtn.style.cssText = isBroken
+            ? 'background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;'
+            : 'background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;';
           directBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Test Direct Site</span>';
           directBtn.onclick = function () {
             saveBuiltinPromptPref();
@@ -4376,7 +4470,9 @@
           var proxyBtn = document.createElement('button');
           proxyBtn.type = 'button';
           proxyBtn.className = 'modal-submit-btn';
-          proxyBtn.style.cssText = 'flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;';
+          proxyBtn.style.cssText = isBroken
+            ? 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #cbd5e1; flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;'
+            : 'flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;';
           proxyBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span>';
           proxyBtn.onclick = function () {
             saveBuiltinPromptPref();
@@ -5050,6 +5146,27 @@
           renderBookmarksUI();
         }
       };
+      var closeSyshiBtn = $('close-syshis-notes-modal-btn');
+      if (closeSyshiBtn) closeSyshiBtn.onclick = closeSyshisNotesModal;
+
+      var syshiIsshonimeBtn = $('syshi-open-isshonime-btn');
+      if (syshiIsshonimeBtn) {
+        syshiIsshonimeBtn.onclick = function () {
+          closeSyshisNotesModal();
+          var proxiedUrl = location.protocol + '//' + location.host + '/proxy/https://www.isshonime.com/';
+          openBuiltinTestModal('Isshonime', 'https://www.isshonime.com/', proxiedUrl, null, false, 'bm_isshonime');
+        };
+      }
+
+      var syshiAnilistBtn = $('syshi-open-anilist-btn');
+      if (syshiAnilistBtn) {
+        syshiAnilistBtn.onclick = function () {
+          closeSyshisNotesModal();
+          var proxiedUrl = location.protocol + '//' + location.host + '/proxy/https://anilist.co/';
+          openBuiltinTestModal('AniList', 'https://anilist.co/', proxiedUrl, null, false, null);
+        };
+      }
+
       $('close-everythingmoe-modal-btn').onclick = closeEverythingMoeNoticeModal;
       $('close-share-modal-btn').onclick = closeShareModal;
 
