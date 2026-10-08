@@ -784,13 +784,28 @@
 
   var DEFAULT_RANDOM_POOL = ['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva'];
 
+  var _lastRawSettings = null;
+  var _cachedHeavenlySettings = null;
+
   function loadHeavenlySettings(window) {
-    var saved = {};
+    var raw = null;
     try {
-      saved = JSON.parse((window.localStorage || localStorage).getItem('heavenly_settings') || '{}');
+      raw = (window.localStorage || localStorage).getItem('heavenly_settings');
     } catch (e) {}
 
-    return {
+    if (raw !== null && raw === _lastRawSettings && _cachedHeavenlySettings !== null) {
+      return _cachedHeavenlySettings;
+    }
+
+    var saved = {};
+    if (raw) {
+      try {
+        saved = JSON.parse(raw);
+      } catch (e) {}
+    }
+
+    _lastRawSettings = raw;
+    _cachedHeavenlySettings = {
       autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
       persistentCloak: saved.persistentCloak || false,
       randomizePresetEachSession: saved.randomizePresetEachSession || false,
@@ -812,6 +827,8 @@
       disableAllWidgets: saved.disableAllWidgets || false,
       disableAllFeatures: saved.disableAllFeatures || false
     };
+
+    return _cachedHeavenlySettings;
   }
 
   function initHeavenlyCloakAndPanic(window, settings, config) {
