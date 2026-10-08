@@ -14,9 +14,9 @@ describe("Sub-Sections Functionality & Data Model", function () {
   });
 
   it("should configure default subSections in DEFAULT_BOOKMARK_DATA across all client files", function () {
-    assert.strictEqual(indexHtml.includes('{ id: "naenae", title: "Nae-Nae", builtIn: true }'), true);
-    assert.strictEqual(settingsHtml.includes('{ id: "naenae", title: "Nae-Nae", builtIn: true }'), true);
-    assert.strictEqual(clientJs.includes('{ id: "naenae", title: "Nae-Nae", builtIn: true }'), true);
+    assert.strictEqual(indexHtml.includes('{ id: "naenae", title: "Nae-Nae", builtIn: true, defaultCollapsed: true }'), true);
+    assert.strictEqual(settingsHtml.includes('{ id: "naenae", title: "Nae-Nae", builtIn: true, defaultCollapsed: true }'), true);
+    assert.strictEqual(clientJs.includes('{ id: "naenae", title: "Nae-Nae", builtIn: true, defaultCollapsed: true }'), true);
   });
 
   it("should configure Nae-Nae default bookmarks across client files", function () {
