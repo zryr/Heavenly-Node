@@ -40,4 +40,15 @@ describe('Quick Settings & Auto-Hide Broken Bookmarks Tests', function () {
     assert.ok(indexHtml.includes('bmToHide.hidden = true'), 'builtin-hide-bm-btn click handler should set hidden = true on target bookmark');
     assert.ok(indexHtml.includes('toggleBrokenLinkState'), 'openBuiltinTestModal should provide broken link toggle button for single-URL bookmarks');
   });
+
+  it('should define micro-animation keyframes and classes for Mark as Working/Broken and smooth transition on search newtab button', function () {
+    assert.ok(indexHtml.includes('@keyframes markWorkingSuccess'), 'index.html should define @keyframes markWorkingSuccess');
+    assert.ok(indexHtml.includes('@keyframes markBrokenWarning'), 'index.html should define @keyframes markBrokenWarning');
+    assert.ok(indexHtml.includes('.mark-working-animate'), 'index.html should define .mark-working-animate CSS class');
+    assert.ok(indexHtml.includes('.mark-broken-animate'), 'index.html should define .mark-broken-animate CSS class');
+    assert.ok(indexHtml.includes('card.classList.add(isBroken ? \'mark-working-animate\' : \'mark-broken-animate\')'), 'toggleBrokenBtn should trigger micro-animation class before re-rendering');
+    assert.ok(indexHtml.includes('sCard.classList.add(sVer.isBroken ? \'mark-working-animate\' : \'mark-broken-animate\')'), 'sToggleBtn should trigger micro-animation class before re-rendering');
+    assert.ok(indexHtml.includes('#search-newtab-btn'), 'index.html should style #search-newtab-btn');
+    assert.ok(indexHtml.includes('#search-newtab-btn.collapsed'), 'index.html should define #search-newtab-btn.collapsed transition');
+  });
 });

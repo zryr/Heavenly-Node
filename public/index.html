@@ -1370,10 +1370,59 @@
       animation: slideFadeDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
+    @keyframes markWorkingSuccess {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
+        border-color: rgba(74, 222, 128, 0.8);
+      }
+      40% {
+        transform: scale(1.03);
+        box-shadow: 0 0 20px 4px rgba(74, 222, 128, 0.5);
+        border-color: #4ade80;
+        background: rgba(34, 197, 94, 0.25);
+      }
+      100% {
+        transform: scale(0.96);
+        opacity: 0.3;
+        box-shadow: 0 0 0 0 transparent;
+      }
+    }
+
+    @keyframes markBrokenWarning {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+      }
+      40% {
+        transform: scale(1.03);
+        box-shadow: 0 0 20px 4px rgba(239, 68, 68, 0.5);
+        border-color: #ef4444;
+        background: rgba(239, 68, 68, 0.25);
+      }
+      100% {
+        transform: scale(0.98);
+        opacity: 0.7;
+        box-shadow: 0 0 0 0 transparent;
+      }
+    }
+
+    .mark-working-animate {
+      animation: markWorkingSuccess 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+      pointer-events: none !important;
+    }
+
+    .mark-broken-animate {
+      animation: markBrokenWarning 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+      pointer-events: none !important;
+    }
+
     #search-newtab-btn {
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       max-width: 140px;
       opacity: 1;
+      transform: scale(1);
+      transform-origin: center right;
       overflow: hidden;
       white-space: nowrap;
     }
@@ -1383,11 +1432,11 @@
       opacity: 0 !important;
       padding-left: 0 !important;
       padding-right: 0 !important;
-      margin-left: 0 !important;
+      margin-left: -10px !important;
       margin-right: 0 !important;
       border-width: 0 !important;
       pointer-events: none !important;
-      transform: scale(0.9) !important;
+      transform: scale(0.85) !important;
     }
   </style>
 </head>
@@ -2023,7 +2072,7 @@
       var goBtn = $('search-go-btn');
       var newTabBtn = $('search-newtab-btn');
 
-      if (settings.openSearchInNewTab && settings.mergeGoNewTab) {
+      if (settings.openSearchInNewTab) {
         if (goBtn) goBtn.value = 'Go (New Tab)';
         if (newTabBtn) newTabBtn.classList.add('collapsed');
       } else {
@@ -4581,8 +4630,12 @@
 
           toggleBrokenBtn.onclick = function (e) {
             e.stopPropagation();
-            toggleBrokenLinkState(ver.url);
-            openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+            toggleBrokenBtn.disabled = true;
+            card.classList.add(isBroken ? 'mark-working-animate' : 'mark-broken-animate');
+            setTimeout(function () {
+              toggleBrokenLinkState(ver.url);
+              openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+            }, 280);
           };
 
           rightBox.appendChild(urlBadge);
@@ -4665,8 +4718,12 @@
 
             sToggleBtn.onclick = function (e) {
               e.stopPropagation();
-              toggleBrokenLinkState(sVer.url);
-              openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+              sToggleBtn.disabled = true;
+              sCard.classList.add(sVer.isBroken ? 'mark-working-animate' : 'mark-broken-animate');
+              setTimeout(function () {
+                toggleBrokenLinkState(sVer.url);
+                openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+              }, 280);
             };
 
             sCard.appendChild(sLeftBox);
