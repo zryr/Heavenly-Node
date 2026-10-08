@@ -1613,23 +1613,26 @@
             ]
           },
           { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: true, hidden: false, order: 1, disableQuickSaveWidget: true, subBookmarks: [] },
+          { id: "bm_sitesdotcom", categoryId: "cat_games", title: "SitesDotCom", url: "https://games-b3749.web.app/", type: "bookmark", icon: "preset:globe", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_grind1", categoryId: "cat_games", title: "GRIND1", url: "https://zbr.base44.app", type: "bookmark", icon: "/proxy/https://yt3.googleusercontent.com/5pXcUZ6ujlD2Cd0loksX2Ju59RtAnfRS4lEG7uf6sd2yemKG33uu2x-31VrU08xAfpEGsUoVGSo=s160-c-k-c0x00ffffff-no-rj", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+          { id: "bm_gn_math", categoryId: "cat_games", title: "GN Math", url: "https://gn-math.dev/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=gn-math.dev&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
           { id: "bm_user_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: false, hidden: false, order: 99, subBookmarks: [] },
-          { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=teddblue.github.io&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-          { id: "bm_ubg98", categoryId: "cat_games", title: "UBG98", url: "https://ubg98.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=ubg98.com&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
-          { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=cpsgames.org&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-          { id: "bm_ubgames", categoryId: "cat_games", title: "UBGames", url: "https://ubgames.uk", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=ubgames.uk&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-          { id: "bm_unbleeked", categoryId: "cat_games", title: "Unbleeked", url: "https://unbleeked.vercel.app/", type: "folder_bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
-          { id: "bm_duckmath", categoryId: "cat_games", title: "DuckMath", url: "https://duckmath.org/", type: "folder_bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 7, disableQuickSaveWidget: true, subBookmarks: [{ id: "sub_duckmath_a1", title: "DuckMath a1", url: "https://classroom-a1.b-cdn.net/", icon: "preset:gamepad" }] },
-          { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=emubrowser.com&sz=64", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
-          { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=gras2027.com&sz=64", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
-          { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 10, subBookmarks: [] },
-          { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "folder_bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
-          { id: "bm_mgalternative", categoryId: "cat_games", title: "Mountain Games", url: "https://mgalternative.github.io", type: "folder_bookmark", icon: "preset:star", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
-          { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "/proxy/https://masonsunblockedgames.github.io/MasonsUnblockedGames/favicon.ico", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
-          { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=geometryspot.com&sz=64", builtIn: true, hidden: false, order: 14, subBookmarks: [] },
-          { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 15, subBookmarks: [] },
-          { id: "bm_interdimensional_lite", categoryId: "cat_games", title: "Interdimensional Lite", url: "https://pinkdev.d13qic2f6zga3.amplifyapp.com", type: "folder_bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 16, subBookmarks: [] },
-          { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 17, subBookmarks: [] },
+          { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=teddblue.github.io&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
+          { id: "bm_ubg98", categoryId: "cat_games", title: "UBG98", url: "https://ubg98.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=ubg98.com&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+          { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=cpsgames.org&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
+          { id: "bm_ubgames", categoryId: "cat_games", title: "UBGames", url: "https://ubgames.uk", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=ubgames.uk&sz=64", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
+          { id: "bm_unbleeked", categoryId: "cat_games", title: "Unbleeked", url: "https://unbleeked.vercel.app/", type: "folder_bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
+          { id: "bm_duckmath", categoryId: "cat_games", title: "DuckMath", url: "https://duckmath.org/", type: "folder_bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 10, disableQuickSaveWidget: true, subBookmarks: [{ id: "sub_duckmath_a1", title: "DuckMath a1", url: "https://classroom-a1.b-cdn.net/", icon: "preset:gamepad" }] },
+          { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=emubrowser.com&sz=64", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
+          { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=gras2027.com&sz=64", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
+          { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
+          { id: "bm_myretrogames", categoryId: "cat_games", title: "My RETROGAMES", url: "https://theooofficial.github.io/myRETROGAMES/", type: "folder_bookmark", icon: "preset:gamepad", builtIn: true, hidden: false, order: 14, subBookmarks: [] },
+          { id: "bm_mgalternative", categoryId: "cat_games", title: "Mountain Games", url: "https://mgalternative.github.io", type: "folder_bookmark", icon: "preset:star", builtIn: true, hidden: false, order: 15, subBookmarks: [] },
+          { id: "bm_masonsunblockedgames", categoryId: "cat_games", title: "Mason's Unblocked Games", url: "https://masonsunblockedgames.github.io/MasonsUnblockedGames/", type: "bookmark", icon: "/proxy/https://masonsunblockedgames.github.io/MasonsUnblockedGames/favicon.ico", builtIn: true, hidden: false, order: 16, subBookmarks: [] },
+          { id: "bm_geometryspot", categoryId: "cat_games", title: "Geometry Spot", url: "https://geometryspot.com/activities/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=geometryspot.com&sz=64", builtIn: true, hidden: false, order: 17, subBookmarks: [] },
+          { id: "bm_outredgames", categoryId: "cat_games", title: "Outred Games", url: "https://outred.org/games.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=outred.org&sz=64", builtIn: true, hidden: false, order: 18, subBookmarks: [] },
+          { id: "bm_interdimensional_lite", categoryId: "cat_games", title: "Interdimensional Lite", url: "https://pinkdev.d13qic2f6zga3.amplifyapp.com", type: "folder_bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 19, subBookmarks: [] },
+          { id: "bm_3hk0lite", categoryId: "cat_games", title: "3hk0 Lite", url: "https://75kh0.github.io", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=75kh0.github.io&sz=64", builtIn: true, hidden: false, order: 20, subBookmarks: [] },
           {
             id: "bm_bloxcraftstudios",
             categoryId: "cat_games",
@@ -1639,7 +1642,7 @@
             icon: "/proxy/https://5kh0.github.io/bloxcraft_transparent.png",
             builtIn: true,
             hidden: false,
-            order: 18,
+            order: 21,
             subBookmarks: [
               { id: "sub_bloxcraft_5kh0", title: "Bloxcraft (5kh0)", url: "https://5kh0.github.io", icon: "" },
               { id: "sub_bloxcraft_fastly", title: "Bloxcraft (Fastly)", url: "https://bloxcraftubg.freetls.fastly.net/games/", icon: "https://www.google.com/s2/favicons?domain=bloxcraftubg.freetls.fastly.net&sz=64" }
@@ -2019,6 +2022,7 @@
       pickerBtn.onclick = function () {
         backdrop.remove();
         storage.setItem('heavenly_manual_icon_pending', JSON.stringify({
+          bookmarkId: 'bm_dock_quick',
           domain: domain,
           targetUrl: unproxiedUrl,
           timestamp: Date.now()
@@ -3560,7 +3564,7 @@
         return;
       }
 
-      if (!pending || !pending.bookmarkId || !pending.targetUrl || !pending.timestamp) {
+      if (!pending || !pending.targetUrl || !pending.timestamp) {
         storage.removeItem('heavenly_manual_icon_pending');
         return;
       }
