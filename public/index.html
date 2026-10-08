@@ -1511,7 +1511,10 @@
           <!-- Unified Manual / Custom URL Container -->
           <div id="icon-manual-container" style="display: none; padding: 10px; background: rgba(30, 41, 59, 0.4); border-radius: 12px; border: 1px solid rgba(148,163,184,0.2); font-size: 0.78rem; color: #cbd5e1; line-height: 1.4; display: flex; flex-direction: column; gap: 8px;">
             <div>Enter an image / GIF URL directly below, or click the Live Icon Picker button to detect icons on the target site:</div>
-            <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="Custom Icon URL (e.g. https://example.com/icon.png)" style="font-size: 0.82rem; padding: 8px 10px;" />
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="Custom Icon URL (e.g. https://example.com/icon.png)" style="font-size: 0.82rem; padding: 8px 10px; flex: 1;" />
+              <div id="bm-custom-icon-preview" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;"></div>
+            </div>
             <button type="button" id="btn-launch-live-picker" style="padding: 8px 12px; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 10px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;">
               <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
               <span>Launch Live Icon Picker Overlay</span>
@@ -1756,7 +1759,10 @@
 
         <div>
           <label for="sub-bm-icon-input" style="font-size: 0.85rem; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Icon URL / Preset (Optional - uses parent icon if empty)</label>
-          <input type="text" id="sub-bm-icon-input" placeholder="Custom Icon URL or preset:gamepad" style="width: 100%; padding: 10px 12px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; color: #f8fafc; font-size: 0.9rem;" />
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="text" id="sub-bm-icon-input" placeholder="Custom Icon URL or preset:gamepad" style="flex: 1; padding: 10px 12px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; color: #f8fafc; font-size: 0.9rem;" />
+            <div id="sub-bm-icon-preview" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;"></div>
+          </div>
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 8px;">
@@ -1929,7 +1935,7 @@
       khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" },
       wikipedia: { title: "Wikipedia", icon: "https://en.wikipedia.org/static/favicon/wikipedia.ico" },
       youtube: { title: "YouTube", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64" },
-      outlook: { title: "Outlook", icon: "https://res.cdn.office.net/assets/mail/falcons/v1/images/favicon.ico" },
+      outlook: { title: "Outlook", icon: "https://outlook.office.com/favicon.ico" },
       notion: { title: "Notion", icon: "https://www.notion.so/images/favicon.ico" },
       elearn_lee: { title: "Courses", icon: "https://www.google.com/s2/favicons?domain=elearn.lee.edu&sz=64" },
       lee_college: { title: "Home | Lee College", icon: "https://www.google.com/s2/favicons?domain=www.lee.edu&sz=64" },
@@ -3810,6 +3816,33 @@
       });
     }
 
+    function updateCustomIconPreview() {
+      var prev = $('bm-custom-icon-preview');
+      if (!prev) return;
+      var customUrl = $('bm-custom-icon-url') ? $('bm-custom-icon-url').value.trim() : '';
+      prev.innerHTML = '';
+      if (customUrl) {
+        var el = renderIconElement(customUrl, $('bm-url') ? $('bm-url').value.trim() : '', 'Preview');
+        prev.appendChild(el);
+      } else {
+        prev.innerHTML = '<span style="font-size: 0.72rem; color: #64748b;">None</span>';
+      }
+    }
+
+    function updateSubBmIconPreview() {
+      var prev = $('sub-bm-icon-preview');
+      if (!prev) return;
+      var iconVal = $('sub-bm-icon-input') ? $('sub-bm-icon-input').value.trim() : '';
+      var urlVal = $('sub-bm-url-input') ? $('sub-bm-url-input').value.trim() : '';
+      prev.innerHTML = '';
+      if (iconVal || urlVal) {
+        var el = renderIconElement(iconVal, urlVal, 'Preview');
+        prev.appendChild(el);
+      } else {
+        prev.innerHTML = '<span style="font-size: 0.72rem; color: #64748b;">None</span>';
+      }
+    }
+
     function switchIconMode(mode) {
       selectedIconMode = mode;
       var btnFavicon = $('icon-tab-favicon');
@@ -3848,6 +3881,8 @@
 
       if (mode === 'preset') {
         renderPresetIconPicker();
+      } else if (mode === 'manual') {
+        updateCustomIconPreview();
       }
     }
 
@@ -4747,6 +4782,7 @@
       $('sub-bm-title-input').value = subItem ? (subItem.title || '') : '';
       $('sub-bm-url-input').value = subItem ? (subItem.url || '') : '';
       $('sub-bm-icon-input').value = subItem ? (subItem.icon || '') : '';
+      updateSubBmIconPreview();
 
       var modal = $('sub-bm-modal');
       if (modal) modal.classList.add('active');
@@ -5013,6 +5049,16 @@
       if (btnIconPreset) btnIconPreset.onclick = function () { switchIconMode('preset'); };
       var btnIconManual = $('icon-tab-manual');
       if (btnIconManual) btnIconManual.onclick = function () { switchIconMode('manual'); };
+
+      var customIconUrlInput = $('bm-custom-icon-url');
+      if (customIconUrlInput) {
+        customIconUrlInput.oninput = updateCustomIconPreview;
+      }
+
+      var subBmIconInput = $('sub-bm-icon-input');
+      var subBmUrlInput = $('sub-bm-url-input');
+      if (subBmIconInput) subBmIconInput.oninput = updateSubBmIconPreview;
+      if (subBmUrlInput) subBmUrlInput.oninput = updateSubBmIconPreview;
 
       var btnAddSubBm = $('btn-add-sub-bm');
       if (btnAddSubBm) {

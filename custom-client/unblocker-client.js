@@ -829,7 +829,7 @@
         khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" },
         wikipedia: { title: "Wikipedia", icon: "https://en.wikipedia.org/static/favicon/wikipedia.ico" },
         youtube: { title: "YouTube", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64" },
-        outlook: { title: "Outlook", icon: "https://res.cdn.office.net/assets/mail/falcons/v1/images/favicon.ico" },
+        outlook: { title: "Outlook", icon: "https://outlook.office.com/favicon.ico" },
         notion: { title: "Notion", icon: "https://www.notion.so/images/favicon.ico" },
         elearn_lee: { title: "Courses", icon: "https://www.google.com/s2/favicons?domain=elearn.lee.edu&sz=64" },
         lee_college: { title: "Home | Lee College", icon: "https://www.google.com/s2/favicons?domain=www.lee.edu&sz=64" },
