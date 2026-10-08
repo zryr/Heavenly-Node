@@ -126,10 +126,10 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('gmail: { title: "Gmail"'), 'DEFAULT_PRESETS should include Gmail');
         assert.ok(html.includes('canvas: { title: "Dashboard"'), 'DEFAULT_PRESETS should include Canvas');
         assert.ok(html.includes('quizlet: { title: "Flashcards, learning tools and textbook solutions | Quizlet"'), 'DEFAULT_PRESETS should include Quizlet');
-        assert.ok(html.includes('wikipedia: { title: "Wikipedia, the free encyclopedia"'), 'DEFAULT_PRESETS should include Wikipedia');
+        assert.ok(html.includes('wikipedia: { title: "Wikipedia"'), 'DEFAULT_PRESETS should include Wikipedia');
         assert.ok(html.includes('youtube: { title: "YouTube"'), 'DEFAULT_PRESETS should include YouTube');
         assert.ok(html.includes('outlook: { title: "Outlook"'), 'DEFAULT_PRESETS should include Outlook');
-        assert.ok(html.includes('notion: { title: "Notion – The all-in-one workspace'), 'DEFAULT_PRESETS should include Notion');
+        assert.ok(html.includes('notion: { title: "Notion"'), 'DEFAULT_PRESETS should include Notion');
 
         assert.ok(html.includes('id="random-pool-chips"'), 'random-pool-chips element should exist');
         assert.ok(html.includes('id="pool-select-all-btn"'), 'pool-select-all-btn should exist');
