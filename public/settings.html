@@ -457,7 +457,10 @@
       display: none;
     }
 
-    details[open] summary .chevron-icon,
+    details:not([open]) > summary .chevron-icon {
+      transform: rotate(0deg);
+    }
+
     details[open] > summary .chevron-icon {
       transform: rotate(180deg);
     }
@@ -1004,7 +1007,7 @@
                 </span>
               </summary>
               <p class="hero-card-desc" style="margin-top: 10px;">Check or uncheck pre-made sections and built-in bookmarks to restore or hide them on your homepage.</p>
-              <div id="bookmark-mgr-container" class="bookmark-mgr-list" style="max-height: 380px; overflow-y: auto; padding-right: 6px; margin-top: 12px;"></div>
+              <div id="bookmark-mgr-container" class="bookmark-mgr-list" style="max-height: 520px; overflow-y: auto; padding: 4px 6px 4px 2px; margin-top: 12px;"></div>
               <div style="margin-top: 14px; border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 14px;">
                 <button id="reset-builtin-bookmarks-btn" type="button" style="width: 100%; padding: 12px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; color: #38bdf8; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
                   <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
@@ -1689,8 +1692,10 @@
         var titleBox = document.createElement('div');
         titleBox.style.cssText = 'display: inline-flex; align-items: center; gap: 8px;';
         titleBox.innerHTML = '<svg style="width:16px;height:16px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>' +
-          '<span>' + cat.title + (cat.builtIn ? ' (Built-in)' : ' (Custom)') + '</span>' +
-          '<svg class="chevron-icon" style="width:14px;height:14px;fill:none;stroke:#94a3b8;stroke-width:2.5;transition:transform 0.2s;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+          '<span>' + cat.title + (cat.builtIn ? ' (Built-in)' : ' (Custom)') + '</span>';
+
+        var rightBox = document.createElement('div');
+        rightBox.style.cssText = 'display: inline-flex; align-items: center; gap: 12px;';
 
         // Master Section Toggle Label & Switch
         var masterLabel = document.createElement('label');
@@ -1708,8 +1713,15 @@
         masterLabel.appendChild(masterInput);
         masterLabel.appendChild(masterSlider);
 
+        var chevron = document.createElement('span');
+        chevron.style.cssText = 'display: flex; align-items: center; justify-content: center;';
+        chevron.innerHTML = '<svg class="chevron-icon" style="width:14px;height:14px;fill:none;stroke:#94a3b8;stroke-width:2.5;transition:transform 0.2s;display:block;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
+        rightBox.appendChild(masterLabel);
+        rightBox.appendChild(chevron);
+
         summary.appendChild(titleBox);
-        summary.appendChild(masterLabel);
+        summary.appendChild(rightBox);
         details.appendChild(summary);
 
         // Section Body: Child Bookmarks List
