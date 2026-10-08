@@ -13,3 +13,7 @@
 ## 2026-10-06 - Search Input Clear Button & Escape Key Dismissal UX
 **Learning:** Search inputs without an inline clear button and `Escape` key listener force users to manually select and backspace text to clear search filters or dismiss overlays.
 **Action:** Always provide an accessible clear button with `aria-label` and `title`, toggle its visibility on input, and attach `Escape` key handlers to reset search filters and refocus inputs.
+
+## 2026-10-07 - Dynamic Drag Handle & Reorder Bar Keyboard Accessibility
+**Learning:** Drag handles dynamically rendered as `<div>` elements without `tabindex="0"`, `role="button"`, `aria-label`, and `onkeydown` listeners render bookmark reorder menus completely inaccessible to keyboard and screen reader users.
+**Action:** Configure drag handle `<div>` elements with `role="button"`, `tabindex="0"`, descriptive `aria-label`, `:focus-visible` outline styles, and `onkeydown` handlers for `Enter` and `Space` keys to open reorder action menus.

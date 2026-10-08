@@ -81,4 +81,19 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('addBmBtn.setAttribute(\'aria-label\', \'Add bookmark to \' + cat.title)'), 'quick-add button should set aria-label with category title');
         assert.ok(html.includes('expandBtn.setAttribute(\'aria-label\', (isFolderExpanded ? \'Collapse folder \' : \'Expand folder \') + bm.title)'), 'folder expand button should set aria-label with expand/collapse state and folder title');
     });
+
+    it('should configure drag handles and reorder bar with ARIA attributes and keyboard accessibility', function() {
+        assert.ok(html.includes('.drag-dots-handle:focus-visible'), 'CSS should include .drag-dots-handle:focus-visible rule');
+        assert.ok(html.includes('handle.setAttribute(\'role\', \'button\')'), 'section drag handle should set role="button"');
+        assert.ok(html.includes('handle.setAttribute(\'tabindex\', \'0\')'), 'section drag handle should set tabindex="0"');
+        assert.ok(html.includes('handle.setAttribute(\'aria-label\', \'Reorder or manage section \' + cat.title)'), 'section drag handle should set aria-label');
+        assert.ok(html.includes('handle.onkeydown'), 'section drag handle should configure keyboard listener');
+        assert.ok(html.includes('bmHandle.setAttribute(\'role\', \'button\')'), 'bookmark drag handle should set role="button"');
+        assert.ok(html.includes('bmHandle.setAttribute(\'tabindex\', \'0\')'), 'bookmark drag handle should set tabindex="0"');
+        assert.ok(html.includes('bmHandle.setAttribute(\'aria-label\', \'Reorder or manage bookmark \' + bm.title)'), 'bookmark drag handle should set aria-label');
+        assert.ok(html.includes('bmHandle.onkeydown'), 'bookmark drag handle should configure keyboard listener');
+        assert.ok(html.includes('id="reorder-bar"') && html.includes('role="region"') && html.includes('aria-label="Reorder and management bar"'), 'reorder-bar should specify role="region" and aria-label');
+        assert.ok(html.includes('id="bar-edit"') && html.includes('aria-label="Edit selected item"'), 'bar-edit should specify aria-label');
+        assert.ok(html.includes('id="search-newtab-btn"') && html.includes('aria-label="Open search query in new tab"'), 'search-newtab-btn should specify aria-label');
+    });
 });
