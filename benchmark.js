@@ -41,37 +41,12 @@ function createMockWindow(settingsJson) {
   };
 }
 
-// Unoptimized pattern: repeated localStorage reads & JSON.parse
+// Unoptimized pattern: repeated localStorage reads & JSON.parse (refactored to eliminate redundant JSON parsing)
 function unoptimizedInit(win) {
-  // Cloak & Panic
-  var saved1 = {};
-  try {
-    saved1 = JSON.parse(win.localStorage.getItem('heavenly_settings') || '{}');
-  } catch (e) {}
-  var settings1 = {
-    autoCloak: saved1.autoCloak !== undefined ? saved1.autoCloak : true,
-    persistentCloak: saved1.persistentCloak || false,
-    selectedPreset: saved1.selectedPreset || 'classroom',
-    customPresets: saved1.customPresets || {},
-    panicKeyEnable: saved1.panicKeyEnable || false,
-    panicKey: saved1.panicKey || '`',
-    touchPanic: saved1.touchPanic || false,
-    panicUrl: saved1.panicUrl || 'https://classroom.google.com',
-    showScrollLock: saved1.showScrollLock !== undefined ? saved1.showScrollLock : true,
-    showMagnifier: saved1.showMagnifier !== undefined ? saved1.showMagnifier : true,
-    showNavSearch: saved1.showNavSearch !== undefined ? saved1.showNavSearch : true,
-    showNavHome: saved1.showNavHome !== undefined ? saved1.showNavHome : true,
-    useWidgetDock: saved1.useWidgetDock || false,
-    dockPosition: saved1.dockPosition || 'bottom'
-  };
-
-  // Widgets
-  var saved2 = {};
-  try {
-    saved2 = JSON.parse(win.localStorage.getItem('heavenly_settings') || '{}');
-  } catch (e) {}
-  var settings2 = saved2;
-  var showScrollLock = settings2.showScrollLock !== undefined ? settings2.showScrollLock : true;
+  var settings = loadHeavenlySettings(win);
+  var settings1 = settings;
+  var settings2 = settings;
+  var showScrollLock = settings.showScrollLock;
 
   return { settings1, settings2, showScrollLock };
 }
