@@ -373,15 +373,9 @@ function renderHeavenlyErrorPage(opts) {
 '      border-radius: 20px; color: #fca5a5; font-size: 0.82rem; font-weight: 700;\n' +
 '      letter-spacing: 0.03em; text-transform: uppercase;\n' +
 '    }\n' +
-'    .brand-icon {\n' +
-'      width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;\n' +
-'      background: linear-gradient(135deg, rgba(239, 68, 68, 0.22) 0%, rgba(99, 102, 241, 0.22) 100%);\n' +
-'      border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 20px;\n' +
-'      box-shadow: 0 0 25px rgba(239, 68, 68, 0.35); padding: 8px;\n' +
-'    }\n' +
-'    .brand-icon img, .brand-logo-img {\n' +
-'      width: 100%; height: 100%; object-fit: contain;\n' +
-'      filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));\n' +
+'    .brand-logo-img {\n' +
+'      width: 64px; height: 64px; object-fit: contain;\n' +
+'      filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.85));\n' +
 '    }\n' +
 '    h1 {\n' +
 '      font-family: \'Space Grotesk\', sans-serif; font-size: 2.35rem; font-weight: 700;\n' +
@@ -454,7 +448,7 @@ function renderHeavenlyErrorPage(opts) {
 '  <div class="glow-orb glow-orb-1"></div>\n' +
 '  <div class="glow-orb glow-orb-2"></div>\n' +
 '  <div class="error-container">\n' +
-'    <div class="brand-icon">\n' +
+'    <div style="display: flex; align-items: center; justify-content: center; gap: 14px;">\n' +
 '      <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img">\n' +
 '    </div>\n' +
 '    <span class="brand-badge">\n' +
