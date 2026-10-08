@@ -178,6 +178,263 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
 
             app.heavenlyErrorMiddleware(err, req, res, function() {});
         });
+
+        it('should handle EAI_AGAIN DNS lookup error and return 502 with Heavenly error page', function(done) {
+            var err = new Error('getaddrinfo EAI_AGAIN temp-dns-fail.com');
+            err.code = 'EAI_AGAIN';
+
+            var req = { originalUrl: '/proxy/https://temp-dns-fail.com/' };
+            var res = {
+                headersSent: false,
+                statusCode: 200,
+                headers: {},
+                status: function(code) {
+                    this.statusCode = code;
+                    return this;
+                },
+                setHeader: function(k, v) {
+                    this.headers[k] = v;
+                },
+                send: function(body) {
+                    assert.strictEqual(this.statusCode, 502);
+                    assert.ok(body.includes('Heavenly - Error 502'));
+                    assert.ok(body.includes('Server Not Found'));
+                    assert.ok(body.includes('https://temp-dns-fail.com/'));
+                    assert.ok(body.includes('Heavenly could not connect or resolve the server address at https://temp-dns-fail.com/'));
+                    done();
+                }
+            };
+
+            app.heavenlyErrorMiddleware(err, req, res, function() {});
+        });
+
+        it('should handle ESOCKETTIMEDOUT error and return 504 with Heavenly error page', function(done) {
+            var err = new Error('socket timed out');
+            err.code = 'ESOCKETTIMEDOUT';
+
+            var req = { originalUrl: '/proxy/https://laggy-stream.com/' };
+            var res = {
+                headersSent: false,
+                statusCode: 200,
+                headers: {},
+                status: function(code) {
+                    this.statusCode = code;
+                    return this;
+                },
+                setHeader: function(k, v) {
+                    this.headers[k] = v;
+                },
+                send: function(body) {
+                    assert.strictEqual(this.statusCode, 504);
+                    assert.ok(body.includes('Heavenly - Error 504'));
+                    assert.ok(body.includes('Connection Timed Out'));
+                    assert.ok(body.includes('The connection to https://laggy-stream.com/ timed out before a response was received.'));
+                    done();
+                }
+            };
+
+            app.heavenlyErrorMiddleware(err, req, res, function() {});
+        });
+
+        it('should handle ECONNRESET error and return 502 with Heavenly error page', function(done) {
+            var err = new Error('read ECONNRESET');
+            err.code = 'ECONNRESET';
+
+            var req = { originalUrl: '/proxy/https://reset-host.org/' };
+            var res = {
+                headersSent: false,
+                statusCode: 200,
+                headers: {},
+                status: function(code) {
+                    this.statusCode = code;
+                    return this;
+                },
+                setHeader: function(k, v) {
+                    this.headers[k] = v;
+                },
+                send: function(body) {
+                    assert.strictEqual(this.statusCode, 502);
+                    assert.ok(body.includes('Heavenly - Error 502'));
+                    assert.ok(body.includes('Connection Reset'));
+                    assert.ok(body.includes('The connection to the target website was unexpectedly reset.'));
+                    done();
+                }
+            };
+
+            app.heavenlyErrorMiddleware(err, req, res, function() {});
+        });
+
+        it('should handle EPIPE broken pipe error and return 502 with Heavenly error page', function(done) {
+            var err = new Error('write EPIPE');
+            err.code = 'EPIPE';
+
+            var req = { originalUrl: '/proxy/https://pipe-drop.com/' };
+            var res = {
+                headersSent: false,
+                statusCode: 200,
+                headers: {},
+                status: function(code) {
+                    this.statusCode = code;
+                    return this;
+                },
+                setHeader: function(k, v) {
+                    this.headers[k] = v;
+                },
+                send: function(body) {
+                    assert.strictEqual(this.statusCode, 502);
+                    assert.ok(body.includes('Heavenly - Error 502'));
+                    assert.ok(body.includes('Connection Reset'));
+                    assert.ok(body.includes('The connection to the target website was unexpectedly reset.'));
+                    done();
+                }
+            };
+
+            app.heavenlyErrorMiddleware(err, req, res, function() {});
+        });
+
+        it('should handle err.status in range 400-599 and return custom status and message', function(done) {
+            var err = new Error('Forbidden resource access');
+            err.status = 403;
+
+            var req = { originalUrl: '/proxy/https://protected-area.com/' };
+            var res = {
+                headersSent: false,
+                statusCode: 200,
+                headers: {},
+                status: function(code) {
+                    this.statusCode = code;
+                    return this;
+                },
+                setHeader: function(k, v) {
+                    this.headers[k] = v;
+                },
+                send: function(body) {
+                    assert.strictEqual(this.statusCode, 403);
+                    assert.ok(body.includes('Heavenly - Error 403'));
+                    assert.ok(body.includes('Error 403'));
+                    assert.ok(body.includes('Forbidden resource access'));
+                    done();
+                }
+            };
+
+            app.heavenlyErrorMiddleware(err, req, res, function() {});
+        });
+
+        it('should fallback to err.errno when err.code is undefined', function(done) {
+            var err = { errno: 'ECONNREFUSED', message: 'connection refused' };
+
+            var req = { originalUrl: '/proxy/https://refused-server.com/' };
+            var res = {
+                headersSent: false,
+                statusCode: 200,
+                headers: {},
+                status: function(code) {
+                    this.statusCode = code;
+                    return this;
+                },
+                setHeader: function(k, v) {
+                    this.headers[k] = v;
+                },
+                send: function(body) {
+                    assert.strictEqual(this.statusCode, 502);
+                    assert.ok(body.includes('Connection Refused'));
+                    assert.ok(body.includes('The target server at https://refused-server.com/ refused the connection.'));
+                    done();
+                }
+            };
+
+            app.heavenlyErrorMiddleware(err, req, res, function() {});
+        });
+
+        it('should fallback to generic err.message details when error code is unknown', function(done) {
+            var err = new Error('Custom SSL Handshake Failure');
+
+            var req = { originalUrl: '/proxy/https://ssl-error.com/' };
+            var res = {
+                headersSent: false,
+                statusCode: 200,
+                headers: {},
+                status: function(code) {
+                    this.statusCode = code;
+                    return this;
+                },
+                setHeader: function(k, v) {
+                    this.headers[k] = v;
+                },
+                send: function(body) {
+                    assert.strictEqual(this.statusCode, 502);
+                    assert.ok(body.includes('Server Not Found'));
+                    assert.ok(body.includes('Custom SSL Handshake Failure'));
+                    done();
+                }
+            };
+
+            app.heavenlyErrorMiddleware(err, req, res, function() {});
+        });
+
+        it('should fallback to default details string when err has no message and unknown error code', function(done) {
+            var err = {};
+
+            var req = { originalUrl: '/proxy/https://unknown-error.com/' };
+            var res = {
+                headersSent: false,
+                statusCode: 200,
+                headers: {},
+                status: function(code) {
+                    this.statusCode = code;
+                    return this;
+                },
+                setHeader: function(k, v) {
+                    this.headers[k] = v;
+                },
+                send: function(body) {
+                    assert.strictEqual(this.statusCode, 502);
+                    assert.ok(body.includes('An error occurred while connecting to the requested website through Heavenly Proxy.'));
+                    done();
+                }
+            };
+
+            app.heavenlyErrorMiddleware(err, req, res, function() {});
+        });
+
+        it('should delegate error handling to next(err) if res.headersSent is true', function(done) {
+            var err = new Error('Header already sent error');
+            err.code = 'ECONNRESET';
+
+            var req = { originalUrl: '/proxy/https://sent-headers.com/' };
+            var res = { headersSent: true };
+
+            app.heavenlyErrorMiddleware(err, req, res, function(passedErr) {
+                assert.strictEqual(passedErr, err);
+                done();
+            });
+        });
+
+        it('should substitute "this website" in error details when targetUrl is missing or empty', function(done) {
+            var err = new Error('ENOTFOUND');
+            err.code = 'ENOTFOUND';
+
+            var req = { originalUrl: '/' };
+            var res = {
+                headersSent: false,
+                statusCode: 200,
+                headers: {},
+                status: function(code) {
+                    this.statusCode = code;
+                    return this;
+                },
+                setHeader: function(k, v) {
+                    this.headers[k] = v;
+                },
+                send: function(body) {
+                    assert.strictEqual(this.statusCode, 502);
+                    assert.ok(body.includes('Heavenly could not connect or resolve the server address at this website.'));
+                    done();
+                }
+            };
+
+            app.heavenlyErrorMiddleware(err, req, res, function() {});
+        });
     });
 
     describe('End-to-End HTTP requests to non-existent target URL', function() {
