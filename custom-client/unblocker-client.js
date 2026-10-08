@@ -1613,8 +1613,8 @@
             ]
           },
           { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: true, hidden: false, order: 1, disableQuickSaveWidget: true, subBookmarks: [] },
-          { id: "bm_sitesdotcom", categoryId: "cat_games", title: "SitesDotCom", url: "https://games-b3749.web.app/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=games-b3749.web.app&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-          { id: "bm_grind1", categoryId: "cat_games", title: "GRIND1", url: "https://zbr.base44.app", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=zbr.base44.app&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+          { id: "bm_sitesdotcom", categoryId: "cat_games", title: "SitesDotCom", url: "https://games-b3749.web.app/", type: "bookmark", icon: "preset:globe", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_grind1", categoryId: "cat_games", title: "GRIND1", url: "https://zbr.base44.app", type: "bookmark", icon: "/proxy/https://yt3.googleusercontent.com/5pXcUZ6ujlD2Cd0loksX2Ju59RtAnfRS4lEG7uf6sd2yemKG33uu2x-31VrU08xAfpEGsUoVGSo=s160-c-k-c0x00ffffff-no-rj", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
           { id: "bm_gn_math", categoryId: "cat_games", title: "GN Math", url: "https://gn-math.dev/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=gn-math.dev&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
           { id: "bm_user_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: false, hidden: false, order: 99, subBookmarks: [] },
           { id: "bm_gamebois", categoryId: "cat_games", title: "Gamebois", url: "https://teddblue.github.io/gamebois/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=teddblue.github.io&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
@@ -2022,6 +2022,7 @@
       pickerBtn.onclick = function () {
         backdrop.remove();
         storage.setItem('heavenly_manual_icon_pending', JSON.stringify({
+          bookmarkId: 'bm_dock_quick',
           domain: domain,
           targetUrl: unproxiedUrl,
           timestamp: Date.now()
@@ -3563,7 +3564,7 @@
         return;
       }
 
-      if (!pending || !pending.bookmarkId || !pending.targetUrl || !pending.timestamp) {
+      if (!pending || !pending.targetUrl || !pending.timestamp) {
         storage.removeItem('heavenly_manual_icon_pending');
         return;
       }
