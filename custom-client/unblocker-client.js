@@ -1660,46 +1660,71 @@
             data = parsed;
             var updated = false;
 
+            // Build lookup maps for DEFAULT_BOOKMARK_DATA categories and bookmarks
+            var defaultCatMap = Object.create(null);
+            for (var dCi = 0; dCi < DEFAULT_BOOKMARK_DATA.categories.length; dCi++) {
+              defaultCatMap[DEFAULT_BOOKMARK_DATA.categories[dCi].id] = DEFAULT_BOOKMARK_DATA.categories[dCi];
+            }
+
+            var defaultBmMap = Object.create(null);
+            for (var dBi = 0; dBi < DEFAULT_BOOKMARK_DATA.bookmarks.length; dBi++) {
+              defaultBmMap[DEFAULT_BOOKMARK_DATA.bookmarks[dBi].id] = DEFAULT_BOOKMARK_DATA.bookmarks[dBi];
+            }
+
             // Prune removed built-in categories and bookmarks
             var initialCatCount = data.categories.length;
             data.categories = data.categories.filter(function (cat) {
               if (!cat.builtIn) return true;
-              return DEFAULT_BOOKMARK_DATA.categories.some(function (defCat) { return defCat.id === cat.id; });
+              return Boolean(defaultCatMap[cat.id]);
             });
             if (data.categories.length !== initialCatCount) updated = true;
 
             var initialBmCount = data.bookmarks.length;
             data.bookmarks = data.bookmarks.filter(function (bm) {
               if (!bm.builtIn) return true;
-              return DEFAULT_BOOKMARK_DATA.bookmarks.some(function (defBm) { return defBm.id === bm.id; });
+              return Boolean(defaultBmMap[bm.id]);
             });
             if (data.bookmarks.length !== initialBmCount) updated = true;
 
+            // Build lookup map for user stored categories by ID
+            var userCatMap = Object.create(null);
+            for (var uCi = 0; uCi < data.categories.length; uCi++) {
+              userCatMap[data.categories[uCi].id] = data.categories[uCi];
+            }
+
             DEFAULT_BOOKMARK_DATA.categories.forEach(function (defCat) {
-              var userCat = data.categories.find(function (c) { return c.id === defCat.id; });
+              var userCat = userCatMap[defCat.id];
               if (!userCat) {
-                data.categories.push(JSON.parse(JSON.stringify(defCat)));
+                userCat = JSON.parse(JSON.stringify(defCat));
+                data.categories.push(userCat);
+                userCatMap[defCat.id] = userCat;
                 updated = true;
               } else {
                 if (!userCat.subSections || !Array.isArray(userCat.subSections)) {
                   userCat.subSections = JSON.parse(JSON.stringify(defCat.subSections));
                   updated = true;
-                  } else {
-                    defCat.subSections.forEach(function (defSub) {
-                      var userSub = userCat.subSections.find(function (s) { return s.id === defSub.id; });
-                      if (!userSub) {
-                        var userIdx = userCat.subSections.findIndex(function (s) { return s.id === 'user'; });
-                        if (userIdx !== -1) {
-                          userCat.subSections.splice(userIdx, 0, JSON.parse(JSON.stringify(defSub)));
-                        } else {
-                          userCat.subSections.push(JSON.parse(JSON.stringify(defSub)));
-                        }
-                        updated = true;
-                      } else if (defSub.builtIn && userSub.title !== defSub.title) {
-                        userSub.title = defSub.title;
-                        updated = true;
+                } else {
+                  var userSubMap = Object.create(null);
+                  for (var uSi = 0; uSi < userCat.subSections.length; uSi++) {
+                    userSubMap[userCat.subSections[uSi].id] = userCat.subSections[uSi];
+                  }
+                  defCat.subSections.forEach(function (defSub) {
+                    var userSub = userSubMap[defSub.id];
+                    if (!userSub) {
+                      var userIdx = userCat.subSections.findIndex(function (s) { return s.id === 'user'; });
+                      var newSub = JSON.parse(JSON.stringify(defSub));
+                      if (userIdx !== -1) {
+                        userCat.subSections.splice(userIdx, 0, newSub);
+                      } else {
+                        userCat.subSections.push(newSub);
                       }
-                    });
+                      userSubMap[defSub.id] = newSub;
+                      updated = true;
+                    } else if (defSub.builtIn && userSub.title !== defSub.title) {
+                      userSub.title = defSub.title;
+                      updated = true;
+                    }
+                  });
                 }
               }
             });
@@ -1714,8 +1739,14 @@
               }
             });
 
+            // Build lookup map for stored user bookmarks by ID
+            var userBmMap = Object.create(null);
+            for (var uBi = 0; uBi < data.bookmarks.length; uBi++) {
+              userBmMap[data.bookmarks[uBi].id] = data.bookmarks[uBi];
+            }
+
             // Migration: Update Newgrounds title/icon if needed
-            var ngBm = data.bookmarks.find(function (b) { return b.id === 'bm_ng'; });
+            var ngBm = userBmMap['bm_ng'];
             if (ngBm) {
               if (ngBm.title !== 'Newgrounds: Syshi') {
                 ngBm.title = 'Newgrounds: Syshi';
@@ -1726,23 +1757,29 @@
                 updated = true;
               }
             }
-            var userNgBm = data.bookmarks.find(function (b) { return b.id === 'bm_user_ng'; });
+            var userNgBm = userBmMap['bm_user_ng'];
             if (userNgBm && userNgBm.icon === 'https://www.newgrounds.com/img/icons/favicon.ico') {
               userNgBm.icon = 'https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64';
               updated = true;
             }
 
             // Migration: Remove pruned built-in bookmarks (like Anify)
-            var initLen = data.bookmarks.length;
-            data.bookmarks = data.bookmarks.filter(function (b) { return b.id !== 'bm_anify'; });
-            if (data.bookmarks.length !== initLen) updated = true;
+            if (userBmMap['bm_anify']) {
+              data.bookmarks = data.bookmarks.filter(function (b) { return b.id !== 'bm_anify'; });
+              delete userBmMap['bm_anify'];
+              updated = true;
+            }
 
             // Migration: Re-sort built-in anime bookmarks so FMHY: Anime is under EverythingMoe and above AniSnatch
             var animeBms = data.bookmarks.filter(function (b) { return b.categoryId === 'cat_anime' && b.builtIn; });
             if (animeBms.length > 0) {
+              var animeBmMap = Object.create(null);
+              for (var aBi = 0; aBi < animeBms.length; aBi++) {
+                animeBmMap[animeBms[aBi].id] = animeBms[aBi];
+              }
               var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_isshonime", "bm_anidb"];
               desiredAnimeOrder.forEach(function (id, index) {
-                var found = animeBms.find(function (b) { return b.id === id; });
+                var found = animeBmMap[id];
                 if (found && found.order !== index) {
                   found.order = index;
                   updated = true;
@@ -1758,9 +1795,11 @@
             });
 
             DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
-              var userBm = data.bookmarks.find(function (b) { return b.id === defBm.id; });
+              var userBm = userBmMap[defBm.id];
               if (!userBm) {
-                data.bookmarks.push(JSON.parse(JSON.stringify(defBm)));
+                var newBm = JSON.parse(JSON.stringify(defBm));
+                data.bookmarks.push(newBm);
+                userBmMap[defBm.id] = newBm;
                 updated = true;
               } else {
                 if (defBm.builtIn) {
@@ -1799,17 +1838,30 @@
                     userBm.subBookmarks = [];
                     updated = true;
                   }
+                  var defSubMap = Object.create(null);
+                  for (var dSi = 0; dSi < defBm.subBookmarks.length; dSi++) {
+                    defSubMap[defBm.subBookmarks[dSi].id] = defBm.subBookmarks[dSi];
+                  }
+
                   if (defBm.builtIn) {
                     var initSubLen = userBm.subBookmarks.length;
                     userBm.subBookmarks = userBm.subBookmarks.filter(function (userSub) {
-                      return defBm.subBookmarks.some(function (defSub) { return defSub.id === userSub.id; });
+                      return Boolean(defSubMap[userSub.id]);
                     });
                     if (userBm.subBookmarks.length !== initSubLen) updated = true;
                   }
+
+                  var userSubBmMap = Object.create(null);
+                  for (var uSbi = 0; uSbi < userBm.subBookmarks.length; uSbi++) {
+                    userSubBmMap[userBm.subBookmarks[uSbi].id] = userBm.subBookmarks[uSbi];
+                  }
+
                   defBm.subBookmarks.forEach(function (defSub) {
-                    var userSub = userBm.subBookmarks.find(function (s) { return s.id === defSub.id; });
+                    var userSub = userSubBmMap[defSub.id];
                     if (!userSub) {
-                      userBm.subBookmarks.push(JSON.parse(JSON.stringify(defSub)));
+                      var newSub = JSON.parse(JSON.stringify(defSub));
+                      userBm.subBookmarks.push(newSub);
+                      userSubBmMap[defSub.id] = newSub;
                       updated = true;
                     } else {
                       if ((!userSub.icon || userSub.icon.trim() === '') && defSub.icon && defSub.icon.trim() !== '') {
