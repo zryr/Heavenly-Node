@@ -1511,7 +1511,10 @@
           <!-- Unified Manual / Custom URL Container -->
           <div id="icon-manual-container" style="display: none; padding: 10px; background: rgba(30, 41, 59, 0.4); border-radius: 12px; border: 1px solid rgba(148,163,184,0.2); font-size: 0.78rem; color: #cbd5e1; line-height: 1.4; display: flex; flex-direction: column; gap: 8px;">
             <div>Enter an image / GIF URL directly below, or click the Live Icon Picker button to detect icons on the target site:</div>
-            <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="Custom Icon URL (e.g. https://example.com/icon.png)" style="font-size: 0.82rem; padding: 8px 10px;" />
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="Custom Icon URL (e.g. https://example.com/icon.png)" style="font-size: 0.82rem; padding: 8px 10px; flex: 1;" />
+              <div id="bm-custom-icon-preview" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;"></div>
+            </div>
             <button type="button" id="btn-launch-live-picker" style="padding: 8px 12px; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 10px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;">
               <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
               <span>Launch Live Icon Picker Overlay</span>
@@ -1756,7 +1759,10 @@
 
         <div>
           <label for="sub-bm-icon-input" style="font-size: 0.85rem; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 4px;">Icon URL / Preset (Optional - uses parent icon if empty)</label>
-          <input type="text" id="sub-bm-icon-input" placeholder="Custom Icon URL or preset:gamepad" style="width: 100%; padding: 10px 12px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; color: #f8fafc; font-size: 0.9rem;" />
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="text" id="sub-bm-icon-input" placeholder="Custom Icon URL or preset:gamepad" style="flex: 1; padding: 10px 12px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; color: #f8fafc; font-size: 0.9rem;" />
+            <div id="sub-bm-icon-preview" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;"></div>
+          </div>
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 8px;">
@@ -1920,11 +1926,20 @@
     var DEFAULT_PRESETS = {
       classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
       google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
+      docs: { title: "Google Docs", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico" },
+      slides: { title: "Google Slides", icon: "https://ssl.gstatic.com/docs/presentations/images/favicon5.ico" },
       drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
-      elearn_lee: { title: "Courses", icon: "https://elearn.lee.edu/favicon.ico" },
-      lee_college: { title: "Home | Lee College", icon: "https://www.lee.edu/favicon.ico" },
-      canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" },
-      khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" }
+      gmail: { title: "Gmail", icon: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" },
+      canvas: { title: "Dashboard", icon: "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico" },
+      quizlet: { title: "Flashcards, learning tools and textbook solutions | Quizlet", icon: "https://quizlet.com/favicon.ico" },
+      khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" },
+      wikipedia: { title: "Wikipedia", icon: "https://en.wikipedia.org/static/favicon/wikipedia.ico" },
+      youtube: { title: "YouTube", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64" },
+      outlook: { title: "Outlook", icon: "https://outlook.office.com/favicon.ico" },
+      notion: { title: "Notion", icon: "https://www.notion.so/images/favicon.ico" },
+      elearn_lee: { title: "Courses", icon: "https://www.google.com/s2/favicons?domain=elearn.lee.edu&sz=64" },
+      lee_college: { title: "Home | Lee College", icon: "https://www.google.com/s2/favicons?domain=www.lee.edu&sz=64" },
+      canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" }
     };
 
     function loadSettings() {
@@ -1937,6 +1952,7 @@
         autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
         persistentCloak: saved.persistentCloak || false,
         randomizePresetEachSession: saved.randomizePresetEachSession || false,
+        randomPool: (saved.randomPool && Array.isArray(saved.randomPool)) ? saved.randomPool : null,
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
@@ -1957,13 +1973,18 @@
 
       if (settings.randomizePresetEachSession) {
         try {
+          var poolKeys = Object.keys(allPresets);
+          if (settings.randomPool && Array.isArray(settings.randomPool) && settings.randomPool.length > 0) {
+            var filteredPool = poolKeys.filter(function (k) { return settings.randomPool.indexOf(k) !== -1; });
+            if (filteredPool.length > 0) poolKeys = filteredPool;
+          }
+
           var sessionPreset = sessionStorage.getItem('heavenly_session_preset');
-          if (sessionPreset && allPresets[sessionPreset]) {
+          if (sessionPreset && allPresets[sessionPreset] && poolKeys.indexOf(sessionPreset) !== -1) {
             selectedKey = sessionPreset;
           } else {
-            var keys = Object.keys(allPresets);
-            if (keys.length > 0) {
-              selectedKey = keys[Math.floor(Math.random() * keys.length)];
+            if (poolKeys.length > 0) {
+              selectedKey = poolKeys[Math.floor(Math.random() * poolKeys.length)];
               sessionStorage.setItem('heavenly_session_preset', selectedKey);
             }
           }
@@ -3795,6 +3816,33 @@
       });
     }
 
+    function updateCustomIconPreview() {
+      var prev = $('bm-custom-icon-preview');
+      if (!prev) return;
+      var customUrl = $('bm-custom-icon-url') ? $('bm-custom-icon-url').value.trim() : '';
+      prev.innerHTML = '';
+      if (customUrl) {
+        var el = renderIconElement(customUrl, $('bm-url') ? $('bm-url').value.trim() : '', 'Preview');
+        prev.appendChild(el);
+      } else {
+        prev.innerHTML = '<span style="font-size: 0.72rem; color: #64748b;">None</span>';
+      }
+    }
+
+    function updateSubBmIconPreview() {
+      var prev = $('sub-bm-icon-preview');
+      if (!prev) return;
+      var iconVal = $('sub-bm-icon-input') ? $('sub-bm-icon-input').value.trim() : '';
+      var urlVal = $('sub-bm-url-input') ? $('sub-bm-url-input').value.trim() : '';
+      prev.innerHTML = '';
+      if (iconVal || urlVal) {
+        var el = renderIconElement(iconVal, urlVal, 'Preview');
+        prev.appendChild(el);
+      } else {
+        prev.innerHTML = '<span style="font-size: 0.72rem; color: #64748b;">None</span>';
+      }
+    }
+
     function switchIconMode(mode) {
       selectedIconMode = mode;
       var btnFavicon = $('icon-tab-favicon');
@@ -3833,6 +3881,8 @@
 
       if (mode === 'preset') {
         renderPresetIconPicker();
+      } else if (mode === 'manual') {
+        updateCustomIconPreview();
       }
     }
 
@@ -4732,6 +4782,7 @@
       $('sub-bm-title-input').value = subItem ? (subItem.title || '') : '';
       $('sub-bm-url-input').value = subItem ? (subItem.url || '') : '';
       $('sub-bm-icon-input').value = subItem ? (subItem.icon || '') : '';
+      updateSubBmIconPreview();
 
       var modal = $('sub-bm-modal');
       if (modal) modal.classList.add('active');
@@ -4999,6 +5050,16 @@
       var btnIconManual = $('icon-tab-manual');
       if (btnIconManual) btnIconManual.onclick = function () { switchIconMode('manual'); };
 
+      var customIconUrlInput = $('bm-custom-icon-url');
+      if (customIconUrlInput) {
+        customIconUrlInput.oninput = updateCustomIconPreview;
+      }
+
+      var subBmIconInput = $('sub-bm-icon-input');
+      var subBmUrlInput = $('sub-bm-url-input');
+      if (subBmIconInput) subBmIconInput.oninput = updateSubBmIconPreview;
+      if (subBmUrlInput) subBmUrlInput.oninput = updateSubBmIconPreview;
+
       var btnAddSubBm = $('btn-add-sub-bm');
       if (btnAddSubBm) {
         btnAddSubBm.onclick = function () {
@@ -5081,18 +5142,21 @@
 
       var btnLaunchLivePicker = $('btn-launch-live-picker');
       if (btnLaunchLivePicker) {
+        btnLaunchLivePicker.type = 'button';
         btnLaunchLivePicker.onclick = function (e) {
-          e.preventDefault();
-          e.stopPropagation();
+          if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
           var res = saveBookmarkForm();
           if (!res) {
             alert('Please enter a Bookmark Title and URL first.');
-            return;
+            return false;
           }
           var urlToLaunch = res.url;
           if (!urlToLaunch) {
             alert('Please enter a Bookmark URL to launch the Live Icon Picker.');
-            return;
+            return false;
           }
           var cleanUrl = urlToLaunch.startsWith('http') ? urlToLaunch : 'https://' + urlToLaunch;
           try {
@@ -5105,6 +5169,7 @@
           closeAddModal();
           showLoadingScreen();
           window.location = location.protocol + '//' + location.host + '/proxy/' + cleanUrl;
+          return false;
         };
       }
 

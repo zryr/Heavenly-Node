@@ -794,7 +794,7 @@
             <p class="hero-card-desc">Continuously keeps your browser tab title and favicon disguised regardless of tab visibility.</p>
           </div>
 
-          <!-- Hero Card: Session Random Preset -->
+          <!-- Hero Card: Session Random Preset & Pool Selector -->
           <div class="hero-card">
             <div class="hero-card-header">
               <label for="set-randomize-preset-session" class="hero-card-title">Randomize Preset Each Session</label>
@@ -803,7 +803,22 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Automatically selects a random cloaking preset each time you start a new browser session.</p>
+            <p class="hero-card-desc">Automatically selects a random cloaking preset from your selected pool each time you start a new browser session.</p>
+
+            <div id="random-pool-container" style="border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 12px; margin-top: 10px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                <span style="font-size: 0.88rem; font-weight: 600; color: #e0f2fe; display: flex; align-items: center; gap: 6px;">
+                  <svg style="width: 15px; height: 15px; fill: none; stroke: #38bdf8; stroke-width: 2;" viewBox="0 0 24 24"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
+                  <span>Randomizer Preset Pool</span>
+                </span>
+                <div style="display: flex; gap: 6px;">
+                  <button id="pool-select-all-btn" type="button" style="padding: 4px 10px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 8px; color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Select All</button>
+                  <button id="pool-deselect-all-btn" type="button" style="padding: 4px 10px; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #cbd5e1; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Deselect All</button>
+                </div>
+              </div>
+              <p class="hero-card-desc" style="margin-bottom: 10px; font-size: 0.8rem;">Click preset chips to toggle which specific identities are included in the random rotation pool:</p>
+              <div id="random-pool-chips" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; max-height: 220px; overflow-y: auto; padding: 2px;"></div>
+            </div>
           </div>
 
           <!-- Hero Card: Custom Styled Preset Dropdown -->
@@ -843,7 +858,7 @@
             </div>
           </div>
 
-          <!-- Hero Card: Live Tab Cloak Preview -->
+          <!-- Hero Card: Reset Branding & Live Tab Cloak Preview -->
           <div class="hero-card" style="background: rgba(15, 23, 42, 0.65); border-color: rgba(56, 189, 248, 0.3);">
             <div class="hero-card-header">
               <span class="hero-card-title">
@@ -867,6 +882,13 @@
                   <span class="tab-close-x">×</span>
                 </div>
               </div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 12px; margin-top: 10px;">
+              <button id="reset-branding-btn" type="button" style="width: 100%; padding: 10px 14px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 10px; color: #38bdf8; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                <svg style="width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                <span>Reset to Heavenly Default Branding</span>
+              </button>
             </div>
           </div>
 
@@ -1269,11 +1291,20 @@
     var DEFAULT_PRESETS = {
       classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
       google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
+      docs: { title: "Google Docs", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico" },
+      slides: { title: "Google Slides", icon: "https://ssl.gstatic.com/docs/presentations/images/favicon5.ico" },
       drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
-      elearn_lee: { title: "Courses", icon: "https://elearn.lee.edu/favicon.ico" },
-      lee_college: { title: "Home | Lee College", icon: "https://www.lee.edu/favicon.ico" },
-      canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" },
-      khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" }
+      gmail: { title: "Gmail", icon: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" },
+      canvas: { title: "Dashboard", icon: "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico" },
+      quizlet: { title: "Flashcards, learning tools and textbook solutions | Quizlet", icon: "https://quizlet.com/favicon.ico" },
+      khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" },
+      wikipedia: { title: "Wikipedia", icon: "https://en.wikipedia.org/static/favicon/wikipedia.ico" },
+      youtube: { title: "YouTube", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64" },
+      outlook: { title: "Outlook", icon: "https://outlook.office.com/favicon.ico" },
+      notion: { title: "Notion", icon: "https://www.notion.so/images/favicon.ico" },
+      elearn_lee: { title: "Courses", icon: "https://www.google.com/s2/favicons?domain=elearn.lee.edu&sz=64" },
+      lee_college: { title: "Home | Lee College", icon: "https://www.google.com/s2/favicons?domain=www.lee.edu&sz=64" },
+      canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" }
     };
 
     var DEFAULT_BOOKMARK_DATA = {
@@ -1362,6 +1393,7 @@
         autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
         persistentCloak: saved.persistentCloak || false,
         randomizePresetEachSession: saved.randomizePresetEachSession || false,
+        randomPool: (saved.randomPool && Array.isArray(saved.randomPool)) ? saved.randomPool : null,
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
@@ -1743,6 +1775,10 @@
       $('set-auto-cloak').checked = settings.autoCloak;
       $('set-persistent-cloak').checked = settings.persistentCloak;
       if ($('set-randomize-preset-session')) $('set-randomize-preset-session').checked = settings.randomizePresetEachSession;
+      var randomPoolContainer = $('random-pool-container');
+      if (randomPoolContainer) {
+        randomPoolContainer.style.display = settings.randomizePresetEachSession ? 'block' : 'none';
+      }
       $('set-show-builtin-prompt').checked = !settings.skipBuiltinTestPrompt;
 
       var searchNewTabCb = $('set-search-new-tab');
@@ -1870,6 +1906,71 @@
         deleteBtn.style.cursor = isBuiltIn ? 'not-allowed' : 'pointer';
       }
 
+      // Render random pool chips
+      var poolChipsContainer = $('random-pool-chips');
+      if (poolChipsContainer) {
+        poolChipsContainer.innerHTML = '';
+        var allPoolPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
+        var currentPool = settings.randomPool || Object.keys(allPoolPresets);
+
+        Object.keys(allPoolPresets).forEach(function (key) {
+          var pObj = allPoolPresets[key];
+          var isInPool = currentPool.indexOf(key) !== -1;
+
+          var chip = document.createElement('button');
+          chip.type = 'button';
+          chip.style.cssText = 'padding: 8px 10px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; transition: all 0.2s ease; font-family: inherit; font-size: 0.8rem; font-weight: 600;' +
+            (isInPool
+              ? 'background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #f8fafc; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);'
+              : 'background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8;');
+
+          var leftGroup = document.createElement('div');
+          leftGroup.style.cssText = 'display: flex; align-items: center; gap: 6px; overflow: hidden;';
+
+          var img = document.createElement('img');
+          img.src = pObj.icon;
+          img.alt = 'Icon';
+          img.style.cssText = 'width: 16px; height: 16px; object-fit: contain; border-radius: 3px; flex-shrink: 0;';
+          img.onerror = function () { this.src = 'https://ssl.gstatic.com/classroom/favicon.png'; };
+
+          var textSpan = document.createElement('span');
+          textSpan.style.cssText = 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
+          textSpan.textContent = pObj.title.split(' - ')[0].split(' | ')[0].split(' – ')[0];
+
+          leftGroup.appendChild(img);
+          leftGroup.appendChild(textSpan);
+          chip.appendChild(leftGroup);
+
+          var checkBadge = document.createElement('span');
+          checkBadge.style.cssText = 'display: flex; align-items: center; justify-content: center; flex-shrink: 0;';
+          checkBadge.innerHTML = isInPool
+            ? '<svg style="width: 14px; height: 14px; fill: none; stroke: #38bdf8; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+            : '<svg style="width: 14px; height: 14px; fill: none; stroke: #64748b; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle></svg>';
+          chip.appendChild(checkBadge);
+
+          chip.onclick = function () {
+            var st = loadSettings();
+            var allKeys = Object.keys(Object.assign({}, DEFAULT_PRESETS, st.customPresets));
+            var activePool = st.randomPool || allKeys.slice();
+
+            var idx = activePool.indexOf(key);
+            if (idx !== -1) {
+              activePool.splice(idx, 1);
+            } else {
+              activePool.push(key);
+            }
+
+            st.randomPool = activePool;
+            try { sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {}
+            saveSettings(st);
+            syncSettingsToUI();
+            syncCloak();
+          };
+
+          poolChipsContainer.appendChild(chip);
+        });
+      }
+
       renderBookmarkManager();
       updateLivePreview();
     }
@@ -1884,13 +1985,18 @@
 
       if (settings.randomizePresetEachSession) {
         try {
+          var poolKeys = Object.keys(allPresets);
+          if (settings.randomPool && Array.isArray(settings.randomPool) && settings.randomPool.length > 0) {
+            var filteredPool = poolKeys.filter(function (k) { return settings.randomPool.indexOf(k) !== -1; });
+            if (filteredPool.length > 0) poolKeys = filteredPool;
+          }
+
           var sessionPreset = sessionStorage.getItem('heavenly_session_preset');
-          if (sessionPreset && allPresets[sessionPreset]) {
+          if (sessionPreset && allPresets[sessionPreset] && poolKeys.indexOf(sessionPreset) !== -1) {
             selectedKey = sessionPreset;
           } else {
-            var keys = Object.keys(allPresets);
-            if (keys.length > 0) {
-              selectedKey = keys[Math.floor(Math.random() * keys.length)];
+            if (poolKeys.length > 0) {
+              selectedKey = poolKeys[Math.floor(Math.random() * poolKeys.length)];
               sessionStorage.setItem('heavenly_session_preset', selectedKey);
             }
           }
@@ -2142,6 +2248,50 @@
         syncCloak();
         showStatusMessage('Custom preset deleted.', false);
       };
+
+      // Random Pool Select All / Deselect All
+      var poolSelectAllBtn = $('pool-select-all-btn');
+      if (poolSelectAllBtn) {
+        poolSelectAllBtn.onclick = function () {
+          var st = loadSettings();
+          var allKeys = Object.keys(Object.assign({}, DEFAULT_PRESETS, st.customPresets));
+          st.randomPool = allKeys;
+          try { sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {}
+          saveSettings(st);
+          syncSettingsToUI();
+          syncCloak();
+        };
+      }
+
+      var poolDeselectAllBtn = $('pool-deselect-all-btn');
+      if (poolDeselectAllBtn) {
+        poolDeselectAllBtn.onclick = function () {
+          var st = loadSettings();
+          st.randomPool = [];
+          try { sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {}
+          saveSettings(st);
+          syncSettingsToUI();
+          syncCloak();
+        };
+      }
+
+      // Reset Branding Button
+      var resetBrandingBtn = $('reset-branding-btn');
+      if (resetBrandingBtn) {
+        resetBrandingBtn.onclick = function () {
+          var st = loadSettings();
+          st.autoCloak = false;
+          st.persistentCloak = false;
+          st.randomizePresetEachSession = false;
+          st.selectedPreset = 'classroom';
+          try { sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {}
+          saveSettings(st);
+          syncSettingsToUI();
+          syncCloak();
+          document.title = "Heavenly: Settings";
+          showStatusMessage('Restored Heavenly default branding!', false);
+        };
+      }
 
       // Reset positions to middle of screen
       $('reset-widget-pos-btn').onclick = function () {

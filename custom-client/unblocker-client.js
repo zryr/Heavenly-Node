@@ -793,6 +793,7 @@
       autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
       persistentCloak: saved.persistentCloak || false,
       randomizePresetEachSession: saved.randomizePresetEachSession || false,
+      randomPool: (saved.randomPool && Array.isArray(saved.randomPool)) ? saved.randomPool : null,
       selectedPreset: saved.selectedPreset || 'classroom',
       customPresets: saved.customPresets || {},
       panicKeyEnable: saved.panicKeyEnable || false,
@@ -819,11 +820,20 @@
       var DEFAULT_PRESETS = {
         classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
         google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
+        docs: { title: "Google Docs", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico" },
+        slides: { title: "Google Slides", icon: "https://ssl.gstatic.com/docs/presentations/images/favicon5.ico" },
         drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
-        elearn_lee: { title: "Courses", icon: "https://elearn.lee.edu/favicon.ico" },
-        lee_college: { title: "Home | Lee College", icon: "https://www.lee.edu/favicon.ico" },
-        canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" },
-        khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" }
+        gmail: { title: "Gmail", icon: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" },
+        canvas: { title: "Dashboard", icon: "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico" },
+        quizlet: { title: "Flashcards, learning tools and textbook solutions | Quizlet", icon: "https://quizlet.com/favicon.ico" },
+        khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" },
+        wikipedia: { title: "Wikipedia", icon: "https://en.wikipedia.org/static/favicon/wikipedia.ico" },
+        youtube: { title: "YouTube", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64" },
+        outlook: { title: "Outlook", icon: "https://outlook.office.com/favicon.ico" },
+        notion: { title: "Notion", icon: "https://www.notion.so/images/favicon.ico" },
+        elearn_lee: { title: "Courses", icon: "https://www.google.com/s2/favicons?domain=elearn.lee.edu&sz=64" },
+        lee_college: { title: "Home | Lee College", icon: "https://www.google.com/s2/favicons?domain=www.lee.edu&sz=64" },
+        canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" }
       };
 
       if (!settings) {
@@ -850,13 +860,18 @@
           try {
             var sessStorage = window.sessionStorage || (typeof sessionStorage !== 'undefined' ? sessionStorage : null);
             if (sessStorage) {
+              var poolKeys = Object.keys(allPresets);
+              if (settings.randomPool && Array.isArray(settings.randomPool) && settings.randomPool.length > 0) {
+                var filteredPool = poolKeys.filter(function (k) { return settings.randomPool.indexOf(k) !== -1; });
+                if (filteredPool.length > 0) poolKeys = filteredPool;
+              }
+
               var sessionPreset = sessStorage.getItem('heavenly_session_preset');
-              if (sessionPreset && allPresets[sessionPreset]) {
+              if (sessionPreset && allPresets[sessionPreset] && poolKeys.indexOf(sessionPreset) !== -1) {
                 selectedKey = sessionPreset;
               } else {
-                var keys = Object.keys(allPresets);
-                if (keys.length > 0) {
-                  selectedKey = keys[Math.floor(Math.random() * keys.length)];
+                if (poolKeys.length > 0) {
+                  selectedKey = poolKeys[Math.floor(Math.random() * poolKeys.length)];
                   sessStorage.setItem('heavenly_session_preset', selectedKey);
                 }
               }
