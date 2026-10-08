@@ -85,11 +85,16 @@ function headersMiddleware(data) {
         // Clean & normalize Referer header if present
         if (data.headers.referer) {
             var ref = data.headers.referer;
-            ref = ref.replace(/^(https?:\/)([^\/])/i, '$1/$2');
+            // Performance optimization: Fast-path O(1) prefix check avoids regex evaluation on valid absolute URLs
+            if (!ref.startsWith('http://') && !ref.startsWith('https://')) {
+                ref = ref.replace(/^(https?:\/)([^\/])/i, '$1/$2');
+            }
             var proxyPrefixIndex = ref.indexOf(unblockerConfig.prefix);
             while (proxyPrefixIndex !== -1) {
                 ref = ref.substring(proxyPrefixIndex + unblockerConfig.prefix.length);
-                ref = ref.replace(/^(https?:\/)([^\/])/i, '$1/$2');
+                if (!ref.startsWith('http://') && !ref.startsWith('https://')) {
+                    ref = ref.replace(/^(https?:\/)([^\/])/i, '$1/$2');
+                }
                 proxyPrefixIndex = ref.indexOf(unblockerConfig.prefix);
             }
             data.headers.referer = ref;
@@ -191,10 +196,17 @@ function responseRedirectMiddleware(data) {
     var prefix = unblockerConfig.prefix;
 
     if (loc.indexOf(prefix) === 0) {
-        loc = loc.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+        // Performance optimization: Fast-path O(1) prefix check avoids regex execution on standard double-slash URLs
+        if (!loc.startsWith('/proxy/http://') && !loc.startsWith('/proxy/https://')) {
+            loc = loc.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+        }
         while (loc.indexOf(prefix, prefix.length) !== -1) {
             var secondIdx = loc.indexOf(prefix, prefix.length);
-            loc = prefix + loc.substring(secondIdx + prefix.length).replace(/^(https?:\/)([^\/])/i, '$1/$2');
+            var rest = loc.substring(secondIdx + prefix.length);
+            if (!rest.startsWith('http://') && !rest.startsWith('https://')) {
+                rest = rest.replace(/^(https?:\/)([^\/])/i, '$1/$2');
+            }
+            loc = prefix + rest;
         }
         data.headers['location'] = loc;
         return;
@@ -206,7 +218,11 @@ function responseRedirectMiddleware(data) {
 
         var proxyIndex = absoluteTarget.indexOf(prefix);
         while (proxyIndex !== -1) {
-            absoluteTarget = absoluteTarget.substring(proxyIndex + prefix.length).replace(/^(https?:\/)([^\/])/i, '$1/$2');
+            var targetRest = absoluteTarget.substring(proxyIndex + prefix.length);
+            if (!targetRest.startsWith('http://') && !targetRest.startsWith('https://')) {
+                targetRest = targetRest.replace(/^(https?:\/)([^\/])/i, '$1/$2');
+            }
+            absoluteTarget = targetRest;
             proxyIndex = absoluteTarget.indexOf(prefix);
         }
 
@@ -243,9 +259,16 @@ app.use(function normalizeProxyUrl(req, res, next) {
         var urlStr = req.url;
         while (urlStr.indexOf('/proxy/', 7) !== -1) {
             var secondProxy = urlStr.indexOf('/proxy/', 7);
-            urlStr = '/proxy/' + urlStr.substring(secondProxy + 7).replace(/^(https?:\/)([^\/])/i, '$1/$2');
+            var rest = urlStr.substring(secondProxy + 7);
+            if (!rest.startsWith('http://') && !rest.startsWith('https://')) {
+                rest = rest.replace(/^(https?:\/)([^\/])/i, '$1/$2');
+            }
+            urlStr = '/proxy/' + rest;
         }
-        urlStr = urlStr.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+        // Performance optimization: Fast-path O(1) prefix check avoids regex execution on standard double-slash URLs
+        if (!urlStr.startsWith('/proxy/http://') && !urlStr.startsWith('/proxy/https://')) {
+            urlStr = urlStr.replace(/^\/proxy\/(https?:\/)([^\/]|$)/i, '/proxy/$1/$2');
+        }
         req.url = urlStr;
     }
     next();

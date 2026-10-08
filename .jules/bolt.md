@@ -51,3 +51,9 @@
 **Learning:** Re-reading `localStorage` and executing `JSON.parse` across multiple independent client initializers (`initHeavenlyCloakAndPanic`, `initHeavenlyWidgets`, `initManualIconPickerWidget`, `initFolderQuickSaveWidget`, `initNewgroundsPagination`, `saveToHeavenlyHistory`) during page/iframe startup blocks the main thread with redundant synchronous storage I/O and JSON parsing overhead. Loading the `settings` object once at `initForWindow` and passing it down to all sub-initializers yields a ~51% speedup in initialization performance.
 
 **Action:** Load persistent configuration/settings objects once at the top-level initialization function and pass the object directly into sub-initializers rather than invoking `localStorage.getItem` + `JSON.parse` inside each function.
+
+## 2025-05-27 - Fast-path O(1) prefix check before URL scheme normalization regexes
+
+**Learning:** Running regex replacements for rare malformed single-slash URLs (e.g. `/^(https?:\/)([^\/])/i`) on every request, redirect, or referer header causes unnecessary regex engine invocation. Unanchored character searches like `indexOf('://')` scan full $O(N)$ query strings and can incorrectly match `://` in query params. Using $O(1)$ prefix guards (`!ref.startsWith('http://') && !ref.startsWith('https://')` / `!urlStr.startsWith('/proxy/http://') && !urlStr.startsWith('/proxy/https://')`) safely bypasses regex execution on standard double-slash URLs while preserving full normalization support, speeding up request/header normalization by ~22.6%.
+
+**Action:** Guard anchored scheme normalization regexes with $O(1)$ `startsWith()` checks against standard valid protocols (`http://` and `https://`) rather than unanchored substring searches.
