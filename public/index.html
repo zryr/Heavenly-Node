@@ -1309,6 +1309,86 @@
       transform: translateX(20px);
       background-color: #ffffff;
     }
+
+    /* Quick Settings Pill Tray */
+    .qs-pill-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: #94a3b8;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+    }
+
+    .qs-pill-chip:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      color: #e0f2fe;
+      transform: translateY(-1px);
+    }
+
+    .qs-pill-chip.active {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #64748b;
+      transition: all 0.25s ease;
+    }
+
+    .qs-pill-chip.active .pill-dot {
+      background: #38bdf8;
+      box-shadow: 0 0 6px #38bdf8;
+    }
+
+    /* Animations & Smooth Transitions */
+    @keyframes slideFadeDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .builtin-hide-animate {
+      animation: slideFadeDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    #search-newtab-btn {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 140px;
+      opacity: 1;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    #search-newtab-btn.collapsed {
+      max-width: 0 !important;
+      opacity: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      border-width: 0 !important;
+      pointer-events: none !important;
+      transform: scale(0.9) !important;
+    }
   </style>
 </head>
 
@@ -1363,6 +1443,34 @@
       </div>
 
       <div id="error"></div>
+
+      <!-- Collapsible Quick Settings Pill Tray -->
+      <div id="quick-settings-section" style="margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 700; color: #7dd3fc; text-transform: uppercase; letter-spacing: 0.05em;">
+            <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <span>Quick Settings</span>
+          </div>
+          <button type="button" id="quick-settings-toggle-btn" aria-label="Toggle Quick Settings Tray" style="background: none; border: none; color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 6px; transition: color 0.2s ease;">
+            <span id="quick-settings-toggle-text">Collapse</span>
+            <svg id="quick-settings-toggle-arrow" style="width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.5; transform: rotate(180deg); transition: transform 0.25s ease;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+        </div>
+
+        <div id="quick-settings-tray" style="display: flex; flex-wrap: wrap; gap: 8px; transition: all 0.3s ease;">
+          <button type="button" id="pill-bm-newtab" class="qs-pill-chip" title="Toggle opening bookmarks in new tab">
+            <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <span>Bookmarks in New Tab</span>
+            <span class="pill-dot"></span>
+          </button>
+
+          <button type="button" id="pill-search-newtab" class="qs-pill-chip" title="Toggle opening search results in new tab">
+            <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Search in New Tab</span>
+            <span class="pill-dot"></span>
+          </button>
+        </div>
+      </div>
 
       <form action="no-js" method="get" id="unblocker-form" class="search-form">
         <div class="input-wrapper">
@@ -1814,6 +1922,16 @@
         <label for="builtin-dont-ask" style="cursor: pointer; user-select: none;">Don't ask me again for default bookmarks</label>
       </div>
       <div id="builtin-alt-versions-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;"></div>
+      <div id="builtin-hide-container" style="display: none; padding: 10px 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 14px; margin-bottom: 12px; flex-direction: column; gap: 8px; align-items: center; text-align: center;">
+        <div style="font-size: 0.85rem; color: #fca5a5; font-weight: 500; display: flex; align-items: center; gap: 6px;">
+          <svg style="width:16px;height:16px;fill:none;stroke:#ef4444;stroke-width:2;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 1 1.71 3h16.94a2 2 0 0 1 1.71-3L13.71 3.86a2 2 0 0 1-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <span>All available links for this bookmark are marked as broken.</span>
+        </div>
+        <button id="builtin-hide-bm-btn" type="button" class="modal-submit-btn" style="width: 100%; margin-top: 0; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.45 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+          <span>Hide Bookmark</span>
+        </button>
+      </div>
       <div id="builtin-default-actions-container" style="display: flex; gap: 10px; justify-content: flex-end;">
         <button id="builtin-test-direct-btn" type="button" class="modal-submit-btn" style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Test Direct Site</span></button>
         <button id="builtin-open-proxy-btn" type="button" class="modal-submit-btn" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span></button>
@@ -1907,10 +2025,10 @@
 
       if (settings.openSearchInNewTab && settings.mergeGoNewTab) {
         if (goBtn) goBtn.value = 'Go (New Tab)';
-        if (newTabBtn) newTabBtn.style.display = 'none';
+        if (newTabBtn) newTabBtn.classList.add('collapsed');
       } else {
         if (goBtn) goBtn.value = 'Go';
-        if (newTabBtn) newTabBtn.style.display = 'inline-flex';
+        if (newTabBtn) newTabBtn.classList.remove('collapsed');
       }
     }
 
@@ -4368,18 +4486,26 @@
 
       var altContainer = $('builtin-alt-versions-container');
       var defActionsContainer = $('builtin-default-actions-container');
+      var hideContainer = $('builtin-hide-container');
       if (altContainer) altContainer.innerHTML = '';
+      if (hideContainer) hideContainer.style.display = 'none';
 
       var data = loadBookmarkData();
       var targetBm = targetBmId ? data.bookmarks.find(function (b) { return b.id === targetBmId; }) : null;
+      if (!targetBm && rawUrl) {
+        var cleanRawUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) ? rawUrl : 'https://' + rawUrl;
+        targetBm = data.bookmarks.find(function (b) {
+          if (!b.url) return false;
+          var bu = (b.url.startsWith('http://') || b.url.startsWith('https://')) ? b.url : 'https://' + b.url;
+          return bu === cleanRawUrl || b.url === rawUrl;
+        });
+      }
+
       var hasAltVersions = targetBm && targetBm.subBookmarks && targetBm.subBookmarks.length > 0;
+      var brokenMap = getBrokenLinksMap();
+      var allVersions = [];
 
-      if (hasAltVersions && altContainer) {
-        if (defActionsContainer) defActionsContainer.style.display = 'none';
-        altContainer.style.display = 'flex';
-
-        var brokenMap = getBrokenLinksMap();
-        var allVersions = [];
+      if (hasAltVersions) {
         if (targetBm.url) {
           allVersions.push({
             title: targetBm.title + ' (Main)',
@@ -4394,6 +4520,21 @@
             isBroken: !!brokenMap[sub.url]
           });
         });
+      } else if (rawUrl || (targetBm && targetBm.url)) {
+        var singleUrl = (targetBm && targetBm.url) ? targetBm.url : rawUrl;
+        allVersions.push({
+          title: (targetBm ? targetBm.title : title) || 'Main Link',
+          url: singleUrl,
+          isBroken: !!brokenMap[singleUrl]
+        });
+      }
+
+      // Check if ALL available URLs for this bookmark are broken
+      var allAreBroken = allVersions.length > 0 && allVersions.every(function (v) { return v.isBroken; });
+
+      if (hasAltVersions && altContainer) {
+        if (defActionsContainer) defActionsContainer.style.display = 'none';
+        altContainer.style.display = 'flex';
 
         // Sort: Working links first, broken/not working links pushed to the bottom
         allVersions.sort(function (a, b) {
@@ -4493,7 +4634,79 @@
         });
       } else {
         if (defActionsContainer) defActionsContainer.style.display = 'flex';
-        if (altContainer) altContainer.style.display = 'none';
+        if (altContainer) {
+          altContainer.style.display = 'flex';
+          if (allVersions.length > 0) {
+            var sVer = allVersions[0];
+            var sCard = document.createElement('div');
+            sCard.style.cssText = sVer.isBroken
+              ? 'background: rgba(15, 23, 42, 0.35); border: 1px dashed rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; opacity: 0.6; transition: all 0.2s ease;'
+              : 'background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(148, 163, 184, 0.15); border-radius: 14px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; transition: all 0.2s ease;';
+
+            var sLeftBox = document.createElement('div');
+            sLeftBox.style.cssText = 'display: flex; align-items: center; gap: 8px; overflow: hidden;';
+
+            var sStatusText = '<span style="font-size: 0.78rem; font-weight: 600; color: ' + (sVer.isBroken ? '#64748b' : '#38bdf8') + '; font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + escapeHtml(sVer.url) + '</span>';
+            if (sVer.isBroken) {
+              sStatusText += '<span style="font-size: 0.7rem; font-weight: 600; color: #94a3b8; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 1px 6px; flex-shrink: 0;">Not Working</span>';
+            }
+            sLeftBox.innerHTML = sStatusText;
+
+            var sToggleBtn = document.createElement('button');
+            sToggleBtn.type = 'button';
+            sToggleBtn.title = sVer.isBroken ? 'Mark this link as working' : 'Mark this link as not working';
+            sToggleBtn.style.cssText = sVer.isBroken
+              ? 'background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;'
+              : 'background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;';
+
+            sToggleBtn.innerHTML = sVer.isBroken
+              ? '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Mark Working</span>'
+              : '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Mark Broken</span>';
+
+            sToggleBtn.onclick = function (e) {
+              e.stopPropagation();
+              toggleBrokenLinkState(sVer.url);
+              openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+            };
+
+            sCard.appendChild(sLeftBox);
+            sCard.appendChild(sToggleBtn);
+            altContainer.appendChild(sCard);
+          }
+        }
+      }
+
+      if (allAreBroken && hideContainer) {
+        hideContainer.style.display = 'flex';
+        hideContainer.classList.remove('builtin-hide-animate');
+        // Trigger reflow for animation restart
+        void hideContainer.offsetWidth;
+        hideContainer.classList.add('builtin-hide-animate');
+        var hideBtn = $('builtin-hide-bm-btn');
+        if (hideBtn) {
+          hideBtn.onclick = function () {
+            var bData = loadBookmarkData();
+            var bmToHide = null;
+            if (pendingBuiltinUrls.targetBmId) {
+              bmToHide = bData.bookmarks.find(function (b) { return b.id === pendingBuiltinUrls.targetBmId; });
+            }
+            if (!bmToHide && (targetBm || rawUrl)) {
+              var matchUrl = (targetBm && targetBm.url) ? targetBm.url : rawUrl;
+              var cleanMatchUrl = (matchUrl.startsWith('http://') || matchUrl.startsWith('https://')) ? matchUrl : 'https://' + matchUrl;
+              bmToHide = bData.bookmarks.find(function (b) {
+                if (!b.url) return false;
+                var bu = (b.url.startsWith('http://') || b.url.startsWith('https://')) ? b.url : 'https://' + b.url;
+                return bu === cleanMatchUrl || b.url === matchUrl;
+              });
+            }
+            if (bmToHide) {
+              bmToHide.hidden = true;
+              saveBookmarkData(bData);
+            }
+            closeBuiltinTestModal();
+            renderBookmarksUI();
+          };
+        }
       }
 
       var modal = $('builtin-test-modal');
@@ -5539,9 +5752,100 @@
       });
     }
 
+    function initQuickSettingsTray() {
+      var tray = $('quick-settings-tray');
+      var toggleBtn = $('quick-settings-toggle-btn');
+      var toggleText = $('quick-settings-toggle-text');
+      var toggleArrow = $('quick-settings-toggle-arrow');
+      if (!tray || !toggleBtn) return;
+
+      var isExpanded = localStorage.getItem('heavenly_quick_settings_expanded') === 'true';
+
+      function applyTrayExpanded(expanded) {
+        if (expanded) {
+          tray.style.display = 'flex';
+          if (toggleText) toggleText.textContent = 'Collapse';
+          if (toggleArrow) toggleArrow.style.transform = 'rotate(180deg)';
+        } else {
+          tray.style.display = 'none';
+          if (toggleText) toggleText.textContent = 'Expand';
+          if (toggleArrow) toggleArrow.style.transform = 'rotate(0deg)';
+        }
+      }
+
+      applyTrayExpanded(isExpanded);
+
+      toggleBtn.onclick = function () {
+        isExpanded = !isExpanded;
+        localStorage.setItem('heavenly_quick_settings_expanded', isExpanded ? 'true' : 'false');
+        applyTrayExpanded(isExpanded);
+      };
+
+      function updatePillStates() {
+        var settings = loadSettings();
+        var bmPill = $('pill-bm-newtab');
+        var searchPill = $('pill-search-newtab');
+
+        if (bmPill) {
+          if (settings.openBookmarksInNewTab !== false) {
+            bmPill.classList.add('active');
+            bmPill.setAttribute('aria-pressed', 'true');
+          } else {
+            bmPill.classList.remove('active');
+            bmPill.setAttribute('aria-pressed', 'false');
+          }
+        }
+
+        if (searchPill) {
+          if (settings.openSearchInNewTab) {
+            searchPill.classList.add('active');
+            searchPill.setAttribute('aria-pressed', 'true');
+          } else {
+            searchPill.classList.remove('active');
+            searchPill.setAttribute('aria-pressed', 'false');
+          }
+        }
+
+        syncSearchFormUI();
+      }
+
+      var bmPill = $('pill-bm-newtab');
+      if (bmPill) {
+        bmPill.onclick = function () {
+          var settings = loadSettings();
+          settings.openBookmarksInNewTab = settings.openBookmarksInNewTab === false;
+          try {
+            localStorage.setItem('heavenly_settings', JSON.stringify(settings));
+          } catch (e) {}
+          updatePillStates();
+        };
+      }
+
+      var searchPill = $('pill-search-newtab');
+      if (searchPill) {
+        searchPill.onclick = function () {
+          var settings = loadSettings();
+          settings.openSearchInNewTab = !settings.openSearchInNewTab;
+          try {
+            localStorage.setItem('heavenly_settings', JSON.stringify(settings));
+          } catch (e) {}
+          updatePillStates();
+        };
+      }
+
+      updatePillStates();
+
+      window.addEventListener('storage', function (e) {
+        if (e.key === 'heavenly_settings') {
+          updatePillStates();
+        }
+      });
+    }
+
     window.onload = function () {
       initLandingCloak();
       initHistoryDropdown();
+      initQuickSettingsTray();
       initBookmarksManager();
       initShareBookmarkHandlers();
       syncSearchFormUI();
