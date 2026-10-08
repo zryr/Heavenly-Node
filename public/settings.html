@@ -1309,7 +1309,7 @@
 
     var DEFAULT_BOOKMARK_DATA = {
       categories: [
-        { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
+        { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "naenae", title: "Nae-Nae", builtIn: true, defaultCollapsed: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
         { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
         { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] }
       ],
@@ -1330,6 +1330,9 @@
         ] },
         { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=7movies.in&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "/proxy/https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_zig_and_sharko", categoryId: "cat_movies", subSectionId: "naenae", title: "Zig & Sharko", url: "https://www.youtube.com/results?search_query=zig+and+sharko+full+episodes", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_larva", categoryId: "cat_movies", subSectionId: "naenae", title: "Larva", url: "https://www.youtube.com/results?search_query=larva+full+episodes", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_spongebob", categoryId: "cat_movies", subSectionId: "naenae", title: "SpongeBob", url: "https://www.youtube.com/results?search_query=spongebob+full+episodes", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         {
           id: "bm_individual_games",
           categoryId: "cat_games",
@@ -1383,6 +1386,8 @@
       ]
     };
 
+    var DEFAULT_RANDOM_POOL = ['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva'];
+
     function loadSettings() {
       var saved = {};
       try {
@@ -1393,7 +1398,7 @@
         autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
         persistentCloak: saved.persistentCloak || false,
         randomizePresetEachSession: saved.randomizePresetEachSession || false,
-        randomPool: (saved.randomPool && Array.isArray(saved.randomPool)) ? saved.randomPool : null,
+        randomPool: (saved.randomPool && Array.isArray(saved.randomPool)) ? saved.randomPool : DEFAULT_RANDOM_POOL.slice(),
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
@@ -1470,7 +1475,12 @@
               defCat.subSections.forEach(function (defSub) {
                 var userSub = userCat.subSections.find(function (s) { return s.id === defSub.id; });
                 if (!userSub) {
-                  userCat.subSections.push(JSON.parse(JSON.stringify(defSub)));
+                  var userIdx = userCat.subSections.findIndex(function (s) { return s.id === 'user'; });
+                  if (userIdx !== -1) {
+                    userCat.subSections.splice(userIdx, 0, JSON.parse(JSON.stringify(defSub)));
+                  } else {
+                    userCat.subSections.push(JSON.parse(JSON.stringify(defSub)));
+                  }
                   updated = true;
                 } else if (defSub.builtIn && userSub.title !== defSub.title) {
                   userSub.title = defSub.title;
@@ -1552,6 +1562,10 @@
                 userBm.type = defBm.type;
                 updated = true;
               }
+              if (defBm.subSectionId && userBm.subSectionId !== defBm.subSectionId) {
+                userBm.subSectionId = defBm.subSectionId;
+                updated = true;
+              }
               if (userBm.url !== defBm.url && defBm.url) {
                 userBm.url = defBm.url;
                 updated = true;
@@ -1620,74 +1634,119 @@
 
       var data = loadBookmarkData();
 
-      // Render Categories Toggles
+      // Render collapsible accordion sections per Category
       data.categories.forEach(function (cat) {
-        var item = document.createElement('div');
-        item.className = 'bookmark-mgr-item';
+        var catBms = data.bookmarks.filter(function (b) { return b.categoryId === cat.id; });
 
-        var titleLabel = document.createElement('span');
-        titleLabel.style.fontWeight = '600';
-        titleLabel.style.fontSize = '0.9rem';
-        var catSpan = document.createElement('span');
-        catSpan.style.cssText = 'display:inline-flex;align-items:center;gap:6px;';
-        catSpan.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg><span>' + cat.title + (cat.builtIn ? ' (Built-in)' : ' (Custom)') + '</span>';
-        titleLabel.appendChild(catSpan);
+        var details = document.createElement('details');
+        details.className = 'bm-mgr-section';
+        details.style.cssText = 'background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; margin-bottom: 10px; overflow: hidden;';
+        details.open = true;
 
-        var toggleLabel = document.createElement('label');
-        toggleLabel.className = 'switch-toggle';
+        var summary = document.createElement('summary');
+        summary.style.cssText = 'padding: 10px 14px; background: rgba(30, 41, 59, 0.5); cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; font-weight: 600; font-size: 0.9rem; color: #f8fafc; list-style: none; outline: none;';
 
-        var input = document.createElement('input');
-        input.type = 'checkbox';
-        input.checked = !cat.hidden;
-        input.onchange = function () {
-          cat.hidden = !input.checked;
+        var titleBox = document.createElement('div');
+        titleBox.style.cssText = 'display: inline-flex; align-items: center; gap: 8px;';
+        titleBox.innerHTML = '<svg style="width:16px;height:16px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>' +
+          '<span>' + cat.title + (cat.builtIn ? ' (Built-in)' : ' (Custom)') + '</span>' +
+          '<svg class="chevron-icon" style="width:14px;height:14px;fill:none;stroke:#94a3b8;stroke-width:2.5;transition:transform 0.2s;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
+        // Master Section Toggle Label & Switch
+        var masterLabel = document.createElement('label');
+        masterLabel.className = 'switch-toggle';
+        masterLabel.onclick = function (e) { e.stopPropagation(); };
+
+        var masterInput = document.createElement('input');
+        masterInput.type = 'checkbox';
+        var isAnyChildVisible = catBms.length === 0 ? !cat.hidden : catBms.some(function (b) { return !b.hidden; });
+        masterInput.checked = !cat.hidden && isAnyChildVisible;
+
+        var masterSlider = document.createElement('span');
+        masterSlider.className = 'slider-knob';
+
+        masterLabel.appendChild(masterInput);
+        masterLabel.appendChild(masterSlider);
+
+        summary.appendChild(titleBox);
+        summary.appendChild(masterLabel);
+        details.appendChild(summary);
+
+        // Section Body: Child Bookmarks List
+        var body = document.createElement('div');
+        body.style.cssText = 'padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid rgba(148, 163, 184, 0.15);';
+
+        var childInputs = [];
+
+        if (catBms.length === 0) {
+          var emptyMsg = document.createElement('div');
+          emptyMsg.style.cssText = 'font-size: 0.8rem; color: #94a3b8; font-style: italic; padding: 4px 0;';
+          emptyMsg.textContent = 'No bookmarks in this section.';
+          body.appendChild(emptyMsg);
+        } else {
+          catBms.forEach(function (bm) {
+            var item = document.createElement('div');
+            item.className = 'bookmark-mgr-item';
+            item.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(30, 41, 59, 0.3); border-radius: 8px; margin: 0;';
+
+            var titleLabel = document.createElement('span');
+            titleLabel.style.fontWeight = '500';
+            titleLabel.style.fontSize = '0.85rem';
+            var bmSpan = document.createElement('span');
+            bmSpan.style.cssText = 'display:inline-flex;align-items:center;gap:6px;color:#e2e8f0;';
+            bmSpan.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>' + bm.title + (bm.builtIn ? ' (Built-in)' : '') + '</span>';
+            titleLabel.appendChild(bmSpan);
+
+            var toggleLabel = document.createElement('label');
+            toggleLabel.className = 'switch-toggle';
+
+            var childInput = document.createElement('input');
+            childInput.type = 'checkbox';
+            childInput.checked = !bm.hidden;
+
+            childInputs.push({ bm: bm, input: childInput });
+
+            childInput.onchange = function () {
+              bm.hidden = !childInput.checked;
+              if (childInput.checked) {
+                cat.hidden = false;
+                masterInput.checked = true;
+              } else {
+                var allUnchecked = catBms.every(function (b) { return b.hidden; });
+                if (allUnchecked) {
+                  cat.hidden = true;
+                  masterInput.checked = false;
+                }
+              }
+              saveBookmarkData(data);
+            };
+
+            var slider = document.createElement('span');
+            slider.className = 'slider-knob';
+
+            toggleLabel.appendChild(childInput);
+            toggleLabel.appendChild(slider);
+
+            item.appendChild(titleLabel);
+            item.appendChild(toggleLabel);
+            body.appendChild(item);
+          });
+        }
+
+        masterInput.onchange = function () {
+          var isChecked = masterInput.checked;
+          cat.hidden = !isChecked;
+          catBms.forEach(function (bm) {
+            bm.hidden = !isChecked;
+          });
+          childInputs.forEach(function (obj) {
+            obj.input.checked = isChecked;
+          });
           saveBookmarkData(data);
         };
 
-        var slider = document.createElement('span');
-        slider.className = 'slider-knob';
-
-        toggleLabel.appendChild(input);
-        toggleLabel.appendChild(slider);
-
-        item.appendChild(titleLabel);
-        item.appendChild(toggleLabel);
-        container.appendChild(item);
-      });
-
-      // Render Bookmarks Toggles
-      data.bookmarks.forEach(function (bm) {
-        var item = document.createElement('div');
-        item.className = 'bookmark-mgr-item';
-
-        var titleLabel = document.createElement('span');
-        titleLabel.style.fontWeight = '500';
-        titleLabel.style.fontSize = '0.88rem';
-        var bmSpan = document.createElement('span');
-        bmSpan.style.cssText = 'display:inline-flex;align-items:center;gap:6px;';
-        bmSpan.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>' + bm.title + (bm.builtIn ? ' (Built-in)' : '') + '</span>';
-        titleLabel.appendChild(bmSpan);
-
-        var toggleLabel = document.createElement('label');
-        toggleLabel.className = 'switch-toggle';
-
-        var input = document.createElement('input');
-        input.type = 'checkbox';
-        input.checked = !bm.hidden;
-        input.onchange = function () {
-          bm.hidden = !input.checked;
-          saveBookmarkData(data);
-        };
-
-        var slider = document.createElement('span');
-        slider.className = 'slider-knob';
-
-        toggleLabel.appendChild(input);
-        toggleLabel.appendChild(slider);
-
-        item.appendChild(titleLabel);
-        item.appendChild(toggleLabel);
-        container.appendChild(item);
+        details.appendChild(body);
+        container.appendChild(details);
       });
     }
 
@@ -1911,7 +1970,7 @@
       if (poolChipsContainer) {
         poolChipsContainer.innerHTML = '';
         var allPoolPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
-        var currentPool = settings.randomPool || Object.keys(allPoolPresets);
+        var currentPool = settings.randomPool || DEFAULT_RANDOM_POOL.slice();
 
         Object.keys(allPoolPresets).forEach(function (key) {
           var pObj = allPoolPresets[key];
@@ -1950,8 +2009,7 @@
 
           chip.onclick = function () {
             var st = loadSettings();
-            var allKeys = Object.keys(Object.assign({}, DEFAULT_PRESETS, st.customPresets));
-            var activePool = st.randomPool || allKeys.slice();
+            var activePool = st.randomPool ? st.randomPool.slice() : DEFAULT_RANDOM_POOL.slice();
 
             var idx = activePool.indexOf(key);
             if (idx !== -1) {
