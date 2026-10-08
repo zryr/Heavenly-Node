@@ -1942,6 +1942,8 @@
       canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" }
     };
 
+    var DEFAULT_RANDOM_POOL = ['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva'];
+
     function loadSettings() {
       var saved = {};
       try {
@@ -1952,7 +1954,7 @@
         autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
         persistentCloak: saved.persistentCloak || false,
         randomizePresetEachSession: saved.randomizePresetEachSession || false,
-        randomPool: (saved.randomPool && Array.isArray(saved.randomPool)) ? saved.randomPool : null,
+        randomPool: (saved.randomPool && Array.isArray(saved.randomPool)) ? saved.randomPool : DEFAULT_RANDOM_POOL.slice(),
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
@@ -2419,7 +2421,7 @@
 
     var DEFAULT_BOOKMARK_DATA = {
       categories: [
-        { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
+        { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "naenae", title: "Nae-Nae", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
         { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
         { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] }
       ],
@@ -2440,6 +2442,9 @@
         ] },
         { id: "bm_7movies", categoryId: "cat_movies", title: "7Movies", url: "https://7movies.in/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=7movies.in&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_rivestream", categoryId: "cat_movies", title: "RiveStream", url: "https://www.rivestream.app/", type: "bookmark", icon: "/proxy/https://www.rivestream.app/icons/icon-192x192.png", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        { id: "bm_zig_and_sharko", categoryId: "cat_movies", subSectionId: "naenae", title: "Zig & Sharko", url: "https://www.youtube.com/results?search_query=zig+and+sharko+full+episodes", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_larva", categoryId: "cat_movies", subSectionId: "naenae", title: "Larva", url: "https://www.youtube.com/results?search_query=larva+full+episodes", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_spongebob", categoryId: "cat_movies", subSectionId: "naenae", title: "SpongeBob", url: "https://www.youtube.com/results?search_query=spongebob+full+episodes", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         {
           id: "bm_individual_games",
           categoryId: "cat_games",
@@ -2549,7 +2554,12 @@
               defCat.subSections.forEach(function (defSub) {
                 var userSub = userCat.subSections.find(function (s) { return s.id === defSub.id; });
                 if (!userSub) {
-                  userCat.subSections.push(JSON.parse(JSON.stringify(defSub)));
+                  var userIdx = userCat.subSections.findIndex(function (s) { return s.id === 'user'; });
+                  if (userIdx !== -1) {
+                    userCat.subSections.splice(userIdx, 0, JSON.parse(JSON.stringify(defSub)));
+                  } else {
+                    userCat.subSections.push(JSON.parse(JSON.stringify(defSub)));
+                  }
                   updated = true;
                 } else if (defSub.builtIn && userSub.title !== defSub.title) {
                   userSub.title = defSub.title;
@@ -2629,6 +2639,10 @@
               }
               if (userBm.type !== defBm.type) {
                 userBm.type = defBm.type;
+                updated = true;
+              }
+              if (defBm.subSectionId && userBm.subSectionId !== defBm.subSectionId) {
+                userBm.subSectionId = defBm.subSectionId;
                 updated = true;
               }
               if (userBm.url !== defBm.url && defBm.url) {
