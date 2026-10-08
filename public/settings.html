@@ -443,11 +443,53 @@
       cursor: default;
     }
 
+    details summary::-webkit-details-marker,
+    details summary::marker {
+      display: none;
+      content: "";
+    }
+
+    details:not([open]) .details-collapse-text {
+      display: none;
+    }
+
+    details[open] .details-expand-text {
+      display: none;
+    }
+
+    details:not([open]) > summary .chevron-icon {
+      transform: rotate(0deg);
+    }
+
+    details[open] > summary .chevron-icon {
+      transform: rotate(180deg);
+    }
+
     .bookmark-mgr-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
       margin-top: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(56, 189, 248, 0.4) rgba(15, 23, 42, 0.6);
+    }
+
+    .bookmark-mgr-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .bookmark-mgr-list::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 4px;
+    }
+
+    .bookmark-mgr-list::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.4);
+      border-radius: 4px;
+    }
+
+    .bookmark-mgr-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.7);
     }
 
     .bookmark-mgr-item {
@@ -959,12 +1001,13 @@
                   <span>Restore & Toggle Built-in Bookmarks</span>
                 </span>
                 <span style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: #38bdf8; font-weight: 500;">
-                  <span>Expand List</span>
-                  <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; transition: transform 0.2s ease;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  <span class="details-expand-text">Expand List</span>
+                  <span class="details-collapse-text">Collapse List</span>
+                  <svg class="chevron-icon" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; transition: transform 0.2s ease;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </span>
               </summary>
               <p class="hero-card-desc" style="margin-top: 10px;">Check or uncheck pre-made sections and built-in bookmarks to restore or hide them on your homepage.</p>
-              <div id="bookmark-mgr-container" class="bookmark-mgr-list" style="max-height: 320px; overflow-y: auto; padding-right: 4px; margin-top: 12px;"></div>
+              <div id="bookmark-mgr-container" class="bookmark-mgr-list" style="max-height: 520px; overflow-y: auto; padding: 4px 6px 4px 2px; margin-top: 12px;"></div>
               <div style="margin-top: 14px; border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 14px;">
                 <button id="reset-builtin-bookmarks-btn" type="button" style="width: 100%; padding: 12px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; color: #38bdf8; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
                   <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
@@ -1649,8 +1692,10 @@
         var titleBox = document.createElement('div');
         titleBox.style.cssText = 'display: inline-flex; align-items: center; gap: 8px;';
         titleBox.innerHTML = '<svg style="width:16px;height:16px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>' +
-          '<span>' + cat.title + (cat.builtIn ? ' (Built-in)' : ' (Custom)') + '</span>' +
-          '<svg class="chevron-icon" style="width:14px;height:14px;fill:none;stroke:#94a3b8;stroke-width:2.5;transition:transform 0.2s;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+          '<span>' + cat.title + (cat.builtIn ? ' (Built-in)' : ' (Custom)') + '</span>';
+
+        var rightBox = document.createElement('div');
+        rightBox.style.cssText = 'display: inline-flex; align-items: center; gap: 12px;';
 
         // Master Section Toggle Label & Switch
         var masterLabel = document.createElement('label');
@@ -1668,8 +1713,15 @@
         masterLabel.appendChild(masterInput);
         masterLabel.appendChild(masterSlider);
 
+        var chevron = document.createElement('span');
+        chevron.style.cssText = 'display: flex; align-items: center; justify-content: center;';
+        chevron.innerHTML = '<svg class="chevron-icon" style="width:14px;height:14px;fill:none;stroke:#94a3b8;stroke-width:2.5;transition:transform 0.2s;display:block;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
+        rightBox.appendChild(masterLabel);
+        rightBox.appendChild(chevron);
+
         summary.appendChild(titleBox);
-        summary.appendChild(masterLabel);
+        summary.appendChild(rightBox);
         details.appendChild(summary);
 
         // Section Body: Child Bookmarks List
@@ -1687,22 +1739,19 @@
           catBms.forEach(function (bm) {
             var item = document.createElement('div');
             item.className = 'bookmark-mgr-item';
-            item.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(30, 41, 59, 0.3); border-radius: 8px; margin: 0;';
+            item.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(30, 41, 59, 0.35); border: 1px solid rgba(148, 163, 184, 0.12); border-radius: 8px; margin: 0; transition: background 0.2s ease;';
 
-            var titleLabel = document.createElement('span');
-            titleLabel.style.fontWeight = '500';
-            titleLabel.style.fontSize = '0.85rem';
+            var titleLabel = document.createElement('label');
+            titleLabel.style.cssText = 'display: flex; align-items: center; justify-content: space-between; width: 100%; cursor: pointer; font-weight: 500; font-size: 0.85rem; user-select: none;';
+
             var bmSpan = document.createElement('span');
-            bmSpan.style.cssText = 'display:inline-flex;align-items:center;gap:6px;color:#e2e8f0;';
-            bmSpan.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>' + bm.title + (bm.builtIn ? ' (Built-in)' : '') + '</span>';
-            titleLabel.appendChild(bmSpan);
-
-            var toggleLabel = document.createElement('label');
-            toggleLabel.className = 'switch-toggle';
+            bmSpan.style.cssText = 'display:inline-flex;align-items:center;gap:8px;color:#e2e8f0;';
+            bmSpan.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>' + bm.title + (bm.builtIn ? ' (Built-in)' : '') + '</span>';
 
             var childInput = document.createElement('input');
             childInput.type = 'checkbox';
             childInput.checked = !bm.hidden;
+            childInput.style.cssText = 'width: 18px; height: 18px; accent-color: #38bdf8; cursor: pointer; flex-shrink: 0; border-radius: 4px;';
 
             childInputs.push({ bm: bm, input: childInput });
 
@@ -1721,14 +1770,9 @@
               saveBookmarkData(data);
             };
 
-            var slider = document.createElement('span');
-            slider.className = 'slider-knob';
-
-            toggleLabel.appendChild(childInput);
-            toggleLabel.appendChild(slider);
-
+            titleLabel.appendChild(bmSpan);
+            titleLabel.appendChild(childInput);
             item.appendChild(titleLabel);
-            item.appendChild(toggleLabel);
             body.appendChild(item);
           });
         }
