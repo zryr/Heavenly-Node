@@ -284,6 +284,13 @@ function renderHeavenlyErrorPage(opts) {
     var details = opts.details || 'An error occurred while attempting to load this website through Heavenly Proxy.';
     var pageTitle = 'Heavenly - Error ' + statusCode;
 
+    var safeErrorType = String(errorType)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
     var safeTargetUrl = String(targetUrl)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -457,7 +464,7 @@ function renderHeavenlyErrorPage(opts) {
 '    </div>\n' +
 '    <span class="brand-badge">\n' +
 '      <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>\n' +
-'      Heavenly Web Proxy &bull; ' + errorType + '\n' +
+    '      Heavenly Web Proxy &bull; ' + safeErrorType + '\n' +
 '    </span>\n' +
 '    <h1>' + pageTitle + '</h1>\n' +
 '    <div class="details-box">\n' +

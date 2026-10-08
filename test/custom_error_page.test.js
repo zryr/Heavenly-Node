@@ -24,14 +24,16 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
             assert.ok(html.includes('#030712'), 'Should use Heavenly dark theme background color');
         });
 
-        it('should sanitize HTML special characters in target URL and details', function() {
+        it('should sanitize HTML special characters in errorType, target URL and details', function() {
             var html = app.renderHeavenlyErrorPage({
                 statusCode: 500,
-                errorType: 'Error',
+                errorType: '<script>alert("xss")</script>',
                 targetUrl: 'https://test.com/<script>alert(1)</script>',
                 details: '<b>Error</b> & test'
             });
 
+            assert.ok(!html.includes('<script>alert("xss")</script>'), 'HTML in errorType must be escaped');
+            assert.ok(html.includes('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'), 'errorType HTML tags and quotes should be entity encoded');
             assert.ok(!html.includes('<script>alert(1)</script>'), 'HTML in targetUrl must be escaped');
             assert.ok(html.includes('&lt;script&gt;alert(1)&lt;/script&gt;'), 'HTML tags should be entity encoded');
             assert.ok(html.includes('&lt;b&gt;Error&lt;/b&gt; &amp; test'), 'Details should be entity encoded');
