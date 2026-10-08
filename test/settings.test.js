@@ -121,6 +121,19 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('closePresetDropdown()'), 'Escape key should close custom preset dropdown menu if active');
     });
 
+    it('should configure heavenly-logo.png as site favicon and header brand mark across public files and app.js', function() {
+        var indexHtml = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
+        var appJs = fs.readFileSync(path.join(__dirname, '../app.js'), 'utf8');
+
+        assert.ok(fs.existsSync(path.join(__dirname, '../public/assets/heavenly-logo.png')), 'heavenly-logo.png file must exist in public/assets/');
+
+        [indexHtml, html, appJs].forEach(function(content, i) {
+            var label = i === 0 ? 'index.html' : (i === 1 ? 'settings.html' : 'app.js');
+            assert.ok(content.includes('<link rel="icon" type="image/png" href="/assets/heavenly-logo.png">'), label + ' should set heavenly-logo.png as default favicon');
+            assert.ok(content.includes('<img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img">'), label + ' should render heavenly-logo.png in brand-icon');
+        });
+    });
+
     it('should contain full tab cloaking presets, randomizer pool controls, and reset branding button', function() {
         assert.ok(html.includes('docs: { title: "Google Docs"'), 'DEFAULT_PRESETS should include Google Docs');
         assert.ok(html.includes('gmail: { title: "Gmail"'), 'DEFAULT_PRESETS should include Gmail');

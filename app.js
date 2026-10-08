@@ -310,6 +310,7 @@ function renderHeavenlyErrorPage(opts) {
 '  <meta charset="UTF-8">\n' +
 '  <title>' + pageTitle + '</title>\n' +
 '  <meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+'  <link rel="icon" type="image/png" href="/assets/heavenly-logo.png">\n' +
 '  <link rel="preconnect" href="https://fonts.googleapis.com">\n' +
 '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
 '  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">\n' +
@@ -376,11 +377,10 @@ function renderHeavenlyErrorPage(opts) {
 '      width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;\n' +
 '      background: linear-gradient(135deg, rgba(239, 68, 68, 0.22) 0%, rgba(99, 102, 241, 0.22) 100%);\n' +
 '      border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 20px;\n' +
-'      box-shadow: 0 0 25px rgba(239, 68, 68, 0.35);\n' +
+'      box-shadow: 0 0 25px rgba(239, 68, 68, 0.35); padding: 8px;\n' +
 '    }\n' +
-'    .brand-icon svg {\n' +
-'      width: 32px; height: 32px; fill: none; stroke: #fca5a5; stroke-width: 2;\n' +
-'      stroke-linecap: round; stroke-linejoin: round;\n' +
+'    .brand-icon img, .brand-logo-img {\n' +
+'      width: 100%; height: 100%; object-fit: contain;\n' +
 '      filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));\n' +
 '    }\n' +
 '    h1 {\n' +
@@ -455,11 +455,7 @@ function renderHeavenlyErrorPage(opts) {
 '  <div class="glow-orb glow-orb-2"></div>\n' +
 '  <div class="error-container">\n' +
 '    <div class="brand-icon">\n' +
-'      <svg viewBox="0 0 24 24">\n' +
-'        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>\n' +
-'        <line x1="12" y1="9" x2="12" y2="13"></line>\n' +
-'        <line x1="12" y1="17" x2="12.01" y2="17"></line>\n' +
-'      </svg>\n' +
+'      <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img">\n' +
 '    </div>\n' +
 '    <span class="brand-badge">\n' +
 '      <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>\n' +
