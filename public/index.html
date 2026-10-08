@@ -2072,7 +2072,7 @@
       var goBtn = $('search-go-btn');
       var newTabBtn = $('search-newtab-btn');
 
-      if (settings.openSearchInNewTab && settings.mergeGoNewTab) {
+      if (settings.openSearchInNewTab) {
         if (goBtn) goBtn.value = 'Go (New Tab)';
         if (newTabBtn) newTabBtn.classList.add('collapsed');
       } else {
