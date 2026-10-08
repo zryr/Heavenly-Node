@@ -1353,6 +1353,42 @@
       background: #38bdf8;
       box-shadow: 0 0 6px #38bdf8;
     }
+
+    /* Animations & Smooth Transitions */
+    @keyframes slideFadeDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .builtin-hide-animate {
+      animation: slideFadeDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    #search-newtab-btn {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 140px;
+      opacity: 1;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    #search-newtab-btn.collapsed {
+      max-width: 0 !important;
+      opacity: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      border-width: 0 !important;
+      pointer-events: none !important;
+      transform: scale(0.9) !important;
+    }
   </style>
 </head>
 
@@ -1989,10 +2025,10 @@
 
       if (settings.openSearchInNewTab && settings.mergeGoNewTab) {
         if (goBtn) goBtn.value = 'Go (New Tab)';
-        if (newTabBtn) newTabBtn.style.display = 'none';
+        if (newTabBtn) newTabBtn.classList.add('collapsed');
       } else {
         if (goBtn) goBtn.value = 'Go';
-        if (newTabBtn) newTabBtn.style.display = 'inline-flex';
+        if (newTabBtn) newTabBtn.classList.remove('collapsed');
       }
     }
 
@@ -4642,6 +4678,10 @@
 
       if (allAreBroken && hideContainer) {
         hideContainer.style.display = 'flex';
+        hideContainer.classList.remove('builtin-hide-animate');
+        // Trigger reflow for animation restart
+        void hideContainer.offsetWidth;
+        hideContainer.classList.add('builtin-hide-animate');
         var hideBtn = $('builtin-hide-bm-btn');
         if (hideBtn) {
           hideBtn.onclick = function () {
@@ -5719,7 +5759,7 @@
       var toggleArrow = $('quick-settings-toggle-arrow');
       if (!tray || !toggleBtn) return;
 
-      var isExpanded = localStorage.getItem('heavenly_quick_settings_expanded') !== 'false';
+      var isExpanded = localStorage.getItem('heavenly_quick_settings_expanded') === 'true';
 
       function applyTrayExpanded(expanded) {
         if (expanded) {
