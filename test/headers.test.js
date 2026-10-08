@@ -148,5 +148,76 @@ describe('headersMiddleware request middleware', function() {
             assert.strictEqual(data.headers.referer, 'http://example.com');
             assert.strictEqual(data.headers.origin, 'http://example.com');
         });
+
+        it('should handle uppercase scheme single-slash normalization in Referer', function() {
+            var data1 = {
+                url: 'https://example.com/page',
+                headers: { referer: 'HTTP:/example.com/test' }
+            };
+            app.headersMiddleware(data1);
+            assert.strictEqual(data1.headers.referer, 'HTTP://example.com/test');
+
+            var data2 = {
+                url: 'https://example.com/page',
+                headers: { referer: 'HTTPS:/example.com/test' }
+            };
+            app.headersMiddleware(data2);
+            assert.strictEqual(data2.headers.referer, 'HTTPS://example.com/test');
+
+            var data3 = {
+                url: 'https://example.com/page',
+                headers: { referer: 'Https:/example.com/test' }
+            };
+            app.headersMiddleware(data3);
+            assert.strictEqual(data3.headers.referer, 'Https://example.com/test');
+        });
+
+        it('should handle empty string header values correctly', function() {
+            var data1 = {
+                url: 'https://example.com/page',
+                headers: { referer: '', origin: 'https://proxy.com' }
+            };
+            app.headersMiddleware(data1);
+            assert.strictEqual(data1.headers.referer, '');
+            assert.strictEqual(data1.headers.origin, 'https://example.com');
+
+            var data2 = {
+                url: 'https://example.com/page',
+                headers: { referer: '/proxy/https:/example.com/prev', origin: '' }
+            };
+            app.headersMiddleware(data2);
+            assert.strictEqual(data2.headers.referer, 'https://example.com/prev');
+            assert.strictEqual(data2.headers.origin, '');
+        });
+
+        it('should preserve other unrelated headers intact when modifying referer and origin', function() {
+            var data = {
+                url: 'https://example.com/api',
+                headers: {
+                    referer: '/proxy/https://example.com/home',
+                    origin: 'https://proxy.com',
+                    'user-agent': 'CustomAgent/1.0',
+                    'accept-language': 'en-US,en;q=0.9',
+                    authorization: 'Bearer secret_token'
+                }
+            };
+            app.headersMiddleware(data);
+            assert.strictEqual(data.headers.referer, 'https://example.com/home');
+            assert.strictEqual(data.headers.origin, 'https://example.com');
+            assert.strictEqual(data.headers['user-agent'], 'CustomAgent/1.0');
+            assert.strictEqual(data.headers['accept-language'], 'en-US,en;q=0.9');
+            assert.strictEqual(data.headers.authorization, 'Bearer secret_token');
+        });
+
+        it('should handle multiple nested proxy prefixes with mixed single and double slashes', function() {
+            var data = {
+                url: 'https://example.com/app',
+                headers: {
+                    referer: 'https://proxy.com/proxy/http:/other.com/proxy/https:/example.com/start'
+                }
+            };
+            app.headersMiddleware(data);
+            assert.strictEqual(data.headers.referer, 'https://example.com/start');
+        });
     });
 });
