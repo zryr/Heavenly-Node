@@ -65,7 +65,31 @@ describe("OP Websites Category, Bookmarks & Advice Modals", function () {
     });
   });
 
-  it("should contain OP Websites Notes modal with updated titles and concluding copy in index.html", function () {
+  it("should configure Opium as a folder bookmark with primary URL and 22 mirrors across client files", function () {
+    [indexHtml, settingsHtml, clientJs].forEach((content, idx) => {
+      const fileName = ["index.html", "settings.html", "unblocker-client.js"][idx];
+      assert.strictEqual(content.includes('https://opium.best/'), true, `${fileName} should contain primary Opium URL`);
+      assert.strictEqual(content.includes('sub_opium_1'), true, `${fileName} should contain sub_opium_1`);
+      assert.strictEqual(content.includes('sub_opium_22'), true, `${fileName} should contain sub_opium_22`);
+    });
+  });
+
+  it("should configure local assets, Polaris SVG, subsection icons, and proxied icons across client files", function () {
+    [indexHtml, settingsHtml, clientJs].forEach((content, idx) => {
+      const fileName = ["index.html", "settings.html", "unblocker-client.js"][idx];
+      assert.strictEqual(content.includes('/assets/artic-logo.png'), true, `${fileName} should contain Artic logo asset`);
+      assert.strictEqual(content.includes('/assets/doc-of-docs-logo.png'), true, `${fileName} should contain Doc of Docs logo asset`);
+      assert.strictEqual(content.includes('/assets/nexus-logo.png'), true, `${fileName} should contain Nexus logo asset`);
+      assert.strictEqual(content.includes('/assets/opium-logo.png'), true, `${fileName} should contain Opium logo asset`);
+      assert.strictEqual(content.includes('/assets/polaris.svg'), true, `${fileName} should contain Polaris SVG asset`);
+      assert.strictEqual(content.includes('/proxy/https://fmhy.net/hall.png'), true, `${fileName} should contain FMHY proxied icon`);
+      assert.strictEqual(content.includes('/proxy/https://everythingmoe.com/favicon.ico'), true, `${fileName} should contain EverythingMoe proxied icon`);
+      assert.strictEqual(content.includes('/proxy/https://pinkdev.d13qic2f6zga3.amplifyapp.com/favicon.png'), true, `${fileName} should contain Interdimensional Lite proxied icon`);
+      assert.strictEqual(content.includes('icon: "file-text"'), true, `${fileName} should contain file-text icon for docs_games sub-section`);
+    });
+  });
+
+  it("should contain OP Websites Notes modal with updated titles, concluding copy, and Discord Tip in index.html", function () {
     assert.strictEqual(indexHtml.includes('id="op-websites-notes-modal"'), true, "index.html should contain op-websites-notes-modal");
     assert.ok(indexHtml.includes("Syshi’s Notes: OP Websites") || indexHtml.includes("Syshi's Notes: OP Websites"), "index.html should contain OP Websites modal title");
     assert.ok(indexHtml.includes("Syshi’s Notes: Anime") || indexHtml.includes("Syshi's Notes: Anime"), "index.html should contain Anime modal title");
@@ -73,6 +97,7 @@ describe("OP Websites Category, Bookmarks & Advice Modals", function () {
     assert.strictEqual(indexHtml.includes("libcurl proxy option in Aether settings"), true, "index.html should contain Aether libcurl tip");
     assert.strictEqual(indexHtml.includes("The point is you have to play around with the sites to find what works best on your specific device."), true, "index.html should contain concluding copy in card 2");
     assert.strictEqual(indexHtml.includes("aniclover.cc"), true, "index.html should contain aniclover tip");
+    assert.strictEqual(indexHtml.includes("Discord Tip: If an OP website features a Discord link, join their server"), true, "index.html should contain Discord tip");
   });
 
   it("should contain Distrosea modal, recommendations, direct/proxy buttons, and responsive side column CSS in index.html", function () {
