@@ -1191,7 +1191,7 @@
       color: #cbd5e1;
     }
 
-    .form-select, .form-input {
+    .form-input {
       width: 100%;
       padding: 12px 14px;
       background: rgba(30, 41, 59, 0.7);
@@ -1201,11 +1201,47 @@
       font-family: inherit;
       font-size: 0.9rem;
       outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 12px 38px 12px 14px;
+      background: rgba(15, 23, 42, 0.75) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center;
+      background-size: 16px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      color: #f8fafc;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .form-select:hover {
+      background-color: rgba(30, 41, 59, 0.85);
+      border-color: rgba(56, 189, 248, 0.45);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(56, 189, 248, 0.12);
     }
 
     .form-select:focus, .form-input:focus {
       border-color: #38bdf8;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25), 0 0 16px rgba(56, 189, 248, 0.2);
+    }
+
+    .form-select option {
+      background-color: #0f172a;
+      color: #f8fafc;
+      padding: 10px 14px;
+      font-weight: 500;
     }
 
     .modal-submit-btn {
@@ -3921,6 +3957,17 @@
                     return;
                   }
 
+                  var sbRawUrl = sb.url ? (sb.url.startsWith('http') ? sb.url : 'https://' + sb.url) : '';
+                  if (bm.launchPreference === 'direct') {
+                    e.preventDefault();
+                    openTargetUrlWithSetting(sbRawUrl);
+                    return;
+                  } else if (bm.launchPreference === 'proxy') {
+                    e.preventDefault();
+                    openTargetUrlWithSetting(sbProxiedUrl);
+                    return;
+                  }
+
                   e.preventDefault();
                   openBuiltinTestModal(sb.title, sb.url, sbProxiedUrl, null, false, bm.id);
                 };
@@ -4581,6 +4628,10 @@
         });
       }
 
+      if (targetBm) {
+        pendingBuiltinUrls.targetBmId = targetBm.id;
+      }
+
       var hasAltVersions = targetBm && targetBm.subBookmarks && targetBm.subBookmarks.length > 0;
       var brokenMap = getBrokenLinksMap();
       var allVersions = [];
@@ -4683,31 +4734,24 @@
 
           var directBtn = document.createElement('button');
           directBtn.type = 'button';
-          directBtn.className = 'modal-submit-btn';
-          directBtn.style.cssText = isBroken
-            ? 'background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;'
-            : 'background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;';
-          directBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Test Direct Site</span>';
-          directBtn.onclick = function () {
-            saveBuiltinPromptPref();
-            saveQuickSaveWidgetTogglePref();
-            closeBuiltinTestModal();
-            openTargetUrlWithSetting(verRawUrl);
-          };
+          directBtn.className = 'modal-submit-btn long-press-btn';
+          directBtn.style.cssText = (isBroken
+            ? 'background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8;'
+            : 'background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8;') +
+            ' flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; overflow: hidden; user-select: none;';
+          directBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;position:relative;z-index:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span style="position:relative;z-index:2;">Test Direct Site</span>';
 
           var proxyBtn = document.createElement('button');
           proxyBtn.type = 'button';
-          proxyBtn.className = 'modal-submit-btn';
-          proxyBtn.style.cssText = isBroken
-            ? 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #cbd5e1; flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;'
-            : 'flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;';
-          proxyBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span>';
-          proxyBtn.onclick = function () {
-            saveBuiltinPromptPref();
-            saveQuickSaveWidgetTogglePref();
-            closeBuiltinTestModal();
-            openTargetUrlWithSetting(verProxiedUrl);
-          };
+          proxyBtn.className = 'modal-submit-btn long-press-btn';
+          proxyBtn.style.cssText = (isBroken
+            ? 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #cbd5e1;'
+            : '') +
+            ' flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; overflow: hidden; user-select: none;';
+          proxyBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;position:relative;z-index:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span style="position:relative;z-index:2;">Open with Proxy</span>';
+
+          bindLongPressToElement(directBtn, 'direct', function () { return verRawUrl; });
+          bindLongPressToElement(proxyBtn, 'proxy', function () { return verProxiedUrl; });
 
           btnRow.appendChild(directBtn);
           btnRow.appendChild(proxyBtn);
@@ -5493,8 +5537,7 @@
         openTargetUrlWithSetting(pendingEverythingMoeNotice.proxiedUrl);
       };
 
-      function attachLongPressListener(btnId, prefType, getTargetUrlFn) {
-        var btn = $(btnId);
+      window.bindLongPressToElement = function (btn, prefType, getTargetUrlFn, onCompleteCloseModal) {
         if (!btn) return;
 
         var timer = null;
@@ -5509,7 +5552,12 @@
             btn.classList.remove('pressing');
             saveBookmarkLaunchPref(prefType);
             saveQuickSaveWidgetTogglePref();
-            closeBuiltinTestModal();
+            if (onCompleteCloseModal) {
+              onCompleteCloseModal();
+            } else {
+              closeBuiltinTestModal();
+              closeEverythingMoeNoticeModal();
+            }
             openTargetUrlWithSetting(getTargetUrlFn());
           }, 500);
         }
@@ -5539,13 +5587,25 @@
           }
           saveBuiltinPromptPref();
           saveQuickSaveWidgetTogglePref();
-          closeBuiltinTestModal();
+          if (onCompleteCloseModal) {
+            onCompleteCloseModal();
+          } else {
+            closeBuiltinTestModal();
+            closeEverythingMoeNoticeModal();
+          }
           openTargetUrlWithSetting(getTargetUrlFn());
         };
+      };
+
+      function attachLongPressListener(btnId, prefType, getTargetUrlFn) {
+        var btn = $(btnId);
+        if (btn) bindLongPressToElement(btn, prefType, getTargetUrlFn);
       }
 
       attachLongPressListener('builtin-test-direct-btn', 'direct', function () { return pendingBuiltinUrls.rawUrl; });
       attachLongPressListener('builtin-open-proxy-btn', 'proxy', function () { return pendingBuiltinUrls.proxiedUrl; });
+      attachLongPressListener('everythingmoe-direct-btn', 'direct', function () { return pendingEverythingMoeNotice.rawUrl; });
+      attachLongPressListener('everythingmoe-ok-btn', 'proxy', function () { return pendingEverythingMoeNotice.proxiedUrl; });
 
       $('tab-add-bm').onclick = function () { openAddModal('bookmark'); };
       $('tab-add-cat').onclick = function () { openAddModal('category'); };
