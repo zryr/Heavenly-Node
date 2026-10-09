@@ -1417,6 +1417,24 @@
       pointer-events: none !important;
     }
 
+    .long-press-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 0%;
+      background: rgba(56, 189, 248, 0.35);
+      z-index: 1;
+      pointer-events: none;
+      transition: width 0s linear;
+    }
+
+    .long-press-btn.pressing::before {
+      width: 100%;
+      transition: width 0.5s ease-out;
+    }
+
     #search-newtab-btn {
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       max-width: 140px;
@@ -1617,7 +1635,7 @@
       </div>
 
       <!-- Tab selection between Add Bookmark, Add Category & Add Sub-Section -->
-      <div style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
+      <div id="add-modal-tabs-container" style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
         <button id="tab-add-bm" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600; cursor: pointer;">Add Bookmark</button>
         <button id="tab-add-cat" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">Add Category</button>
         <button id="tab-add-subsec" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">Add Sub-Section</button>
@@ -1644,6 +1662,14 @@
         <div class="form-group" id="group-bm-url">
           <label class="form-label" for="bm-url">URL</label>
           <input type="text" id="bm-url" class="form-input" placeholder="https://example.com" />
+        </div>
+        <div class="form-group" id="group-bm-launch-pref">
+          <label class="form-label" for="bm-launch-pref">Launch Mode</label>
+          <select id="bm-launch-pref" class="form-select">
+            <option value="ask">Always Ask [Default]</option>
+            <option value="proxy">Always Proxy</option>
+            <option value="direct">Always Direct</option>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label" for="bm-category">Category Section</label>
@@ -1960,10 +1986,6 @@
           <span class="slider-knob"></span>
         </label>
       </div>
-      <div id="builtin-dont-ask-container" style="display: none; align-items: center; gap: 8px; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 20px; cursor: pointer;">
-        <input type="checkbox" id="builtin-dont-ask" style="accent-color: #38bdf8; cursor: pointer; width: 16px; height: 16px;" />
-        <label for="builtin-dont-ask" style="cursor: pointer; user-select: none;">Don't ask me again for default bookmarks</label>
-      </div>
       <div id="builtin-alt-versions-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;"></div>
       <div id="builtin-hide-container" style="display: none; padding: 10px 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 14px; margin-bottom: 12px; flex-direction: column; gap: 8px; align-items: center; text-align: center;">
         <div style="font-size: 0.85rem; color: #fca5a5; font-weight: 500; display: flex; align-items: center; gap: 6px;">
@@ -1975,9 +1997,13 @@
           <span>Hide Bookmark</span>
         </button>
       </div>
-      <div id="builtin-default-actions-container" style="display: flex; gap: 10px; justify-content: flex-end;">
-        <button id="builtin-test-direct-btn" type="button" class="modal-submit-btn" style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Test Direct Site</span></button>
-        <button id="builtin-open-proxy-btn" type="button" class="modal-submit-btn" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span></button>
+      <div id="builtin-default-actions-container" style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
+        <button id="builtin-test-direct-btn" type="button" class="modal-submit-btn long-press-btn" style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; user-select: none;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;position:relative;z-index:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span style="position:relative;z-index:2;">Test Direct Site</span></button>
+        <button id="builtin-open-proxy-btn" type="button" class="modal-submit-btn long-press-btn" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; user-select: none;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;position:relative;z-index:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span style="position:relative;z-index:2;">Open with Proxy</span></button>
+      </div>
+      <div id="builtin-discovery-hint" style="font-size: 0.76rem; color: #64748b; text-align: center; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+        <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <span>Tip: Long-press an option to make it the default for this bookmark.</span>
       </div>
     </div>
   </div>
@@ -3586,6 +3612,16 @@
                   return;
                 }
 
+                if (bm.launchPreference === 'direct') {
+                  e.preventDefault();
+                  openTargetUrlWithSetting(rawTargetUrl);
+                  return;
+                } else if (bm.launchPreference === 'proxy') {
+                  e.preventDefault();
+                  openTargetUrlWithSetting(proxiedUrl);
+                  return;
+                }
+
                 if (bm.builtIn && (bm.id === 'bm_everythingmoe' || bm.id === 'bm_fmhy_movies' || bm.id === 'bm_fmhy_anime' || (bm.url && (bm.url.includes('everythingmoe.com') || bm.url.includes('fmhy.net'))))) {
                   e.preventDefault();
                   openEverythingMoeNoticeModal(bm.title, rawTargetUrl, proxiedUrl);
@@ -4327,6 +4363,7 @@
       $('bm-url').value = '';
       $('bm-custom-icon-url').value = '';
       $('bm-type').value = 'bookmark';
+      if ($('bm-launch-pref')) $('bm-launch-pref').value = 'ask';
       if ($('subsec-title')) $('subsec-title').value = '';
       modalSubBookmarks = [];
       if ($('bm-quick-save-toggle')) $('bm-quick-save-toggle').checked = true;
@@ -4340,6 +4377,7 @@
           $('bm-title').value = existingBm.title;
           $('bm-url').value = existingBm.url || '';
           $('bm-type').value = existingBm.type || 'bookmark';
+          if ($('bm-launch-pref')) $('bm-launch-pref').value = existingBm.launchPreference || 'ask';
           updateSubSectionSelect(existingBm.categoryId, existingBm.subSectionId || (existingBm.builtIn ? 'builtin' : 'user'));
           modalSubBookmarks = existingBm.subBookmarks ? JSON.parse(JSON.stringify(existingBm.subBookmarks)) : [];
           if ($('bm-quick-save-toggle')) $('bm-quick-save-toggle').checked = existingBm.disableQuickSaveWidget !== true;
@@ -4404,9 +4442,14 @@
       formCat.style.display = type === 'category' ? 'flex' : 'none';
       if (formSubSec) formSubSec.style.display = type === 'subsection' ? 'flex' : 'none';
 
+      var tabsContainer = $('add-modal-tabs-container');
+      if (tabsContainer) {
+        tabsContainer.style.display = editBmId ? 'none' : 'flex';
+      }
+
       if (type === 'category') $('modal-title').textContent = 'Add Category Section';
       else if (type === 'subsection') $('modal-title').textContent = 'Add Sub-Section';
-      else $('modal-title').textContent = editBmId ? 'Edit Bookmark / Folder' : 'Add Bookmark / Folder';
+      else $('modal-title').textContent = editBmId ? 'Edit Bookmark' : 'Add Bookmark / Folder';
 
       modal.classList.add('active');
 
@@ -4485,12 +4528,6 @@
       pendingBuiltinUrls.proxiedUrl = proxiedUrl || '';
       pendingBuiltinUrls.targetBmId = targetBmId || null;
       if ($('builtin-site-name')) $('builtin-site-name').textContent = title || rawUrl;
-      if ($('builtin-dont-ask')) $('builtin-dont-ask').checked = false;
-
-      var dontAskContainer = $('builtin-dont-ask-container');
-      if (dontAskContainer) {
-        dontAskContainer.style.display = showDontAsk === true ? 'flex' : 'none';
-      }
 
       var qsToggle = $('builtin-quick-save-toggle');
       var qsContainer = $('builtin-quick-save-container');
@@ -4784,13 +4821,19 @@
     }
 
     function saveBuiltinPromptPref() {
-      if ($('builtin-dont-ask') && $('builtin-dont-ask').checked) {
-        try {
-          var settings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
-          settings.skipBuiltinTestPrompt = true;
-          localStorage.setItem('heavenly_settings', JSON.stringify(settings));
-        } catch (e) {}
-      }
+      // Kept for backward compatibility
+    }
+
+    function saveBookmarkLaunchPref(pref) {
+      if (!pref || !pendingBuiltinUrls.targetBmId) return;
+      try {
+        var data = loadBookmarkData();
+        var bm = data.bookmarks.find(function (b) { return b.id === pendingBuiltinUrls.targetBmId; });
+        if (bm) {
+          bm.launchPreference = pref; // "direct" | "proxy" | "ask"
+          saveBookmarkData(data);
+        }
+      } catch (e) {}
     }
 
     // --- Granular Share Bookmarks Manager ---
@@ -5450,19 +5493,59 @@
         openTargetUrlWithSetting(pendingEverythingMoeNotice.proxiedUrl);
       };
 
-      $('builtin-test-direct-btn').onclick = function () {
-        saveBuiltinPromptPref();
-        saveQuickSaveWidgetTogglePref();
-        closeBuiltinTestModal();
-        openTargetUrlWithSetting(pendingBuiltinUrls.rawUrl);
-      };
+      function attachLongPressListener(btnId, prefType, getTargetUrlFn) {
+        var btn = $(btnId);
+        if (!btn) return;
 
-      $('builtin-open-proxy-btn').onclick = function () {
-        saveBuiltinPromptPref();
-        saveQuickSaveWidgetTogglePref();
-        closeBuiltinTestModal();
-        openTargetUrlWithSetting(pendingBuiltinUrls.proxiedUrl);
-      };
+        var timer = null;
+        var isLongPress = false;
+
+        function startPress(e) {
+          if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
+          isLongPress = false;
+          btn.classList.add('pressing');
+          timer = setTimeout(function () {
+            isLongPress = true;
+            btn.classList.remove('pressing');
+            saveBookmarkLaunchPref(prefType);
+            saveQuickSaveWidgetTogglePref();
+            closeBuiltinTestModal();
+            openTargetUrlWithSetting(getTargetUrlFn());
+          }, 500);
+        }
+
+        function cancelPress() {
+          if (timer) {
+            clearTimeout(timer);
+            timer = null;
+          }
+          btn.classList.remove('pressing');
+        }
+
+        btn.addEventListener('mousedown', startPress);
+        btn.addEventListener('touchstart', startPress, { passive: true });
+
+        btn.addEventListener('mouseup', cancelPress);
+        btn.addEventListener('mouseleave', cancelPress);
+        btn.addEventListener('touchend', cancelPress);
+        btn.addEventListener('touchcancel', cancelPress);
+
+        btn.onclick = function (e) {
+          if (isLongPress) {
+            e.preventDefault();
+            e.stopPropagation();
+            isLongPress = false;
+            return;
+          }
+          saveBuiltinPromptPref();
+          saveQuickSaveWidgetTogglePref();
+          closeBuiltinTestModal();
+          openTargetUrlWithSetting(getTargetUrlFn());
+        };
+      }
+
+      attachLongPressListener('builtin-test-direct-btn', 'direct', function () { return pendingBuiltinUrls.rawUrl; });
+      attachLongPressListener('builtin-open-proxy-btn', 'proxy', function () { return pendingBuiltinUrls.proxiedUrl; });
 
       $('tab-add-bm').onclick = function () { openAddModal('bookmark'); };
       $('tab-add-cat').onclick = function () { openAddModal('category'); };
@@ -5516,6 +5599,7 @@
         var url = $('bm-url').value.trim();
         var categoryId = $('bm-category').value;
         var subSectionId = $('bm-subsection') ? $('bm-subsection').value : 'user';
+        var launchPref = $('bm-launch-pref') ? $('bm-launch-pref').value : 'ask';
 
         if (!title || !categoryId) return null;
         if (bmType !== 'folder' && !url) return null;
@@ -5542,6 +5626,7 @@
             bm.categoryId = categoryId;
             bm.subSectionId = subSectionId || 'user';
             bm.icon = iconVal;
+            bm.launchPreference = launchPref;
             bm.disableQuickSaveWidget = !isQuickSaveEnabled;
             bm.subBookmarks = modalSubBookmarks;
           }
@@ -5555,6 +5640,7 @@
             title: title,
             url: bmType === 'folder' ? '' : url,
             icon: iconVal,
+            launchPreference: launchPref,
             builtIn: false,
             hidden: false,
             disableQuickSaveWidget: !isQuickSaveEnabled,
