@@ -1471,6 +1471,34 @@
       transition: width 0.5s ease-out;
     }
 
+    .bookmark-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bookmark-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 0%;
+      background: rgba(56, 189, 248, 0.25);
+      z-index: 0;
+      pointer-events: none;
+      transition: width 0s linear;
+    }
+
+    .bookmark-card.pressing::before {
+      width: 100%;
+      transition: width 0.5s ease-out;
+    }
+
+    .bookmark-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
     #search-newtab-btn {
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       max-width: 140px;
@@ -3635,8 +3663,10 @@
                 if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
                 if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
                 isCardLongPress = false;
+                bmCard.classList.add('pressing');
                 cardLongPressTimer = setTimeout(function () {
                   isCardLongPress = true;
+                  bmCard.classList.remove('pressing');
                   // Reset launch preference to "ask" on long press
                   try {
                     var data = loadBookmarkData();
@@ -3656,6 +3686,7 @@
                   clearTimeout(cardLongPressTimer);
                   cardLongPressTimer = null;
                 }
+                bmCard.classList.remove('pressing');
               }
 
               bmCard.addEventListener('mousedown', startCardPress);
@@ -3989,8 +4020,10 @@
                   if (e.target.closest('.bookmark-card-edit-btn')) return;
                   if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
                   isSbLongPress = false;
+                  sbCard.classList.add('pressing');
                   sbLongPressTimer = setTimeout(function () {
                     isSbLongPress = true;
+                    sbCard.classList.remove('pressing');
                     try {
                       var data = loadBookmarkData();
                       var targetBm = data.bookmarks.find(function (b) { return b.id === bm.id; });
@@ -4009,6 +4042,7 @@
                     clearTimeout(sbLongPressTimer);
                     sbLongPressTimer = null;
                   }
+                  sbCard.classList.remove('pressing');
                 }
 
                 sbCard.addEventListener('mousedown', startSbPress);
