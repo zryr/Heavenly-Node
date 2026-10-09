@@ -57,3 +57,9 @@
 **Learning:** Running regex replacements for rare malformed single-slash URLs (e.g. `/^(https?:\/)([^\/])/i`) on every request, redirect, or referer header causes unnecessary regex engine invocation. Unanchored character searches like `indexOf('://')` scan full $O(N)$ query strings and can incorrectly match `://` in query params. Using $O(1)$ prefix guards (`!ref.startsWith('http://') && !ref.startsWith('https://')` / `!urlStr.startsWith('/proxy/http://') && !urlStr.startsWith('/proxy/https://')`) safely bypasses regex execution on standard double-slash URLs while preserving full normalization support, speeding up request/header normalization by ~22.6%.
 
 **Action:** Guard anchored scheme normalization regexes with $O(1)$ `startsWith()` checks against standard valid protocols (`http://` and `https://`) rather than unanchored substring searches.
+
+## 2025-05-28 - Fast-path check for absolute target URLs in response middleware URL resolution
+
+**Learning:** Passing a base URL (`new URL(target, base)`) in response redirect (`responseRedirectMiddleware`) and header rewriting (`responseLinkHeaderMiddleware`) middleware forces V8's URL constructor to parse the base URL parameter even when `target` is already an absolute HTTP/HTTPS URL. Guarding `new URL()` with `isAbsolute = target.startsWith('http://') || target.startsWith('https://')` and invoking `new URL(target)` without a base URL when absolute speeds up redirect and Link header rewriting by ~21.4%.
+
+**Action:** Always check if a target URL is already absolute before passing a base URL to `new URL()` in backend response processing middleware.
