@@ -4420,7 +4420,16 @@
     var pendingBuiltinUrls = { rawUrl: '', proxiedUrl: '' };
     var pendingEverythingMoeNotice = { title: '', rawUrl: '', proxiedUrl: '' };
 
+    function restoreLastFocus() {
+      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        try {
+          lastFocusedElement.focus();
+        } catch (e) {}
+      }
+    }
+
     function openEverythingMoeNoticeModal(title, rawUrl, proxiedUrl) {
+      if (document.activeElement) lastFocusedElement = document.activeElement;
       pendingEverythingMoeNotice.title = title || 'EverythingMoe';
       pendingEverythingMoeNotice.rawUrl = rawUrl || '';
       pendingEverythingMoeNotice.proxiedUrl = proxiedUrl || '';
@@ -4430,21 +4439,32 @@
 
       var modal = $('everythingmoe-modal');
       if (modal) modal.classList.add('active');
+      setTimeout(function () {
+        var btn = $('close-everythingmoe-modal-btn');
+        if (btn) btn.focus();
+      }, 50);
     }
 
     function openSyshisNotesModal() {
+      if (document.activeElement) lastFocusedElement = document.activeElement;
       var modal = $('syshis-notes-modal');
       if (modal) modal.classList.add('active');
+      setTimeout(function () {
+        var btn = $('close-syshis-notes-modal-btn');
+        if (btn) btn.focus();
+      }, 50);
     }
 
     function closeSyshisNotesModal() {
       var modal = $('syshis-notes-modal');
       if (modal) modal.classList.remove('active');
+      restoreLastFocus();
     }
 
     function closeEverythingMoeNoticeModal() {
       var modal = $('everythingmoe-modal');
       if (modal) modal.classList.remove('active');
+      restoreLastFocus();
     }
 
     function getBrokenLinksMap() {
@@ -4480,6 +4500,7 @@
     }
 
     function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId) {
+      if (document.activeElement) lastFocusedElement = document.activeElement;
       rawUrl = rawUrl || '';
       pendingBuiltinUrls.rawUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) ? rawUrl : (rawUrl ? 'https://' + rawUrl : '');
       pendingBuiltinUrls.proxiedUrl = proxiedUrl || '';
@@ -4762,6 +4783,10 @@
 
       var modal = $('builtin-test-modal');
       if (modal) modal.classList.add('active');
+      setTimeout(function () {
+        var btn = $('close-builtin-modal-btn');
+        if (btn) btn.focus();
+      }, 50);
     }
 
     function saveQuickSaveWidgetTogglePref() {
@@ -4781,6 +4806,7 @@
     function closeBuiltinTestModal() {
       var modal = $('builtin-test-modal');
       if (modal) modal.classList.remove('active');
+      restoreLastFocus();
     }
 
     function saveBuiltinPromptPref() {
@@ -4845,6 +4871,7 @@
     }
 
     function openShareModal() {
+      if (document.activeElement) lastFocusedElement = document.activeElement;
       var modal = $('share-modal');
       if (!modal) return;
 
@@ -4928,12 +4955,17 @@
       switchShareTab('create');
       updateShareOutputCode();
       modal.classList.add('active');
+      setTimeout(function () {
+        var btn = $('close-share-modal-btn');
+        if (btn) btn.focus();
+      }, 50);
     }
 
     function closeShareModal() {
       var modal = $('share-modal');
       if (modal) modal.classList.remove('active');
       $('share-copy-status').textContent = '';
+      restoreLastFocus();
     }
 
     function switchShareTab(tab) {
