@@ -1468,7 +1468,7 @@
 
     .long-press-btn.pressing::before {
       width: 100%;
-      transition: width 0.5s ease-out;
+      transition: width 0.4s ease-out;
     }
 
     .bookmark-card {
@@ -1491,7 +1491,7 @@
 
     .bookmark-card.pressing::before {
       width: 100%;
-      transition: width 0.5s ease-out;
+      transition: width 0.4s ease-out;
     }
 
     .bookmark-card > * {
@@ -3657,13 +3657,17 @@
               bmCard.href = proxiedUrl;
 
               var cardLongPressTimer = null;
+              var cardAnimTimer = null;
               var isCardLongPress = false;
 
               function startCardPress(e) {
                 if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
                 if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
                 isCardLongPress = false;
-                bmCard.classList.add('pressing');
+                if (cardAnimTimer) clearTimeout(cardAnimTimer);
+                cardAnimTimer = setTimeout(function () {
+                  bmCard.classList.add('pressing');
+                }, 100);
                 cardLongPressTimer = setTimeout(function () {
                   isCardLongPress = true;
                   bmCard.classList.remove('pressing');
@@ -3682,6 +3686,10 @@
               }
 
               function cancelCardPress() {
+                if (cardAnimTimer) {
+                  clearTimeout(cardAnimTimer);
+                  cardAnimTimer = null;
+                }
                 if (cardLongPressTimer) {
                   clearTimeout(cardLongPressTimer);
                   cardLongPressTimer = null;
@@ -4014,13 +4022,17 @@
                 };
 
                 var sbLongPressTimer = null;
+                var sbAnimTimer = null;
                 var isSbLongPress = false;
 
                 function startSbPress(e) {
                   if (e.target.closest('.bookmark-card-edit-btn')) return;
                   if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
                   isSbLongPress = false;
-                  sbCard.classList.add('pressing');
+                  if (sbAnimTimer) clearTimeout(sbAnimTimer);
+                  sbAnimTimer = setTimeout(function () {
+                    sbCard.classList.add('pressing');
+                  }, 100);
                   sbLongPressTimer = setTimeout(function () {
                     isSbLongPress = true;
                     sbCard.classList.remove('pressing');
@@ -4038,6 +4050,10 @@
                 }
 
                 function cancelSbPress() {
+                  if (sbAnimTimer) {
+                    clearTimeout(sbAnimTimer);
+                    sbAnimTimer = null;
+                  }
                   if (sbLongPressTimer) {
                     clearTimeout(sbLongPressTimer);
                     sbLongPressTimer = null;
@@ -5693,12 +5709,16 @@
         if (!btn) return;
 
         var timer = null;
+        var animTimer = null;
         var isLongPress = false;
 
         function startPress(e) {
           if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
           isLongPress = false;
-          btn.classList.add('pressing');
+          if (animTimer) clearTimeout(animTimer);
+          animTimer = setTimeout(function () {
+            btn.classList.add('pressing');
+          }, 100);
           timer = setTimeout(function () {
             isLongPress = true;
             btn.classList.remove('pressing');
@@ -5715,6 +5735,10 @@
         }
 
         function cancelPress() {
+          if (animTimer) {
+            clearTimeout(animTimer);
+            animTimer = null;
+          }
           if (timer) {
             clearTimeout(timer);
             timer = null;

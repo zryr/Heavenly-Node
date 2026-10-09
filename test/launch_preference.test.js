@@ -26,6 +26,12 @@ describe('Launch Preference & Scoped Edit Modal Tests', function () {
     assert.ok(indexHtml.includes('bm.launchPreference === \'proxy\''), 'index.html should check bm.launchPreference === proxy');
   });
 
+  it('should use threshold timers before adding pressing class to prevent fill animation on quick clicks', function () {
+    assert.ok(indexHtml.includes('cardAnimTimer'), 'index.html should define cardAnimTimer threshold timer for main bookmark cards');
+    assert.ok(indexHtml.includes('sbAnimTimer'), 'index.html should define sbAnimTimer threshold timer for sub-bookmark cards');
+    assert.ok(indexHtml.includes('animTimer'), 'index.html should define animTimer threshold timer in bindLongPressToElement');
+  });
+
   it('should scope edit modal UI by hiding action tabs when editing an existing bookmark', function () {
     assert.ok(indexHtml.includes('id="add-modal-tabs-container"'), 'add-modal should wrap tab buttons in tabs container');
     assert.ok(indexHtml.includes('tabsContainer.style.display = editBmId ? \'none\' : \'flex\';'), 'openAddModal should hide tabs container in edit mode');
