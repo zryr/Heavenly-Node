@@ -269,7 +269,7 @@
       border: 1px solid rgba(56, 189, 248, 0.18);
       border-radius: 18px;
       padding: 18px;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -277,8 +277,8 @@
 
     .hero-card:hover {
       background: rgba(30, 41, 59, 0.65);
-      border-color: rgba(56, 189, 248, 0.4);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.45);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 20px rgba(56, 189, 248, 0.2);
       transform: translateY(-2px);
     }
 
@@ -495,17 +495,24 @@
     /* Modal Backdrop & Dialog Animations */
     @keyframes modalBackdropFadeIn {
       from { opacity: 0; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); }
-      to { opacity: 1; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+      to { opacity: 1; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
     }
 
-    @keyframes modalPopIn {
+    @keyframes springPopIn {
       0% {
         opacity: 0;
-        transform: scale(0.92) translateY(18px);
+        transform: scale(0.88) translateY(24px);
+        filter: blur(6px);
+      }
+      60% {
+        opacity: 1;
+        transform: scale(1.02) translateY(-4px);
+        filter: blur(0px);
       }
       100% {
         opacity: 1;
         transform: scale(1) translateY(0);
+        filter: blur(0px);
       }
     }
 
@@ -518,13 +525,13 @@
       height: 100dvh;
       max-height: 100dvh;
       z-index: 3000;
-      background: rgba(3, 7, 18, 0.82);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       align-items: center;
       justify-content: center;
       padding: clamp(12px, 3vh, 24px) 16px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       box-sizing: border-box;
       margin: 0;
       overflow-y: auto;
@@ -548,7 +555,7 @@
       box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.08) inset,
         0 30px 70px -10px rgba(0, 0, 0, 0.85),
-        0 0 45px -5px rgba(56, 189, 248, 0.3);
+        0 0 50px -2px rgba(56, 189, 248, 0.4);
       padding: clamp(20px, 4vh, 32px) clamp(16px, 4vw, 28px);
       width: 100%;
       max-width: 520px;
@@ -564,7 +571,7 @@
       scrollbar-width: none;
       -ms-overflow-style: none;
       transform-origin: center center;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .modal-card::-webkit-scrollbar {
@@ -574,17 +581,17 @@
     }
 
     .modal-backdrop.active .modal-card {
-      animation: modalPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: springPopIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
     .modal-card::before {
       content: "";
       position: absolute;
-      top: -60px;
-      right: -60px;
-      width: 180px;
-      height: 180px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, rgba(129, 140, 248, 0.08) 50%, transparent 80%);
+      top: -80px;
+      right: -80px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(129, 140, 248, 0.12) 50%, transparent 80%);
       border-radius: 50%;
       pointer-events: none;
     }
