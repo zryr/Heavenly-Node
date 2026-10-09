@@ -37,14 +37,13 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
       });
   });
 
-  it('should contain HTML Viewer navigation buttons in public/index.html and public/settings.html', function() {
+  it('should contain HTML Viewer navigation button in public/index.html and not in settings.html', function() {
     var indexHtml = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
     var settingsHtml = fs.readFileSync(path.join(__dirname, '../public/settings.html'), 'utf8');
 
     assert.ok(indexHtml.includes('href="html-viewer.html"'));
     assert.ok(indexHtml.includes('HTML Viewer'));
 
-    assert.ok(settingsHtml.includes('href="html-viewer.html"'));
-    assert.ok(settingsHtml.includes('HTML Viewer'));
+    assert.strictEqual(settingsHtml.includes('href="html-viewer.html"'), false);
   });
 });
