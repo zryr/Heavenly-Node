@@ -3628,8 +3628,51 @@
               var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + rawTargetUrl;
               bmCard.href = proxiedUrl;
 
+              var cardLongPressTimer = null;
+              var isCardLongPress = false;
+
+              function startCardPress(e) {
+                if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
+                if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
+                isCardLongPress = false;
+                cardLongPressTimer = setTimeout(function () {
+                  isCardLongPress = true;
+                  // Reset launch preference to "ask" on long press
+                  try {
+                    var data = loadBookmarkData();
+                    var targetBm = data.bookmarks.find(function (b) { return b.id === bm.id; });
+                    if (targetBm) {
+                      targetBm.launchPreference = 'ask';
+                      saveBookmarkData(data);
+                      bm.launchPreference = 'ask';
+                    }
+                  } catch (err) {}
+                  openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, false, bm.id);
+                }, 500);
+              }
+
+              function cancelCardPress() {
+                if (cardLongPressTimer) {
+                  clearTimeout(cardLongPressTimer);
+                  cardLongPressTimer = null;
+                }
+              }
+
+              bmCard.addEventListener('mousedown', startCardPress);
+              bmCard.addEventListener('touchstart', startCardPress, { passive: true });
+              bmCard.addEventListener('mouseup', cancelCardPress);
+              bmCard.addEventListener('mouseleave', cancelCardPress);
+              bmCard.addEventListener('touchend', cancelCardPress);
+              bmCard.addEventListener('touchcancel', cancelCardPress);
+
               bmCard.onclick = function (e) {
                 if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
+                if (isCardLongPress) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  isCardLongPress = false;
+                  return;
+                }
 
                 var settings = {};
                 try {
@@ -3939,7 +3982,50 @@
                   openSubBmModal(bm.id, sbIdx, sb);
                 };
 
+                var sbLongPressTimer = null;
+                var isSbLongPress = false;
+
+                function startSbPress(e) {
+                  if (e.target.closest('.bookmark-card-edit-btn')) return;
+                  if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
+                  isSbLongPress = false;
+                  sbLongPressTimer = setTimeout(function () {
+                    isSbLongPress = true;
+                    try {
+                      var data = loadBookmarkData();
+                      var targetBm = data.bookmarks.find(function (b) { return b.id === bm.id; });
+                      if (targetBm) {
+                        targetBm.launchPreference = 'ask';
+                        saveBookmarkData(data);
+                        bm.launchPreference = 'ask';
+                      }
+                    } catch (err) {}
+                    openBuiltinTestModal(sb.title, sb.url, sbProxiedUrl, null, false, bm.id);
+                  }, 500);
+                }
+
+                function cancelSbPress() {
+                  if (sbLongPressTimer) {
+                    clearTimeout(sbLongPressTimer);
+                    sbLongPressTimer = null;
+                  }
+                }
+
+                sbCard.addEventListener('mousedown', startSbPress);
+                sbCard.addEventListener('touchstart', startSbPress, { passive: true });
+                sbCard.addEventListener('mouseup', cancelSbPress);
+                sbCard.addEventListener('mouseleave', cancelSbPress);
+                sbCard.addEventListener('touchend', cancelSbPress);
+                sbCard.addEventListener('touchcancel', cancelSbPress);
+
                 sbCard.onclick = function (e) {
+                  if (isSbLongPress) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    isSbLongPress = false;
+                    return;
+                  }
+
                   var settings = {};
                   try {
                     settings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
