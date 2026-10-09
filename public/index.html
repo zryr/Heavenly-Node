@@ -1853,7 +1853,7 @@
       </div>
 
       <div class="footer">
-        <p>Originally created by <a href="http://www.nfriedly.com/" target="_blank" rel="noopener">Nathan Friedly</a> &bull; Improved by <strong>Syshi</strong></p>
+        <p>Originally created by <a href="http://www.nfriedly.com/" target="_blank" rel="noopener">Nathan Friedly</a> &bull; Improved by <strong>Syshi</strong> &bull; Credits to <a href="https://0800webdev.github.io/UBGdir/" target="_blank" rel="noopener">UBGDir</a></p>
       </div>
 
     </div>
@@ -2324,6 +2324,92 @@
               <span>Open AniList</span>
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OP Websites Tips / Notes Modal -->
+  <div id="op-websites-notes-modal" class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="op-websites-notes-modal-title" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-icon-badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(129, 140, 248, 0.25) 100%); border-color: rgba(56, 189, 248, 0.4);">
+            <svg style="width:20px;height:20px;fill:none;stroke:#38bdf8;stroke-width:2.2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </div>
+          <span class="modal-title" id="op-websites-notes-modal-title">OP Websites Notes</span>
+        </div>
+        <button id="close-op-websites-notes-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;">
+          <span style="color: #38bdf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
+          <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
+            Test sites directly first before using proxy mode.
+          </div>
+        </div>
+
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;">
+          <span style="color: #38bdf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
+          <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
+            Device differences matter: some sites only load on Chrome (not Safari); Spotify works best on PC; Spotify/TikTok often require the libcurl proxy option in Aether settings.
+          </div>
+        </div>
+
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;">
+          <span style="color: #38bdf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
+          <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
+            Proxy browsers can also unblock streaming sites with trial and error (e.g., <a href="https://aniclover.cc/" target="_blank" rel="noopener" style="color:#38bdf8;text-decoration:underline;">aniclover.cc</a> and <a href="https://reanime.to" target="_blank" rel="noopener" style="color:#38bdf8;text-decoration:underline;">https://reanime.to</a> work on Aether proxy). If buttons do not click, long-press and select 'Open in New Tab'.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Distrosea Info Modal -->
+  <div id="distrosea-info-modal" class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="distrosea-info-modal-title" style="max-width: 480px;">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-icon-badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%); border-color: rgba(56, 189, 248, 0.4);">
+            <svg style="width:20px;height:20px;fill:none;stroke:#38bdf8;stroke-width:2.2;" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          </div>
+          <span class="modal-title" id="distrosea-info-modal-title">Distrosea</span>
+        </div>
+        <button id="close-distrosea-info-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; gap: 8px; align-items: flex-start; font-size: 0.88rem; color: #e2e8f0; line-height: 1.45;">
+            <span style="color: #38bdf8; font-weight: 700;">•</span>
+            <span>Requires a free account and a mouse for proper controls.</span>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: flex-start; font-size: 0.88rem; color: #e2e8f0; line-height: 1.45;">
+            <span style="color: #38bdf8; font-weight: 700;">•</span>
+            <span>Enable internet/networking in session settings before launching.</span>
+          </div>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 0.85rem; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em;">Recommended Distros:</div>
+          <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.45;">
+            <strong style="color: #7dd3fc;">Best for Games &amp; Apps:</strong> <strong>Nobara Linux</strong> (gaming-ready) and <strong>Linux Mint</strong> / <strong>Zorin OS</strong> (familiar Windows-like desktop with 1-click app stores).
+          </div>
+          <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.45;">
+            <strong style="color: #7dd3fc;">Best for Weak/Laggy Devices:</strong> <strong>Lubuntu</strong> (lightweight and fastest in-browser).
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 4px;">
+          <button id="distrosea-direct-btn" type="button" class="modal-submit-btn" style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; margin-top: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>Test Direct Site</span>
+          </button>
+          <button id="distrosea-proxy-btn" type="button" class="modal-submit-btn" style="flex: 1; margin-top: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Open with Proxy</span>
+          </button>
         </div>
       </div>
     </div>
@@ -2870,11 +2956,17 @@
           var subSecModal = $('subsec-modal');
           var subSecDelModal = $('subsec-delete-modal');
           var syshiModal = $('syshis-notes-modal');
+          var opNotesModal = $('op-websites-notes-modal');
+          var distroseaModal = $('distrosea-info-modal');
           var builtinModal = $('builtin-test-modal');
           var emoeModal = $('everythingmoe-modal');
           var reorderBar = $('reorder-bar');
           var bmSearch = $('bm-universal-search');
-          if (syshiModal && syshiModal.classList.contains('active')) {
+          if (opNotesModal && opNotesModal.classList.contains('active')) {
+            closeOpWebsitesNotesModal();
+          } else if (distroseaModal && distroseaModal.classList.contains('active')) {
+            closeDistroseaInfoModal();
+          } else if (syshiModal && syshiModal.classList.contains('active')) {
             closeSyshisNotesModal();
           } else if (emoeModal && emoeModal.classList.contains('active')) {
             closeEverythingMoeNoticeModal();
@@ -2939,7 +3031,8 @@
       categories: [
         { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "naenae", title: "Nae-Nae", builtIn: true, defaultCollapsed: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
         { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
-        { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] }
+        { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
+        { id: "cat_op_websites", title: "OP Websites", side: "bottom", order: 1, builtIn: true, hidden: false, subSections: [{ id: "browser_games", title: "Browser/Games", builtIn: true }, { id: "docs_games", title: "Docs/Games", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: false }] }
       ],
       bookmarks: [
         { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
@@ -3013,7 +3106,108 @@
             { id: "sub_bloxcraft_5kh0", title: "Bloxcraft (5kh0)", url: "https://5kh0.github.io", icon: "" },
             { id: "sub_bloxcraft_fastly", title: "Bloxcraft (Fastly)", url: "https://bloxcraftubg.freetls.fastly.net/games/", icon: "https://www.google.com/s2/favicons?domain=bloxcraftubg.freetls.fastly.net&sz=64" }
           ]
-        }
+        },
+        {
+          id: "bm_aether",
+          categoryId: "cat_op_websites",
+          subSectionId: "browser_games",
+          title: "Aether",
+          url: "https://actstudy.s3.us-east-1.amazonaws.com/index.html",
+          type: "folder_bookmark",
+          icon: "https://www.google.com/s2/favicons?domain=actstudy.s3.us-east-1.amazonaws.com&sz=64",
+          builtIn: true,
+          hidden: false,
+          order: 0,
+          subBookmarks: [
+            { id: "sub_aether_1", title: "Dogestudy Mirror", url: "https://dogestudy.aether.samirchand.com.np/", icon: "https://www.google.com/s2/favicons?domain=dogestudy.aether.samirchand.com.np&sz=64" },
+            { id: "sub_aether_2", title: "AetherK12 S3 Mirror 1", url: "https://aetherk12.s3.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=aetherk12.s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_3", title: "AetherK12 S3 Mirror 2", url: "https://s3.amazonaws.com/aetherk12/index.html", icon: "https://www.google.com/s2/favicons?domain=s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_4", title: "AdvancedAlg2 S3 Mirror 1", url: "https://advancedalg2.s3.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=advancedalg2.s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_5", title: "AdvancedAlg2 S3 Mirror 2", url: "https://s3.amazonaws.com/advancedalg2/index.html", icon: "https://www.google.com/s2/favicons?domain=s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_6", title: "SchoolCDN S3 Mirror", url: "https://schoolcdn.s3.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=schoolcdn.s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_7", title: "AetherK12 US-East-1 Mirror", url: "https://s3.us-east-1.amazonaws.com/aetherk12/index.html", icon: "https://www.google.com/s2/favicons?domain=s3.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_8", title: "AdvancedAlg2 US-East-1 Mirror", url: "https://advancedalg2.s3.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=advancedalg2.s3.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_9", title: "SchoolCDN Dualstack Mirror", url: "https://schoolcdn.s3.dualstack.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=schoolcdn.s3.dualstack.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_10", title: "SchoolCDN FIPS Mirror", url: "https://schoolcdn.s3-fips.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=schoolcdn.s3-fips.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_11", title: "ACTStudy S3 Mirror 1", url: "https://actstudy.s3.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=actstudy.s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_12", title: "ACTStudy S3 Mirror 2", url: "https://s3.amazonaws.com/actstudy/index.html", icon: "https://www.google.com/s2/favicons?domain=s3.amazonaws.com&sz=64" },
+            { id: "sub_aether_13", title: "ACTStudy Dualstack Mirror", url: "https://actstudy.s3.dualstack.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=actstudy.s3.dualstack.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_14", title: "ACTStudy US-East-1 Mirror", url: "https://s3.us-east-1.amazonaws.com/actstudy/index.html", icon: "https://www.google.com/s2/favicons?domain=s3.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_15", title: "ACTStudy FIPS Mirror 1", url: "https://actstudy.s3-fips.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=actstudy.s3-fips.us-east-1.amazonaws.com&sz=64" },
+            { id: "sub_aether_16", title: "ACTStudy FIPS Mirror 2", url: "https://actstudy.s3-fips.dualstack.us-east-1.amazonaws.com/index.html", icon: "https://www.google.com/s2/favicons?domain=actstudy.s3-fips.dualstack.us-east-1.amazonaws.com&sz=64" }
+          ]
+        },
+        { id: "bm_korona", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Korona", url: "https://korona.lat/dashboard", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=korona.lat&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_nexus", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Nexus", url: "https://car-meow.github.io/toothbrush/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=car-meow.github.io&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+        { id: "bm_flux", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Flux", url: "https://web.flux.focuznow.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=web.flux.focuznow.com&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_opium", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Opium", url: "https://storage.googleapis.com/opiumbest/index.html", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=storage.googleapis.com&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
+        {
+          id: "bm_polaris",
+          categoryId: "cat_op_websites",
+          subSectionId: "browser_games",
+          title: "Polaris",
+          url: "https://mathplayground.explosionlearning.org/",
+          type: "folder_bookmark",
+          icon: "https://www.google.com/s2/favicons?domain=mathplayground.explosionlearning.org&sz=64",
+          builtIn: true,
+          hidden: false,
+          order: 5,
+          subBookmarks: [
+            { id: "sub_polaris_1", title: "Goontopia Mirror", url: "https://goontopia.me/", icon: "https://www.google.com/s2/favicons?domain=goontopia.me&sz=64" },
+            { id: "sub_polaris_2", title: "Polara Render 1", url: "https://polara-1.onrender.com/", icon: "https://www.google.com/s2/favicons?domain=polara-1.onrender.com&sz=64" },
+            { id: "sub_polaris_3", title: "Polaris Foff Mirror", url: "https://polarisisthebest.foff.ch/", icon: "https://www.google.com/s2/favicons?domain=polarisisthebest.foff.ch&sz=64" },
+            { id: "sub_polaris_4", title: "Puppypoop Flort Mirror", url: "https://puppypoop.flort.com.tr/", icon: "https://www.google.com/s2/favicons?domain=puppypoop.flort.com.tr&sz=64" },
+            { id: "sub_polaris_5", title: "Polara Render 2", url: "https://polara-i1r7.onrender.com/", icon: "https://www.google.com/s2/favicons?domain=polara-i1r7.onrender.com&sz=64" },
+            { id: "sub_polaris_6", title: "Downing DNS Mirror", url: "https://poopoo.downingdns.xyz/", icon: "https://www.google.com/s2/favicons?domain=poopoo.downingdns.xyz&sz=64" },
+            { id: "sub_polaris_7", title: "Math Skills Algebra Mirror", url: "https://mathskillsalgebra.pepikutan.net/", icon: "https://www.google.com/s2/favicons?domain=mathskillsalgebra.pepikutan.net&sz=64" },
+            { id: "sub_polaris_8", title: "Lafairs Mirror", url: "https://lafairs.sh8.no/", icon: "https://www.google.com/s2/favicons?domain=lafairs.sh8.no&sz=64" }
+          ]
+        },
+        {
+          id: "bm_arctic",
+          categoryId: "cat_op_websites",
+          subSectionId: "browser_games",
+          title: "Arctic",
+          url: "https://storage.googleapis.com/math-homework/index.html",
+          type: "folder_bookmark",
+          icon: "https://www.google.com/s2/favicons?domain=storage.googleapis.com&sz=64",
+          builtIn: true,
+          hidden: false,
+          order: 6,
+          subBookmarks: [
+            { id: "sub_arctic_1", title: "Arctic Games GCS", url: "https://storage.googleapis.com/arctic-games/arctic.html", icon: "https://www.google.com/s2/favicons?domain=storage.googleapis.com&sz=64" },
+            { id: "sub_arctic_2", title: "Padlet Mirror", url: "https://uploads-usc1.padletcdn.com/4865083536/4e7c634432b37bba781530a0802763b7/arctic.html#/home", icon: "https://www.google.com/s2/favicons?domain=padletcdn.com&sz=64" },
+            { id: "sub_arctic_3", title: "Pizza.com Mirror", url: "https://pizza.com/?s=%3Cimg%20src%20onerror=h=eval,h(atob(%27ZmV0Y2goImh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9naC9jcnNocWQvc3R1cmR5LWxhbXBASEVBRC9hcmN0aWMuc3ZnIikudGhlbihmdW5jdGlvbih0KXtyZXR1cm4gdC50ZXh0KCl9KS50aGVuKGZ1bmN0aW9uKHQpe2RvY3VtZW50LndyaXRlKHQpfSk7%27))%3E", icon: "https://www.google.com/s2/favicons?domain=pizza.com&sz=64" },
+            { id: "sub_arctic_4", title: "Icon Horse Mirror", url: "https://icon.horse/icon/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=icon.horse&sz=64" },
+            { id: "sub_arctic_5", title: "FaviconAPI Mirror", url: "https://faviconapi.com/vemetric/128/png/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=faviconapi.com&sz=64" },
+            { id: "sub_arctic_6", title: "GetFavicon Mirror", url: "https://getfavicon.dev/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=getfavicon.dev&sz=64" },
+            { id: "sub_arctic_7", title: "Favicon IM Mirror", url: "https://a.favicon.im/xn--kwhenihadalife-utl6u222y.neocities.org?larger=true", icon: "https://www.google.com/s2/favicons?domain=a.favicon.im&sz=64" },
+            { id: "sub_arctic_8", title: "Favicon SO Mirror", url: "https://favicon.so/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=favicon.so&sz=64" },
+            { id: "sub_arctic_9", title: "KeeWeb Favicon Mirror", url: "https://services.keeweb.info/favicon/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=services.keeweb.info&sz=64" },
+            { id: "sub_arctic_10", title: "Vemetric Favicon Mirror", url: "https://favicon.vemetric.com/xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=favicon.vemetric.com&sz=64" },
+            { id: "sub_arctic_11", title: "Imgsrc Pub Mirror", url: "https://imgsrc.pub/favicon?url=https://xn--kwhenihadalife-utl6u222y.neocities.org", icon: "https://www.google.com/s2/favicons?domain=imgsrc.pub&sz=64" }
+          ]
+        },
+        { id: "bm_pgis2", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "PGIS 2", url: "https://pgis.x10.mx/index.html", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=pgis.x10.mx&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
+        { id: "bm_ubgdir", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "UBGDir", url: "https://0800webdev.github.io/UBGdir/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=0800webdev.github.io&sz=64", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_the_wagon", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "The Wagon", url: "https://the-wagonization.github.io/The-Wagon-Site/Pages/Home.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=the-wagonization.github.io&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        {
+          id: "bm_ultimate_doc_of_docs",
+          categoryId: "cat_op_websites",
+          subSectionId: "docs_games",
+          title: "Ultimate Doc Of Docs",
+          url: "https://0800webdev.github.io/The-Ultimate-Doc-Of-Docs/",
+          type: "folder_bookmark",
+          icon: "https://www.google.com/s2/favicons?domain=0800webdev.github.io&sz=64",
+          builtIn: true,
+          hidden: false,
+          order: 2,
+          subBookmarks: [
+            { id: "sub_udod_google_doc", title: "Google Doc Mirror", url: "https://docs.google.com/document/d/1foYnf3pqg00PbEMGnOKmdC0fJsUE_w_lmUZjGTHJtRo/", icon: "https://www.google.com/s2/favicons?domain=docs.google.com&sz=64" }
+          ]
+        },
+        { id: "bm_project_19", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project 19", url: "https://docs.google.com/document/d/1rlluLiVQc4DGr-kgcoLoF0qb4q1ooTRLj6RPiUxAZCo/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=docs.google.com&sz=64", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 3, subBookmarks: [] },
+        { id: "bm_project_idk", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project IDK", url: "https://docs.google.com/document/d/1BDRltDqQLuyITBddWOGREhmGnNK8zR-kZ2-mHkkQ9rw/edit?tab=t.0", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=docs.google.com&sz=64", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 4, subBookmarks: [] }
       ]
     };
 
@@ -3643,6 +3837,37 @@
             openSyshisNotesModal();
           };
           titleGroup.appendChild(syshiBtn);
+        } else if (cat.id === 'cat_op_websites') {
+          var opNotesBtn = document.createElement('button');
+          opNotesBtn.type = 'button';
+          opNotesBtn.className = 'syshi-notes-btn';
+          opNotesBtn.title = "OP Websites Advice & Tips";
+          opNotesBtn.setAttribute('aria-label', "Open OP Websites Advice & Tips");
+          opNotesBtn.style.cssText = 'background: rgba(56, 189, 248, 0.18); border: 1px solid rgba(56, 189, 248, 0.45); color: #38bdf8; border-radius: 8px; width: 26px; height: 26px; padding: 0; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; transition: all 0.2s ease; flex-shrink: 0;';
+          opNotesBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
+          opNotesBtn.onmouseover = function () { opNotesBtn.style.background = 'rgba(56, 189, 248, 0.3)'; opNotesBtn.style.color = '#ffffff'; };
+          opNotesBtn.onmouseout = function () { opNotesBtn.style.background = 'rgba(56, 189, 248, 0.18)'; opNotesBtn.style.color = '#38bdf8'; };
+          opNotesBtn.onclick = function (e) {
+            e.stopPropagation();
+            openOpWebsitesNotesModal();
+          };
+
+          var distroseaBtn = document.createElement('button');
+          distroseaBtn.type = 'button';
+          distroseaBtn.className = 'distrosea-btn';
+          distroseaBtn.title = "Distrosea Info & Quick Launch";
+          distroseaBtn.setAttribute('aria-label', "Open Distrosea Info & Quick Launch");
+          distroseaBtn.style.cssText = 'background: rgba(56, 189, 248, 0.18); border: 1px solid rgba(56, 189, 248, 0.45); color: #7dd3fc; border-radius: 8px; padding: 0 8px; height: 26px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; transition: all 0.2s ease; flex-shrink: 0;';
+          distroseaBtn.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.2;" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg><span>Distrosea</span>';
+          distroseaBtn.onmouseover = function () { distroseaBtn.style.background = 'rgba(56, 189, 248, 0.3)'; distroseaBtn.style.color = '#ffffff'; };
+          distroseaBtn.onmouseout = function () { distroseaBtn.style.background = 'rgba(56, 189, 248, 0.18)'; distroseaBtn.style.color = '#7dd3fc'; };
+          distroseaBtn.onclick = function (e) {
+            e.stopPropagation();
+            openDistroseaInfoModal();
+          };
+
+          titleGroup.appendChild(opNotesBtn);
+          titleGroup.appendChild(distroseaBtn);
         }
 
         var addBmBtn = document.createElement('button');
@@ -4897,6 +5122,38 @@
       restoreLastFocus();
     }
 
+    function openOpWebsitesNotesModal() {
+      if (document.activeElement) lastFocusedElement = document.activeElement;
+      var modal = $('op-websites-notes-modal');
+      if (modal) modal.classList.add('active');
+      setTimeout(function () {
+        var btn = $('close-op-websites-notes-modal-btn');
+        if (btn) btn.focus();
+      }, 50);
+    }
+
+    function closeOpWebsitesNotesModal() {
+      var modal = $('op-websites-notes-modal');
+      if (modal) modal.classList.remove('active');
+      restoreLastFocus();
+    }
+
+    function openDistroseaInfoModal() {
+      if (document.activeElement) lastFocusedElement = document.activeElement;
+      var modal = $('distrosea-info-modal');
+      if (modal) modal.classList.add('active');
+      setTimeout(function () {
+        var btn = $('close-distrosea-info-modal-btn');
+        if (btn) btn.focus();
+      }, 50);
+    }
+
+    function closeDistroseaInfoModal() {
+      var modal = $('distrosea-info-modal');
+      if (modal) modal.classList.remove('active');
+      restoreLastFocus();
+    }
+
     function closeEverythingMoeNoticeModal() {
       var modal = $('everythingmoe-modal');
       if (modal) modal.classList.remove('active');
@@ -5896,6 +6153,29 @@
           closeSyshisNotesModal();
           var proxiedUrl = location.protocol + '//' + location.host + '/proxy/https://anilist.co/';
           openBuiltinTestModal('AniList', 'https://anilist.co/', proxiedUrl, null, false, null);
+        };
+      }
+
+      var closeOpNotesBtn = $('close-op-websites-notes-modal-btn');
+      if (closeOpNotesBtn) closeOpNotesBtn.onclick = closeOpWebsitesNotesModal;
+
+      var closeDistroseaBtn = $('close-distrosea-info-modal-btn');
+      if (closeDistroseaBtn) closeDistroseaBtn.onclick = closeDistroseaInfoModal;
+
+      var distroseaDirectBtn = $('distrosea-direct-btn');
+      if (distroseaDirectBtn) {
+        distroseaDirectBtn.onclick = function () {
+          closeDistroseaInfoModal();
+          openTargetUrlWithSetting('https://distrosea.com/');
+        };
+      }
+
+      var distroseaProxyBtn = $('distrosea-proxy-btn');
+      if (distroseaProxyBtn) {
+        distroseaProxyBtn.onclick = function () {
+          closeDistroseaInfoModal();
+          var proxiedUrl = location.protocol + '//' + location.host + '/proxy/https://distrosea.com/';
+          openTargetUrlWithSetting(proxiedUrl);
         };
       }
 
