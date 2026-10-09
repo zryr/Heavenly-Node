@@ -1358,7 +1358,6 @@
         { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anisnatch.top&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-        { id: "bm_isshonime", categoryId: "cat_anime", title: "Isshonime", url: "https://www.isshonime.com/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=isshonime.com&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [
           { id: "sub_movish_latestmovies_anime", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }
@@ -1571,7 +1570,7 @@
         // Migration: Re-sort built-in anime bookmarks so FMHY: Anime is under EverythingMoe and above AniSnatch
         var animeBms = data.bookmarks.filter(function (b) { return b.categoryId === 'cat_anime' && b.builtIn; });
         if (animeBms.length > 0) {
-          var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_isshonime", "bm_anidb"];
+          var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_anidb"];
           desiredAnimeOrder.forEach(function (id, index) {
             var found = animeBms.find(function (b) { return b.id === id; });
             if (found && found.order !== index) {
