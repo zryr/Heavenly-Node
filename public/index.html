@@ -392,7 +392,7 @@
         0 0 0 1px rgba(255, 255, 255, 0.08) inset,
         0 25px 60px -15px rgba(0, 0, 0, 0.8),
         0 0 50px -10px rgba(56, 189, 248, 0.3);
-      padding: 44px 36px 36px 36px;
+      padding: 48px 40px 40px 40px;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -1002,6 +1002,16 @@
       grid-template-columns: repeat(2, 4px);
       grid-template-rows: repeat(2, 4px);
       gap: 3px;
+    }
+
+    .side-column .distrosea-btn span {
+      display: none !important;
+    }
+
+    .side-column .distrosea-btn {
+      padding: 0 6px !important;
+      width: 26px !important;
+      justify-content: center !important;
     }
 
     .dot-node {
@@ -1758,7 +1768,7 @@
     <div class="container">
 
       <!-- Universal Bookmark Search -->
-      <div style="margin-bottom: 24px;">
+      <div style="margin-bottom: 28px;">
         <div style="position: relative; width: 100%; display: flex; align-items: center;">
           <svg style="position: absolute; left: 14px; width: 16px; height: 16px; fill: none; stroke: #94a3b8; stroke-width: 2; pointer-events: none;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <input type="text" id="bm-universal-search" placeholder="Search bookmarks, folders & categories..." autocomplete="off" aria-label="Search bookmarks and folders" style="padding-left: 40px; padding-right: 44px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); font-size: 0.9rem;" />
@@ -1766,7 +1776,7 @@
         </div>
       </div>
 
-      <div class="brand-header">
+      <div class="brand-header" style="margin-bottom: 32px;">
         <div class="brand-title-group">
           <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img">
           <h1>Heavenly</h1>
@@ -1777,7 +1787,7 @@
       <div id="error"></div>
 
       <!-- Collapsible Quick Settings Pill Tray -->
-      <div id="quick-settings-section" style="margin-bottom: 16px;">
+      <div id="quick-settings-section" style="margin-bottom: 20px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
           <div style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 700; color: #7dd3fc; text-transform: uppercase; letter-spacing: 0.05em;">
             <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
@@ -1804,7 +1814,7 @@
         </div>
       </div>
 
-      <form action="no-js" method="get" id="unblocker-form" class="search-form">
+      <form action="no-js" method="get" id="unblocker-form" class="search-form" style="margin-bottom: 24px;">
         <div class="input-wrapper">
           <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autocomplete="off" aria-label="URL or search query" aria-expanded="false" aria-controls="history-dropdown" style="padding-right: 44px;" />
           <button type="button" id="url-clear-btn" class="url-clear-btn" aria-label="Clear search input" title="Clear input">✕</button>
@@ -1814,7 +1824,7 @@
         <div id="history-dropdown" class="history-dropdown"></div>
       </form>
 
-      <div class="header-actions-group" style="margin-top: 4px; margin-bottom: 24px;">
+      <div class="header-actions-group" style="margin-top: 8px; margin-bottom: 28px;">
         <a href="html-viewer.html" id="open-html-viewer-btn" class="settings-btn" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.18) 0%, rgba(59, 130, 246, 0.18) 100%); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" aria-label="HTML Viewer & Code Editor page">
           <svg style="width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
           <span>HTML Viewer</span>
@@ -1839,7 +1849,7 @@
         </script>
       </div>
 
-      <div class="info-section">
+      <div class="info-section" style="padding-top: 24px; margin-top: 24px;">
         <h3>About Heavenly</h3>
         <p>Heavenly is a fast, streamlined web proxy built to provide smooth web browsing and uninterrupted data streaming.</p>
         <p>It processes web responses dynamically in real time without buffering whole pages, preserving original relative URLs and site speed.</p>
@@ -2288,10 +2298,10 @@
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="syshis-notes-modal-title" style="max-width: 480px;">
       <div class="modal-header">
         <div class="modal-header-left">
-          <div class="modal-icon-badge" style="background: linear-gradient(135deg, rgba(129, 140, 248, 0.25) 0%, rgba(99, 102, 241, 0.25) 100%); border-color: rgba(129, 140, 248, 0.4);">
-            <svg style="width:20px;height:20px;fill:none;stroke:#818cf8;stroke-width:2.2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <div class="modal-icon-badge" style="background: linear-gradient(135deg, rgba(192, 132, 252, 0.25) 0%, rgba(168, 85, 247, 0.25) 100%); border-color: rgba(192, 132, 252, 0.4);">
+            <svg style="width:20px;height:20px;fill:none;stroke:#c084fc;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
           </div>
-          <span class="modal-title" id="syshis-notes-modal-title">Syshi's Notes</span>
+          <span class="modal-title" id="syshis-notes-modal-title">Syshi’s Notes: Anime</span>
         </div>
         <button id="close-syshis-notes-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
@@ -2334,10 +2344,10 @@
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="op-websites-notes-modal-title" style="max-width: 500px;">
       <div class="modal-header">
         <div class="modal-header-left">
-          <div class="modal-icon-badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(129, 140, 248, 0.25) 100%); border-color: rgba(56, 189, 248, 0.4);">
-            <svg style="width:20px;height:20px;fill:none;stroke:#38bdf8;stroke-width:2.2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <div class="modal-icon-badge" style="background: linear-gradient(135deg, rgba(192, 132, 252, 0.25) 0%, rgba(168, 85, 247, 0.25) 100%); border-color: rgba(192, 132, 252, 0.4);">
+            <svg style="width:20px;height:20px;fill:none;stroke:#c084fc;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
           </div>
-          <span class="modal-title" id="op-websites-notes-modal-title">OP Websites Notes</span>
+          <span class="modal-title" id="op-websites-notes-modal-title">Syshi’s Notes: OP Websites</span>
         </div>
         <button id="close-op-websites-notes-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
@@ -2352,7 +2362,7 @@
         <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;">
           <span style="color: #38bdf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
           <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
-            Device differences matter: some sites only load on Chrome (not Safari); Spotify works best on PC; Spotify/TikTok often require the libcurl proxy option in Aether settings.
+            Device differences matter: some sites only load on Chrome (not Safari); Spotify works best on PC; Spotify/TikTok often require the libcurl proxy option in Aether settings. The point is you have to play around with the sites to find what works best on your specific device.
           </div>
         </div>
 
@@ -3032,7 +3042,7 @@
         { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "naenae", title: "Nae-Nae", builtIn: true, defaultCollapsed: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
         { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
         { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
-        { id: "cat_op_websites", title: "OP Websites", side: "bottom", order: 1, builtIn: true, hidden: false, subSections: [{ id: "browser_games", title: "Browser/Games", builtIn: true }, { id: "docs_games", title: "Docs/Games", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: false }] }
+        { id: "cat_op_websites", title: "OP Websites", side: "bottom", order: 1, builtIn: true, hidden: false, subSections: [{ id: "browser_games", title: "Browser/Games", icon: "globe", builtIn: true }, { id: "docs_games", title: "Docs/Games", icon: "book", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: false }] }
       ],
       bookmarks: [
         { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
@@ -3114,7 +3124,7 @@
           title: "Aether",
           url: "https://actstudy.s3.us-east-1.amazonaws.com/index.html",
           type: "folder_bookmark",
-          icon: "https://www.google.com/s2/favicons?domain=actstudy.s3.us-east-1.amazonaws.com&sz=64",
+          icon: "/proxy/https://actstudy.s3.us-east-1.amazonaws.com/aether.svg",
           builtIn: true,
           hidden: false,
           order: 0,
@@ -3139,7 +3149,7 @@
         },
         { id: "bm_korona", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Korona", url: "https://korona.lat/dashboard", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=korona.lat&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_nexus", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Nexus", url: "https://car-meow.github.io/toothbrush/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=car-meow.github.io&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-        { id: "bm_flux", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Flux", url: "https://web.flux.focuznow.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=web.flux.focuznow.com&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_flux", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Flux", url: "https://web.flux.focuznow.com/", type: "folder_bookmark", icon: "/proxy/https://web.flux.focuznow.com/assets/flux-mark.webp", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_opium", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Opium", url: "https://storage.googleapis.com/opiumbest/index.html", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=storage.googleapis.com&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
         {
           id: "bm_polaris",
@@ -3189,8 +3199,8 @@
           ]
         },
         { id: "bm_pgis2", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "PGIS 2", url: "https://pgis.x10.mx/index.html", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=pgis.x10.mx&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
-        { id: "bm_ubgdir", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "UBGDir", url: "https://0800webdev.github.io/UBGdir/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=0800webdev.github.io&sz=64", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-        { id: "bm_the_wagon", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "The Wagon", url: "https://the-wagonization.github.io/The-Wagon-Site/Pages/Home.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=the-wagonization.github.io&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_ubgdir", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "UBGDir", url: "https://0800webdev.github.io/UBGdir/", type: "bookmark", icon: "/proxy/https://0800webdev.github.io/UBGdir/favicon.png", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_the_wagon", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "The Wagon", url: "https://the-wagonization.github.io/The-Wagon-Site/Pages/Home.html", type: "folder_bookmark", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         {
           id: "bm_ultimate_doc_of_docs",
           categoryId: "cat_op_websites",
@@ -3206,8 +3216,8 @@
             { id: "sub_udod_google_doc", title: "Google Doc Mirror", url: "https://docs.google.com/document/d/1foYnf3pqg00PbEMGnOKmdC0fJsUE_w_lmUZjGTHJtRo/", icon: "https://www.google.com/s2/favicons?domain=docs.google.com&sz=64" }
           ]
         },
-        { id: "bm_project_19", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project 19", url: "https://docs.google.com/document/d/1rlluLiVQc4DGr-kgcoLoF0qb4q1ooTRLj6RPiUxAZCo/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=docs.google.com&sz=64", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 3, subBookmarks: [] },
-        { id: "bm_project_idk", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project IDK", url: "https://docs.google.com/document/d/1BDRltDqQLuyITBddWOGREhmGnNK8zR-kZ2-mHkkQ9rw/edit?tab=t.0", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=docs.google.com&sz=64", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 4, subBookmarks: [] }
+        { id: "bm_project_19", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project 19", url: "https://docs.google.com/document/d/1rlluLiVQc4DGr-kgcoLoF0qb4q1ooTRLj6RPiUxAZCo/", type: "folder_bookmark", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 3, subBookmarks: [] },
+        { id: "bm_project_idk", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project IDK", url: "https://docs.google.com/document/d/1BDRltDqQLuyITBddWOGREhmGnNK8zR-kZ2-mHkkQ9rw/edit?tab=t.0", type: "folder_bookmark", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 4, subBookmarks: [] }
       ]
     };
 
@@ -3826,12 +3836,12 @@
           var syshiBtn = document.createElement('button');
           syshiBtn.type = 'button';
           syshiBtn.className = 'syshi-notes-btn';
-          syshiBtn.title = "Syshi's Notes";
+          syshiBtn.title = "Syshi's Notes: Anime";
           syshiBtn.setAttribute('aria-label', "Open Syshi's Notes for Anime/Manga");
-          syshiBtn.style.cssText = 'background: rgba(129, 140, 248, 0.18); border: 1px solid rgba(129, 140, 248, 0.45); color: #a5b4fc; border-radius: 8px; width: 26px; height: 26px; padding: 0; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; transition: all 0.2s ease; flex-shrink: 0;';
-          syshiBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
-          syshiBtn.onmouseover = function () { syshiBtn.style.background = 'rgba(129, 140, 248, 0.3)'; syshiBtn.style.color = '#ffffff'; };
-          syshiBtn.onmouseout = function () { syshiBtn.style.background = 'rgba(129, 140, 248, 0.18)'; syshiBtn.style.color = '#a5b4fc'; };
+          syshiBtn.style.cssText = 'background: rgba(192, 132, 252, 0.18); border: 1px solid rgba(192, 132, 252, 0.45); color: #c084fc; border-radius: 8px; width: 26px; height: 26px; padding: 0; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; transition: all 0.2s ease; flex-shrink: 0;';
+          syshiBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>';
+          syshiBtn.onmouseover = function () { syshiBtn.style.background = 'rgba(192, 132, 252, 0.3)'; syshiBtn.style.color = '#ffffff'; };
+          syshiBtn.onmouseout = function () { syshiBtn.style.background = 'rgba(192, 132, 252, 0.18)'; syshiBtn.style.color = '#c084fc'; };
           syshiBtn.onclick = function (e) {
             e.stopPropagation();
             openSyshisNotesModal();
@@ -3841,12 +3851,12 @@
           var opNotesBtn = document.createElement('button');
           opNotesBtn.type = 'button';
           opNotesBtn.className = 'syshi-notes-btn';
-          opNotesBtn.title = "OP Websites Advice & Tips";
-          opNotesBtn.setAttribute('aria-label', "Open OP Websites Advice & Tips");
-          opNotesBtn.style.cssText = 'background: rgba(56, 189, 248, 0.18); border: 1px solid rgba(56, 189, 248, 0.45); color: #38bdf8; border-radius: 8px; width: 26px; height: 26px; padding: 0; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; transition: all 0.2s ease; flex-shrink: 0;';
-          opNotesBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
-          opNotesBtn.onmouseover = function () { opNotesBtn.style.background = 'rgba(56, 189, 248, 0.3)'; opNotesBtn.style.color = '#ffffff'; };
-          opNotesBtn.onmouseout = function () { opNotesBtn.style.background = 'rgba(56, 189, 248, 0.18)'; opNotesBtn.style.color = '#38bdf8'; };
+          opNotesBtn.title = "Syshi's Notes: OP Websites";
+          opNotesBtn.setAttribute('aria-label', "Open Syshi's Notes for OP Websites");
+          opNotesBtn.style.cssText = 'background: rgba(192, 132, 252, 0.18); border: 1px solid rgba(192, 132, 252, 0.45); color: #c084fc; border-radius: 8px; width: 26px; height: 26px; padding: 0; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; transition: all 0.2s ease; flex-shrink: 0;';
+          opNotesBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>';
+          opNotesBtn.onmouseover = function () { opNotesBtn.style.background = 'rgba(192, 132, 252, 0.3)'; opNotesBtn.style.color = '#ffffff'; };
+          opNotesBtn.onmouseout = function () { opNotesBtn.style.background = 'rgba(192, 132, 252, 0.18)'; opNotesBtn.style.color = '#c084fc'; };
           opNotesBtn.onclick = function (e) {
             e.stopPropagation();
             openOpWebsitesNotesModal();

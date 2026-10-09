@@ -1496,7 +1496,7 @@
         { id: "cat_movies", title: "Movies/Shows", side: "left", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "naenae", title: "Nae-Nae", builtIn: true, defaultCollapsed: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
         { id: "cat_anime", title: "Anime/Manga", side: "right", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
         { id: "cat_games", title: "Games", side: "bottom", order: 0, builtIn: true, hidden: false, subSections: [{ id: "builtin", title: "Built-In", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: true }] },
-        { id: "cat_op_websites", title: "OP Websites", side: "bottom", order: 1, builtIn: true, hidden: false, subSections: [{ id: "browser_games", title: "Browser/Games", builtIn: true }, { id: "docs_games", title: "Docs/Games", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: false }] }
+        { id: "cat_op_websites", title: "OP Websites", side: "bottom", order: 1, builtIn: true, hidden: false, subSections: [{ id: "browser_games", title: "Browser/Games", icon: "globe", builtIn: true }, { id: "docs_games", title: "Docs/Games", icon: "book", builtIn: true }, { id: "user", title: "Your Bookmarks", builtIn: false }] }
       ],
       bookmarks: [
         { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "preset:list", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
@@ -1578,7 +1578,7 @@
           title: "Aether",
           url: "https://actstudy.s3.us-east-1.amazonaws.com/index.html",
           type: "folder_bookmark",
-          icon: "https://www.google.com/s2/favicons?domain=actstudy.s3.us-east-1.amazonaws.com&sz=64",
+          icon: "/proxy/https://actstudy.s3.us-east-1.amazonaws.com/aether.svg",
           builtIn: true,
           hidden: false,
           order: 0,
@@ -1603,7 +1603,7 @@
         },
         { id: "bm_korona", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Korona", url: "https://korona.lat/dashboard", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=korona.lat&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_nexus", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Nexus", url: "https://car-meow.github.io/toothbrush/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=car-meow.github.io&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
-        { id: "bm_flux", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Flux", url: "https://web.flux.focuznow.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=web.flux.focuznow.com&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
+        { id: "bm_flux", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Flux", url: "https://web.flux.focuznow.com/", type: "folder_bookmark", icon: "/proxy/https://web.flux.focuznow.com/assets/flux-mark.webp", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_opium", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Opium", url: "https://storage.googleapis.com/opiumbest/index.html", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=storage.googleapis.com&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
         {
           id: "bm_polaris",
@@ -1653,8 +1653,8 @@
           ]
         },
         { id: "bm_pgis2", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "PGIS 2", url: "https://pgis.x10.mx/index.html", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=pgis.x10.mx&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
-        { id: "bm_ubgdir", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "UBGDir", url: "https://0800webdev.github.io/UBGdir/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=0800webdev.github.io&sz=64", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-        { id: "bm_the_wagon", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "The Wagon", url: "https://the-wagonization.github.io/The-Wagon-Site/Pages/Home.html", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=the-wagonization.github.io&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_ubgdir", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "UBGDir", url: "https://0800webdev.github.io/UBGdir/", type: "bookmark", icon: "/proxy/https://0800webdev.github.io/UBGdir/favicon.png", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_the_wagon", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "The Wagon", url: "https://the-wagonization.github.io/The-Wagon-Site/Pages/Home.html", type: "folder_bookmark", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         {
           id: "bm_ultimate_doc_of_docs",
           categoryId: "cat_op_websites",
@@ -1670,8 +1670,8 @@
             { id: "sub_udod_google_doc", title: "Google Doc Mirror", url: "https://docs.google.com/document/d/1foYnf3pqg00PbEMGnOKmdC0fJsUE_w_lmUZjGTHJtRo/", icon: "https://www.google.com/s2/favicons?domain=docs.google.com&sz=64" }
           ]
         },
-        { id: "bm_project_19", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project 19", url: "https://docs.google.com/document/d/1rlluLiVQc4DGr-kgcoLoF0qb4q1ooTRLj6RPiUxAZCo/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=docs.google.com&sz=64", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 3, subBookmarks: [] },
-        { id: "bm_project_idk", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project IDK", url: "https://docs.google.com/document/d/1BDRltDqQLuyITBddWOGREhmGnNK8zR-kZ2-mHkkQ9rw/edit?tab=t.0", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=docs.google.com&sz=64", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 4, subBookmarks: [] }
+        { id: "bm_project_19", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project 19", url: "https://docs.google.com/document/d/1rlluLiVQc4DGr-kgcoLoF0qb4q1ooTRLj6RPiUxAZCo/", type: "folder_bookmark", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 3, subBookmarks: [] },
+        { id: "bm_project_idk", categoryId: "cat_op_websites", subSectionId: "docs_games", title: "Project IDK", url: "https://docs.google.com/document/d/1BDRltDqQLuyITBddWOGREhmGnNK8zR-kZ2-mHkkQ9rw/edit?tab=t.0", type: "folder_bookmark", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico", builtIn: true, hidden: false, disableQuickSaveWidget: true, order: 4, subBookmarks: [] }
       ]
     };
 
