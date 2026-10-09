@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Heavenly - HTML Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="/assets/heavenly-logo.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style type="text/css">
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #030712;
+      background-image:
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.14) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(129, 140, 248, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom)) 16px;
+      overflow-x: hidden;
+    }
+
+    @keyframes floatOrb {
+      0%, 100% { transform: translate(-50%, 0) scale(1); }
+      50% { transform: translate(-50%, 20px) scale(1.08); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 0.9; }
+    }
+
+    @keyframes editorWipe {
+      0% { opacity: 0.3; filter: blur(4px); transform: scale(0.99); }
+      100% { opacity: 1; filter: blur(0); transform: scale(1); }
+    }
+
+    @keyframes previewFade {
+      0% { opacity: 0.2; transform: scale(0.995); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes spinPulse {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.08); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    /* Ambient Heavenly Orbs */
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-orb-1 {
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(99, 102, 241, 0.12) 60%, transparent 100%);
+      animation: floatOrb 12s ease-in-out infinite;
+    }
+
+    .glow-orb-2 {
+      bottom: -100px;
+      right: 10%;
+      width: 400px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.18) 0%, transparent 70%);
+      animation: pulseGlow 8s ease-in-out infinite;
+    }
+
+    /* App Shell */
+    .app-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      flex: 1;
+    }
+
+    /* Top Navigation Header */
+    .nav-header {
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 20px;
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 15px 35px rgba(0, 0, 0, 0.5),
+        0 0 25px rgba(56, 189, 248, 0.15);
+      flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-logo-img {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.8));
+      transition: transform 0.25s ease;
+    }
+
+    .brand-group:hover .brand-logo-img {
+      transform: scale(1.08) rotate(-4deg);
+    }
+
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 0%, #bae6fd 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      color: #e0f2fe;
+      padding: 9px 16px;
+      border-radius: 14px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+    }
+
+    .nav-btn:hover {
+      background: rgba(56, 189, 248, 0.16);
+      border-color: #38bdf8;
+      color: #38bdf8;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.25);
+    }
+
+    .nav-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Main Toolbar Controls */
+    .control-bar {
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 20px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      flex-wrap: wrap;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      padding: 10px 18px;
+      border-radius: 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      outline: none;
+    }
+
+    .btn-action svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .btn-run {
+      background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);
+      color: #030712;
+      font-weight: 700;
+      box-shadow: 0 4px 18px rgba(56, 189, 248, 0.35);
+    }
+
+    .btn-run:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.55);
+      background: linear-gradient(135deg, #7dd3fc 0%, #60a5fa 100%);
+    }
+
+    .btn-clear {
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    .btn-clear:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: #ef4444;
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.25);
+    }
+
+    .btn-blank {
+      background: rgba(129, 140, 248, 0.16);
+      border: 1px solid rgba(129, 140, 248, 0.4);
+      color: #a5b4fc;
+    }
+
+    .btn-blank:hover {
+      background: rgba(129, 140, 248, 0.28);
+      border-color: #818cf8;
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(129, 140, 248, 0.3);
+    }
+
+    .btn-vus {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(16, 185, 129, 0.25) 100%);
+      border: 1px solid rgba(34, 197, 94, 0.5);
+      color: #4ade80;
+      font-weight: 700;
+      box-shadow: 0 4px 18px rgba(34, 197, 94, 0.2);
+    }
+
+    .btn-vus:hover {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.4) 0%, rgba(16, 185, 129, 0.4) 100%);
+      border-color: #22c55e;
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-vus.loading {
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    .btn-vus .vus-spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      display: none;
+      animation: spinPulse 0.8s linear infinite;
+    }
+
+    .btn-vus.loading .vus-spinner {
+      display: inline-block;
+    }
+
+    .btn-vus.loading .vus-icon {
+      display: none;
+    }
+
+    /* View Switcher Chips */
+    .view-switcher {
+      display: inline-flex;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 14px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .view-chip {
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .view-chip:hover {
+      color: #e0f2fe;
+    }
+
+    .view-chip.active {
+      background: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Workspace Layout: Split-pane */
+    .workspace-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      flex: 1;
+      min-height: 560px;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .workspace-split.mode-editor {
+      grid-template-columns: 1fr;
+    }
+
+    .workspace-split.mode-editor .preview-pane {
+      display: none !important;
+    }
+
+    .workspace-split.mode-preview {
+      grid-template-columns: 1fr;
+    }
+
+    .workspace-split.mode-preview .editor-pane {
+      display: none !important;
+    }
+
+    .preview-pane:fullscreen,
+    .preview-pane:-webkit-full-screen,
+    .preview-pane.native-fullscreen-overlay {
+      position: fixed !important;
+      inset: 0 !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 999999 !important;
+      border-radius: 0 !important;
+      border: none !important;
+      max-width: none !important;
+      margin: 0 !important;
+    }
+
+    /* Panel Styling */
+    .panel-card {
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 24px;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 20px 50px -10px rgba(0, 0, 0, 0.7),
+        0 0 35px -5px rgba(56, 189, 248, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .panel-card:hover {
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+
+    .panel-header {
+      padding: 12px 18px;
+      background: rgba(30, 41, 59, 0.45);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #e0f2fe;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-title svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: #38bdf8;
+      stroke-width: 2.2;
+    }
+
+    .panel-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tool-btn {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: #94a3b8;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .tool-btn:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+    }
+
+    /* Editor Pane */
+    .editor-wrapper {
+      position: relative;
+      flex: 1;
+      display: flex;
+      background: rgba(3, 7, 18, 0.65);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .editor-wrapper.focus-glow {
+      box-shadow: inset 0 0 0 1px #38bdf8, 0 0 20px rgba(56, 189, 248, 0.2);
+    }
+
+    .line-numbers {
+      padding: 16px 8px 16px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: #475569;
+      text-align: right;
+      user-select: none;
+      background: rgba(15, 23, 42, 0.4);
+      border-right: 1px solid rgba(148, 163, 184, 0.1);
+      min-width: 42px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .code-textarea {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 480px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: #f1f5f9;
+      background: transparent;
+      border: none;
+      outline: none;
+      resize: none;
+      white-space: pre;
+      overflow-wrap: normal;
+      overflow-x: auto;
+      tab-size: 2;
+    }
+
+    .code-textarea::selection {
+      background: rgba(56, 189, 248, 0.3);
+      color: #ffffff;
+    }
+
+    /* Preview Frame Pane */
+    .device-wrapper {
+      flex: 1;
+      position: relative;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 480px;
+      border: none;
+      background: #ffffff;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .preview-iframe.refreshing {
+      animation: previewFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Status Bar */
+    .status-bar {
+      padding: 6px 16px;
+      background: rgba(15, 23, 42, 0.85);
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+      font-size: 0.78rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    .status-dot.idle {
+      background: #38bdf8;
+      box-shadow: 0 0 8px #38bdf8;
+    }
+
+    .status-dot.busy {
+      background: #eab308;
+      box-shadow: 0 0 8px #eab308;
+    }
+
+    /* Responsive Stacked Layout on Mobile */
+    @media (max-width: 900px) {
+      .workspace-split {
+        grid-template-columns: 1fr !important;
+      }
+
+      .preview-pane {
+        display: flex !important;
+      }
+
+      .editor-pane {
+        display: flex !important;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-header, .control-bar {
+        padding: 12px 14px;
+      }
+
+      .brand-title {
+        font-size: 1.25rem;
+      }
+
+      .control-group {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .btn-action {
+        flex: 1;
+        justify-content: center;
+        padding: 9px 12px;
+        font-size: 0.82rem;
+      }
+
+      .view-switcher {
+        width: 100%;
+      }
+
+      .view-chip {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <div class="app-container">
+
+    <!-- Top Navigation Header -->
+    <header class="nav-header">
+      <a href="/" class="brand-group" title="Return to Heavenly Home">
+        <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img">
+        <span class="brand-title">Heavenly</span>
+        <span class="brand-badge">HTML Viewer</span>
+      </a>
+
+      <div class="header-actions">
+        <a href="/" class="nav-btn">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <span>Home</span>
+        </a>
+        <a href="settings.html" class="nav-btn">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Settings & Cloaking</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Control Toolbar -->
+    <div class="control-bar">
+      <div class="control-group">
+        <button type="button" id="btn-run" class="btn-action btn-run" title="Execute current code live in preview frame">
+          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          <span>Run Code</span>
+        </button>
+
+        <button type="button" id="btn-clear" class="btn-action btn-clear" title="Clear editor content">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          <span>Clear</span>
+        </button>
+
+        <button type="button" id="btn-blank" class="btn-action btn-blank" title="Cleanly inject code into an untracked about:blank tab">
+          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          <span>Open in New Tab</span>
+        </button>
+
+        <button type="button" id="btn-vus" class="btn-action btn-vus" title="1-Click Unblockable 3-Tier VUS Launcher Waterfall">
+          <span class="vus-spinner"></span>
+          <svg class="vus-icon" viewBox="0 0 24 24"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><circle cx="15" cy="13" r="1" fill="currentColor"></circle><circle cx="18" cy="11" r="1" fill="currentColor"></circle><rect x="2" y="6" width="20" height="12" rx="3"></rect></svg>
+          <span id="vus-btn-text">Launch VUS</span>
+        </button>
+      </div>
+
+      <div class="control-group">
+        <div class="view-switcher" role="tablist" aria-label="Layout view mode">
+          <button type="button" id="view-split" class="view-chip active" title="Side-by-side split view">
+            <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line></svg>
+            <span>Split View</span>
+          </button>
+          <button type="button" id="view-editor" class="view-chip" title="Editor view only">
+            <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <span>Full Editor</span>
+          </button>
+          <button type="button" id="view-preview" class="view-chip" title="Preview frame only">
+            <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            <span>Full Preview</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workspace Split Pane -->
+    <main id="workspace" class="workspace-split">
+
+      <!-- Code Editor Panel -->
+      <section class="panel-card editor-pane">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <span>HTML Editor</span>
+          </div>
+
+          <div class="panel-tools">
+            <button type="button" id="btn-load-sample" class="tool-btn" title="Load glassmorphic sample HTML template">Load Sample Demo</button>
+            <button type="button" id="btn-copy-code" class="tool-btn" title="Copy code to clipboard">Copy Code</button>
+          </div>
+        </div>
+
+        <div id="editor-container" class="editor-wrapper">
+          <div id="line-numbers" class="line-numbers">1</div>
+          <textarea id="code-input" class="code-textarea" spellcheck="false" placeholder="Enter HTML, CSS, or JavaScript code here..."></textarea>
+        </div>
+
+        <div class="status-bar">
+          <span id="char-count">0 chars &bull; 1 lines</span>
+          <span class="status-indicator">
+            <span class="status-dot idle"></span>
+            <span>Editor Ready</span>
+          </span>
+        </div>
+      </section>
+
+      <!-- Live Execution Preview Frame Panel -->
+      <section class="panel-card preview-pane">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            <span>Live Execution Preview</span>
+          </div>
+
+          <div class="panel-tools">
+            <button type="button" id="btn-refresh-preview" class="tool-btn" title="Refresh preview frame">Refresh Preview</button>
+            <button type="button" id="btn-fullscreen-preview" class="tool-btn" title="Toggle native full screen preview">
+              <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+              <span id="fullscreen-btn-text">Fullscreen</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="device-wrapper">
+          <iframe id="preview-iframe" class="preview-iframe" title="Live HTML Preview" sandbox="allow-scripts allow-modals allow-forms allow-popups allow-same-origin"></iframe>
+        </div>
+
+        <div class="status-bar">
+          <span id="preview-status">Preview: Active</span>
+          <span class="status-indicator">
+            <span id="preview-status-dot" class="status-dot"></span>
+            <span id="preview-status-text">Live Render</span>
+          </span>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script>
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    // Default Glassmorphic Starter Code Template
+    var SAMPLE_STARTER_CODE = '<!DOCTYPE html>\n' +
+'<html lang="en">\n' +
+'<head>\n' +
+'  <meta charset="UTF-8">\n' +
+'  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+'  <title>Heavenly Glassmorphic Demo</title>\n' +
+'  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">\n' +
+'  <style>\n' +
+'    * { box-sizing: border-box; margin: 0; padding: 0; }\n' +
+'    body {\n' +
+'      font-family: \'Outfit\', sans-serif;\n' +
+'      background: #030712;\n' +
+'      background-image: radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.25) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.2) 0px, transparent 50%);\n' +
+'      color: #f8fafc;\n' +
+'      min-height: 100vh;\n' +
+'      display: flex;\n' +
+'      align-items: center;\n' +
+'      justify-content: center;\n' +
+'      padding: 24px;\n' +
+'    }\n' +
+'    .card {\n' +
+'      background: rgba(15, 23, 42, 0.75);\n' +
+'      backdrop-filter: blur(20px);\n' +
+'      -webkit-backdrop-filter: blur(20px);\n' +
+'      border: 1px solid rgba(56, 189, 248, 0.3);\n' +
+'      border-radius: 24px;\n' +
+'      padding: 36px;\n' +
+'      max-width: 480px;\n' +
+'      text-align: center;\n' +
+'      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(56, 189, 248, 0.2);\n' +
+'      transition: transform 0.3s ease;\n' +
+'    }\n' +
+'    .card:hover { transform: translateY(-4px); }\n' +
+'    h1 {\n' +
+'      font-size: 2rem;\n' +
+'      font-weight: 700;\n' +
+'      background: linear-gradient(135deg, #ffffff 0%, #38bdf8 100%);\n' +
+'      -webkit-background-clip: text;\n' +
+'      -webkit-text-fill-color: transparent;\n' +
+'      margin-bottom: 12px;\n' +
+'    }\n' +
+'    p { color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; }\n' +
+'    button {\n' +
+'      background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);\n' +
+'      color: #030712;\n' +
+'      font-weight: 700;\n' +
+'      border: none;\n' +
+'      padding: 12px 24px;\n' +
+'      border-radius: 12px;\n' +
+'      cursor: pointer;\n' +
+'      font-size: 0.9rem;\n' +
+'      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);\n' +
+'    }\n' +
+'  </style>\n' +
+'</head>\n' +
+'<body>\n' +
+'  <div class="card">\n' +
+'    <h1>Heavenly HTML Viewer</h1>\n' +
+'    <p>Build, test, and render glassmorphic web applications in real time with an unblockable multi-tier launcher.</p>\n' +
+'    <button onclick="alert(\'Ethereal live execution functional!\')">Test Interactive JS</button>\n' +
+'  </div>\n' +
+'</body>\n' +
+'</html>';
+
+    // Heavenly Tab Cloaking Loader
+    var DEFAULT_PRESETS = {
+      classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
+      google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
+      docs: { title: "Google Docs", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico" },
+      slides: { title: "Google Slides", icon: "https://ssl.gstatic.com/docs/presentations/images/favicon5.ico" },
+      drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
+      gmail: { title: "Gmail", icon: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" }
+    };
+
+    function loadSettings() {
+      var saved = {};
+      try {
+        saved = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
+      } catch (e) {}
+      return {
+        autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
+        persistentCloak: saved.persistentCloak || false,
+        selectedPreset: saved.selectedPreset || 'classroom',
+        customPresets: saved.customPresets || {}
+      };
+    }
+
+    function applyCloak() {
+      var settings = loadSettings();
+      var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
+      var preset = allPresets[settings.selectedPreset] || DEFAULT_PRESETS.classroom;
+      var head = document.head || document.getElementsByTagName('head')[0];
+
+      var shouldCloak = settings.persistentCloak || (settings.autoCloak && document.hidden);
+
+      if (shouldCloak) {
+        document.title = preset.title;
+        var cloakLink = document.getElementById('heavenly-cloak-icon');
+        if (!cloakLink) {
+          cloakLink = document.createElement('link');
+          cloakLink.id = 'heavenly-cloak-icon';
+          head.appendChild(cloakLink);
+        }
+        cloakLink.type = 'image/x-icon';
+        cloakLink.rel = 'shortcut icon';
+        cloakLink.href = preset.icon;
+      } else {
+        document.title = 'Heavenly - HTML Viewer';
+        var cloakLink2 = document.getElementById('heavenly-cloak-icon');
+        if (cloakLink2 && cloakLink2.parentNode) {
+          cloakLink2.parentNode.removeChild(cloakLink2);
+        }
+      }
+    }
+
+    // Line Numbers & Editor Functionality
+    function updateLineNumbers() {
+      var codeInput = $('code-input');
+      var lineNums = $('line-numbers');
+      var charCount = $('char-count');
+      if (!codeInput || !lineNums) return;
+
+      var lines = codeInput.value.split('\n');
+      var count = lines.length;
+      var numsArr = [];
+      for (var i = 1; i <= count; i++) {
+        numsArr.push(i);
+      }
+      lineNums.innerHTML = numsArr.join('<br>');
+
+      if (charCount) {
+        charCount.textContent = codeInput.value.length + ' chars \u2022 ' + count + ' lines';
+      }
+    }
+
+    function syncScroll() {
+      var codeInput = $('code-input');
+      var lineNums = $('line-numbers');
+      if (codeInput && lineNums) {
+        lineNums.scrollTop = codeInput.scrollTop;
+      }
+    }
+
+    // Preview Execution
+    function runCode() {
+      var codeInput = $('code-input');
+      var iframe = $('preview-iframe');
+      if (!codeInput || !iframe) return;
+
+      iframe.classList.add('refreshing');
+      setTimeout(function () {
+        iframe.classList.remove('refreshing');
+      }, 300);
+
+      var doc = iframe.contentDocument || (iframe.contentWindow ? iframe.contentWindow.document : null);
+      if (doc) {
+        doc.open();
+        doc.write(codeInput.value);
+        doc.close();
+      }
+    }
+
+    function clearCode() {
+      var codeInput = $('code-input');
+      var editorWrapper = $('editor-container');
+      if (!codeInput) return;
+
+      if (editorWrapper) {
+        editorWrapper.style.animation = 'editorWipe 0.25s ease';
+        setTimeout(function () {
+          editorWrapper.style.animation = '';
+        }, 250);
+      }
+
+      codeInput.value = '';
+      updateLineNumbers();
+      runCode();
+      try {
+        localStorage.removeItem('heavenly_html_viewer_code');
+      } catch (e) {}
+    }
+
+    function launchInAboutBlank(codeToLaunch) {
+      var code = codeToLaunch !== undefined ? codeToLaunch : ($('code-input') ? $('code-input').value : '');
+      if (!code || !code.trim()) {
+        alert('Please enter or generate HTML code before launching in about:blank.');
+        return;
+      }
+
+      var win = window.open('about:blank', '_blank');
+      if (!win) {
+        alert('Popup blocked. Please allow popups for Heavenly Proxy to launch in about:blank.');
+        return;
+      }
+
+      try {
+        win.document.open();
+        win.document.write(code);
+        win.document.close();
+      } catch (e) {
+        alert('Failed to write code into about:blank window: ' + e.message);
+      }
+    }
+
+    // 1-Click VUS Unblockable 3-Tier Waterfall Launcher
+    function launchVUSWaterfall() {
+      // Synchronously open window inside user click context to prevent popup blocker
+      var targetWin = window.open('about:blank', '_blank');
+      if (!targetWin) {
+        alert('Popup blocked. Please allow popups for Heavenly Proxy to launch VUS in about:blank.');
+        return;
+      }
+
+      var vusBtn = $('btn-vus');
+      var vusText = $('vus-btn-text');
+      if (vusBtn) vusBtn.classList.add('loading');
+      if (vusText) vusText.textContent = 'Resolving VUS (Tier 1)...';
+
+      var rawVusUrl = 'https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/main/index.html';
+      var proxiedVusUrl = location.protocol + '//' + location.host + '/proxy/' + rawVusUrl;
+      var localVusFallbackUrl = '/vendor/vus.html';
+
+      function writeToTargetWindow(code) {
+        if (vusBtn) vusBtn.classList.remove('loading');
+        if (vusText) vusText.textContent = 'Launch VUS';
+        try {
+          targetWin.document.open();
+          targetWin.document.write(code);
+          targetWin.document.close();
+        } catch (e) {
+          alert('Failed to write VUS code into target window: ' + e.message);
+        }
+      }
+
+      // Tier 1: Direct fetch from Github Raw
+      fetch(rawVusUrl, { cache: 'no-store' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Tier 1 blocked or failed (HTTP ' + res.status + ')');
+          return res.text();
+        })
+        .then(function (code) {
+          writeToTargetWindow(code);
+        })
+        .catch(function (err1) {
+          console.warn('VUS Tier 1 failed:', err1.message);
+          if (vusText) vusText.textContent = 'Resolving VUS (Tier 2 Proxy)...';
+
+          // Tier 2: Route through Heavenly Proxy
+          fetch(proxiedVusUrl, { cache: 'no-store' })
+            .then(function (res2) {
+              if (!res2.ok) throw new Error('Tier 2 Proxy failed (HTTP ' + res2.status + ')');
+              return res2.text();
+            })
+            .then(function (code2) {
+              writeToTargetWindow(code2);
+            })
+            .catch(function (err2) {
+              console.warn('VUS Tier 2 failed:', err2.message);
+              if (vusText) vusText.textContent = 'Resolving VUS (Tier 3 Local)...';
+
+              // Tier 3: Hardcoded Local Fallback Asset
+              fetch(localVusFallbackUrl, { cache: 'no-store' })
+                .then(function (res3) {
+                  if (!res3.ok) throw new Error('Tier 3 local fetch error');
+                  return res3.text();
+                })
+                .then(function (code3) {
+                  writeToTargetWindow(code3);
+                })
+                .catch(function (err3) {
+                  console.error('VUS Tier 3 failed:', err3.message);
+                  if (vusBtn) vusBtn.classList.remove('loading');
+                  if (vusText) vusText.textContent = 'Launch VUS';
+                  targetWin.close();
+                  alert('Unable to load VUS code across all 3 tiers.');
+                });
+            });
+        });
+    }
+
+    // View Switcher (Split / Editor / Preview)
+    function setViewMode(mode) {
+      var workspace = $('workspace');
+      var btnSplit = $('view-split');
+      var btnEditor = $('view-editor');
+      var btnPreview = $('view-preview');
+      if (!workspace) return;
+
+      workspace.classList.remove('mode-editor', 'mode-preview');
+      if (btnSplit) btnSplit.classList.remove('active');
+      if (btnEditor) btnEditor.classList.remove('active');
+      if (btnPreview) btnPreview.classList.remove('active');
+
+      if (mode === 'editor') {
+        workspace.classList.add('mode-editor');
+        if (btnEditor) btnEditor.classList.add('active');
+      } else if (mode === 'preview') {
+        workspace.classList.add('mode-preview');
+        if (btnPreview) btnPreview.classList.add('active');
+      } else {
+        if (btnSplit) btnSplit.classList.add('active');
+      }
+
+      try {
+        localStorage.setItem('heavenly_html_viewer_view_mode', mode);
+      } catch (e) {}
+    }
+
+    // Initialization & Event Wiring
+    window.onload = function () {
+      applyCloak();
+      document.addEventListener('visibilitychange', applyCloak);
+
+      var codeInput = $('code-input');
+      var editorWrapper = $('editor-container');
+
+      // Load saved view mode
+      var savedMode = 'split';
+      try {
+        savedMode = localStorage.getItem('heavenly_html_viewer_view_mode') || 'split';
+      } catch (e) {}
+      setViewMode(savedMode);
+
+      // Load saved code or sample code
+      var savedCode = '';
+      try {
+        savedCode = localStorage.getItem('heavenly_html_viewer_code');
+      } catch (e) {}
+
+      if (savedCode && savedCode.trim()) {
+        codeInput.value = savedCode;
+      } else {
+        codeInput.value = SAMPLE_STARTER_CODE;
+      }
+
+      updateLineNumbers();
+      runCode();
+
+      // Input Event Listeners
+      if (codeInput) {
+        codeInput.oninput = function () {
+          updateLineNumbers();
+          try {
+            localStorage.setItem('heavenly_html_viewer_code', codeInput.value);
+          } catch (e) {}
+        };
+
+        codeInput.onscroll = syncScroll;
+
+        codeInput.onfocus = function () {
+          if (editorWrapper) editorWrapper.classList.add('focus-glow');
+        };
+
+        codeInput.onblur = function () {
+          if (editorWrapper) editorWrapper.classList.remove('focus-glow');
+        };
+
+        // Support Tab key indentation inside textarea
+        codeInput.onkeydown = function (e) {
+          if (e.key === 'Tab') {
+            e.preventDefault();
+            var start = this.selectionStart;
+            var end = this.selectionEnd;
+            this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+            this.selectionStart = this.selectionEnd = start + 2;
+            updateLineNumbers();
+          }
+        };
+      }
+
+      // Control Action Buttons
+      $('btn-run').onclick = runCode;
+      $('btn-clear').onclick = clearCode;
+      $('btn-blank').onclick = function () { launchInAboutBlank(); };
+      $('btn-vus').onclick = launchVUSWaterfall;
+
+      // View Buttons
+      $('view-split').onclick = function () { setViewMode('split'); };
+      $('view-editor').onclick = function () { setViewMode('editor'); };
+      $('view-preview').onclick = function () { setViewMode('preview'); };
+
+      // Tool Buttons
+      $('btn-load-sample').onclick = function () {
+        codeInput.value = SAMPLE_STARTER_CODE;
+        updateLineNumbers();
+        runCode();
+      };
+
+      $('btn-copy-code').onclick = function () {
+        if (!codeInput.value) return;
+        navigator.clipboard.writeText(codeInput.value).then(function () {
+          var btn = $('btn-copy-code');
+          if (btn) {
+            btn.textContent = 'Copied!';
+            setTimeout(function () { btn.textContent = 'Copy Code'; }, 1500);
+          }
+        }).catch(function () {
+          codeInput.select();
+          document.execCommand('copy');
+        });
+      };
+
+      $('btn-refresh-preview').onclick = runCode;
+
+      // Fullscreen Preview Toggle
+      var fullscreenBtn = $('btn-fullscreen-preview');
+      var fullscreenText = $('fullscreen-btn-text');
+
+      function toggleFullscreenPreview() {
+        var previewPane = document.querySelector('.preview-pane');
+        if (!previewPane) return;
+
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+        } else {
+          var req = previewPane.requestFullscreen || previewPane.webkitRequestFullscreen || previewPane.msRequestFullscreen;
+          if (req) {
+            req.call(previewPane).catch(function () {
+              previewPane.classList.toggle('native-fullscreen-overlay');
+              updateFullscreenBtnState();
+            });
+          } else {
+            previewPane.classList.toggle('native-fullscreen-overlay');
+            updateFullscreenBtnState();
+          }
+        }
+      }
+
+      function updateFullscreenBtnState() {
+        var previewPane = document.querySelector('.preview-pane');
+        var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || (previewPane && previewPane.classList.contains('native-fullscreen-overlay')));
+        if (fullscreenText) {
+          fullscreenText.textContent = isFs ? 'Exit Fullscreen' : 'Fullscreen';
+        }
+      }
+
+      if (fullscreenBtn) {
+        fullscreenBtn.onclick = toggleFullscreenPreview;
+      }
+
+      document.addEventListener('fullscreenchange', updateFullscreenBtnState);
+      document.addEventListener('webkitfullscreenchange', updateFullscreenBtnState);
+    };
+  </script>
+
+</body>
+
+</html>
