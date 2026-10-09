@@ -382,19 +382,35 @@
     }
 
     .workspace-split.mode-editor {
-      grid-template-columns: 1fr 0fr;
+      grid-template-columns: 1fr;
     }
 
     .workspace-split.mode-editor .preview-pane {
-      display: none;
+      display: none !important;
     }
 
     .workspace-split.mode-preview {
-      grid-template-columns: 0fr 1fr;
+      grid-template-columns: 1fr;
     }
 
     .workspace-split.mode-preview .editor-pane {
-      display: none;
+      display: none !important;
+    }
+
+    .preview-pane:fullscreen,
+    .preview-pane:-webkit-full-screen,
+    .preview-pane.native-fullscreen-overlay {
+      position: fixed !important;
+      inset: 0 !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 999999 !important;
+      border-radius: 0 !important;
+      border: none !important;
+      max-width: none !important;
+      margin: 0 !important;
     }
 
     /* Panel Styling */
@@ -672,12 +688,12 @@
 
         <button type="button" id="btn-blank" class="btn-action btn-blank" title="Cleanly inject code into an untracked about:blank tab">
           <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-          <span>Launch in about:blank</span>
+          <span>Open in New Tab</span>
         </button>
 
         <button type="button" id="btn-vus" class="btn-action btn-vus" title="1-Click Unblockable 3-Tier VUS Launcher Waterfall">
           <span class="vus-spinner"></span>
-          <svg class="vus-icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <svg class="vus-icon" viewBox="0 0 24 24"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><circle cx="15" cy="13" r="1" fill="currentColor"></circle><circle cx="18" cy="11" r="1" fill="currentColor"></circle><rect x="2" y="6" width="20" height="12" rx="3"></rect></svg>
           <span id="vus-btn-text">Launch VUS</span>
         </button>
       </div>
@@ -741,6 +757,10 @@
 
           <div class="panel-tools">
             <button type="button" id="btn-refresh-preview" class="tool-btn" title="Refresh preview frame">Refresh Preview</button>
+            <button type="button" id="btn-fullscreen-preview" class="tool-btn" title="Toggle native full screen preview">
+              <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+              <span id="fullscreen-btn-text">Fullscreen</span>
+            </button>
           </div>
         </div>
 
@@ -1170,6 +1190,49 @@
       };
 
       $('btn-refresh-preview').onclick = runCode;
+
+      // Fullscreen Preview Toggle
+      var fullscreenBtn = $('btn-fullscreen-preview');
+      var fullscreenText = $('fullscreen-btn-text');
+
+      function toggleFullscreenPreview() {
+        var previewPane = document.querySelector('.preview-pane');
+        if (!previewPane) return;
+
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+        } else {
+          var req = previewPane.requestFullscreen || previewPane.webkitRequestFullscreen || previewPane.msRequestFullscreen;
+          if (req) {
+            req.call(previewPane).catch(function () {
+              previewPane.classList.toggle('native-fullscreen-overlay');
+              updateFullscreenBtnState();
+            });
+          } else {
+            previewPane.classList.toggle('native-fullscreen-overlay');
+            updateFullscreenBtnState();
+          }
+        }
+      }
+
+      function updateFullscreenBtnState() {
+        var previewPane = document.querySelector('.preview-pane');
+        var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || (previewPane && previewPane.classList.contains('native-fullscreen-overlay')));
+        if (fullscreenText) {
+          fullscreenText.textContent = isFs ? 'Exit Fullscreen' : 'Fullscreen';
+        }
+      }
+
+      if (fullscreenBtn) {
+        fullscreenBtn.onclick = toggleFullscreenPreview;
+      }
+
+      document.addEventListener('fullscreenchange', updateFullscreenBtnState);
+      document.addEventListener('webkitfullscreenchange', updateFullscreenBtnState);
     };
   </script>
 
