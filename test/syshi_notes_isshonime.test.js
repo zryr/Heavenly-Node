@@ -2,7 +2,7 @@ const assert = require("assert");
 const fs = require("fs");
 
 describe("Syshi's Notes, Isshonime Bookmark & De-emphasized Broken Links", function () {
-  it("should contain Isshonime bookmark in DEFAULT_BOOKMARK_DATA across all client files", function () {
+  it("should contain Isshonime link only in Syshi's Notes modal in index.html and not in default bookmarks", function () {
     const files = [
       "./public/index.html",
       "./public/settings.html",
@@ -11,10 +11,11 @@ describe("Syshi's Notes, Isshonime Bookmark & De-emphasized Broken Links", funct
 
     files.forEach(function (filePath) {
       const content = fs.readFileSync(filePath, "utf8");
-      assert.ok(content.includes('id: "bm_isshonime"'), filePath + ' should contain bm_isshonime ID');
-      assert.ok(content.includes('title: "Isshonime"'), filePath + ' should contain Isshonime title');
-      assert.ok(content.includes('https://www.isshonime.com/'), filePath + ' should contain Isshonime URL');
+      assert.strictEqual(content.includes('id: "bm_isshonime"'), false, filePath + ' should not contain bm_isshonime in DEFAULT_BOOKMARK_DATA');
     });
+
+    const indexContent = fs.readFileSync("./public/index.html", "utf8");
+    assert.ok(indexContent.includes('https://www.isshonime.com/'), 'index.html should contain Isshonime URL in Syshi\'s Notes modal');
   });
 
   it("should contain Syshi\'s Notes button, modal, and tip content in index.html", function () {

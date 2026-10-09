@@ -39,22 +39,24 @@
 
     @keyframes floatOrb {
       0%, 100% { transform: translate(-50%, 0) scale(1); }
-      50% { transform: translate(-50%, 20px) scale(1.08); }
+      50% { transform: translate(-50%, 25px) scale(1.12); }
     }
 
     @keyframes pulseGlow {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 0.9; }
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 0.95; transform: scale(1.05); }
     }
 
     @keyframes topToBottomEntrance {
       0% {
         opacity: 0;
-        transform: translateY(-28px) scale(0.96);
+        transform: translateY(-24px) scale(0.95);
+        filter: blur(4px);
       }
       100% {
         opacity: 1;
         transform: translateY(0) scale(1);
+        filter: blur(0px);
       }
     }
 
@@ -308,11 +310,14 @@
       height: 24px;
       border-radius: 50%;
       font-size: 0.75rem;
-      display: none;
+      display: flex;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.7);
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 10;
       padding: 0;
       line-height: 1;
@@ -322,11 +327,13 @@
       background: rgba(239, 68, 68, 0.25);
       border-color: rgba(239, 68, 68, 0.5);
       color: #fca5a5;
-      transform: scale(1.08);
+      transform: scale(1.1);
     }
 
     .url-clear-btn.visible {
-      display: flex;
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
     }
 
     .history-dropdown {
@@ -880,15 +887,16 @@
       border-radius: 12px;
       text-decoration: none;
       color: #f1f5f9;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       gap: 8px;
       touch-action: none;
     }
 
     .bookmark-card:hover {
       background: rgba(30, 41, 59, 0.85);
-      border-color: rgba(56, 189, 248, 0.4);
-      transform: translateX(2px);
+      border-color: rgba(56, 189, 248, 0.45);
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35), 0 0 16px rgba(56, 189, 248, 0.2);
     }
 
     .bookmark-card-left {
@@ -1027,17 +1035,24 @@
     /* Modal Backdrop & Dialog Animations */
     @keyframes modalBackdropFadeIn {
       from { opacity: 0; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); }
-      to { opacity: 1; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+      to { opacity: 1; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
     }
 
-    @keyframes modalPopIn {
+    @keyframes springPopIn {
       0% {
         opacity: 0;
-        transform: scale(0.92) translateY(18px);
+        transform: scale(0.88) translateY(24px);
+        filter: blur(6px);
+      }
+      60% {
+        opacity: 1;
+        transform: scale(1.02) translateY(-4px);
+        filter: blur(0px);
       }
       100% {
         opacity: 1;
         transform: scale(1) translateY(0);
+        filter: blur(0px);
       }
     }
 
@@ -1050,13 +1065,13 @@
       height: 100dvh;
       max-height: 100dvh;
       z-index: 3000;
-      background: rgba(3, 7, 18, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       align-items: center;
       justify-content: center;
       padding: clamp(12px, 3vh, 24px) 16px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       box-sizing: border-box;
       margin: 0;
       overflow-y: auto;
@@ -1080,7 +1095,7 @@
       box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.08) inset,
         0 30px 70px -10px rgba(0, 0, 0, 0.85),
-        0 0 45px -5px rgba(56, 189, 248, 0.3);
+        0 0 50px -2px rgba(56, 189, 248, 0.4);
       padding: clamp(20px, 4vh, 32px) clamp(16px, 4vw, 28px);
       width: 100%;
       max-width: 460px;
@@ -1089,7 +1104,7 @@
       flex-direction: column;
       gap: 18px;
       transform-origin: center center;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       overflow-y: auto;
       overflow-x: hidden;
       overscroll-behavior: none;
@@ -1106,17 +1121,17 @@
     }
 
     .modal-backdrop.active .modal-card {
-      animation: modalPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: springPopIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
     .modal-card::before {
       content: "";
       position: absolute;
-      top: -60px;
-      right: -60px;
-      width: 180px;
-      height: 180px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, rgba(129, 140, 248, 0.08) 50%, transparent 80%);
+      top: -80px;
+      right: -80px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(129, 140, 248, 0.12) 50%, transparent 80%);
       border-radius: 50%;
       pointer-events: none;
     }
@@ -1338,12 +1353,13 @@
     .switch-toggle input:checked + .slider-knob {
       background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);
       border-color: #38bdf8;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.6);
     }
 
     .switch-toggle input:checked + .slider-knob:before {
       transform: translateX(20px);
       background-color: #ffffff;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
     }
 
     /* Quick Settings Pill Tray */
@@ -2740,8 +2756,7 @@
         { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anisnatch.top&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
-        { id: "bm_isshonime", categoryId: "cat_anime", title: "Isshonime", url: "https://www.isshonime.com/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=isshonime.com&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
-        { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 6, subBookmarks: [] },
+        { id: "bm_anidb", categoryId: "cat_anime", title: "AniDB", url: "https://anidb.se", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anidb.se&sz=64", builtIn: true, hidden: false, order: 5, subBookmarks: [] },
         { id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [
           { id: "sub_movish_latestmovies_anime", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }
         ] },
@@ -2920,7 +2935,7 @@
         // Migration: Re-sort built-in anime bookmarks so FMHY: Anime is under EverythingMoe and above AniSnatch
         var animeBms = data.bookmarks.filter(function (b) { return b.categoryId === 'cat_anime' && b.builtIn; });
         if (animeBms.length > 0) {
-          var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_isshonime", "bm_anidb"];
+          var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_anidb"];
           desiredAnimeOrder.forEach(function (id, index) {
             var found = animeBms.find(function (b) { return b.id === id; });
             if (found && found.order !== index) {
@@ -5680,7 +5695,7 @@
         syshiIsshonimeBtn.onclick = function () {
           closeSyshisNotesModal();
           var proxiedUrl = location.protocol + '//' + location.host + '/proxy/https://www.isshonime.com/';
-          openBuiltinTestModal('Isshonime', 'https://www.isshonime.com/', proxiedUrl, null, false, 'bm_isshonime');
+          openBuiltinTestModal('Isshonime', 'https://www.isshonime.com/', proxiedUrl, null, false, null);
         };
       }
 
