@@ -69,6 +69,12 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('closeAddModal()'), 'Escape key handler should call closeAddModal when active');
     });
 
+    it('should configure focus management and restoration across share, notes, and test modals', function() {
+        assert.ok(html.includes('function restoreLastFocus()'), 'index.html should define restoreLastFocus helper');
+        assert.ok(html.includes('openShareModal') && html.includes('openSyshisNotesModal') && html.includes('openBuiltinTestModal'), 'modals should exist');
+        assert.ok(html.includes('closeShareModal') && html.includes('closeSyshisNotesModal') && html.includes('closeBuiltinTestModal'), 'modal close handlers should exist');
+    });
+
     it('should configure bookmark search clear button with aria-label, title, and Escape key dismiss handling', function() {
         assert.ok(html.includes('id="bm-search-clear-btn"'), 'bm-search-clear-btn should exist');
         assert.ok(html.includes('aria-label="Clear bookmark search input"'), 'bm-search-clear-btn should specify aria-label');
