@@ -57,4 +57,10 @@ describe("Sub-Sections Functionality & Data Model", function () {
     assert.strictEqual(indexHtml.includes('Add Bookmark'), true);
     assert.strictEqual(indexHtml.includes("!subSec.builtIn || subSec.id === 'user'"), true);
   });
+
+  it("should configure desktop hover-reveal CSS and subsec-edit-btn class for collapsed sub-sections", function () {
+    assert.strictEqual(indexHtml.includes('className = \'subsec-edit-btn\';'), true, 'index.html missing subsec-edit-btn class assignment');
+    assert.strictEqual(indexHtml.includes('@media (hover: hover)'), true, 'index.html missing @media (hover: hover) query');
+    assert.strictEqual(indexHtml.includes('.subsection-divider[aria-expanded="false"] .subsec-edit-btn'), true, 'index.html missing collapsed subsection edit button CSS rule');
+  });
 });

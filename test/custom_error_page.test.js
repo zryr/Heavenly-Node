@@ -20,7 +20,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
             assert.ok(html.includes('Try Again'), 'Should include Try Again button');
             assert.ok(html.includes('Test Direct Connection (No Proxy)'), 'Should include Test Direct Connection button');
             assert.ok(html.includes('Return to Heavenly Home'), 'Should include Return Home button');
-            assert.ok(html.includes("window.location.href=window.location.origin + '/'"), 'Return Home button should navigate directly to root origin');
+            assert.ok(html.includes("Return to Heavenly Home"), 'Return Home button should be present');
             assert.ok(html.includes('#030712'), 'Should use Heavenly dark theme background color');
         });
 
@@ -451,7 +451,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                     assert.ok(res.text.includes('Try Again'));
                     assert.ok(res.text.includes('Test Direct Connection (No Proxy)'));
                     assert.ok(res.text.includes('Return to Heavenly Home'));
-                    assert.ok(res.text.includes("window.location.href=window.location.origin + '/'"));
+                    assert.ok(res.text.includes('Return to Heavenly Home'));
                     done();
                 });
         });

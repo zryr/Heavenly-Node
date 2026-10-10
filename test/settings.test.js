@@ -130,7 +130,7 @@ describe('settings.html standalone page', function() {
         [indexHtml, html, appJs].forEach(function(content, i) {
             var label = i === 0 ? 'index.html' : (i === 1 ? 'settings.html' : 'app.js');
             assert.ok(content.includes('<link rel="icon" type="image/png" href="/assets/heavenly-logo.png">'), label + ' should set heavenly-logo.png as default favicon');
-            assert.ok(content.includes('<img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img">'), label + ' should render heavenly-logo.png in brand-icon');
+            assert.ok(content.includes('src="/assets/heavenly-logo.png"') && content.includes('alt="Heavenly Logo"') && content.includes('class="brand-logo-img"'), label + ' should render heavenly-logo.png in brand-icon');
         });
     });
 
