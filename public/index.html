@@ -984,7 +984,7 @@
       border-radius: 8px;
       opacity: 0.5;
       transition: all 0.2s ease;
-      touch-action: none;
+      touch-action: pan-y;
     }
 
     .drag-dots-handle:hover,
@@ -1075,7 +1075,7 @@
       color: #f1f5f9;
       transition: transform 0.25s var(--ease-spring), border-color 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-spring), background 0.25s var(--ease-spring);
       gap: 8px;
-      touch-action: none;
+      touch-action: pan-y;
       will-change: transform;
     }
 
@@ -1671,7 +1671,7 @@
 
     .long-press-btn.pressing::before {
       width: 100%;
-      transition: width 0.4s ease-out;
+      transition: width 0.7s ease-out;
     }
 
     .bookmark-card {
@@ -1694,7 +1694,7 @@
 
     .bookmark-card.pressing::before {
       width: 100%;
-      transition: width 0.4s ease-out;
+      transition: width 0.7s ease-out;
     }
 
     .bookmark-card > * {
@@ -2541,6 +2541,7 @@
     // --- Heavenly Settings Loader ---
     var DEFAULT_PRESETS = {
       classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
+      newtab: { title: "New Tab", icon: "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\"/>" },
       google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
       docs: { title: "Google Docs", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico" },
       slides: { title: "Google Slides", icon: "https://ssl.gstatic.com/docs/presentations/images/favicon5.ico" },
@@ -3099,7 +3100,7 @@
         { id: "bm_cpsgames", categoryId: "cat_games", title: "CPS Games", url: "https://cpsgames.org/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=cpsgames.org&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [] },
         { id: "bm_ubgames", categoryId: "cat_games", title: "UBGames", url: "https://ubgames.uk", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=ubgames.uk&sz=64", builtIn: true, hidden: false, order: 8, subBookmarks: [] },
         { id: "bm_unbleeked", categoryId: "cat_games", title: "Unbleeked", url: "https://unbleeked.vercel.app/", type: "folder_bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 9, subBookmarks: [] },
-        { id: "bm_duckmath", categoryId: "cat_games", title: "DuckMath", url: "https://duckmath.org/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=duckmath.org&sz=64", builtIn: true, hidden: false, order: 10, disableQuickSaveWidget: true, subBookmarks: [{ id: "sub_duckmath_a1", title: "DuckMath a1", url: "https://classroom-a1.b-cdn.net/", icon: "https://www.google.com/s2/favicons?domain=duckmath.org&sz=64" }] },
+        { id: "bm_duckmath", categoryId: "cat_games", title: "DuckMath", url: "https://duckmath.org/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=duckmath.org&sz=64", builtIn: true, hidden: false, order: 10, disableQuickSaveWidget: true, subBookmarks: [] },
         { id: "bm_emubrowser", categoryId: "cat_games", title: "EmuBrowser", url: "https://emubrowser.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=emubrowser.com&sz=64", builtIn: true, hidden: false, order: 11, subBookmarks: [] },
         { id: "bm_gras2027", categoryId: "cat_games", title: "Gras 2027", url: "https://www.gras2027.com/", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=gras2027.com&sz=64", builtIn: true, hidden: false, order: 12, subBookmarks: [] },
         { id: "bm_funkymods", categoryId: "cat_games", title: "Funky Mods", url: "https://funkymods.github.io/", type: "bookmark", icon: "preset:sparkles", builtIn: true, hidden: false, order: 13, subBookmarks: [] },
@@ -3642,6 +3643,11 @@
     });
 
     function openReorderBar(item) {
+      // Ensure only one drag-dots handle and reorder bar is active at a time
+      document.querySelectorAll('.drag-dots-handle.selected').forEach(function (el) {
+        el.classList.remove('selected');
+      });
+
       selectedItemState = item;
       var bar = $('reorder-bar');
       var info = $('bar-target-info');
@@ -3950,7 +3956,7 @@
         addBmBtn.textContent = '+';
         addBmBtn.onclick = function (e) {
           e.stopPropagation();
-          openAddModal('bookmark', cat.id);
+          openAddModal('bookmark', cat.id, null, null, true);
         };
 
         header.appendChild(titleGroup);
@@ -4156,6 +4162,29 @@
               } catch (err) {}
             };
 
+            var subContainer = null;
+            var toggleFolderInPlace = null;
+
+            if (isFolderType) {
+              toggleFolderInPlace = function (e) {
+                if (e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+                var nowExpanded = !expandedFolders[bm.id];
+                expandedFolders[bm.id] = nowExpanded;
+                var expandBtnEl = bmLeft.querySelector('.folder-expand-btn');
+                if (expandBtnEl) {
+                  expandBtnEl.style.transform = nowExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
+                  expandBtnEl.title = nowExpanded ? 'Collapse folder' : 'Expand folder';
+                  expandBtnEl.setAttribute('aria-label', (nowExpanded ? 'Collapse folder ' : 'Expand folder ') + bm.title);
+                }
+                if (subContainer) {
+                  subContainer.style.display = nowExpanded ? 'flex' : 'none';
+                }
+              };
+            }
+
             if (bm.type !== 'folder') {
               bmCard.target = '_blank';
               bmCard.rel = 'noopener';
@@ -4166,11 +4195,16 @@
               var cardLongPressTimer = null;
               var cardAnimTimer = null;
               var isCardLongPress = false;
+              var cardTouchSX = 0, cardTouchSY = 0;
 
               function startCardPress(e) {
                 if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
                 if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
                 isCardLongPress = false;
+                if (e.type === 'touchstart' && e.touches && e.touches[0]) {
+                  cardTouchSX = e.touches[0].clientX;
+                  cardTouchSY = e.touches[0].clientY;
+                }
                 if (cardAnimTimer) clearTimeout(cardAnimTimer);
                 cardAnimTimer = setTimeout(function () {
                   bmCard.classList.add('pressing');
@@ -4189,7 +4223,16 @@
                     }
                   } catch (err) {}
                   openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, false, bm.id);
-                }, 500);
+                }, 800);
+              }
+
+              function handleCardTouchMove(e) {
+                if (!e.touches || !e.touches[0]) return;
+                var dx = Math.abs(e.touches[0].clientX - cardTouchSX);
+                var dy = Math.abs(e.touches[0].clientY - cardTouchSY);
+                if (dx > 8 || dy > 8) {
+                  cancelCardPress();
+                }
               }
 
               function cancelCardPress() {
@@ -4206,6 +4249,7 @@
 
               bmCard.addEventListener('mousedown', startCardPress);
               bmCard.addEventListener('touchstart', startCardPress, { passive: true });
+              bmCard.addEventListener('touchmove', handleCardTouchMove, { passive: true });
               bmCard.addEventListener('mouseup', cancelCardPress);
               bmCard.addEventListener('mouseleave', cancelCardPress);
               bmCard.addEventListener('touchend', cancelCardPress);
@@ -4260,8 +4304,9 @@
               bmCard.style.cursor = 'pointer';
               bmCard.onclick = function (e) {
                 if (!e.target.closest('.drag-dots-handle') && !e.target.closest('.folder-expand-btn')) {
-                  expandedFolders[bm.id] = !expandedFolders[bm.id];
-                  renderBookmarksUI();
+                  if (typeof toggleFolderInPlace === 'function') {
+                    toggleFolderInPlace(e);
+                  }
                 }
               };
             }
@@ -4285,12 +4330,7 @@
               expandBtn.style.transform = isFolderExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
               expandBtn.style.transition = 'transform 0.2s ease';
               expandBtn.textContent = '>';
-              expandBtn.onclick = function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                expandedFolders[bm.id] = !expandedFolders[bm.id];
-                renderBookmarksUI();
-              };
+              expandBtn.onclick = toggleFolderInPlace;
               bmLeft.appendChild(expandBtn);
             }
 
@@ -4450,9 +4490,9 @@
             bmCard.appendChild(bmHandle);
             bmWrapper.appendChild(bmCard);
 
-            if (isFolderType && isFolderExpanded) {
-              var subContainer = document.createElement('div');
-              subContainer.style.display = 'flex';
+            if (isFolderType) {
+              subContainer = document.createElement('div');
+              subContainer.style.display = isFolderExpanded ? 'flex' : 'none';
               subContainer.style.flexDirection = 'column';
               subContainer.style.gap = '6px';
               subContainer.style.paddingLeft = '18px';
@@ -4531,11 +4571,16 @@
                 var sbLongPressTimer = null;
                 var sbAnimTimer = null;
                 var isSbLongPress = false;
+                var sbTouchSX = 0, sbTouchSY = 0;
 
                 function startSbPress(e) {
                   if (e.target.closest('.bookmark-card-edit-btn')) return;
                   if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
                   isSbLongPress = false;
+                  if (e.type === 'touchstart' && e.touches && e.touches[0]) {
+                    sbTouchSX = e.touches[0].clientX;
+                    sbTouchSY = e.touches[0].clientY;
+                  }
                   if (sbAnimTimer) clearTimeout(sbAnimTimer);
                   sbAnimTimer = setTimeout(function () {
                     sbCard.classList.add('pressing');
@@ -4553,7 +4598,16 @@
                       }
                     } catch (err) {}
                     openBuiltinTestModal(sb.title, sb.url, sbProxiedUrl, null, false, bm.id);
-                  }, 500);
+                  }, 800);
+                }
+
+                function handleSbTouchMove(e) {
+                  if (!e.touches || !e.touches[0]) return;
+                  var dx = Math.abs(e.touches[0].clientX - sbTouchSX);
+                  var dy = Math.abs(e.touches[0].clientY - sbTouchSY);
+                  if (dx > 8 || dy > 8) {
+                    cancelSbPress();
+                  }
                 }
 
                 function cancelSbPress() {
@@ -4570,6 +4624,7 @@
 
                 sbCard.addEventListener('mousedown', startSbPress);
                 sbCard.addEventListener('touchstart', startSbPress, { passive: true });
+                sbCard.addEventListener('touchmove', handleSbTouchMove, { passive: true });
                 sbCard.addEventListener('mouseup', cancelSbPress);
                 sbCard.addEventListener('mouseleave', cancelSbPress);
                 sbCard.addEventListener('touchend', cancelSbPress);
@@ -4732,11 +4787,34 @@
           subDiv.appendChild(subTitleEl);
           subDiv.appendChild(subRightGroup);
 
+          var subContentWrapper = document.createElement('div');
+          subContentWrapper.className = 'subsection-content-wrapper';
+          subContentWrapper.style.display = isSubCollapsed ? 'none' : (cat.side === 'bottom' ? 'grid' : 'flex');
+          if (cat.side === 'bottom') {
+            subContentWrapper.style.gridTemplateColumns = 'repeat(auto-fill, minmax(200px, 1fr))';
+            subContentWrapper.style.gap = '10px';
+          } else {
+            subContentWrapper.style.flexDirection = 'column';
+            subContentWrapper.style.gap = '8px';
+          }
+
           var toggleSubSection = function (e) {
             e.stopPropagation();
-            collapsedSubSections[subSecKey] = !isSubCollapsed;
-            renderBookmarksUI();
+            var nowCollapsed = !(subContentWrapper.style.display === 'none');
+            collapsedSubSections[subSecKey] = nowCollapsed;
+            subContentWrapper.style.display = nowCollapsed ? 'none' : (cat.side === 'bottom' ? 'grid' : 'flex');
+            subArrow.style.transform = nowCollapsed ? 'rotate(0deg)' : 'rotate(90deg)';
+            subDiv.setAttribute('aria-expanded', nowCollapsed ? 'false' : 'true');
+
+            // Hide edit pencil on collapse, show on expand
+            if (editSubSecBtn) {
+              editSubSecBtn.style.display = nowCollapsed ? 'none' : 'inline-flex';
+            }
           };
+
+          if (editSubSecBtn) {
+            editSubSecBtn.style.display = isSubCollapsed ? 'none' : 'inline-flex';
+          }
 
           subDiv.onclick = toggleSubSection;
           subDiv.onkeydown = function (e) {
@@ -4748,37 +4826,43 @@
 
           listContainer.appendChild(subDiv);
 
-          if (!isSubCollapsed) {
-            if (subBms.length > 0) {
-              var isSubExpanded = !!expandedSubSections[cat.id + '_' + subSec.id] || !!searchQuery;
-              var visibleSubBms = isSubExpanded ? subBms : subBms.slice(0, limit);
-              renderBookmarkListSection(visibleSubBms, listContainer);
+          if (subBms.length > 0) {
+            var isSubExpanded = !!expandedSubSections[cat.id + '_' + subSec.id] || !!searchQuery;
+            var initialVisibleSubBms = isSubExpanded ? subBms : subBms.slice(0, limit);
+            renderBookmarkListSection(initialVisibleSubBms, subContentWrapper);
 
-              if (subBms.length > limit && !searchQuery) {
-                var showMoreBtn = document.createElement('button');
-                showMoreBtn.type = 'button';
-                showMoreBtn.className = 'show-more-btn';
-                showMoreBtn.innerHTML = '<span>' + (isSubExpanded ? 'Show Less' : 'Show More (' + (subBms.length - limit) + ' more)') + '</span> <span style="margin-left:4px; display:inline-block; transition:transform 0.2s ease; transform:' + (isSubExpanded ? 'rotate(-90deg)' : 'rotate(0deg)') + ';">&gt;</span>';
-                showMoreBtn.onclick = function (e) {
-                  e.stopPropagation();
-                  expandedSubSections[cat.id + '_' + subSec.id] = !isSubExpanded;
-                  renderBookmarksUI();
-                };
-                listContainer.appendChild(showMoreBtn);
-              }
-            } else {
-              // Add Bookmark button when sub-section has no bookmarks
-              var addBmInEmptySubSecBtn = document.createElement('button');
-              addBmInEmptySubSecBtn.type = 'button';
-              addBmInEmptySubSecBtn.style.cssText = 'background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(56, 189, 248, 0.3); color: #38bdf8; border-radius: 10px; padding: 6px 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s ease; width: 100%; grid-column: 1 / -1;';
-              addBmInEmptySubSecBtn.innerHTML = '<span style="display:inline-flex; align-items:center; gap:4px; justify-content:center;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>Add Bookmark</span></span>';
-              addBmInEmptySubSecBtn.onclick = function (e) {
+            if (subBms.length > limit && !searchQuery) {
+              var showMoreBtn = document.createElement('button');
+              showMoreBtn.type = 'button';
+              showMoreBtn.className = 'show-more-btn';
+              showMoreBtn.innerHTML = '<span>' + (isSubExpanded ? 'Show Less' : 'Show More (' + (subBms.length - limit) + ' more)') + '</span> <span style="margin-left:4px; display:inline-block; transition:transform 0.2s ease; transform:' + (isSubExpanded ? 'rotate(-90deg)' : 'rotate(0deg)') + ';">&gt;</span>';
+              showMoreBtn.onclick = function (e) {
                 e.stopPropagation();
-                openAddModal('bookmark', cat.id, null, subSec.id);
+                var nowExpanded = !expandedSubSections[cat.id + '_' + subSec.id];
+                expandedSubSections[cat.id + '_' + subSec.id] = nowExpanded;
+
+                subContentWrapper.innerHTML = '';
+                var newVisibleBms = nowExpanded ? subBms : subBms.slice(0, limit);
+                renderBookmarkListSection(newVisibleBms, subContentWrapper);
+
+                showMoreBtn.innerHTML = '<span>' + (nowExpanded ? 'Show Less' : 'Show More (' + (subBms.length - limit) + ' more)') + '</span> <span style="margin-left:4px; display:inline-block; transition:transform 0.2s ease; transform:' + (nowExpanded ? 'rotate(-90deg)' : 'rotate(0deg)') + ';">&gt;</span>';
               };
-              listContainer.appendChild(addBmInEmptySubSecBtn);
+              subContentWrapper.appendChild(showMoreBtn);
             }
+          } else {
+            // Add Bookmark button when sub-section has no bookmarks
+            var addBmInEmptySubSecBtn = document.createElement('button');
+            addBmInEmptySubSecBtn.type = 'button';
+            addBmInEmptySubSecBtn.style.cssText = 'background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(56, 189, 248, 0.3); color: #38bdf8; border-radius: 10px; padding: 6px 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s ease; width: 100%; grid-column: 1 / -1;';
+            addBmInEmptySubSecBtn.innerHTML = '<span style="display:inline-flex; align-items:center; gap:4px; justify-content:center;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>Add Bookmark</span></span>';
+            addBmInEmptySubSecBtn.onclick = function (e) {
+              e.stopPropagation();
+              openAddModal('bookmark', cat.id, null, subSec.id);
+            };
+            subContentWrapper.appendChild(addBmInEmptySubSecBtn);
           }
+
+          listContainer.appendChild(subContentWrapper);
         });
         card.appendChild(listContainer);
 
@@ -5007,7 +5091,7 @@
       });
     }
 
-    function openAddModal(type, targetCatId, editBmId, targetSubSecId) {
+    function openAddModal(type, targetCatId, editBmId, targetSubSecId, isTabScoped) {
       var modal = $('add-modal');
       var tabBm = $('tab-add-bm');
       var tabCat = $('tab-add-cat');
@@ -5131,6 +5215,10 @@
       formBm.style.display = type === 'bookmark' ? 'flex' : 'none';
       formCat.style.display = type === 'category' ? 'flex' : 'none';
       if (formSubSec) formSubSec.style.display = type === 'subsection' ? 'flex' : 'none';
+
+      if (tabCat) {
+        tabCat.style.display = isTabScoped ? 'none' : 'block';
+      }
 
       var tabsContainer = $('add-modal-tabs-container');
       if (tabsContainer) {
@@ -6273,10 +6361,15 @@
         var timer = null;
         var animTimer = null;
         var isLongPress = false;
+        var touchSX = 0, touchSY = 0;
 
         function startPress(e) {
           if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
           isLongPress = false;
+          if (e.type === 'touchstart' && e.touches && e.touches[0]) {
+            touchSX = e.touches[0].clientX;
+            touchSY = e.touches[0].clientY;
+          }
           if (animTimer) clearTimeout(animTimer);
           animTimer = setTimeout(function () {
             btn.classList.add('pressing');
@@ -6293,7 +6386,16 @@
               closeEverythingMoeNoticeModal();
             }
             openTargetUrlWithSetting(getTargetUrlFn());
-          }, 500);
+          }, 800);
+        }
+
+        function handleTouchMove(e) {
+          if (!e.touches || !e.touches[0]) return;
+          var dx = Math.abs(e.touches[0].clientX - touchSX);
+          var dy = Math.abs(e.touches[0].clientY - touchSY);
+          if (dx > 8 || dy > 8) {
+            cancelPress();
+          }
         }
 
         function cancelPress() {
@@ -6310,6 +6412,7 @@
 
         btn.addEventListener('mousedown', startPress);
         btn.addEventListener('touchstart', startPress, { passive: true });
+        btn.addEventListener('touchmove', handleTouchMove, { passive: true });
 
         btn.addEventListener('mouseup', cancelPress);
         btn.addEventListener('mouseleave', cancelPress);

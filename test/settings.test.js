@@ -100,8 +100,7 @@ describe('settings.html standalone page', function() {
             assert.ok(content.includes('id: "bm_duckmath"'), label + ' should contain bm_duckmath');
             assert.ok(content.includes('title: "DuckMath"'), label + ' should contain DuckMath title');
             assert.ok(content.includes('https://duckmath.org/'), label + ' should contain duckmath URL');
-            assert.ok(content.includes('title: "DuckMath a1"'), label + ' should contain DuckMath a1 sub-bookmark');
-            assert.ok(content.includes('https://classroom-a1.b-cdn.net/'), label + ' should contain DuckMath a1 URL');
+            assert.ok(!content.includes('title: "DuckMath a1"'), label + ' should not contain redundant DuckMath a1 sub-bookmark');
             assert.ok(content.includes('id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7'), label + ' should configure bm_movish_anime');
             assert.ok(content.includes('id: "bm_movish_movies", categoryId: "cat_movies", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 2'), label + ' should configure bm_movish_movies');
             assert.ok(content.includes('Latest Movies'), label + ' should include Latest Movies mirror link under Movish');
