@@ -23,9 +23,9 @@ describe("Developer QA Panel, Loading Screen Redesign & Touch Drop Indicators", 
       assert(indexHtml.includes('Drop Section Here'), "getSectionGhost should say Drop Section Here");
     });
 
-    it("should define compact-purple-avatar CSS and logic for category drag avatars on small screens", function () {
+    it("should define compact-purple-avatar CSS and disable custom drag avatars in favor of drop indicators", function () {
       assert(indexHtml.includes('.compact-purple-avatar'), "Should define .compact-purple-avatar class");
-      assert(indexHtml.includes('useCompactAvatar'), "createPopoutAvatar should determine useCompactAvatar for category cards on small screens or touch");
+      assert(indexHtml.includes('createPopoutAvatar'), "createPopoutAvatar function should be defined");
     });
   });
 
