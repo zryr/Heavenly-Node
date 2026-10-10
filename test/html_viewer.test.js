@@ -46,4 +46,15 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
 
     assert.strictEqual(settingsHtml.includes('href="html-viewer.html"'), false);
   });
+
+  it('should configure layout view switcher tabs with ARIA attributes in public/html-viewer.html', function() {
+    var html = fs.readFileSync(path.join(__dirname, '../public/html-viewer.html'), 'utf8');
+
+    assert.ok(html.includes('role="tablist"'), 'view-switcher should specify role="tablist"');
+    assert.ok(html.includes('id="view-split"') && html.includes('role="tab"') && html.includes('aria-selected="true"') && html.includes('aria-controls="workspace"'), 'view-split should specify role="tab", aria-selected, and aria-controls');
+    assert.ok(html.includes('id="view-editor"') && html.includes('role="tab"') && html.includes('aria-selected="false"') && html.includes('aria-controls="workspace"'), 'view-editor should specify role="tab", aria-selected, and aria-controls');
+    assert.ok(html.includes('id="view-preview"') && html.includes('role="tab"') && html.includes('aria-selected="false"') && html.includes('aria-controls="workspace"'), 'view-preview should specify role="tab", aria-selected, and aria-controls');
+    assert.ok(html.includes('btn.setAttribute(\'aria-selected\', \'false\')'), 'setViewMode should reset aria-selected to false');
+    assert.ok(html.includes('btnSplit.setAttribute(\'aria-selected\', \'true\')') || html.includes('setAttribute(\'aria-selected\', \'true\')'), 'setViewMode should set aria-selected to true on active tab');
+  });
 });
