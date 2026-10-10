@@ -784,6 +784,56 @@
 
   var DEFAULT_RANDOM_POOL = ['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva'];
 
+  var DEFAULT_PRESETS = {
+    classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
+    google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
+    docs: { title: "Google Docs", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico" },
+    slides: { title: "Google Slides", icon: "https://ssl.gstatic.com/docs/presentations/images/favicon5.ico" },
+    drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
+    gmail: { title: "Gmail", icon: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" },
+    canvas: { title: "Dashboard", icon: "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico" },
+    quizlet: { title: "Flashcards, learning tools and textbook solutions | Quizlet", icon: "https://quizlet.com/favicon.ico" },
+    khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" },
+    wikipedia: { title: "Wikipedia", icon: "https://en.wikipedia.org/static/favicon/wikipedia.ico" },
+    youtube: { title: "YouTube", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64" },
+    outlook: { title: "Outlook", icon: "https://outlook.office.com/favicon.ico" },
+    notion: { title: "Notion", icon: "https://www.notion.so/images/favicon.ico" },
+    elearn_lee: { title: "Courses", icon: "https://www.google.com/s2/favicons?domain=elearn.lee.edu&sz=64" },
+    lee_college: { title: "Home | Lee College", icon: "https://www.google.com/s2/favicons?domain=www.lee.edu&sz=64" },
+    canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" }
+  };
+
+  function resolveActivePreset(settings, win) {
+    if (!settings) return DEFAULT_PRESETS.classroom;
+    var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
+    var selectedKey = settings.selectedPreset;
+
+    if (settings.randomizePresetEachSession) {
+      try {
+        var sessStorage = (win && win.sessionStorage) || (typeof sessionStorage !== 'undefined' ? sessionStorage : null);
+        if (sessStorage) {
+          var poolKeys = Object.keys(allPresets);
+          if (settings.randomPool && Array.isArray(settings.randomPool) && settings.randomPool.length > 0) {
+            var filteredPool = poolKeys.filter(function (k) { return settings.randomPool.indexOf(k) !== -1; });
+            if (filteredPool.length > 0) poolKeys = filteredPool;
+          }
+
+          var sessionPreset = sessStorage.getItem('heavenly_session_preset');
+          if (sessionPreset && allPresets[sessionPreset] && poolKeys.indexOf(sessionPreset) !== -1) {
+            selectedKey = sessionPreset;
+          } else {
+            if (poolKeys.length > 0) {
+              selectedKey = poolKeys[Math.floor(Math.random() * poolKeys.length)];
+              sessStorage.setItem('heavenly_session_preset', selectedKey);
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    return allPresets[selectedKey] || DEFAULT_PRESETS.classroom;
+  }
+
   var _lastRawSettings = null;
   var _cachedHeavenlySettings = null;
 
@@ -808,6 +858,7 @@
     _cachedHeavenlySettings = {
       autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
       persistentCloak: saved.persistentCloak || false,
+      decoyAutoTimer: saved.decoyAutoTimer !== undefined ? Boolean(saved.decoyAutoTimer) : false,
       randomizePresetEachSession: saved.randomizePresetEachSession || false,
       randomPool: (saved.randomPool && Array.isArray(saved.randomPool)) ? saved.randomPool : DEFAULT_RANDOM_POOL.slice(),
       selectedPreset: saved.selectedPreset || 'classroom',
@@ -833,26 +884,7 @@
 
   function initHeavenlyCloakAndPanic(window, settings, config) {
     try {
-      if (window !== window.top) return;
-
-      var DEFAULT_PRESETS = {
-        classroom: { title: "Google Classroom", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
-        google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
-        docs: { title: "Google Docs", icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico" },
-        slides: { title: "Google Slides", icon: "https://ssl.gstatic.com/docs/presentations/images/favicon5.ico" },
-        drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
-        gmail: { title: "Gmail", icon: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" },
-        canvas: { title: "Dashboard", icon: "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico" },
-        quizlet: { title: "Flashcards, learning tools and textbook solutions | Quizlet", icon: "https://quizlet.com/favicon.ico" },
-        khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" },
-        wikipedia: { title: "Wikipedia", icon: "https://en.wikipedia.org/static/favicon/wikipedia.ico" },
-        youtube: { title: "YouTube", icon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64" },
-        outlook: { title: "Outlook", icon: "https://outlook.office.com/favicon.ico" },
-        notion: { title: "Notion", icon: "https://www.notion.so/images/favicon.ico" },
-        elearn_lee: { title: "Courses", icon: "https://www.google.com/s2/favicons?domain=elearn.lee.edu&sz=64" },
-        lee_college: { title: "Home | Lee College", icon: "https://www.google.com/s2/favicons?domain=www.lee.edu&sz=64" },
-        canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" }
-      };
+      if (!isTopOrAboutBlankIframe(window)) return;
 
       if (!settings) {
         settings = loadHeavenlySettings(window);
@@ -871,33 +903,7 @@
       }
 
       function getPresetData() {
-        var allPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
-        var selectedKey = settings.selectedPreset;
-
-        if (settings.randomizePresetEachSession) {
-          try {
-            var sessStorage = window.sessionStorage || (typeof sessionStorage !== 'undefined' ? sessionStorage : null);
-            if (sessStorage) {
-              var poolKeys = Object.keys(allPresets);
-              if (settings.randomPool && Array.isArray(settings.randomPool) && settings.randomPool.length > 0) {
-                var filteredPool = poolKeys.filter(function (k) { return settings.randomPool.indexOf(k) !== -1; });
-                if (filteredPool.length > 0) poolKeys = filteredPool;
-              }
-
-              var sessionPreset = sessStorage.getItem('heavenly_session_preset');
-              if (sessionPreset && allPresets[sessionPreset] && poolKeys.indexOf(sessionPreset) !== -1) {
-                selectedKey = sessionPreset;
-              } else {
-                if (poolKeys.length > 0) {
-                  selectedKey = poolKeys[Math.floor(Math.random() * poolKeys.length)];
-                  sessStorage.setItem('heavenly_session_preset', selectedKey);
-                }
-              }
-            }
-          } catch (e) {}
-        }
-
-        return allPresets[selectedKey] || DEFAULT_PRESETS.classroom;
+        return resolveActivePreset(settings, window);
       }
 
       function applyCloak(isCloaked) {
@@ -1109,10 +1115,15 @@
 
           var isMinimized = false;
           var autoMinTimer = setTimeout(function () {
+            if (!btn) return;
             isMinimized = true;
-            btn.classList.add('minimized');
-            btn.querySelector('.btn-label').style.display = 'none';
+            if (btn.classList) btn.classList.add('minimized');
+            var label = btn.querySelector ? btn.querySelector('.btn-label') : null;
+            if (label && label.style) label.style.display = 'none';
           }, 10000);
+          if (autoMinTimer && typeof autoMinTimer.unref === 'function') {
+            autoMinTimer.unref();
+          }
 
           var isDragging = false;
           var startX = 0, startY = 0;
@@ -1181,8 +1192,10 @@
             }
           };
 
-          btn.addEventListener('mousedown', onDown);
-          btn.addEventListener('touchstart', onDown);
+          if (btn && typeof btn.addEventListener === 'function') {
+            btn.addEventListener('mousedown', onDown);
+            btn.addEventListener('touchstart', onDown);
+          }
         }
 
         if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {
@@ -2327,9 +2340,127 @@
     }
   }
 
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function isTopOrAboutBlankIframe(win) {
+    if (!win) return false;
+    try {
+      if (win === win.top) return true;
+    } catch (e) {
+      return false;
+    }
+    try {
+      if (win.top && win.top.location) {
+        var topHref = win.top.location.href || '';
+        var topProto = win.top.location.protocol || '';
+        if (topHref === 'about:blank' || topProto === 'about:') {
+          if (!win.parent || win.parent === win.top || (win.parent.location && win.parent.location.href === 'about:blank')) {
+            return true;
+          }
+        }
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  function getActiveProxiedUrl(win, config) {
+    try {
+      win = win || window;
+      var prefix = (config && config.prefix) || '/proxy/';
+      var origin = (win.location && win.location.origin && win.location.origin !== 'null' && win.location.origin.indexOf('http') === 0) ? win.location.origin : '';
+
+      if (win.location && win.location.pathname && win.location.pathname.indexOf(prefix) !== -1) {
+        return origin + win.location.pathname + (win.location.search || '') + (win.location.hash || '');
+      }
+
+      var targetUrl = getDirectRemoteUrl(win, config);
+      if (targetUrl) {
+        return origin + prefix + targetUrl;
+      }
+
+      if (win.location && win.location.href) {
+        if (win.location.href.indexOf(prefix) !== -1) {
+          return win.location.href;
+        }
+        return origin + prefix + win.location.href;
+      }
+    } catch (e) {}
+    return (config && config.url) ? (((config && config.prefix) || '/proxy/') + config.url) : '';
+  }
+
+  function openAboutBlankLauncher(url, title, favicon, win) {
+    win = win || window;
+    var blankTab = null;
+    try {
+      blankTab = win.open('about:blank', '_blank');
+    } catch (e) {}
+
+    if (!blankTab) {
+      if (typeof win.alert === 'function') {
+        win.alert('Popup blocked! Please allow popups for this site to use about:blank cloaking.');
+      }
+      return null;
+    }
+
+    try {
+      var doc = blankTab.document;
+      if (doc) {
+        doc.open();
+        var safeTitle = escapeHtml(title || 'Classes');
+        var safeFavicon = escapeHtml(favicon || '');
+        var safeUrl = escapeHtml(url || '');
+        var html = '<!DOCTYPE html>\n<html>\n<head>\n' +
+          '<meta charset="UTF-8">\n' +
+          '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+          '<title>' + safeTitle + '</title>\n' +
+          (safeFavicon ? '<link rel="icon" type="image/x-icon" href="' + safeFavicon + '">\n<link rel="shortcut icon" href="' + safeFavicon + '">\n' : '') +
+          '<style>\n' +
+          '  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }\n' +
+          '  iframe { width: 100vw; height: 100vh; border: none; display: block; outline: none; margin: 0; padding: 0; }\n' +
+          '</style>\n' +
+          '</head>\n<body>\n' +
+          '<iframe src="' + safeUrl + '" allowfullscreen="true" style="width: 100vw; height: 100vh; border: none;"></iframe>\n' +
+          '</body>\n</html>';
+        doc.write(html);
+        doc.close();
+      }
+    } catch (err) {
+      try {
+        blankTab.location.href = url;
+      } catch (e) {}
+    }
+
+    return blankTab;
+  }
+
+  function launchActiveInAboutBlank(win, settings, config) {
+    win = win || window;
+    var proxiedUrl = getActiveProxiedUrl(win, config);
+    if (!settings) settings = loadHeavenlySettings(win);
+    var preset = resolveActivePreset(settings);
+    var cloakTitle = (win.document && win.document.title) || preset.title || 'Classes';
+    var cloakFavicon = '';
+    if (win.document && typeof win.document.querySelector === 'function') {
+      var iconEl = win.document.querySelector("link[rel*='icon']");
+      if (iconEl && iconEl.href) cloakFavicon = iconEl.href;
+    }
+    if (!cloakFavicon) {
+      cloakFavicon = preset.icon || (win.location && win.location.origin ? win.location.origin + '/assets/heavenly-logo.png' : '/assets/heavenly-logo.png');
+    }
+    return openAboutBlankLauncher(proxiedUrl, cloakTitle, cloakFavicon, win);
+  }
+
   function initHeavenlyWidgets(window, settings, config) {
     try {
-      if (window !== window.top) return; // Only show in main top window
+      if (!isTopOrAboutBlankIframe(window)) return; // Only show in main top window or about:blank wrapper
 
       if (!settings) {
         settings = loadHeavenlySettings(window);
@@ -2468,25 +2599,31 @@
         var inactivityTimer = null;
 
         function updateWidgetMode() {
-          var rect = container.getBoundingClientRect();
-          var winW = window.innerWidth || document.documentElement.clientWidth || 800;
+          var rect = (container && typeof container.getBoundingClientRect === 'function')
+            ? container.getBoundingClientRect()
+            : { left: 0, top: 0, right: 0, bottom: 0 };
+          var winW = window.innerWidth || (document.documentElement && document.documentElement.clientWidth) || 800;
           var widgetW = container.offsetWidth || 40;
           var centerX = rect.left + widgetW / 2;
           var isLeft = centerX < (winW / 2);
-          if (isLeft) {
-            widgetElement.classList.add('left-mode');
-          } else {
-            widgetElement.classList.remove('left-mode');
+          if (widgetElement && widgetElement.classList) {
+            if (isLeft) {
+              widgetElement.classList.add('left-mode');
+            } else {
+              widgetElement.classList.remove('left-mode');
+            }
           }
           return isLeft;
         }
 
         function enforceBoundaries() {
-          var currentRect = container.getBoundingClientRect();
-          var winW = window.innerWidth || document.documentElement.clientWidth || 800;
-          var winH = window.innerHeight || document.documentElement.clientHeight || 600;
-          var maxLeft = Math.max(0, winW - container.offsetWidth);
-          var maxTop = Math.max(0, winH - container.offsetHeight);
+          var currentRect = (container && typeof container.getBoundingClientRect === 'function')
+            ? container.getBoundingClientRect()
+            : { left: 0, top: 0, right: 0, bottom: 0 };
+          var winW = window.innerWidth || (document.documentElement && document.documentElement.clientWidth) || 800;
+          var winH = window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 600;
+          var maxLeft = Math.max(0, winW - (container.offsetWidth || 40));
+          var maxTop = Math.max(0, winH - (container.offsetHeight || 40));
 
           var curLeft = currentRect.left;
           var curTop = currentRect.top;
@@ -2520,10 +2657,13 @@
         } catch (e) {}
 
         // Default to collapsed state upon page open
-        setTimeout(function () {
+        var defCollapseTimer = setTimeout(function () {
           minimize();
           enforceBoundaries();
         }, 0);
+        if (defCollapseTimer && typeof defCollapseTimer.unref === 'function') {
+          defCollapseTimer.unref();
+        }
 
         // Re-clamp on window resize
         window.addEventListener('resize', enforceBoundaries);
@@ -2535,16 +2675,23 @@
             inactivityTimer = setTimeout(function () {
               minimize();
             }, 10000);
+            if (inactivityTimer && typeof inactivityTimer.unref === 'function') {
+              inactivityTimer.unref();
+            }
           }
         }
 
         function minimize() {
           if (isMinimized) return;
           var isLeft = updateWidgetMode();
-          var rect = container.getBoundingClientRect();
+          var rect = (container && typeof container.getBoundingClientRect === 'function')
+            ? container.getBoundingClientRect()
+            : { left: 0, top: 0, right: 0, bottom: 0 };
           var rightEdge = rect.right;
           isMinimized = true;
-          widgetElement.classList.add('minimized');
+          if (widgetElement && widgetElement.classList) {
+            widgetElement.classList.add('minimized');
+          }
 
           if (!isLeft) {
             var miniW = container.offsetWidth || 38;
@@ -3191,6 +3338,8 @@
 
           items.push('<button type="button" class="btn-ctrl" id="dock-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
 
+          items.push('<button type="button" class="btn-ctrl" id="dock-blank-btn" title="Open in about:blank Cloak"><svg class="title-icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg><span>about:blank</span></button>');
+
           if (showNavBookmark) {
             items.push('<button type="button" class="btn-ctrl" id="dock-bm-btn" title="Bookmark Page"><svg class="title-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>Bookmark</span></button>');
           }
@@ -3415,6 +3564,15 @@
             directDockBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               openDirectSitePreview(window, getDirectRemoteUrl(window, config));
+            });
+          }
+
+          // Wire up about:blank Cloak button
+          var blankDockBtn = dockBar.querySelector('#dock-blank-btn');
+          if (blankDockBtn) {
+            blankDockBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              launchActiveInAboutBlank(window, settings, config);
             });
           }
 
@@ -3671,6 +3829,8 @@
 
           navHtml.push('<button type="button" class="btn-ctrl" id="nav-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
 
+          navHtml.push('<button type="button" class="btn-ctrl" id="nav-blank-btn" title="Open in about:blank Cloak"><svg class="title-icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg><span>about:blank</span></button>');
+
           navHtml.push('<button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>');
           navHtml.push('</div>');
           navWidget.innerHTML = navHtml.join('\n');
@@ -3720,6 +3880,14 @@
             floatDirectBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               openDirectSitePreview(window, getDirectRemoteUrl(window, config));
+            });
+          }
+
+          var floatBlankBtn = navWidget.querySelector('#nav-blank-btn') || (navShadow.querySelector ? navShadow.querySelector('#nav-blank-btn') : null);
+          if (floatBlankBtn) {
+            floatBlankBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              launchActiveInAboutBlank(window, settings, config);
             });
           }
 
@@ -3806,7 +3974,7 @@
 
   function initManualIconPickerWidget(config, window, settings) {
     try {
-      if (window !== window.top) return;
+      if (!isTopOrAboutBlankIframe(window)) return;
       if (!settings) {
         settings = loadHeavenlySettings(window);
       }
@@ -4153,7 +4321,7 @@
 
   function saveToHeavenlyHistory(window, config, settings) {
     try {
-      if (window !== window.top) return;
+      if (!isTopOrAboutBlankIframe(window)) return;
 
       var path = window.location.pathname;
       var prefix = config.prefix || '/proxy/';
@@ -4201,7 +4369,7 @@
 
   function initFolderQuickSaveWidget(config, window, settings) {
     try {
-      if (window !== window.top) return;
+      if (!isTopOrAboutBlankIframe(window)) return;
       if (!settings) {
         settings = loadHeavenlySettings(window);
       }
@@ -4448,7 +4616,7 @@
 
   function initNewgroundsPagination(config, window, settings) {
     try {
-      if (window !== window.top) return;
+      if (!isTopOrAboutBlankIframe(window)) return;
       if (!settings) {
         settings = loadHeavenlySettings(window);
       }
@@ -4685,6 +4853,9 @@
       initForWindow: initForWindow,
       fixUrl: fixUrl,
       fixSrcset: fixSrcset,
+      isTopOrAboutBlankIframe: isTopOrAboutBlankIframe,
+      openAboutBlankLauncher: openAboutBlankLauncher,
+      getActiveProxiedUrl: getActiveProxiedUrl,
     };
   }
 })(this); // window in a browser, global in node.js

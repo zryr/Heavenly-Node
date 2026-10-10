@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { fixUrl, fixSrcset, initForWindow } = require('../custom-client/unblocker-client.js');
+const { fixUrl, fixSrcset, initForWindow, isTopOrAboutBlankIframe, openAboutBlankLauncher } = require('../custom-client/unblocker-client.js');
 
 describe('unblocker-client.js DOM element rewriting & click interception', function () {
   const config = {
@@ -499,6 +499,438 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       const parsedPos = JSON.parse(savedPanicPos);
       assert.strictEqual(typeof parsedPos.left, 'number');
       assert.strictEqual(typeof parsedPos.top, 'number');
+    });
+  });
+
+  describe('about:blank Tab Cloaking Launcher & Wrapper Support', function () {
+    describe('isTopOrAboutBlankIframe', function () {
+      it('should return true for a top window', function () {
+        const topWin = {};
+        topWin.top = topWin;
+        assert.strictEqual(isTopOrAboutBlankIframe(topWin), true);
+      });
+
+      it('should return true for an iframe embedded in an about:blank parent', function () {
+        const topWin = {
+          location: { href: 'about:blank', protocol: 'about:' }
+        };
+        const childWin = {
+          top: topWin,
+          parent: topWin
+        };
+        assert.strictEqual(isTopOrAboutBlankIframe(childWin), true);
+      });
+
+      it('should return false for an iframe inside a regular page', function () {
+        const topWin = {
+          location: { href: 'https://example.com/some/page', protocol: 'https:' }
+        };
+        const childWin = {
+          top: topWin,
+          parent: topWin
+        };
+        assert.strictEqual(isTopOrAboutBlankIframe(childWin), false);
+      });
+
+      it('should return false safely when cross-origin access throws an error', function () {
+        const childWin = {
+          get top() {
+            throw new Error('Blocked a frame with origin from accessing a cross-origin frame');
+          }
+        };
+        assert.strictEqual(isTopOrAboutBlankIframe(childWin), false);
+      });
+    });
+
+    describe('openAboutBlankLauncher', function () {
+      it('should open about:blank window and write full-screen cloaked iframe markup', function () {
+        let openedUrl = null;
+        let openedTarget = null;
+        let writtenHtml = '';
+        let docOpened = false;
+        let docClosed = false;
+
+        const mockBlankDoc = {
+          open: function () { docOpened = true; },
+          write: function (html) { writtenHtml += html; },
+          close: function () { docClosed = true; }
+        };
+
+        const mockBlankWin = {
+          document: mockBlankDoc
+        };
+
+        const mockWin = {
+          open: function (url, target) {
+            openedUrl = url;
+            openedTarget = target;
+            return mockBlankWin;
+          }
+        };
+
+        const result = openAboutBlankLauncher('https://example.com/target', 'Google Docs', 'https://example.com/icon.ico', mockWin);
+        assert.strictEqual(result, mockBlankWin);
+        assert.strictEqual(openedUrl, 'about:blank');
+        assert.strictEqual(openedTarget, '_blank');
+        assert.strictEqual(docOpened, true);
+        assert.strictEqual(docClosed, true);
+        assert.ok(writtenHtml.includes('<title>Google Docs</title>'));
+        assert.ok(writtenHtml.includes('<link rel="icon" type="image/x-icon" href="https://example.com/icon.ico">'));
+        assert.ok(writtenHtml.includes('width: 100vw; height: 100vh; border: none;'));
+        assert.ok(writtenHtml.includes('src="https://example.com/target"'));
+      });
+
+      it('should alert user when popups are blocked (window.open returns null)', function () {
+        let alertedMsg = null;
+        const mockWin = {
+          open: function () {
+            return null;
+          },
+          alert: function (msg) {
+            alertedMsg = msg;
+          }
+        };
+
+        const result = openAboutBlankLauncher('https://example.com/target', 'Google Docs', 'https://example.com/icon.ico', mockWin);
+        assert.strictEqual(result, null);
+        assert.ok(alertedMsg && alertedMsg.includes('Popup blocked!'));
+      });
+    });
+
+    describe('Launcher Buttons in Dock & Nav Bar', function () {
+      it('should include #dock-blank-btn in dock mode and trigger launcher on click', function () {
+        let openedBlank = false;
+        let writtenDoc = '';
+
+        const mockBlankDoc = {
+          open: () => {},
+          write: (h) => { writtenDoc += h; },
+          close: () => {}
+        };
+        const mockBlankWin = { document: mockBlankDoc };
+
+        const mockElement = function (tag) {
+          this.tagName = tag.toUpperCase();
+          this.style = {};
+          this.children = [];
+          this.elementListeners = {};
+          this.classList = {
+            add: () => {},
+            remove: () => {},
+            contains: () => false
+          };
+          this.appendChild = (c) => this.children.push(c);
+          this.attachShadow = () => this;
+          this.addEventListener = (evt, fn) => {
+            this.elementListeners[evt] = fn;
+          };
+          let innerHtmlVal = '';
+          Object.defineProperty(this, 'innerHTML', {
+            get: () => innerHtmlVal,
+            set: (val) => {
+              innerHtmlVal = val;
+              const matches = val.matchAll(/id="([^"]+)"/g);
+              for (const m of matches) {
+                const child = new mockElement('div');
+                child.id = m[1];
+                this.children.push(child);
+              }
+            }
+          });
+          this.querySelector = (sel) => {
+            if (this.id && '#' + this.id === sel) return this;
+            if (sel === '#p-btn') return this;
+            for (let c of this.children) {
+              if (c.id && '#' + c.id === sel) return c;
+              if (c.querySelector) {
+                const found = c.querySelector(sel);
+                if (found) return found;
+              }
+            }
+            return null;
+          };
+          this.querySelectorAll = () => [];
+        };
+
+        const mockDoc = {
+          readyState: 'complete',
+          body: new mockElement('body'),
+          createElement: (tag) => new mockElement(tag),
+          getElementById: (id) => {
+            return mockDoc.body.querySelector ? mockDoc.body.querySelector('#' + id) : null;
+          },
+          querySelector: (sel) => {
+            return mockDoc.body.querySelector ? mockDoc.body.querySelector(sel) : null;
+          },
+          getElementsByTagName: () => [],
+          querySelectorAll: () => [],
+          documentElement: { addEventListener: function () {} }
+        };
+
+        const mockWindow = {
+          innerWidth: 800,
+          innerHeight: 600,
+          location: {
+            origin: 'http://localhost:8080',
+            pathname: '/proxy/https://en.wikipedia.org/wiki/Main_Page',
+            search: '',
+            hash: '',
+            href: 'http://localhost:8080/proxy/https://en.wikipedia.org/wiki/Main_Page'
+          },
+          document: mockDoc,
+          addEventListener: function () {},
+          open: function (url, target) {
+            if (url === 'about:blank') {
+              openedBlank = true;
+              return mockBlankWin;
+            }
+            return null;
+          },
+          localStorage: {
+            getItem: function (key) {
+              if (key === 'heavenly_settings') {
+                return JSON.stringify({
+                  useWidgetDock: true,
+                  selectedPreset: 'docs'
+                });
+              }
+              return null;
+            }
+          }
+        };
+        mockWindow.top = mockWindow;
+
+        initForWindow(config, mockWindow);
+
+        // Find dock root
+        const dockRoot = mockDoc.body.children.find(c => c.id === 'heavenly-dock-root');
+        assert.ok(dockRoot, 'Dock root should be injected');
+
+        const dockBlankBtn = dockRoot.querySelector('#dock-blank-btn');
+        assert.ok(dockBlankBtn, 'Dock should contain #dock-blank-btn');
+
+        // Click the dock launcher button
+        assert.ok(dockBlankBtn.elementListeners['click'], 'dock-blank-btn should have click listener');
+        dockBlankBtn.elementListeners['click']({ stopPropagation: () => {} });
+
+        assert.strictEqual(openedBlank, true, 'Clicking #dock-blank-btn should open about:blank window');
+        assert.ok(writtenDoc.includes('width: 100vw; height: 100vh; border: none;'), 'Should write cloaked iframe');
+        assert.ok(writtenDoc.includes('Google Docs'), 'Should use active preset title');
+      });
+
+      it('should include #nav-blank-btn in floating nav mode and trigger launcher on click', function () {
+        let openedBlank = false;
+        let writtenDoc = '';
+
+        const mockBlankDoc = {
+          open: () => {},
+          write: (h) => { writtenDoc += h; },
+          close: () => {}
+        };
+        const mockBlankWin = { document: mockBlankDoc };
+
+        const mockElement = function (tag) {
+          this.tagName = tag.toUpperCase();
+          this.style = {};
+          this.children = [];
+          this.elementListeners = {};
+          this.classList = {
+            add: () => {},
+            remove: () => {},
+            contains: () => false
+          };
+          this.appendChild = (c) => this.children.push(c);
+          this.attachShadow = () => this;
+          this.addEventListener = (evt, fn) => {
+            this.elementListeners[evt] = fn;
+          };
+          let innerHtmlVal = '';
+          Object.defineProperty(this, 'innerHTML', {
+            get: () => innerHtmlVal,
+            set: (val) => {
+              innerHtmlVal = val;
+              const matches = val.matchAll(/id="([^"]+)"/g);
+              for (const m of matches) {
+                const child = new mockElement('div');
+                child.id = m[1];
+                this.children.push(child);
+              }
+            }
+          });
+          this.querySelector = (sel) => {
+            if (this.id && '#' + this.id === sel) return this;
+            if (sel === '#p-btn') return this;
+            for (let c of this.children) {
+              if (c.id && '#' + c.id === sel) return c;
+              if (c.querySelector) {
+                const found = c.querySelector(sel);
+                if (found) return found;
+              }
+            }
+            return null;
+          };
+          this.querySelectorAll = () => [];
+        };
+
+        const mockDoc = {
+          readyState: 'complete',
+          body: new mockElement('body'),
+          createElement: (tag) => new mockElement(tag),
+          getElementById: (id) => {
+            return mockDoc.body.querySelector ? mockDoc.body.querySelector('#' + id) : null;
+          },
+          querySelector: (sel) => {
+            return mockDoc.body.querySelector ? mockDoc.body.querySelector(sel) : null;
+          },
+          getElementsByTagName: () => [],
+          querySelectorAll: () => [],
+          documentElement: { addEventListener: function () {} }
+        };
+
+        const mockWindow = {
+          innerWidth: 800,
+          innerHeight: 600,
+          location: {
+            origin: 'http://localhost:8080',
+            pathname: '/proxy/https://en.wikipedia.org/wiki/Main_Page',
+            search: '',
+            hash: '',
+            href: 'http://localhost:8080/proxy/https://en.wikipedia.org/wiki/Main_Page'
+          },
+          document: mockDoc,
+          addEventListener: function () {},
+          open: function (url, target) {
+            if (url === 'about:blank') {
+              openedBlank = true;
+              return mockBlankWin;
+            }
+            return null;
+          },
+          localStorage: {
+            getItem: function (key) {
+              if (key === 'heavenly_settings') {
+                return JSON.stringify({
+                  useWidgetDock: false,
+                  selectedPreset: 'sheets'
+                });
+              }
+              return null;
+            }
+          }
+        };
+        mockWindow.top = mockWindow;
+
+        initForWindow(config, mockWindow);
+
+        // Find nav root
+        const navRoot = mockDoc.body.children.find(c => c.id === 'heavenly-nav-root');
+        assert.ok(navRoot, 'Floating nav root should be injected');
+
+        const navBlankBtn = navRoot.querySelector('#nav-blank-btn');
+        assert.ok(navBlankBtn, 'Nav root should contain #nav-blank-btn');
+
+        // Click nav launcher button
+        assert.ok(navBlankBtn.elementListeners['click'], 'nav-blank-btn should have click listener');
+        navBlankBtn.elementListeners['click']({ stopPropagation: () => {} });
+
+        assert.strictEqual(openedBlank, true, 'Clicking #nav-blank-btn should open about:blank window');
+        assert.ok(writtenDoc.includes('width: 100vw; height: 100vh; border: none;'), 'Should write cloaked iframe');
+      });
+    });
+
+    describe('Widget support inside about:blank iframe wrapper', function () {
+      it('should initialize Heavenly widgets when running inside an about:blank iframe wrapper', function () {
+        const topWin = {
+          location: { href: 'about:blank', protocol: 'about:' }
+        };
+
+        const mockElement = function (tag) {
+          this.tagName = tag.toUpperCase();
+          this.style = {};
+          this.children = [];
+          this.elementListeners = {};
+          this.classList = {
+            add: () => {},
+            remove: () => {},
+            contains: () => false
+          };
+          this.appendChild = (c) => this.children.push(c);
+          this.attachShadow = () => this;
+          this.addEventListener = (evt, fn) => {
+            this.elementListeners[evt] = fn;
+          };
+          let innerHtmlVal = '';
+          Object.defineProperty(this, 'innerHTML', {
+            get: () => innerHtmlVal,
+            set: (val) => {
+              innerHtmlVal = val;
+              const matches = val.matchAll(/id="([^"]+)"/g);
+              for (const m of matches) {
+                const child = new mockElement('div');
+                child.id = m[1];
+                this.children.push(child);
+              }
+            }
+          });
+          this.querySelector = (sel) => {
+            if (this.id && '#' + this.id === sel) return this;
+            if (sel === '#p-btn') return this;
+            for (let c of this.children) {
+              if (c.id && '#' + c.id === sel) return c;
+              if (c.querySelector) {
+                const found = c.querySelector(sel);
+                if (found) return found;
+              }
+            }
+            return null;
+          };
+          this.querySelectorAll = () => [];
+        };
+
+        const mockDoc = {
+          readyState: 'complete',
+          body: new mockElement('body'),
+          createElement: (tag) => new mockElement(tag),
+          getElementById: (id) => {
+            return mockDoc.body.querySelector ? mockDoc.body.querySelector('#' + id) : null;
+          },
+          getElementsByTagName: () => [],
+          querySelectorAll: () => [],
+          documentElement: { addEventListener: function () {} }
+        };
+
+        const mockChildWindow = {
+          innerWidth: 800,
+          innerHeight: 600,
+          location: {
+            origin: 'http://localhost:8080',
+            pathname: '/proxy/https://en.wikipedia.org/wiki/Main_Page',
+            search: '',
+            hash: '',
+            href: 'http://localhost:8080/proxy/https://en.wikipedia.org/wiki/Main_Page'
+          },
+          document: mockDoc,
+          addEventListener: function () {},
+          localStorage: {
+            getItem: function (key) {
+              if (key === 'heavenly_settings') {
+                return JSON.stringify({ useWidgetDock: true, touchPanic: true });
+              }
+              return null;
+            }
+          }
+        };
+        mockChildWindow.top = topWin;
+        mockChildWindow.parent = topWin;
+
+        initForWindow(config, mockChildWindow);
+
+        // Check if widgets mounted despite win !== win.top
+        const dockRoot = mockDoc.body.children.find(c => c.id === 'heavenly-dock-root');
+        assert.ok(dockRoot, 'Dock widget should mount inside about:blank wrapper iframe');
+        const panicRoot = mockDoc.body.children.find(c => c.id === 'heavenly-touch-panic-root');
+        assert.ok(panicRoot, 'Panic button should mount inside about:blank wrapper iframe');
+      });
     });
   });
 });

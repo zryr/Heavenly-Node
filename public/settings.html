@@ -977,6 +977,30 @@
             <p class="hero-card-desc">Continuously keeps your browser tab title and favicon disguised regardless of tab visibility.</p>
           </div>
 
+          <!-- Hero Card: Open in about:blank Cloak -->
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-about-blank" class="hero-card-title">Open in about:blank Cloak</label>
+              <label class="switch-toggle">
+                <input type="checkbox" id="set-about-blank" role="switch">
+                <span class="slider-knob"></span>
+              </label>
+            </div>
+            <p class="hero-card-desc">Launches proxied websites and bookmarks inside an about:blank cloaked tab to hide page history and URLs from browser address bars.</p>
+          </div>
+
+          <!-- Hero Card: Timed Decoy Auto-Unlock -->
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-decoy-auto-timer" class="hero-card-title">Timed Decoy Auto-Unlock</label>
+              <label class="switch-toggle">
+                <input type="checkbox" id="set-decoy-auto-timer" role="switch">
+                <span class="slider-knob"></span>
+              </label>
+            </div>
+            <p class="hero-card-desc">Automatically opens Heavenly after a few seconds without clicking Terms of Service.</p>
+          </div>
+
           <!-- Hero Card: Session Random Preset & Pool Selector -->
           <div class="hero-card">
             <div class="hero-card-header">
@@ -1721,6 +1745,7 @@
       return {
         autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
         persistentCloak: saved.persistentCloak || false,
+        decoyAutoTimer: saved.decoyAutoTimer !== undefined ? Boolean(saved.decoyAutoTimer) : false,
         randomizePresetEachSession: saved.randomizePresetEachSession || false,
         randomPool: (saved.randomPool && Array.isArray(saved.randomPool)) ? saved.randomPool : DEFAULT_RANDOM_POOL.slice(),
         selectedPreset: saved.selectedPreset || 'classroom',
@@ -1729,6 +1754,7 @@
         openSearchInNewTab: saved.openSearchInNewTab || false,
         mergeGoNewTab: saved.mergeGoNewTab || false,
         openBookmarksInNewTab: saved.openBookmarksInNewTab !== undefined ? saved.openBookmarksInNewTab : true,
+        openInAboutBlank: saved.openInAboutBlank !== undefined ? saved.openInAboutBlank : false,
         panicKeyEnable: saved.panicKeyEnable || false,
         panicKey: saved.panicKey || '`',
         touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
@@ -2193,6 +2219,10 @@
 
       var bmsNewTabCb = $('set-bookmarks-new-tab');
       if (bmsNewTabCb) bmsNewTabCb.checked = settings.openBookmarksInNewTab;
+      var aboutBlankCb = $('set-about-blank');
+      if (aboutBlankCb) aboutBlankCb.checked = Boolean(settings.openInAboutBlank);
+      var decoyAutoTimerCb = $('set-decoy-auto-timer');
+      if (decoyAutoTimerCb) decoyAutoTimerCb.checked = Boolean(settings.decoyAutoTimer);
 
       $('set-panic-key-enable').checked = settings.panicKeyEnable;
       $('set-panic-key').value = settings.panicKey;
@@ -2562,6 +2592,8 @@
         settings.openSearchInNewTab = $('set-search-new-tab') ? $('set-search-new-tab').checked : false;
         settings.mergeGoNewTab = $('set-merge-go-newtab') ? $('set-merge-go-newtab').checked : false;
         settings.openBookmarksInNewTab = $('set-bookmarks-new-tab') ? $('set-bookmarks-new-tab').checked : true;
+        settings.openInAboutBlank = $('set-about-blank') ? $('set-about-blank').checked : false;
+        settings.decoyAutoTimer = $('set-decoy-auto-timer') ? $('set-decoy-auto-timer').checked : false;
         settings.panicKeyEnable = $('set-panic-key-enable').checked;
         settings.panicKey = $('set-panic-key').value.trim();
         settings.touchPanic = $('set-touch-panic').checked;
@@ -2580,7 +2612,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-randomize-preset-session', 'set-show-builtin-prompt', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-about-blank', 'set-decoy-auto-timer', 'set-randomize-preset-session', 'set-show-builtin-prompt', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
         var el = $(id);
         if (el) {
           el.onchange = function () {

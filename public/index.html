@@ -6,6 +6,13 @@
   <title>Heavenly</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" href="/assets/heavenly-logo.png">
+  <script>
+    try {
+      if (sessionStorage.getItem('heavenly_decoy_unlocked') === 'true') {
+        document.documentElement.classList.add('decoy-bypassed');
+      }
+    } catch (e) {}
+  </script>
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -446,6 +453,10 @@
       text-align: center;
     }
 
+    #error:empty {
+      display: none !important;
+    }
+
     .search-form {
       display: flex;
       gap: 10px;
@@ -514,6 +525,11 @@
       overflow-y: auto;
       scrollbar-width: thin;
       scrollbar-color: rgba(56, 189, 248, 0.6) rgba(15, 23, 42, 0.8);
+    }
+
+    .history-dropdown:empty,
+    #history-dropdown:empty {
+      display: none !important;
     }
 
     .history-dropdown::-webkit-scrollbar {
@@ -712,17 +728,6 @@
       box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
     }
 
-    #google-ad {
-      text-align: center;
-      margin: 0 auto;
-      max-width: 100%;
-      overflow: hidden;
-    }
-
-    #google-ad:empty,
-    #google-ad ins:empty {
-      display: none !important;
-    }
 
     .info-section {
       padding-top: 20px;
@@ -1836,12 +1841,976 @@
       margin-right: 0 !important;
       border-width: 0 !important;
       pointer-events: none !important;
-      transform: scale(0.85) !important;
+    }
+
+    /* =========================================================
+       Milestone 2: Educational Decoy Landing Screen ("Academy Disguise")
+       ========================================================= */
+    html.decoy-bypassed #academy-decoy-root:not(.unlocked),
+    html.decoy-bypassed #heavenly-decoy-screen:not(.unlocked) {
+      display: none !important;
+    }
+
+    #academy-decoy-root,
+    .academy-decoy-screen {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 999999;
+      background: #ffffff;
+      color: #1e293b;
+      overflow-y: auto;
+      overflow-x: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.5s ease;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #academy-decoy-root.unlocked,
+    .academy-decoy-screen.unlocked {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Clean Navy Top Bar with School Branding & Portal Links */
+    .decoy-top-bar {
+      background: #0f2942;
+      color: #cbd5e1;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      padding: 9px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .decoy-top-bar-notice {
+      color: #93c5fd;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.76rem;
+    }
+
+    .decoy-top-bar-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .decoy-top-bar-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: color 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .decoy-top-bar-links a:hover {
+      color: #38bdf8;
+    }
+
+    .decoy-portal-cta {
+      background: #2563eb;
+      color: #ffffff !important;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      transition: background 0.15s ease !important;
+    }
+
+    .decoy-portal-cta:hover {
+      background: #1d4ed8 !important;
+    }
+
+    /* Header with School Crest & ACA Branding */
+    .decoy-header {
+      background: #0f2942;
+      color: #ffffff;
+      padding: 20px 32px 14px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 3px solid #1e40af;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .decoy-header-main {
+      width: 100%;
+      max-width: 1180px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .decoy-brand {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      text-align: left;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .decoy-crest {
+      width: 58px;
+      height: 58px;
+      fill: none;
+      stroke: #ffffff;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+    }
+
+    .decoy-brand-title {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.15;
+      color: #ffffff;
+    }
+
+    .decoy-brand-tagline {
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      color: #93c5fd;
+      margin-top: 3px;
+    }
+
+    .decoy-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .decoy-header-btn {
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .decoy-header-btn-primary {
+      background: #ffffff;
+      color: #0f2942;
+    }
+
+    .decoy-header-btn-primary:hover {
+      background: #f1f5f9;
+      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+    }
+
+    .decoy-header-btn-outline {
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+    }
+
+    .decoy-header-btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #ffffff;
+    }
+
+    .decoy-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      width: 100%;
+      max-width: 1180px;
+    }
+
+    .decoy-nav a {
+      color: #f1f5f9;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background 0.15s ease, color 0.15s ease;
+      letter-spacing: 0.01em;
+    }
+
+    .decoy-nav a:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+    }
+
+    /* Hero Section: High-contrast academic banner */
+    .decoy-hero {
+      position: relative;
+      background: linear-gradient(135deg, #091d30 0%, #0f2942 55%, #19385c 100%);
+      color: #ffffff;
+      padding: 80px 24px 72px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      min-height: 400px;
+    }
+
+    .decoy-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 25%, rgba(59, 130, 246, 0.22) 0%, transparent 68%);
+      pointer-events: none;
+    }
+
+    .decoy-hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .decoy-hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 20px;
+      color: #93c5fd;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .decoy-hero-headline {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 2.75rem;
+      font-weight: 700;
+      line-height: 1.18;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .decoy-hero-mission {
+      font-size: 1.12rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+      max-width: 740px;
+      margin: 0 auto;
+    }
+
+    .decoy-hero-cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .decoy-btn-enroll {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 30px;
+      background: #ffffff;
+      color: #0f2942;
+      font-size: 0.96rem;
+      font-weight: 700;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+      transition: all 0.2s ease;
+    }
+
+    .decoy-btn-enroll:hover {
+      background: #f8fafc;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      color: #0c2338;
+    }
+
+    .decoy-btn-tour {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      background: transparent;
+      border: 2px solid #ffffff;
+      color: #ffffff;
+      font-size: 0.96rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .decoy-btn-tour:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .decoy-btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 24px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: #cbd5e1;
+      font-size: 0.96rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .decoy-btn-outline:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    /* Key Academic Stats Strip */
+    .decoy-stats-strip {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 28px 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .decoy-stats-grid {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      text-align: center;
+    }
+
+    .decoy-stat-item {
+      padding: 8px 16px;
+    }
+
+    .decoy-stat-number {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #0f2942;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .decoy-stat-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Curriculum Grid: 3 modern white cards with subtle drop shadows */
+    .decoy-curriculum-section {
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 72px 24px;
+      border-top: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .decoy-curriculum-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .decoy-curriculum-badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #2563eb;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .decoy-curriculum-heading {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 2.35rem;
+      font-weight: 700;
+      color: #0f2942;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+
+    .decoy-curriculum-sub {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: #475569;
+      max-width: 760px;
+      margin: 0 auto 44px;
+    }
+
+    .decoy-curriculum-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 30px;
+      text-align: left;
+    }
+
+    .decoy-curriculum-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 20px rgba(15, 41, 66, 0.07), 0 1px 3px rgba(15, 41, 66, 0.04);
+      padding: 34px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+    }
+
+    .decoy-curriculum-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 36px rgba(15, 41, 66, 0.12), 0 2px 6px rgba(15, 41, 66, 0.06);
+      border-color: #cbd5e1;
+    }
+
+    .decoy-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .decoy-card-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2563eb;
+    }
+
+    .decoy-card-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .decoy-card-tag {
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .decoy-card-title {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0f2942;
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+
+    .decoy-card-desc {
+      font-size: 0.94rem;
+      line-height: 1.62;
+      color: #475569;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+
+    .decoy-card-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 16px;
+    }
+
+    .decoy-card-features li {
+      font-size: 0.88rem;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .decoy-card-features li::before {
+      content: "✓";
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .decoy-card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #2563eb;
+      text-decoration: none;
+      transition: color 0.15s ease, gap 0.15s ease;
+      margin-top: auto;
+    }
+
+    .decoy-card-link:hover {
+      color: #1d4ed8;
+      gap: 10px;
+    }
+
+    /* Core Virtues Section */
+    .decoy-virtues-section {
+      background: #ffffff;
+      padding: 60px 24px;
+      text-align: center;
+    }
+
+    .decoy-virtues-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .decoy-virtues-title {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0f2942;
+      margin-bottom: 10px;
+    }
+
+    .decoy-virtues-sub {
+      font-size: 1rem;
+      color: #64748b;
+      margin-bottom: 36px;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .decoy-virtues-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .decoy-virtue-pill {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 30px;
+      padding: 10px 22px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #1e293b;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    .decoy-virtue-pill:hover {
+      border-color: #2563eb;
+      color: #2563eb;
+      background: #eff6ff;
+      transform: translateY(-2px);
+    }
+
+    /* Academic Footer with Working TOS Link */
+    .decoy-footer {
+      background: #091e32;
+      color: #94a3b8;
+      padding: 56px 24px 28px 24px;
+      border-top: 3px solid #1e40af;
+    }
+
+    .decoy-footer-grid {
+      max-width: 1140px;
+      margin: 0 auto 40px auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1.2fr 1.2fr;
+      gap: 40px;
+      text-align: left;
+    }
+
+    @media (max-width: 900px) {
+      .decoy-footer-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 32px;
+      }
+    }
+
+    .decoy-footer-col h4 {
+      color: #f1f5f9;
+      font-size: 0.94rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .decoy-footer-about {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+
+    .decoy-footer-contact {
+      font-size: 0.84rem;
+      line-height: 1.65;
+      color: #64748b;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .decoy-footer-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .decoy-footer-col a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.86rem;
+      transition: color 0.15s ease;
+    }
+
+    .decoy-footer-col a:hover {
+      color: #38bdf8;
+    }
+
+    .decoy-footer-link {
+      cursor: pointer;
+    }
+
+    .decoy-footer-bottom {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.82rem;
+      color: #64748b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .decoy-footer-bottom-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .decoy-footer-bottom-links a {
+      color: #64748b;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .decoy-footer-bottom-links a:hover {
+      color: #cbd5e1;
     }
   </style>
 </head>
 
 <body>
+
+  <!-- Milestone 2: Educational Decoy Landing Screen ("Academy Disguise") -->
+  <div id="academy-decoy-root" class="academy-decoy-screen" role="region" aria-label="Atlanta Classical Academy">
+    <!-- Decoy Utility Top Bar -->
+    <div class="decoy-top-bar">
+      <div class="decoy-top-bar-notice">
+        <span>🏛️ Tuition-Free Classical K–12 Public Charter School &bull; Atlanta, GA</span>
+      </div>
+      <div class="decoy-top-bar-links">
+        <a href="#parent-portal">Parent Portal</a>
+        <a href="#student-portal">Student Portal</a>
+        <a href="#faculty">Faculty &amp; Staff</a>
+        <a href="#calendar">Academic Calendar</a>
+        <a href="#contact">Contact</a>
+        <a href="#admissions" class="decoy-portal-cta">Apply for 2026–2027</a>
+      </div>
+    </div>
+
+    <!-- Decoy Clean Navy Header -->
+    <header class="decoy-header">
+      <div class="decoy-header-main">
+        <a href="#home" class="decoy-brand">
+          <svg class="decoy-crest" width="58" height="58" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+            <circle cx="50" cy="50" r="46" stroke-width="2.5" />
+            <circle cx="50" cy="50" r="41" stroke-width="1.2" stroke-dasharray="2,2" />
+            <polygon points="50,22 26,35 74,35" stroke-width="2" fill="rgba(255,255,255,0.15)" />
+            <line x1="24" y1="35" x2="76" y2="35" stroke-width="2.5" />
+            <line x1="32" y1="36" x2="32" y2="68" stroke-width="3" />
+            <line x1="44" y1="36" x2="44" y2="68" stroke-width="3" />
+            <line x1="56" y1="36" x2="56" y2="68" stroke-width="3" />
+            <line x1="68" y1="36" x2="68" y2="68" stroke-width="3" />
+            <rect x="24" y="68" width="52" height="6" stroke-width="2" fill="rgba(255,255,255,0.15)" />
+            <circle cx="50" cy="28" r="2" fill="currentColor" />
+            <path d="M26 80 C 40 85, 60 85, 74 80" stroke-width="1.5" />
+          </svg>
+          <div>
+            <div class="decoy-brand-title">Atlanta Classical Academy</div>
+            <div class="decoy-brand-tagline">A Tuition-Free Classical K–12 Charter Public Institution</div>
+          </div>
+        </a>
+        <div class="decoy-header-actions">
+          <a href="#tour" class="decoy-header-btn decoy-header-btn-outline">Visit Campus</a>
+          <a href="#admissions" class="decoy-header-btn decoy-header-btn-primary">Apply Now</a>
+        </div>
+      </div>
+      <nav class="decoy-nav">
+        <a href="#about">About ACA</a>
+        <a href="#academics">Academics</a>
+        <a href="#admissions">Admissions</a>
+        <a href="#curriculum">Core Curriculum</a>
+        <a href="#athletics">Athletics</a>
+        <a href="#fine-arts">Fine Arts</a>
+        <a href="#community">Community</a>
+        <a href="#giving">Giving &amp; Support</a>
+      </nav>
+    </header>
+
+    <!-- Decoy Hero Mission Section: High-contrast academic banner -->
+    <section class="decoy-hero">
+      <div class="decoy-hero-content">
+        <div class="decoy-hero-tag">Classical Liberal Arts Education &bull; Grades K–12</div>
+        <h1 class="decoy-hero-headline">Forming Knowledgeable, Virtuous Citizens</h1>
+        <p class="decoy-hero-mission">The mission of Atlanta Classical Academy is to develop students in mind and character through a classical, content-rich curriculum that emphasizes the principles of virtuous living, traditional learning, and civic responsibility.</p>
+        <div class="decoy-hero-cta-group">
+          <a href="#admissions" class="decoy-btn-enroll">Apply for 2026–2027 &rarr;</a>
+          <a href="#tour" class="decoy-btn-tour">Schedule a Campus Tour</a>
+          <a href="#curriculum" class="decoy-btn-outline">Explore Classical Curriculum</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Institutional Highlights Strip -->
+    <section class="decoy-stats-strip">
+      <div class="decoy-stats-grid">
+        <div class="decoy-stat-item">
+          <div class="decoy-stat-number">100%</div>
+          <div class="decoy-stat-label">Graduation &amp; Acceptance</div>
+        </div>
+        <div class="decoy-stat-item">
+          <div class="decoy-stat-number">14:1</div>
+          <div class="decoy-stat-label">Student-to-Teacher Ratio</div>
+        </div>
+        <div class="decoy-stat-item">
+          <div class="decoy-stat-number">K–12</div>
+          <div class="decoy-stat-label">Tuition-Free Public Charter</div>
+        </div>
+        <div class="decoy-stat-item">
+          <div class="decoy-stat-number">Top 1%</div>
+          <div class="decoy-stat-label">Ranked Charter School in GA</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Curriculum Grid: 3 modern white cards with subtle drop shadows -->
+    <section class="decoy-curriculum-section">
+      <div class="decoy-curriculum-inner">
+        <div class="decoy-curriculum-badge">Academic Excellence</div>
+        <h2 class="decoy-curriculum-heading">Classical Curriculum &amp; Programs</h2>
+        <p class="decoy-curriculum-sub">Rooted in the Western classical tradition, our three-tier Trivium develops disciplined minds, eloquent communicators, and virtuous leaders across all grade levels.</p>
+
+        <div class="decoy-curriculum-grid">
+          <!-- Card 1: Grammar Stage (Lower School) -->
+          <div class="decoy-curriculum-card">
+            <div>
+              <div class="decoy-card-top">
+                <div class="decoy-card-icon-wrap">
+                  <svg class="decoy-card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                  </svg>
+                </div>
+                <span class="decoy-card-tag">Grades K–5</span>
+              </div>
+              <h3 class="decoy-card-title">Grammar Stage (Lower School)</h3>
+              <p class="decoy-card-desc">Laying the foundation of scholarship through explicit phonics, Singapore mathematics, Core Knowledge world history, laboratory sciences, and habits of virtuous character.</p>
+              <ul class="decoy-card-features">
+                <li>Explicit Phonics, Spelling &amp; Cursive</li>
+                <li>Singapore Math Conceptual Mastery</li>
+                <li>Core Knowledge History &amp; Science</li>
+              </ul>
+            </div>
+            <a href="#lower-school" class="decoy-card-link">Explore Lower School &rarr;</a>
+          </div>
+
+          <!-- Card 2: Logic Stage (Middle School) -->
+          <div class="decoy-curriculum-card">
+            <div>
+              <div class="decoy-card-top">
+                <div class="decoy-card-icon-wrap">
+                  <svg class="decoy-card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                </div>
+                <span class="decoy-card-tag">Grades 6–8</span>
+              </div>
+              <h3 class="decoy-card-title">Logic Stage (Middle School)</h3>
+              <p class="decoy-card-desc">Advancing from facts to reasoned analysis. Scholars investigate causal relationships, dissect logical arguments, master Latin grammar, and engage in disciplined Socratic inquiry.</p>
+              <ul class="decoy-card-features">
+                <li>Formal Logic &amp; Argumentation</li>
+                <li>Classical Latin Language &amp; Etymology</li>
+                <li>Pre-Algebra &amp; Earth/Life Sciences</li>
+              </ul>
+            </div>
+            <a href="#middle-school" class="decoy-card-link">Explore Middle School &rarr;</a>
+          </div>
+
+          <!-- Card 3: Rhetoric Stage (Upper School) -->
+          <div class="decoy-curriculum-card">
+            <div>
+              <div class="decoy-card-top">
+                <div class="decoy-card-icon-wrap">
+                  <svg class="decoy-card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                </div>
+                <span class="decoy-card-tag">Grades 9–12</span>
+              </div>
+              <h3 class="decoy-card-title">Rhetoric Stage (Upper School)</h3>
+              <p class="decoy-card-desc">Preparing articulate scholars who synthesize complex ideas, defend moral truths, and communicate persuasively through Great Books seminars and senior capstone thesis defense.</p>
+              <ul class="decoy-card-features">
+                <li>Humane Letters Literature &amp; History</li>
+                <li>Classical Rhetoric &amp; Senior Thesis</li>
+                <li>Moral Philosophy, Government &amp; STEM</li>
+              </ul>
+            </div>
+            <a href="#upper-school" class="decoy-card-link">Explore Upper School &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Virtues Overview -->
+    <section class="decoy-virtues-section">
+      <div class="decoy-virtues-inner">
+        <h2 class="decoy-virtues-title">The Seven Core Virtues</h2>
+        <p class="decoy-virtues-sub">Our academic community is governed by timeless virtues practiced daily inside the classroom and across campus life.</p>
+        <div class="decoy-virtues-grid">
+          <div class="decoy-virtue-pill">🛡️ Courage</div>
+          <div class="decoy-virtue-pill">🤝 Courtesy</div>
+          <div class="decoy-virtue-pill">⚖️ Honesty</div>
+          <div class="decoy-virtue-pill">🧗 Perseverance</div>
+          <div class="decoy-virtue-pill">🧘 Self-Government</div>
+          <div class="decoy-virtue-pill">🌱 Service</div>
+          <div class="decoy-virtue-pill">✨ Wonder</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formal Academic Footer with Working TOS Bypass Link -->
+    <footer class="decoy-footer">
+      <div class="decoy-footer-grid">
+        <div class="decoy-footer-col">
+          <h4>Atlanta Classical Academy</h4>
+          <p class="decoy-footer-about">A Tuition-Free Classical K–12 Charter Public School developing students in mind and character through rigorous inquiry, virtue, and civic responsibility.</p>
+          <div class="decoy-footer-contact">
+            <div>📍 3260 Northside Drive NW, Atlanta, GA 30327</div>
+            <div>📞 Main Office: (404) 369-3500 | Fax: (404) 369-3501</div>
+            <div>✉️ admissions@classicalacademy.org</div>
+            <div>🏛️ CEEB: 110294 &bull; SACS Accredited &bull; Title IX Compliant</div>
+          </div>
+        </div>
+        <div class="decoy-footer-col">
+          <h4>Academics</h4>
+          <ul>
+            <li><a href="#curriculum">Core Curriculum</a></li>
+            <li><a href="#lower-school">Lower School (Grammar)</a></li>
+            <li><a href="#middle-school">Middle School (Logic)</a></li>
+            <li><a href="#upper-school">Upper School (Rhetoric)</a></li>
+            <li><a href="#latin">Classical Latin &amp; Greek</a></li>
+            <li><a href="#athletics">Athletics (The Archers)</a></li>
+          </ul>
+        </div>
+        <div class="decoy-footer-col">
+          <h4>Portals &amp; Resources</h4>
+          <ul>
+            <li><a href="#parent-portal">Parent Infinite Campus</a></li>
+            <li><a href="#student-portal">Student Portal Login</a></li>
+            <li><a href="#faculty">Faculty &amp; Staff Directory</a></li>
+            <li><a href="#calendar">2026–2027 Calendar</a></li>
+            <li><a href="#library">Classical Library Catalog</a></li>
+            <li><a href="#support-aca">Support ACA &amp; Giving</a></li>
+          </ul>
+        </div>
+        <div class="decoy-footer-col">
+          <h4>Governance &amp; Policies</h4>
+          <ul>
+            <li><a href="#board">Board of Trustees Minutes</a></li>
+            <li><a href="#charter-policies">Charter School Policies</a></li>
+            <li><a href="#privacy">Student Privacy Policy</a></li>
+            <li><a href="#terms" id="decoy-tos-link" class="decoy-footer-link">Terms of Service</a></li>
+            <li><a href="#nondiscrimination">Nondiscrimination Statement</a></li>
+            <li><a href="#accessibility">Accessibility Statement</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="decoy-footer-bottom">
+        <div>&copy; 2026 Atlanta Classical Academy. All rights reserved. A 501(c)(3) Classical Public Charter Institution.</div>
+        <div class="decoy-footer-bottom-links">
+          <a href="#privacy">Privacy</a> &bull;
+          <a href="#terms">Terms</a> &bull;
+          <a href="#accessibility">Accessibility</a>
+        </div>
+      </div>
+    </footer>
+  </div>
 
   <!-- Ethereal Splash / Loading Screen Overlay -->
   <div id="heavenly-loading-screen" class="loading-overlay">
@@ -1869,7 +2838,7 @@
     <div id="left-column" class="side-column"></div>
 
     <!-- Center Container -->
-    <div class="container">
+    <div class="container" id="center-container">
 
       <!-- Universal Bookmark Search -->
       <div style="margin-bottom: 28px;">
@@ -1943,15 +2912,6 @@
         </button>
       </div>
 
-      <div id="google-ad">
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- Nodeunblocker.com -->
-        <ins class="adsbygoogle" style="display:inline-block;width:336px;height:280px"
-          data-ad-client="ca-pub-9477050254721722" data-ad-slot="3464697570"></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-      </div>
 
       <div class="info-section" style="padding-top: 24px; margin-top: 24px;">
         <h3>About Heavenly</h3>
@@ -2630,6 +3590,126 @@
         .replace(/'/g, '&#39;');
     }
 
+    // --- Milestone 2: Educational Decoy ("Academy Disguise") Controller ---
+    var decoyTimer = null;
+
+    function unlockAcademyDecoy() {
+      if (decoyTimer) {
+        clearTimeout(decoyTimer);
+        decoyTimer = null;
+      }
+      try {
+        sessionStorage.setItem('heavenly_decoy_unlocked', 'true');
+      } catch (e) {}
+
+      var decoy = $('academy-decoy-root') || $('heavenly-decoy-screen');
+      if (decoy) {
+        if (decoy.classList.contains('unlocked') || decoy.style.display === 'none') return;
+        decoy.classList.add('unlocked');
+        setTimeout(function () {
+          decoy.style.display = 'none';
+          document.documentElement.classList.add('decoy-bypassed');
+        }, 500);
+      } else {
+        document.documentElement.classList.add('decoy-bypassed');
+      }
+      hideLoadingScreen();
+    }
+
+    function initAcademyDecoy() {
+      try {
+        if (sessionStorage.getItem('heavenly_decoy_unlocked') === 'true') {
+          document.documentElement.classList.add('decoy-bypassed');
+          var decoy = $('academy-decoy-root') || $('heavenly-decoy-screen');
+          if (decoy) decoy.style.display = 'none';
+          return;
+        }
+      } catch (e) {}
+
+      var tosLinks = document.querySelectorAll('#decoy-tos-link, a[href="#terms"]');
+      if (tosLinks && tosLinks.length > 0) {
+        tosLinks.forEach(function (link) {
+          link.onclick = function (e) {
+            e.preventDefault();
+            unlockAcademyDecoy();
+          };
+        });
+      }
+
+      var autoTimerEnabled = false;
+      try {
+        var settings = loadSettings();
+        if (settings && settings.decoyAutoTimer === true) {
+          autoTimerEnabled = true;
+        }
+      } catch (e) {}
+
+      if (autoTimerEnabled) {
+        if (!decoyTimer) {
+          decoyTimer = setTimeout(function () {
+            unlockAcademyDecoy();
+          }, 2600);
+        }
+      } else if (decoyTimer) {
+        clearTimeout(decoyTimer);
+        decoyTimer = null;
+      }
+    }
+
+    // --- Milestone 3: about:blank Tab Cloaking Launcher ---
+    function launchInAboutBlank(url, customTitle, customIcon) {
+      if (!url) return false;
+      var settings = loadSettings();
+      var preset = resolveLandingActivePreset(settings);
+      var cloakTitle = customTitle || preset.title || 'Classes';
+      var cloakIcon = customIcon || preset.icon || '/assets/heavenly-logo.png';
+
+      var blankTab = null;
+      try {
+        blankTab = window.open('about:blank', '_blank');
+      } catch (e) {}
+
+      if (!blankTab) {
+        var proceed = window.confirm('Popup was blocked by your browser! To use about:blank cloaking, please allow popups for this site. Click OK to open directly in this tab instead.');
+        if (proceed) {
+          showLoadingScreen();
+          window.location.href = url;
+        }
+        return false;
+      }
+
+      try {
+        var doc = blankTab.document;
+        if (doc) {
+          doc.open();
+          var safeTitle = escapeHtml(cloakTitle);
+          var safeIcon = escapeHtml(cloakIcon);
+          var safeUrl = escapeHtml(url);
+          var html = '<!DOCTYPE html>\n<html>\n<head>\n' +
+            '<meta charset="UTF-8">\n' +
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+            '<title>' + safeTitle + '</title>\n' +
+            (safeIcon ? '<link rel="icon" type="image/x-icon" href="' + safeIcon + '">\n<link rel="shortcut icon" href="' + safeIcon + '">\n' : '') +
+            '<style>\n' +
+            '  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }\n' +
+            '  iframe { width: 100vw; height: 100vh; border: none; display: block; outline: none; margin: 0; padding: 0; }\n' +
+            '</style>\n' +
+            '</head>\n<body>\n' +
+            '<iframe src="' + safeUrl + '" allowfullscreen="true" style="width: 100vw; height: 100vh; border: none;"></iframe>\n' +
+            '</body>\n</html>';
+          doc.write(html);
+          doc.close();
+          return true;
+        }
+      } catch (err) {
+        try {
+          blankTab.location.href = url;
+          return true;
+        } catch (e) {}
+      }
+      return true;
+    }
+
     function showLoadingScreen() {
       var loader = $('heavenly-loading-screen');
       if (loader) {
@@ -2680,6 +3760,11 @@
       }
 
       var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + url;
+      var settings = loadSettings();
+      if (settings.openInAboutBlank) {
+        launchInAboutBlank(proxiedUrl);
+        return false;
+      }
       if (inNewTab) {
         window.open(proxiedUrl, '_blank', 'noopener');
       } else {
@@ -2765,7 +3850,8 @@
         openSearchInNewTab: saved.openSearchInNewTab || false,
         mergeGoNewTab: saved.mergeGoNewTab || false,
         openBookmarksInNewTab: saved.openBookmarksInNewTab !== undefined ? saved.openBookmarksInNewTab : true,
-        openInAboutBlank: saved.openInAboutBlank !== undefined ? saved.openInAboutBlank : true
+        openInAboutBlank: saved.openInAboutBlank !== undefined ? saved.openInAboutBlank : true,
+        decoyAutoTimer: saved.decoyAutoTimer !== undefined ? Boolean(saved.decoyAutoTimer) : false
       };
     }
 
@@ -4438,7 +5524,9 @@
                 var targetMode = settings.openBookmarksInNewTab !== false ? '_blank' : '_self';
                 if (settings.skipBuiltinTestPrompt) {
                   e.preventDefault();
-                  if (targetMode === '_blank') {
+                  if (settings.openInAboutBlank) {
+                    launchInAboutBlank(proxiedUrl, bm.title, bm.icon);
+                  } else if (targetMode === '_blank') {
                     window.open(proxiedUrl, '_blank', 'noopener');
                   } else {
                     showLoadingScreen();
@@ -4801,7 +5889,9 @@
                   var targetMode = settings.openBookmarksInNewTab !== false ? '_blank' : '_self';
                   if (settings.skipBuiltinTestPrompt) {
                     e.preventDefault();
-                    if (targetMode === '_blank') {
+                    if (settings.openInAboutBlank) {
+                      launchInAboutBlank(sbProxiedUrl, sb.title, sb.icon);
+                    } else if (targetMode === '_blank') {
                       window.open(sbProxiedUrl, '_blank', 'noopener');
                     } else {
                       showLoadingScreen();
@@ -5565,6 +6655,10 @@
     function openTargetUrlWithSetting(targetUrl) {
       if (!targetUrl) return;
       var settings = loadSettings();
+      if (settings.openInAboutBlank) {
+        launchInAboutBlank(targetUrl);
+        return;
+      }
       if (settings.openBookmarksInNewTab !== false) {
         window.open(targetUrl, '_blank', 'noopener');
       } else {
@@ -7306,10 +8400,12 @@
       }
 
       checkError();
+      initAcademyDecoy();
       setTimeout(hideLoadingScreen, 300);
     };
 
     window.addEventListener('pageshow', function (e) {
+      initAcademyDecoy();
       hideLoadingScreen();
       initLandingCloak();
       renderBookmarksUI();

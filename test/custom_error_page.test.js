@@ -19,8 +19,12 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
             assert.ok(html.includes('Heavenly could not resolve the server address.'), 'Should display error details');
             assert.ok(html.includes('Try Again'), 'Should include Try Again button');
             assert.ok(html.includes('Test Direct Connection (No Proxy)'), 'Should include Test Direct Connection button');
+            assert.ok(html.includes('<link rel="icon" type="image/png" href="/assets/heavenly-logo.png">'), 'Should include valid favicon link in head');
+            assert.ok(html.includes('src="/assets/heavenly-logo.png"') && html.includes('class="brand-logo-img"'), 'Should render logo image with absolute path');
+            assert.ok(html.includes('id="fallback-svg-logo"'), 'Should provide fallback inline SVG logo');
             assert.ok(html.includes('Return to Heavenly Home'), 'Should include Return Home button');
             assert.ok(html.includes("Return to Heavenly Home"), 'Return Home button should be present');
+            assert.ok(html.includes('href="/"') && html.includes('(window.location.origin + \'/\')'), 'Return Home button should redirect to root URL');
             assert.ok(html.includes('#030712'), 'Should use Heavenly dark theme background color');
         });
 

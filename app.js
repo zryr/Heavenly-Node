@@ -18,6 +18,28 @@ var youtube = require('unblocker/examples/youtube/youtube.js')
 var app = express();
 app.set('trust proxy', true);
 
+// Strip X-Frame-Options on Express app routes so Heavenly pages can embed inside the about:blank iframe
+app.use((req, res, next) => {
+    res.removeHeader('X-Frame-Options');
+    var origSetHeader = res.setHeader;
+    res.setHeader = function(name, val) {
+        if (typeof name === 'string' && name.toLowerCase() === 'x-frame-options') {
+            return;
+        }
+        return origSetHeader.apply(this, arguments);
+    };
+    var origWriteHead = res.writeHead;
+    res.writeHead = function() {
+        res.removeHeader('X-Frame-Options');
+        return origWriteHead.apply(this, arguments);
+    };
+    next();
+});
+
+if (typeof helmet === 'function') {
+    app.use(helmet({ frameguard: false }));
+}
+
 var google_analytics_id = process.env.GA_ID || null;
 
 // Caching GA snippet string to avoid string array creation & join on every stream chunk
@@ -235,6 +257,58 @@ function responseRedirectMiddleware(data) {
     }
 }
 
+function iframeSecurityHeadersResponseMiddleware(data) {
+    if (!data || !data.headers) return;
+
+    // Strip x-frame-options (case-insensitive) so target sites can embed inside about:blank iframe
+    for (var key in data.headers) {
+        if (key.toLowerCase() === 'x-frame-options') {
+            delete data.headers[key];
+        }
+    }
+
+    // Clean frame-ancestors from content-security-policy (and report-only if present)
+    var cleanCspDirectives = function(str) {
+        if (typeof str !== 'string') return str;
+        var directives = str.split(';');
+        var filtered = [];
+        for (var i = 0; i < directives.length; i++) {
+            var trimmed = directives[i].trim();
+            if (trimmed.length > 0 && !/^frame-ancestors(\s|$)/i.test(trimmed)) {
+                filtered.push(trimmed);
+            }
+        }
+        return filtered.join('; ');
+    };
+
+    var cspHeaders = [
+        'content-security-policy',
+        'content-security-policy-report-only',
+        'x-content-security-policy',
+        'x-webkit-csp'
+    ];
+    for (var h in data.headers) {
+        if (cspHeaders.indexOf(h.toLowerCase()) !== -1) {
+            var val = data.headers[h];
+            if (Array.isArray(val)) {
+                var cleanedList = val.map(cleanCspDirectives).filter(function(v) { return v && v.length > 0; });
+                if (cleanedList.length > 0) {
+                    data.headers[h] = cleanedList;
+                } else {
+                    delete data.headers[h];
+                }
+            } else if (typeof val === 'string') {
+                var cleanedStr = cleanCspDirectives(val);
+                if (cleanedStr) {
+                    data.headers[h] = cleanedStr;
+                } else {
+                    delete data.headers[h];
+                }
+            }
+        }
+    }
+}
+
 var unblockerConfig = {
     prefix: '/proxy/',
     requestMiddleware: [
@@ -246,6 +320,7 @@ var unblockerConfig = {
     responseMiddleware: [
         responseRedirectMiddleware,
         responseLinkHeaderMiddleware,
+        iframeSecurityHeadersResponseMiddleware,
         googleAnalyticsMiddleware,
         serverErrorResponseMiddleware
     ]
@@ -315,6 +390,7 @@ function renderHeavenlyErrorPage(opts) {
 '  <title>' + pageTitle + '</title>\n' +
 '  <meta name="viewport" content="width=device-width, initial-scale=1">\n' +
 '  <link rel="icon" type="image/png" href="/assets/heavenly-logo.png">\n' +
+'  <link rel="shortcut icon" href="/assets/heavenly-logo.png">\n' +
 '  <link rel="preconnect" href="https://fonts.googleapis.com">\n' +
 '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
 '  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">\n' +
@@ -453,7 +529,8 @@ function renderHeavenlyErrorPage(opts) {
 '  <div class="glow-orb glow-orb-2"></div>\n' +
 '  <div class="error-container">\n' +
 '    <div style="display: flex; align-items: center; justify-content: center; gap: 14px;">\n' +
-'      <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src=(window.location.origin||\'\')+\'/assets/heavenly-logo.png\';}">\n' +
+'      <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src=(window.location.origin||\'\')+\'/assets/heavenly-logo.png\';}else{this.style.display=\'none\';var fb=document.getElementById(\'fallback-svg-logo\');if(fb){fb.style.display=\'inline-block\';}}">\n' +
+'      <svg id="fallback-svg-logo" class="brand-logo-img" style="display:none;width:64px;height:64px;color:#38bdf8;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>\n' +
 '    </div>\n' +
 '    <span class="brand-badge">\n' +
 '      <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>\n' +
@@ -477,10 +554,10 @@ function renderHeavenlyErrorPage(opts) {
 '        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>\n' +
 '        <span>Test Direct Connection (No Proxy)</span>\n' +
 '      </a>\n' : '') +
-'      <a href="/" target="_top" onclick="(window.top || window).location.href=\'/\'; return false;" class="btn-action btn-outline">\n' +
+'      <a href="/" target="_top" onclick="try { var root = (window.location && window.location.origin && window.location.origin !== \'null\' && window.location.origin.indexOf(\'http\') === 0) ? (window.location.origin + \'/\') : \'/\'; (window.top || window).location.href = root; } catch(e) { window.location.href = \'/\'; } return false;" class="btn-action btn-outline">\n' +
 '        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>\n' +
 '        <span>Return to Heavenly Home</span>\n' +
-'      </a>\n'
+'      </a>\n' +
 '    </div>\n' +
 '    <div class="footer-note">Heavenly Web Proxy &bull; Ethereal &bull; Streamlined</div>\n' +
 '  </div>\n' +
@@ -655,6 +732,7 @@ app.newgroundsMiddleware = newgroundsMiddleware;
 app.cloudflareMiddleware = cloudflareMiddleware;
 app.responseRedirectMiddleware = responseRedirectMiddleware;
 app.serverErrorResponseMiddleware = serverErrorResponseMiddleware;
+app.iframeSecurityHeadersResponseMiddleware = iframeSecurityHeadersResponseMiddleware;
 app.heavenlyErrorMiddleware = heavenlyErrorMiddleware;
 app.normalizeProxyUrl = normalizeProxyUrl;
 

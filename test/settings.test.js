@@ -31,6 +31,8 @@ describe('settings.html standalone page', function() {
     it('should contain all essential setting controls and inputs', function() {
         assert.ok(html.includes('id="set-auto-cloak"'), 'set-auto-cloak checkbox should exist');
         assert.ok(html.includes('id="set-persistent-cloak"'), 'set-persistent-cloak checkbox should exist');
+        assert.ok(html.includes('id="set-about-blank"'), 'set-about-blank checkbox should exist');
+        assert.ok(html.includes('id="set-decoy-auto-timer"'), 'set-decoy-auto-timer checkbox should exist');
         assert.ok(html.includes('id="preset-select"'), 'preset-select dropdown should exist');
         assert.ok(html.includes('id="save-custom-preset-btn"'), 'save-custom-preset-btn should exist');
         assert.ok(html.includes('id="set-panic-key-enable"'), 'set-panic-key-enable checkbox should exist');
@@ -45,6 +47,8 @@ describe('settings.html standalone page', function() {
     it('should associate labels with form inputs using for attributes in settings.html', function() {
         assert.ok(html.includes('for="set-panic-key"'), 'label for set-panic-key should exist');
         assert.ok(html.includes('for="set-use-widget-dock"'), 'label for set-use-widget-dock should exist');
+        assert.ok(html.includes('for="set-about-blank"'), 'label for set-about-blank should exist');
+        assert.ok(html.includes('for="set-decoy-auto-timer"'), 'label for set-decoy-auto-timer should exist');
     });
 
     it('should have accessible aria-labels on settings form controls', function() {
@@ -63,7 +67,18 @@ describe('settings.html standalone page', function() {
     it('should assign role="switch" to switch toggle checkboxes in settings.html', function() {
         assert.ok(html.includes('id="set-auto-cloak" role="switch"'), 'set-auto-cloak should have role="switch"');
         assert.ok(html.includes('id="set-persistent-cloak" role="switch"'), 'set-persistent-cloak should have role="switch"');
+        assert.ok(html.includes('id="set-about-blank" role="switch"'), 'set-about-blank should have role="switch"');
+        assert.ok(html.includes('id="set-decoy-auto-timer" role="switch"'), 'set-decoy-auto-timer should have role="switch"');
         assert.ok(html.includes('id="set-use-widget-dock" role="switch"'), 'set-use-widget-dock should have role="switch"');
+    });
+
+    it('should configure Timed Decoy Auto-Unlock setting card and default decoyAutoTimer to false', function() {
+        assert.ok(html.includes('Timed Decoy Auto-Unlock'), 'Card label should be Timed Decoy Auto-Unlock');
+        assert.ok(html.includes('Automatically opens Heavenly after a few seconds without clicking Terms of Service.'), 'Card description should match specification');
+        assert.ok(html.includes('decoyAutoTimer: saved.decoyAutoTimer !== undefined ? Boolean(saved.decoyAutoTimer) : false'), 'loadSettings should default decoyAutoTimer to false');
+        assert.ok(html.includes("settings.decoyAutoTimer = $('set-decoy-auto-timer') ? $('set-decoy-auto-timer').checked : false;"), 'updateHandler should persist decoyAutoTimer');
+        assert.ok(html.includes("decoyAutoTimerCb.checked = Boolean(settings.decoyAutoTimer);"), 'syncSettingsToUI should reflect decoyAutoTimer state');
+        assert.ok(html.includes("'set-decoy-auto-timer'"), 'set-decoy-auto-timer should be wired into onchange event listeners');
     });
 
     it('should attach Enter key event listener to custom preset title and icon inputs', function() {

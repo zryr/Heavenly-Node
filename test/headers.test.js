@@ -221,3 +221,173 @@ describe('headersMiddleware request middleware', function() {
         });
     });
 });
+
+describe('iframeSecurityHeadersResponseMiddleware', function() {
+    it('should strip x-frame-options header in lowercase', function() {
+        var data = {
+            headers: {
+                'x-frame-options': 'DENY',
+                'content-type': 'text/html'
+            }
+        };
+        app.iframeSecurityHeadersResponseMiddleware(data);
+        assert.strictEqual(data.headers['x-frame-options'], undefined);
+        assert.strictEqual(data.headers['content-type'], 'text/html');
+    });
+
+    it('should strip X-Frame-Options header in mixed and uppercase', function() {
+        var data1 = {
+            headers: {
+                'X-Frame-Options': 'SAMEORIGIN'
+            }
+        };
+        app.iframeSecurityHeadersResponseMiddleware(data1);
+        assert.strictEqual(data1.headers['X-Frame-Options'], undefined);
+
+        var data2 = {
+            headers: {
+                'X-FRAME-OPTIONS': 'ALLOW-FROM https://example.com'
+            }
+        };
+        app.iframeSecurityHeadersResponseMiddleware(data2);
+        assert.strictEqual(data2.headers['X-FRAME-OPTIONS'], undefined);
+    });
+
+    it('should clean frame-ancestors from content-security-policy string while preserving other directives', function() {
+        var data = {
+            headers: {
+                'content-security-policy': "default-src 'self'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline'"
+            }
+        };
+        app.iframeSecurityHeadersResponseMiddleware(data);
+        assert.strictEqual(
+            data.headers['content-security-policy'],
+            "default-src 'self'; script-src 'self' 'unsafe-inline'"
+        );
+    });
+
+    it('should remove content-security-policy completely if frame-ancestors was the only directive', function() {
+        var data = {
+            headers: {
+                'content-security-policy': "frame-ancestors 'self' https://trusted.com"
+            }
+        };
+        app.iframeSecurityHeadersResponseMiddleware(data);
+        assert.strictEqual(data.headers['content-security-policy'], undefined);
+    });
+
+    it('should clean frame-ancestors from content-security-policy-report-only', function() {
+        var data = {
+            headers: {
+                'content-security-policy-report-only': "default-src 'self'; frame-ancestors https://example.com"
+            }
+        };
+        app.iframeSecurityHeadersResponseMiddleware(data);
+        assert.strictEqual(
+            data.headers['content-security-policy-report-only'],
+            "default-src 'self'"
+        );
+    });
+
+    it('should handle array format content-security-policy correctly', function() {
+        var data = {
+            headers: {
+                'content-security-policy': [
+                    "default-src 'self'",
+                    "frame-ancestors 'none'"
+                ]
+            }
+        };
+        app.iframeSecurityHeadersResponseMiddleware(data);
+        assert.deepStrictEqual(data.headers['content-security-policy'], ["default-src 'self'"]);
+    });
+
+    it('should clean frame-ancestors from legacy CSP headers (x-content-security-policy and x-webkit-csp)', function() {
+        var data = {
+            headers: {
+                'x-content-security-policy': "default-src 'self'; frame-ancestors 'none'",
+                'x-webkit-csp': "frame-ancestors https://test.edu"
+            }
+        };
+        app.iframeSecurityHeadersResponseMiddleware(data);
+        assert.strictEqual(data.headers['x-content-security-policy'], "default-src 'self'");
+        assert.strictEqual(data.headers['x-webkit-csp'], undefined);
+    });
+
+    it('should strip frame-ancestors with tabs, newlines, and mixed casing', function() {
+        var data = {
+            headers: {
+                'content-security-policy': "default-src 'self';\n\tFRAME-ANCESTORS\t'none';\t\nscript-src 'self'"
+            }
+        };
+        app.iframeSecurityHeadersResponseMiddleware(data);
+        assert.strictEqual(
+            data.headers['content-security-policy'],
+            "default-src 'self'; script-src 'self'"
+        );
+    });
+
+    it('should safely do nothing if data or data.headers is falsy', function() {
+        assert.doesNotThrow(function() {
+            app.iframeSecurityHeadersResponseMiddleware(null);
+            app.iframeSecurityHeadersResponseMiddleware({});
+            app.iframeSecurityHeadersResponseMiddleware({ headers: null });
+        });
+    });
+});
+
+describe('Express routes X-Frame-Options header removal', function() {
+    var request = require('supertest');
+
+    it('should not include X-Frame-Options header on GET /', function(done) {
+        request(app)
+            .get('/')
+            .expect(200)
+            .end(function(err, res) {
+                if (err) return done(err);
+                assert.strictEqual(res.headers['x-frame-options'], undefined);
+                done();
+            });
+    });
+
+    it('should not include X-Frame-Options header on GET /no-js', function(done) {
+        request(app)
+            .get('/no-js?url=http://example.com')
+            .expect(302)
+            .end(function(err, res) {
+                if (err) return done(err);
+                assert.strictEqual(res.headers['x-frame-options'], undefined);
+                done();
+            });
+    });
+
+    it('should prevent routes or middleware from setting X-Frame-Options via res.setHeader', function(done) {
+        var express = require('express');
+        var testApp = express();
+        testApp.use((req, res, next) => {
+            res.removeHeader('X-Frame-Options');
+            var origSetHeader = res.setHeader;
+            res.setHeader = function(name, val) {
+                if (typeof name === 'string' && name.toLowerCase() === 'x-frame-options') {
+                    return;
+                }
+                return origSetHeader.apply(this, arguments);
+            };
+            next();
+        });
+        testApp.get('/test-frame-block', (req, res) => {
+            res.setHeader('X-Frame-Options', 'DENY');
+            res.send('ok');
+        });
+
+        request(testApp)
+            .get('/test-frame-block')
+            .expect(200)
+            .end(function(err, res) {
+                if (err) return done(err);
+                assert.strictEqual(res.headers['x-frame-options'], undefined);
+                done();
+            });
+    });
+});
+
