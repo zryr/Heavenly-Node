@@ -1694,6 +1694,83 @@
       pointer-events: none !important;
     }
 
+    /* Click-to-Copy URL Pill Styling */
+    .url-copy-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #38bdf8;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 220px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .url-copy-pill:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: #38bdf8;
+      color: #7dd3fc;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .url-copy-pill:active, .url-copy-pill.copied {
+      background: rgba(34, 197, 94, 0.2) !important;
+      border-color: #4ade80 !important;
+      color: #4ade80 !important;
+      box-shadow: 0 0 14px rgba(74, 222, 128, 0.4) !important;
+    }
+
+    .url-copy-pill .copy-icon {
+      width: 12px;
+      height: 12px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .url-copy-pill:hover .copy-icon {
+      transform: scale(1.15);
+    }
+
+    .url-copy-pill .pill-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mirror-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      transition: all 0.2s ease;
+    }
+
+    .mirror-section-header:hover {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: rgba(56, 189, 248, 0.4);
+      color: #f8fafc;
+    }
+
     .long-press-btn::before {
       content: "";
       position: absolute;
@@ -5509,7 +5586,7 @@
       } catch (e) {}
     }
 
-    function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId) {
+    function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId, expandUserMirrorsOnLoad) {
       if (document.activeElement) lastFocusedElement = document.activeElement;
       rawUrl = rawUrl || '';
       pendingBuiltinUrls.rawUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) ? rawUrl : (rawUrl ? 'https://' + rawUrl : '');
@@ -5573,179 +5650,368 @@
         pendingBuiltinUrls.targetBmId = targetBm.id;
       }
 
-      var hasAltVersions = targetBm && targetBm.subBookmarks && targetBm.subBookmarks.length > 0;
       var brokenMap = getBrokenLinksMap();
-      var allVersions = [];
+      var rawPrimaryUrl = (targetBm && targetBm.url) ? targetBm.url : rawUrl;
 
-      if (hasAltVersions) {
-        if (targetBm.url) {
-          allVersions.push({
-            title: targetBm.title + ' (Main)',
-            url: targetBm.url,
-            isBroken: !!brokenMap[targetBm.url]
-          });
-        }
+      // Extract all mirror sources
+      var builtinMirrors = [];
+      var userMirrors = [];
+
+      if (targetBm && targetBm.subBookmarks && targetBm.subBookmarks.length > 0) {
         targetBm.subBookmarks.forEach(function (sub) {
-          allVersions.push({
+          var item = {
+            id: sub.id,
             title: sub.title,
             url: sub.url,
+            isUser: !!sub.isUser,
             isBroken: !!brokenMap[sub.url]
-          });
-        });
-      } else if (rawUrl || (targetBm && targetBm.url)) {
-        var singleUrl = (targetBm && targetBm.url) ? targetBm.url : rawUrl;
-        allVersions.push({
-          title: (targetBm ? targetBm.title : title) || 'Main Link',
-          url: singleUrl,
-          isBroken: !!brokenMap[singleUrl]
+          };
+          if (sub.isUser) {
+            userMirrors.push(item);
+          } else {
+            builtinMirrors.push(item);
+          }
         });
       }
 
-      // Check if ALL available URLs for this bookmark are broken
-      var allAreBroken = allVersions.length > 0 && allVersions.every(function (v) { return v.isBroken; });
+      // Identify active/working primary site link (Auto-Failover / Promotion)
+      var primaryCandidate = {
+        title: (targetBm ? targetBm.title : title) || 'Main Link',
+        url: rawPrimaryUrl,
+        isBroken: !!brokenMap[rawPrimaryUrl],
+        isPromoted: false,
+        source: 'main'
+      };
 
-      if (hasAltVersions && altContainer) {
+      if (primaryCandidate.isBroken) {
+        // Find next working mirror starting with User Mirrors then Built-in Mirrors
+        var nextWorking = userMirrors.find(function (m) { return !m.isBroken; }) ||
+                           builtinMirrors.find(function (m) { return !m.isBroken; });
+        if (nextWorking) {
+          primaryCandidate = {
+            title: nextWorking.title,
+            url: nextWorking.url,
+            isBroken: false,
+            isPromoted: true,
+            source: nextWorking.isUser ? 'user' : 'builtin'
+          };
+        }
+      }
+
+      // Check if ALL links (Primary site + all mirrors) are broken
+      var allMirrorsList = [ { url: rawPrimaryUrl, isBroken: !!brokenMap[rawPrimaryUrl] } ]
+        .concat(userMirrors.map(function(m){ return { url: m.url, isBroken: m.isBroken }; }))
+        .concat(builtinMirrors.map(function(m){ return { url: m.url, isBroken: m.isBroken }; }));
+      var allVersions = allMirrorsList;
+      var allAreBroken = allVersions.length > 0 && allVersions.every(function (v) { return !!v.url && v.isBroken; });
+
+      // Helper function to create Click-to-Copy URL Pill
+      function createUrlCopyPill(urlToCopy) {
+        var pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = 'url-copy-pill';
+        pill.title = 'Click to copy URL to clipboard';
+        pill.innerHTML = '<svg class="copy-icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span class="pill-text">' + escapeHtml(urlToCopy) + '</span>';
+
+        pill.onclick = function (e) {
+          e.stopPropagation();
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(urlToCopy).then(function () {
+              pill.classList.add('copied');
+              var txt = pill.querySelector('.pill-text');
+              if (txt) txt.textContent = 'Copied!';
+              setTimeout(function () {
+                pill.classList.remove('copied');
+                if (txt) txt.textContent = urlToCopy;
+              }, 1500);
+            }).catch(function () {
+              window.prompt('Copy URL:', urlToCopy);
+            });
+          } else {
+            window.prompt('Copy URL:', urlToCopy);
+          }
+        };
+        return pill;
+      }
+
+      // Helper function to render a mirror item card
+      function renderMirrorItemCard(item, isPrimaryCard) {
+        var card = document.createElement('div');
+        var isBroken = item.isBroken;
+
+        card.style.cssText = isBroken
+          ? 'background: rgba(15, 23, 42, 0.35); border: 1px dashed rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0.45; filter: grayscale(50%); transition: all 0.2s ease;'
+          : (isPrimaryCard
+              ? 'background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);'
+              : 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;');
+
+        var topRow = document.createElement('div');
+        topRow.style.cssText = 'display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;';
+
+        var titleBox = document.createElement('div');
+        titleBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
+        var titleText = '<div style="font-weight: 700; font-size: 0.88rem; color: ' + (isBroken ? '#64748b' : '#f8fafc') + ';">' + escapeHtml(item.title) + '</div>';
+        if (item.isPromoted) {
+          titleText += '<span class="promoted-badge-btn" role="button" tabindex="0" title="Click to learn why this link was promoted" style="font-size: 0.68rem; font-weight: 700; color: #a855f7; background: rgba(168, 85, 247, 0.18); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 6px; padding: 1px 6px; text-transform: uppercase; cursor: pointer; user-select: none;">Promoted</span>';
+        } else if (isBroken) {
+          titleText += '<span style="font-size: 0.68rem; font-weight: 600; color: #94a3b8; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 1px 6px;">Not Working</span>';
+        }
+        titleBox.innerHTML = titleText;
+
+        var rightBox = document.createElement('div');
+        rightBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
+
+        var copyPill = createUrlCopyPill(item.url);
+
+        var toggleBrokenBtn = document.createElement('button');
+        toggleBrokenBtn.type = 'button';
+        toggleBrokenBtn.title = isBroken ? 'Mark this link as working' : 'Mark this link as not working';
+        toggleBrokenBtn.style.cssText = isBroken
+          ? 'background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;'
+          : 'background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;';
+
+        toggleBrokenBtn.innerHTML = isBroken
+          ? '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Mark Working</span>'
+          : '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Mark Broken</span>';
+
+        toggleBrokenBtn.onclick = function (e) {
+          e.stopPropagation();
+          toggleBrokenBtn.disabled = true;
+          card.classList.add(isBroken ? 'mark-working-animate' : 'mark-broken-animate');
+          setTimeout(function () {
+            toggleBrokenLinkState(item.url);
+            openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+          }, 280);
+        };
+
+        rightBox.appendChild(copyPill);
+        rightBox.appendChild(toggleBrokenBtn);
+
+        // Delete button for user custom mirrors
+        if (item.isUser && item.id) {
+          var deleteMirrorBtn = document.createElement('button');
+          deleteMirrorBtn.type = 'button';
+          deleteMirrorBtn.title = 'Delete custom mirror';
+          deleteMirrorBtn.style.cssText = 'background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; border-radius: 8px; padding: 3px 6px; font-size: 0.72rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;';
+          deleteMirrorBtn.innerHTML = '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+          deleteMirrorBtn.onclick = function (e) {
+            e.stopPropagation();
+            if (targetBm && targetBm.subBookmarks) {
+              targetBm.subBookmarks = targetBm.subBookmarks.filter(function (s) { return s.id !== item.id; });
+              saveBookmarkData(data);
+              openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+            }
+          };
+          rightBox.appendChild(deleteMirrorBtn);
+        }
+
+        topRow.appendChild(titleBox);
+        topRow.appendChild(rightBox);
+
+        var promotedBadge = titleBox.querySelector('.promoted-badge-btn');
+        if (promotedBadge) {
+          var showPromotedExplanation = function (e) {
+            e.stopPropagation();
+            var existingTooltip = card.querySelector('.promoted-tooltip-box');
+            if (existingTooltip) {
+              existingTooltip.remove();
+              return;
+            }
+            var tooltip = document.createElement('div');
+            tooltip.className = 'promoted-tooltip-box';
+            tooltip.style.cssText = 'font-size: 0.76rem; color: #e9d5ff; background: rgba(88, 28, 135, 0.85); border: 1px solid rgba(168, 85, 247, 0.5); border-radius: 8px; padding: 6px 10px; line-height: 1.4; display: flex; align-items: flex-start; gap: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); animation: slideFadeDown 0.2s ease forwards;';
+            tooltip.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#c084fc;stroke-width:2.5;flex-shrink:0;margin-top:2px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg><span>The main site link is currently marked as broken, so this working mirror was automatically promoted to the primary position.</span>';
+            card.insertBefore(tooltip, card.children[1] || null);
+          };
+
+          promotedBadge.onclick = showPromotedExplanation;
+          promotedBadge.onkeydown = function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              showPromotedExplanation(e);
+            }
+          };
+        }
+
+        var btnRow = document.createElement('div');
+        btnRow.style.cssText = 'display: flex; gap: 8px;';
+
+        var itemRawUrl = (item.url.startsWith('http://') || item.url.startsWith('https://')) ? item.url : 'https://' + item.url;
+        var itemProxiedUrl = location.protocol + '//' + location.host + '/proxy/' + itemRawUrl;
+
+        var directBtn = document.createElement('button');
+        directBtn.type = 'button';
+        directBtn.className = 'modal-submit-btn long-press-btn';
+        directBtn.style.cssText = (isBroken
+          ? 'background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8;'
+          : 'background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8;') +
+          ' flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; overflow: hidden; user-select: none;';
+        directBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;position:relative;z-index:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span style="position:relative;z-index:2;">Test Direct Site</span>';
+
+        var proxyBtn = document.createElement('button');
+        proxyBtn.type = 'button';
+        proxyBtn.className = 'modal-submit-btn long-press-btn';
+        proxyBtn.style.cssText = (isBroken
+          ? 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #cbd5e1;'
+          : '') +
+          ' flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; overflow: hidden; user-select: none;';
+        proxyBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;position:relative;z-index:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span style="position:relative;z-index:2;">Open with Proxy</span>';
+
+        bindLongPressToElement(directBtn, 'direct', function () { return itemRawUrl; });
+        bindLongPressToElement(proxyBtn, 'proxy', function () { return itemProxiedUrl; });
+
+        btnRow.appendChild(directBtn);
+        btnRow.appendChild(proxyBtn);
+
+        card.appendChild(topRow);
+        card.appendChild(btnRow);
+        return card;
+      }
+
+      if (altContainer) {
         if (defActionsContainer) defActionsContainer.style.display = 'none';
         altContainer.style.display = 'flex';
+        altContainer.style.flexDirection = 'column';
+        altContainer.style.gap = '12px';
 
-        // Sort: Working links first, broken/not working links pushed to the bottom
-        allVersions.sort(function (a, b) {
+        // 1. Primary Site Header Card
+        var primaryHeaderLabel = document.createElement('div');
+        primaryHeaderLabel.style.cssText = 'font-size: 0.8rem; font-weight: 700; color: #7dd3fc; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;';
+        primaryHeaderLabel.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>Primary Site</span>';
+        altContainer.appendChild(primaryHeaderLabel);
+
+        var primaryCard = renderMirrorItemCard(primaryCandidate, true);
+        altContainer.appendChild(primaryCard);
+
+        // Sort mirrors: Working mirrors first, broken mirrors bottom
+        userMirrors.sort(function (a, b) {
           if (a.isBroken === b.isBroken) return 0;
           return a.isBroken ? 1 : -1;
         });
 
-        allVersions.forEach(function (ver) {
-          var card = document.createElement('div');
-          var isBroken = ver.isBroken;
+        builtinMirrors.sort(function (a, b) {
+          if (a.isBroken === b.isBroken) return 0;
+          return a.isBroken ? 1 : -1;
+        });
 
-          card.style.cssText = isBroken
-            ? 'background: rgba(15, 23, 42, 0.35); border: 1px dashed rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0.45; filter: grayscale(50%); transition: all 0.2s ease;'
-            : 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;';
+        // 2. Determine section order & default expansion state
+        var hasUserMirrors = userMirrors.length > 0;
+        var userMirrorsTop = hasUserMirrors; // Your mirrors on top when present
 
-          var topRow = document.createElement('div');
-          topRow.style.cssText = 'display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;';
+        function createMirrorSection(titleText, iconSvg, mirrorItems, isUserSection, isDefaultCollapsed) {
+          var secWrapper = document.createElement('div');
+          secWrapper.style.cssText = 'display: flex; flex-direction: column; gap: 8px;';
 
-          var titleBox = document.createElement('div');
-          titleBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
-          var titleText = '<div style="font-weight: 700; font-size: 0.9rem; color: ' + (isBroken ? '#64748b' : '#f8fafc') + ';">' + escapeHtml(ver.title) + '</div>';
-          if (isBroken) {
-            titleText += '<span style="font-size: 0.7rem; font-weight: 600; color: #94a3b8; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 1px 6px;">Not Working</span>';
-          }
-          titleBox.innerHTML = titleText;
+          var secHeader = document.createElement('div');
+          secHeader.className = 'mirror-section-header';
 
-          var rightBox = document.createElement('div');
-          rightBox.style.cssText = 'display: flex; align-items: center; gap: 8px;';
+          var isCollapsed = isDefaultCollapsed;
 
-          var urlBadge = document.createElement('div');
-          urlBadge.style.cssText = 'font-size: 0.75rem; color: ' + (isBroken ? '#64748b' : '#38bdf8') + '; font-family: monospace; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
-          urlBadge.textContent = ver.url;
+          var headerLeft = document.createElement('div');
+          headerLeft.style.cssText = 'display: flex; align-items: center; gap: 6px;';
+          headerLeft.innerHTML = iconSvg + '<span>' + titleText + ' (' + mirrorItems.length + ')</span>';
 
-          var toggleBrokenBtn = document.createElement('button');
-          toggleBrokenBtn.type = 'button';
-          toggleBrokenBtn.title = isBroken ? 'Mark this link as working' : 'Mark this link as not working';
-          toggleBrokenBtn.style.cssText = isBroken
-            ? 'background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;'
-            : 'background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;';
+          var arrow = document.createElement('span');
+          arrow.style.cssText = 'font-size: 0.75rem; color: #38bdf8; transition: transform 0.2s ease; transform: ' + (isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)') + ';';
+          arrow.textContent = '>';
 
-          toggleBrokenBtn.innerHTML = isBroken
-            ? '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Mark Working</span>'
-            : '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Mark Broken</span>';
+          secHeader.appendChild(headerLeft);
+          secHeader.appendChild(arrow);
 
-          toggleBrokenBtn.onclick = function (e) {
-            e.stopPropagation();
-            toggleBrokenBtn.disabled = true;
-            card.classList.add(isBroken ? 'mark-working-animate' : 'mark-broken-animate');
-            setTimeout(function () {
-              toggleBrokenLinkState(ver.url);
-              openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
-            }, 280);
+          var itemsList = document.createElement('div');
+          itemsList.style.cssText = 'display: ' + (isCollapsed ? 'none' : 'flex') + '; flex-direction: column; gap: 8px;';
+
+          secHeader.onclick = function () {
+            isCollapsed = !isCollapsed;
+            itemsList.style.display = isCollapsed ? 'none' : 'flex';
+            arrow.style.transform = isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)';
           };
 
-          rightBox.appendChild(urlBadge);
-          rightBox.appendChild(toggleBrokenBtn);
+          if (mirrorItems.length > 0) {
+            mirrorItems.forEach(function (mItem) {
+              itemsList.appendChild(renderMirrorItemCard(mItem, false));
+            });
+          } else {
+            var emptyNotice = document.createElement('div');
+            emptyNotice.style.cssText = 'font-size: 0.78rem; color: #94a3b8; font-style: italic; padding: 6px 10px; background: rgba(15,23,42,0.4); border-radius: 8px; border: 1px dashed rgba(148,163,184,0.2);';
+            emptyNotice.textContent = 'No custom mirrors added yet.';
+            itemsList.appendChild(emptyNotice);
+          }
 
-          topRow.appendChild(titleBox);
-          topRow.appendChild(rightBox);
+          // + Add Custom Mirror Form inside "Your Mirrors" subsection
+          if (isUserSection && targetBm) {
+            var addForm = document.createElement('div');
+            addForm.style.cssText = 'display: flex; flex-direction: column; gap: 8px; padding: 10px; background: rgba(15, 23, 42, 0.6); border-radius: 12px; border: 1px dashed rgba(56, 189, 248, 0.3); margin-top: 4px;';
 
-          var btnRow = document.createElement('div');
-          btnRow.style.cssText = 'display: flex; gap: 8px;';
+            var formTitle = document.createElement('div');
+            formTitle.style.cssText = 'font-size: 0.8rem; font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 4px;';
+            formTitle.innerHTML = '<svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>Add Custom Mirror</span>';
 
-          var verRawUrl = (ver.url.startsWith('http://') || ver.url.startsWith('https://')) ? ver.url : 'https://' + ver.url;
-          var verProxiedUrl = location.protocol + '//' + location.host + '/proxy/' + verRawUrl;
+            var titleInp = document.createElement('input');
+            titleInp.type = 'text';
+            titleInp.className = 'form-input';
+            titleInp.placeholder = 'Mirror Name (e.g. Mirror 1)';
+            titleInp.style.cssText = 'font-size: 0.82rem; padding: 6px 10px;';
 
-          var directBtn = document.createElement('button');
-          directBtn.type = 'button';
-          directBtn.className = 'modal-submit-btn long-press-btn';
-          directBtn.style.cssText = (isBroken
-            ? 'background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8;'
-            : 'background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8;') +
-            ' flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; overflow: hidden; user-select: none;';
-          directBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;position:relative;z-index:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span style="position:relative;z-index:2;">Test Direct Site</span>';
+            var urlInp = document.createElement('input');
+            urlInp.type = 'text';
+            urlInp.className = 'form-input';
+            urlInp.placeholder = 'https://mirror-url.com';
+            urlInp.style.cssText = 'font-size: 0.82rem; padding: 6px 10px;';
 
-          var proxyBtn = document.createElement('button');
-          proxyBtn.type = 'button';
-          proxyBtn.className = 'modal-submit-btn long-press-btn';
-          proxyBtn.style.cssText = (isBroken
-            ? 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #cbd5e1;'
-            : '') +
-            ' flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; overflow: hidden; user-select: none;';
-          proxyBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;position:relative;z-index:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span style="position:relative;z-index:2;">Open with Proxy</span>';
+            var submitAddBtn = document.createElement('button');
+            submitAddBtn.type = 'button';
+            submitAddBtn.style.cssText = 'padding: 6px 12px; background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer; align-self: flex-end; transition: all 0.2s ease;';
+            submitAddBtn.textContent = '+ Add Custom Mirror';
 
-          bindLongPressToElement(directBtn, 'direct', function () { return verRawUrl; });
-          bindLongPressToElement(proxyBtn, 'proxy', function () { return verProxiedUrl; });
-
-          btnRow.appendChild(directBtn);
-          btnRow.appendChild(proxyBtn);
-
-          card.appendChild(topRow);
-          card.appendChild(btnRow);
-          altContainer.appendChild(card);
-        });
-      } else {
-        if (defActionsContainer) defActionsContainer.style.display = 'flex';
-        if (altContainer) {
-          altContainer.style.display = 'flex';
-          if (allVersions.length > 0) {
-            var sVer = allVersions[0];
-            var sCard = document.createElement('div');
-            sCard.style.cssText = sVer.isBroken
-              ? 'background: rgba(15, 23, 42, 0.35); border: 1px dashed rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; opacity: 0.6; transition: all 0.2s ease;'
-              : 'background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(148, 163, 184, 0.15); border-radius: 14px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; transition: all 0.2s ease;';
-
-            var sLeftBox = document.createElement('div');
-            sLeftBox.style.cssText = 'display: flex; align-items: center; gap: 8px; overflow: hidden;';
-
-            var sStatusText = '<span style="font-size: 0.78rem; font-weight: 600; color: ' + (sVer.isBroken ? '#64748b' : '#38bdf8') + '; font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + escapeHtml(sVer.url) + '</span>';
-            if (sVer.isBroken) {
-              sStatusText += '<span style="font-size: 0.7rem; font-weight: 600; color: #94a3b8; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 1px 6px; flex-shrink: 0;">Not Working</span>';
-            }
-            sLeftBox.innerHTML = sStatusText;
-
-            var sToggleBtn = document.createElement('button');
-            sToggleBtn.type = 'button';
-            sToggleBtn.title = sVer.isBroken ? 'Mark this link as working' : 'Mark this link as not working';
-            sToggleBtn.style.cssText = sVer.isBroken
-              ? 'background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;'
-              : 'background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;';
-
-            sToggleBtn.innerHTML = sVer.isBroken
-              ? '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Mark Working</span>'
-              : '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Mark Broken</span>';
-
-            sToggleBtn.onclick = function (e) {
+            submitAddBtn.onclick = function (e) {
               e.stopPropagation();
-              sToggleBtn.disabled = true;
-              sCard.classList.add(sVer.isBroken ? 'mark-working-animate' : 'mark-broken-animate');
-              setTimeout(function () {
-                toggleBrokenLinkState(sVer.url);
-                openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
-              }, 280);
+              var mTitle = titleInp.value.trim();
+              var mUrl = urlInp.value.trim();
+              if (!mUrl) {
+                alert('Please enter a mirror URL.');
+                return;
+              }
+              if (!targetBm.subBookmarks) targetBm.subBookmarks = [];
+              targetBm.subBookmarks.push({
+                id: 'sub_user_' + Date.now(),
+                title: mTitle || mUrl,
+                url: mUrl,
+                icon: '',
+                isUser: true
+              });
+              saveBookmarkData(data);
+              openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId, true);
             };
 
-            sCard.appendChild(sLeftBox);
-            sCard.appendChild(sToggleBtn);
-            altContainer.appendChild(sCard);
+            addForm.appendChild(formTitle);
+            addForm.appendChild(titleInp);
+            addForm.appendChild(urlInp);
+            addForm.appendChild(submitAddBtn);
+            itemsList.appendChild(addForm);
           }
+
+          secWrapper.appendChild(secHeader);
+          secWrapper.appendChild(itemsList);
+          return secWrapper;
+        }
+
+        var userSvg = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+        var builtinSvg = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>';
+
+        var userSectionEl = createMirrorSection('Your Mirrors', userSvg, userMirrors, true, expandUserMirrorsOnLoad ? false : true);
+        var builtinSectionEl = createMirrorSection('Built-in Mirrors', builtinSvg, builtinMirrors, false, false);
+
+        if (userMirrorsTop) {
+          altContainer.appendChild(userSectionEl);
+          if (builtinMirrors.length > 0) {
+            altContainer.appendChild(builtinSectionEl);
+          }
+        } else {
+          if (builtinMirrors.length > 0) {
+            altContainer.appendChild(builtinSectionEl);
+          }
+          altContainer.appendChild(userSectionEl);
         }
       }
 
