@@ -920,6 +920,21 @@
       opacity: 1 !important;
     }
 
+    .compact-purple-avatar {
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 50% !important;
+      background: rgba(15, 23, 42, 0.95) !important;
+      border: 2px solid #c084fc !important;
+      box-shadow: 0 0 20px rgba(192, 132, 252, 0.85), 0 0 10px #c084fc !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
     .drop-indicator-dot {
       width: 10px;
       height: 10px;
@@ -3648,7 +3663,15 @@
       if (!sourceEl) return;
 
       var rect = sourceEl.getBoundingClientRect();
-      avatarWidth = rect.width;
+      var isCategory = sourceEl.classList.contains('section-card');
+      var isSmallScreenOrTouch = window.innerWidth <= 1024 || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      var useCompactAvatar = isCategory && isSmallScreenOrTouch;
+
+      if (useCompactAvatar) {
+        avatarWidth = 36;
+      } else {
+        avatarWidth = rect.width;
+      }
 
       // Fallback if initial coordinates are (0,0) or missing (common in HTML5 dragstart events)
       if ((!mouseX && !mouseY) || (mouseX === 0 && mouseY === 0)) {
@@ -3657,12 +3680,22 @@
       }
 
       avatarX = mouseX - avatarWidth / 2;
-      avatarY = mouseY - 20;
+      avatarY = mouseY - (useCompactAvatar ? 18 : 20);
 
-      var clone = sourceEl.cloneNode(true);
-      clone.id = 'heavenly-drag-avatar';
-      clone.className = (clone.className || '').replace(/\bentrance-animate\b/g, '') + ' drag-popout-avatar';
-      clone.style.width = avatarWidth + 'px';
+      var clone;
+      if (useCompactAvatar) {
+        clone = document.createElement('div');
+        clone.id = 'heavenly-drag-avatar';
+        clone.className = 'drag-popout-avatar compact-purple-avatar';
+        clone.innerHTML = '<span class="drop-indicator-dot drop-indicator-purple" style="margin:0;"></span>';
+        clone.setAttribute('data-compact', 'true');
+      } else {
+        clone = sourceEl.cloneNode(true);
+        clone.id = 'heavenly-drag-avatar';
+        clone.className = (clone.className || '').replace(/\bentrance-animate\b/g, '') + ' drag-popout-avatar';
+        clone.style.width = avatarWidth + 'px';
+      }
+
       clone.style.transition = 'none';
       clone.style.animation = 'none';
       clone.style.opacity = '1';
@@ -3677,8 +3710,9 @@
       // Ignore invalid (0,0) coordinates sent by native dragover/drag events
       if (mouseX === 0 && mouseY === 0) return;
 
+      var isCompact = activePopoutAvatar.getAttribute('data-compact') === 'true';
       avatarX = mouseX - avatarWidth / 2;
-      avatarY = mouseY - 20;
+      avatarY = mouseY - (isCompact ? 18 : 20);
 
       if (!avatarRafPending) {
         avatarRafPending = true;
