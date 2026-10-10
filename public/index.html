@@ -884,6 +884,24 @@
       transition: transform 0.2s ease;
     }
 
+    /* Hover reveal for collapsed subsection edit icons */
+    .subsection-divider[aria-expanded="false"] .subsec-edit-btn,
+    .subsection-divider.is-collapsed .subsec-edit-btn {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    @media (hover: hover) {
+      .subsection-divider[aria-expanded="false"]:hover .subsec-edit-btn,
+      .subsection-divider.is-collapsed:hover .subsec-edit-btn,
+      .subsection-divider[aria-expanded="false"] .subsec-edit-btn:focus-visible,
+      .subsection-divider.is-collapsed .subsec-edit-btn:focus-visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+
     /* Drag and Drop styling */
     .section-card.drag-over {
       border-color: #38bdf8 !important;
@@ -4793,7 +4811,7 @@
           var isSubCollapsed = (collapsedSubSections[subSecKey] !== undefined ? !!collapsedSubSections[subSecKey] : (subSec.id === 'naenae' || !!subSec.defaultCollapsed)) && !searchQuery;
 
           var subDiv = document.createElement('div');
-          subDiv.className = 'subsection-divider';
+          subDiv.className = 'subsection-divider' + (isSubCollapsed ? ' is-collapsed' : '');
           subDiv.title = 'Click to collapse/expand ' + subSec.title;
           subDiv.setAttribute('role', 'button');
           subDiv.setAttribute('tabindex', '0');
@@ -4824,6 +4842,7 @@
           if (!subSec.builtIn || subSec.id === 'user') {
             var editSubSecBtn = document.createElement('button');
             editSubSecBtn.type = 'button';
+            editSubSecBtn.className = 'subsec-edit-btn';
             editSubSecBtn.title = 'Edit sub-section';
             editSubSecBtn.style.cssText = 'background:none; border:none; color:#94a3b8; cursor:pointer; padding:2px 4px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; transition:all 0.2s ease;';
             editSubSecBtn.innerHTML = '<svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>';

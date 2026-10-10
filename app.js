@@ -453,7 +453,7 @@ function renderHeavenlyErrorPage(opts) {
 '  <div class="glow-orb glow-orb-2"></div>\n' +
 '  <div class="error-container">\n' +
 '    <div style="display: flex; align-items: center; justify-content: center; gap: 14px;">\n' +
-'      <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img">\n' +
+'      <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src=(window.location.origin||\'\')+\'/assets/heavenly-logo.png\';}">\n' +
 '    </div>\n' +
 '    <span class="brand-badge">\n' +
 '      <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>\n' +
@@ -477,10 +477,10 @@ function renderHeavenlyErrorPage(opts) {
 '        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>\n' +
 '        <span>Test Direct Connection (No Proxy)</span>\n' +
 '      </a>\n' : '') +
-'      <button type="button" onclick="window.location.href=window.location.origin + \'/\'; return false;" class="btn-action btn-outline">\n' +
+'      <a href="/" target="_top" onclick="(window.top || window).location.href=\'/\'; return false;" class="btn-action btn-outline">\n' +
 '        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>\n' +
 '        <span>Return to Heavenly Home</span>\n' +
-'      </button>\n' +
+'      </a>\n'
 '    </div>\n' +
 '    <div class="footer-note">Heavenly Web Proxy &bull; Ethereal &bull; Streamlined</div>\n' +
 '  </div>\n' +
