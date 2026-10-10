@@ -263,6 +263,147 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
     });
   });
 
+  describe('Live Page Icon Picker Resiliency & SPA Handling', function () {
+    it('should normalize URLs with trailing slashes and /proxy/ prefixes for pending icon picker matching', function () {
+      let savedBookmarks = null;
+
+      const mockElement = function (tag) {
+        this.tagName = tag.toUpperCase();
+        this.style = {};
+        this.children = [];
+        this.attachShadow = () => this;
+        this.appendChild = (child) => this.children.push(child);
+        this.querySelector = (sel) => {
+          if (sel === '#live-icon-img') return { src: '', onerror: null };
+          if (sel === '#live-icon-text') return { textContent: '' };
+          if (sel === '#close-picker-btn') return { onclick: null };
+          if (sel === '#save-direct-btn') return { onclick: null };
+          if (sel === '#save-proxied-btn') return { onclick: null };
+          return this;
+        };
+      };
+
+      const mockDoc = {
+        readyState: 'interactive',
+        body: new mockElement('body'),
+        createElement: (tag) => new mockElement(tag),
+        getElementById: (id) => null,
+        head: { querySelectorAll: () => [] }
+      };
+
+      const mockWindow = {
+        location: {
+          origin: 'http://localhost:8080',
+          pathname: '/proxy/https://games-b3749.web.app/',
+          search: '',
+          hash: ''
+        },
+        document: mockDoc,
+        addEventListener: function () {},
+        localStorage: {
+          getItem: function (key) {
+            if (key === 'heavenly_settings') return JSON.stringify({ disableAllWidgets: false });
+            if (key === 'heavenly_manual_icon_pending') {
+              return JSON.stringify({
+                bookmarkId: 'bm_sitesdotcom',
+                targetUrl: 'https://games-b3749.web.app', // No trailing slash, no /proxy/
+                timestamp: Date.now()
+              });
+            }
+            if (key === 'heavenly_bookmarks') {
+              return JSON.stringify({ bookmarks: [{ id: 'bm_sitesdotcom', icon: '' }] });
+            }
+            return null;
+          },
+          removeItem: function (key) {},
+          setItem: function (key, val) {
+            if (key === 'heavenly_bookmarks') savedBookmarks = val;
+          }
+        }
+      };
+      mockWindow.top = mockWindow;
+
+      initForWindow(config, mockWindow);
+
+      const pickerRoot = mockDoc.body.children.find(c => c.id === 'heavenly-manual-icon-root');
+      assert.ok(pickerRoot, 'Icon picker overlay should mount despite trailing slash or proxy prefix differences');
+    });
+
+    it('should retry mounting overlay until document.body is available on heavy async SPAs', function (done) {
+      let bodyCreated = false;
+      const mockElement = function (tag) {
+        this.tagName = tag.toUpperCase();
+        this.style = {};
+        this.children = [];
+        this.attachShadow = () => this;
+        this.appendChild = (child) => this.children.push(child);
+        this.querySelector = (sel) => {
+          const childEl = new mockElement('div');
+          childEl.addEventListener = () => {};
+          childEl.classList = { add: () => {}, remove: () => {}, contains: () => false };
+          return childEl;
+        };
+        this.addEventListener = () => {};
+        this.classList = { add: () => {}, remove: () => {}, contains: () => false };
+      };
+
+      const mockDoc = {
+        readyState: 'loading',
+        body: null, // Initially null to simulate delayed DOM body creation on heavy SPA
+        createElement: (tag) => new mockElement(tag),
+        getElementById: (id) => (bodyCreated && mockDoc.body ? mockDoc.body.children.find(c => c.id === id) : null),
+        head: { querySelectorAll: () => [] },
+        querySelectorAll: () => [],
+        getElementsByTagName: () => [],
+        addEventListener: function (evt, fn) {
+          if (evt === 'DOMContentLoaded') {
+            setTimeout(() => {
+              if (!mockDoc.body) {
+                mockDoc.body = new mockElement('body');
+                bodyCreated = true;
+              }
+              fn();
+            }, 30);
+          }
+        }
+      };
+
+      const mockWindow = {
+        location: {
+          pathname: '/proxy/https://games-b3749.web.app/',
+          search: '',
+          hash: ''
+        },
+        document: mockDoc,
+        addEventListener: function () {},
+        localStorage: {
+          getItem: function (key) {
+            if (key === 'heavenly_settings') return JSON.stringify({ disableAllWidgets: false });
+            if (key === 'heavenly_manual_icon_pending') {
+              return JSON.stringify({
+                bookmarkId: 'bm_sitesdotcom',
+                targetUrl: 'https://games-b3749.web.app/',
+                timestamp: Date.now()
+              });
+            }
+            return null;
+          },
+          removeItem: function (key) {}
+        }
+      };
+      mockWindow.top = mockWindow;
+
+      initForWindow(config, mockWindow);
+
+      setTimeout(() => {
+        assert.ok(mockDoc.body, 'Document body should be created');
+        const pickerRoot = mockDoc.body ? mockDoc.body.children.find(c => c.id === 'heavenly-manual-icon-root') : null;
+        assert.ok(pickerRoot, 'Icon picker overlay should retry and mount once body is ready');
+        done();
+      }, 150);
+    });
+  });
+
   describe('Draggable Touch Panic Overlay', function () {
     it('should inject panic overlay, handle mouse & touch dragging, clamp bounds, and persist position', function () {
       let savedPanicPos = null;

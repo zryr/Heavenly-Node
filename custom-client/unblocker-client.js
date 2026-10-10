@@ -1629,7 +1629,7 @@
             ]
           },
           { id: "bm_ng", categoryId: "cat_games", title: "Newgrounds: Syshi", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: true, hidden: false, order: 1, disableQuickSaveWidget: true, subBookmarks: [] },
-          { id: "bm_sitesdotcom", categoryId: "cat_games", title: "SitesDotCom", url: "https://games-b3749.web.app/", type: "bookmark", icon: "preset:globe", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_sitesdotcom", categoryId: "cat_games", title: "SitesDotCom", url: "https://games-b3749.web.app/", type: "bookmark", icon: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>%F0%9F%A5%94</text></svg>", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
           { id: "bm_grind1", categoryId: "cat_games", title: "GRIND1", url: "https://zbr.base44.app", type: "bookmark", icon: "/proxy/https://yt3.googleusercontent.com/5pXcUZ6ujlD2Cd0loksX2Ju59RtAnfRS4lEG7uf6sd2yemKG33uu2x-31VrU08xAfpEGsUoVGSo=s160-c-k-c0x00ffffff-no-rj", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
           { id: "bm_gn_math", categoryId: "cat_games", title: "GN Math", url: "https://gn-math.dev/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=gn-math.dev&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
           { id: "bm_user_ng", categoryId: "cat_games", title: "Newgrounds", url: "https://newgrounds.com", type: "folder_bookmark", icon: "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64", builtIn: false, hidden: false, order: 99, subBookmarks: [] },
@@ -1671,7 +1671,7 @@
             title: "Aether",
             url: "https://actstudy.s3.us-east-1.amazonaws.com/index.html",
             type: "folder_bookmark",
-            icon: "/proxy/https://actstudy.s3.us-east-1.amazonaws.com/aether.svg",
+            icon: "/assets/aether-logo.png",
             builtIn: true,
             hidden: false,
             order: 0,
@@ -3741,11 +3741,41 @@
     }
   }
 
+  function normalizeUrlForMatching(urlStr, config) {
+    if (!urlStr) return { host: '', origin: '', pathname: '/' };
+    try {
+      var clean = urlStr.toString();
+      var prefix = (config && config.prefix) || '/proxy/';
+      while (clean.indexOf(prefix) !== -1) {
+        var idx = clean.indexOf(prefix);
+        clean = clean.substring(idx + prefix.length);
+      }
+      if (clean.indexOf(":/") !== -1 && clean.indexOf("://") === -1) {
+        clean = clean.replace(/^(https?:\/)([^\/])/i, "$1/$2");
+      }
+      if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
+        clean = 'https://' + clean;
+      }
+      var u = new URL(clean);
+      var path = u.pathname || '/';
+      if (path.length > 1 && path.endsWith('/')) {
+        path = path.slice(0, -1);
+      }
+      return {
+        host: u.hostname.toLowerCase(),
+        origin: u.origin,
+        pathname: path.toLowerCase()
+      };
+    } catch (e) {
+      return { host: '', origin: '', pathname: '/' };
+    }
+  }
+
   function detectActiveFavicon(window, config) {
     try {
-      var head = window.document ? (window.document.head || window.document.getElementsByTagName('head')[0]) : null;
-      if (head) {
-        var links = head.querySelectorAll("link[rel*='icon'], link[data-heavenly-rel*='icon']");
+      var doc = window.document;
+      if (doc) {
+        var links = doc.querySelectorAll("link[rel*='icon'], link[data-heavenly-rel*='icon']");
         for (var i = 0; i < links.length; i++) {
           var href = links[i].getAttribute('href') || links[i].getAttribute('data-heavenly-href');
           if (href) {
@@ -3758,8 +3788,12 @@
       }
       var directUrl = getDirectRemoteUrl(window, config);
       if (directUrl) {
-        var u = new URL(directUrl.startsWith('http') ? directUrl : 'https://' + directUrl);
-        return 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(u.hostname) + '&sz=64';
+        try {
+          var u = new URL(directUrl.startsWith('http') ? directUrl : 'https://' + directUrl);
+          return u.origin + '/favicon.ico';
+        } catch (e) {
+          return 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(directUrl) + '&sz=64';
+        }
       }
     } catch (e) {}
     return 'https://ssl.gstatic.com/classroom/favicon.png';
@@ -3803,26 +3837,28 @@
         return;
       }
 
-      // Check domain/hostname match
+      // Check domain/hostname match using normalized URL parsing
       var activeRemoteUrl = getDirectRemoteUrl(window, config);
-      var pendingHost = '';
-      var activeHost = '';
-      try {
-        pendingHost = new URL(pending.targetUrl.startsWith('http') ? pending.targetUrl : 'https://' + pending.targetUrl).hostname.toLowerCase();
-        activeHost = new URL(activeRemoteUrl.startsWith('http') ? activeRemoteUrl : 'https://' + activeRemoteUrl).hostname.toLowerCase();
-      } catch (e) {}
+      var pendingNorm = normalizeUrlForMatching(pending.targetUrl, config);
+      var activeNorm = normalizeUrlForMatching(activeRemoteUrl, config);
+
+      var pendingHost = pendingNorm.host;
+      var activeHost = activeNorm.host;
 
       if (!pendingHost || !activeHost || (pendingHost !== activeHost && !activeHost.endsWith('.' + pendingHost) && !pendingHost.endsWith('.' + activeHost))) {
         storage.removeItem('heavenly_manual_icon_pending');
         return;
       }
 
-      // Immediately consume pending item so it never triggers accidentally on subsequent navigations
-      storage.removeItem('heavenly_manual_icon_pending');
-
       function setupOverlay() {
-        if (!window.document || !window.document.body) return;
-        if (window.document.getElementById('heavenly-manual-icon-root')) return;
+        if (!window.document) return false;
+        var parent = window.document.body || window.document.documentElement;
+        if (!parent) return false;
+
+        if (window.document.getElementById('heavenly-manual-icon-root')) {
+          storage.removeItem('heavenly_manual_icon_pending');
+          return true;
+        }
 
         var container = window.document.createElement('div');
         container.id = 'heavenly-manual-icon-root';
@@ -3988,11 +4024,27 @@
 
         shadow.appendChild(style);
         shadow.appendChild(card);
-        window.document.body.appendChild(container);
+        parent.appendChild(container);
+
+        storage.removeItem('heavenly_manual_icon_pending');
 
         var imgEl = card.querySelector('#live-icon-img');
         var textEl = card.querySelector('#live-icon-text');
         var statusEl = card.querySelector('#copy-status');
+
+        if (imgEl) {
+          imgEl.onerror = function () {
+            if (activeNorm.host) {
+              var googleFaviconUrl = 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(activeNorm.host) + '&sz=64';
+              if (directRawIconUrl !== googleFaviconUrl) {
+                directRawIconUrl = googleFaviconUrl;
+                proxiedIconUrl = googleFaviconUrl;
+                imgEl.src = googleFaviconUrl;
+                if (textEl) textEl.textContent = googleFaviconUrl;
+              }
+            }
+          };
+        }
 
         function updatePreview() {
           var detected = detectActiveFavicon(window, config);
@@ -4009,6 +4061,9 @@
           obs.observe(window.document.head, { childList: true, subtree: true, attributes: true });
         }
         var pollInterval = setInterval(updatePreview, 1000);
+        if (pollInterval && typeof pollInterval.unref === 'function') {
+          pollInterval.unref();
+        }
 
         card.querySelector('#close-picker-btn').onclick = function (e) {
           e.stopPropagation();
@@ -4061,13 +4116,33 @@
           e.stopPropagation();
           saveIconAndReturn(proxiedIconUrl);
         };
+
+        return true;
       }
 
-      if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {
-        setupOverlay();
-      } else if (window.document) {
-        window.document.addEventListener('DOMContentLoaded', setupOverlay);
+      if (!setupOverlay()) {
+        var attempts = 0;
+        var maxAttempts = 100;
+        var mountInterval = setInterval(function () {
+          attempts++;
+          if (setupOverlay() || attempts >= maxAttempts) {
+            clearInterval(mountInterval);
+          }
+        }, 100);
+        if (mountInterval && typeof mountInterval.unref === 'function') {
+          mountInterval.unref();
+        }
+
+        if (window.document) {
+          window.document.addEventListener('DOMContentLoaded', function () {
+            if (setupOverlay()) clearInterval(mountInterval);
+          });
+          window.addEventListener('load', function () {
+            if (setupOverlay()) clearInterval(mountInterval);
+          });
+        }
       }
+
     } catch (e) {}
   }
 
