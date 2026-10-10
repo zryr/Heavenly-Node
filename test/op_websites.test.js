@@ -44,7 +44,7 @@ describe("OP Websites Category, Bookmarks & Advice Modals", function () {
   it("should configure specific icons for Aether, Flux, UBGDir, and Docs bookmarks across client files", function () {
     [indexHtml, settingsHtml, clientJs].forEach((content, idx) => {
       const fileName = ["index.html", "settings.html", "unblocker-client.js"][idx];
-      assert.strictEqual(content.includes("/proxy/https://actstudy.s3.us-east-1.amazonaws.com/aether.svg"), true, `${fileName} should contain Aether custom icon`);
+      assert.strictEqual(content.includes("/assets/aether-logo.png"), true, `${fileName} should contain Aether custom icon`);
       assert.strictEqual(content.includes("/proxy/https://web.flux.focuznow.com/assets/flux-mark.webp"), true, `${fileName} should contain Flux custom icon`);
       assert.strictEqual(content.includes("/proxy/https://0800webdev.github.io/UBGdir/favicon.png"), true, `${fileName} should contain UBGDir custom icon`);
       assert.strictEqual(content.includes("https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico"), true, `${fileName} should contain Google Docs favicon`);
