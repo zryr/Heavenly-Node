@@ -18,7 +18,8 @@ describe('Bookmark Mirror Modal Upgrades Tests', function () {
   it('should render Primary Site header card and support auto-failover promotion', function () {
     assert.ok(indexHtml.includes('<span>Primary Site</span>'), 'openBuiltinTestModal should render Primary Site label');
     assert.ok(indexHtml.includes('primaryCandidate'), 'openBuiltinTestModal should determine primaryCandidate');
-    assert.ok(indexHtml.includes('Promoted Primary'), 'openBuiltinTestModal should promote mirror when primary site is broken');
+    assert.ok(indexHtml.includes('promoted-badge-btn'), 'openBuiltinTestModal should render promoted badge button');
+    assert.ok(indexHtml.includes('promoted-tooltip-box'), 'promoted badge click should toggle promoted explanation tooltip');
   });
 
   it('should render Collapsible Your Mirrors and Built-in Mirrors sections with + Add Custom Mirror form', function () {

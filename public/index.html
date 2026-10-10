@@ -5689,7 +5689,7 @@
                            builtinMirrors.find(function (m) { return !m.isBroken; });
         if (nextWorking) {
           primaryCandidate = {
-            title: nextWorking.title + ' (Promoted Primary)',
+            title: nextWorking.title,
             url: nextWorking.url,
             isBroken: false,
             isPromoted: true,
@@ -5752,7 +5752,7 @@
         titleBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
         var titleText = '<div style="font-weight: 700; font-size: 0.88rem; color: ' + (isBroken ? '#64748b' : '#f8fafc') + ';">' + escapeHtml(item.title) + '</div>';
         if (item.isPromoted) {
-          titleText += '<span style="font-size: 0.68rem; font-weight: 700; color: #a855f7; background: rgba(168, 85, 247, 0.18); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 6px; padding: 1px 6px; text-transform: uppercase;">Auto Promoted</span>';
+          titleText += '<span class="promoted-badge-btn" role="button" tabindex="0" title="Click to learn why this link was promoted" style="font-size: 0.68rem; font-weight: 700; color: #a855f7; background: rgba(168, 85, 247, 0.18); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 6px; padding: 1px 6px; text-transform: uppercase; cursor: pointer; user-select: none;">Promoted</span>';
         } else if (isBroken) {
           titleText += '<span style="font-size: 0.68rem; font-weight: 600; color: #94a3b8; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 1px 6px;">Not Working</span>';
         }
@@ -5807,6 +5807,31 @@
 
         topRow.appendChild(titleBox);
         topRow.appendChild(rightBox);
+
+        var promotedBadge = titleBox.querySelector('.promoted-badge-btn');
+        if (promotedBadge) {
+          var showPromotedExplanation = function (e) {
+            e.stopPropagation();
+            var existingTooltip = card.querySelector('.promoted-tooltip-box');
+            if (existingTooltip) {
+              existingTooltip.remove();
+              return;
+            }
+            var tooltip = document.createElement('div');
+            tooltip.className = 'promoted-tooltip-box';
+            tooltip.style.cssText = 'font-size: 0.76rem; color: #e9d5ff; background: rgba(88, 28, 135, 0.85); border: 1px solid rgba(168, 85, 247, 0.5); border-radius: 8px; padding: 6px 10px; line-height: 1.4; display: flex; align-items: flex-start; gap: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); animation: slideFadeDown 0.2s ease forwards;';
+            tooltip.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#c084fc;stroke-width:2.5;flex-shrink:0;margin-top:2px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg><span>The main site link is currently marked as broken, so this working mirror was automatically promoted to the primary position.</span>';
+            card.insertBefore(tooltip, card.children[1] || null);
+          };
+
+          promotedBadge.onclick = showPromotedExplanation;
+          promotedBadge.onkeydown = function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              showPromotedExplanation(e);
+            }
+          };
+        }
 
         var btnRow = document.createElement('div');
         btnRow.style.cssText = 'display: flex; gap: 8px;';
