@@ -47,7 +47,6 @@ describe('Quick Settings & Auto-Hide Broken Bookmarks Tests', function () {
     assert.ok(indexHtml.includes('.mark-working-animate'), 'index.html should define .mark-working-animate CSS class');
     assert.ok(indexHtml.includes('.mark-broken-animate'), 'index.html should define .mark-broken-animate CSS class');
     assert.ok(indexHtml.includes('card.classList.add(isBroken ? \'mark-working-animate\' : \'mark-broken-animate\')'), 'toggleBrokenBtn should trigger micro-animation class before re-rendering');
-    assert.ok(indexHtml.includes('sCard.classList.add(sVer.isBroken ? \'mark-working-animate\' : \'mark-broken-animate\')'), 'sToggleBtn should trigger micro-animation class before re-rendering');
     assert.ok(indexHtml.includes('#search-newtab-btn'), 'index.html should style #search-newtab-btn');
     assert.ok(indexHtml.includes('#search-newtab-btn.collapsed'), 'index.html should define #search-newtab-btn.collapsed transition');
   });

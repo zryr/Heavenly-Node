@@ -5586,7 +5586,7 @@
       } catch (e) {}
     }
 
-    function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId) {
+    function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId, expandUserMirrorsOnLoad) {
       if (document.activeElement) lastFocusedElement = document.activeElement;
       rawUrl = rawUrl || '';
       pendingBuiltinUrls.rawUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) ? rawUrl : (rawUrl ? 'https://' + rawUrl : '');
@@ -5751,9 +5751,7 @@
         var titleBox = document.createElement('div');
         titleBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
         var titleText = '<div style="font-weight: 700; font-size: 0.88rem; color: ' + (isBroken ? '#64748b' : '#f8fafc') + ';">' + escapeHtml(item.title) + '</div>';
-        if (isPrimaryCard && !item.isPromoted) {
-          titleText += '<span style="font-size: 0.68rem; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.18); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 6px; padding: 1px 6px; text-transform: uppercase;">Primary Site</span>';
-        } else if (item.isPromoted) {
+        if (item.isPromoted) {
           titleText += '<span style="font-size: 0.68rem; font-weight: 700; color: #a855f7; background: rgba(168, 85, 247, 0.18); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 6px; padding: 1px 6px; text-transform: uppercase;">Auto Promoted</span>';
         } else if (isBroken) {
           titleText += '<span style="font-size: 0.68rem; font-weight: 600; color: #94a3b8; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 1px 6px;">Not Working</span>';
@@ -5785,9 +5783,6 @@
             openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
           }, 280);
         };
-        // Reference for test assertions:
-        // toggleBrokenBtn.classList.add(isBroken ? 'mark-working-animate' : 'mark-broken-animate')
-        // sCard.classList.add(sVer.isBroken ? 'mark-working-animate' : 'mark-broken-animate')
 
         rightBox.appendChild(copyPill);
         rightBox.appendChild(toggleBrokenBtn);
@@ -5961,7 +5956,7 @@
                 isUser: true
               });
               saveBookmarkData(data);
-              openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+              openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId, true);
             };
 
             addForm.appendChild(formTitle);
@@ -5979,7 +5974,7 @@
         var userSvg = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
         var builtinSvg = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>';
 
-        var userSectionEl = createMirrorSection('Your Mirrors', userSvg, userMirrors, true, false);
+        var userSectionEl = createMirrorSection('Your Mirrors', userSvg, userMirrors, true, expandUserMirrorsOnLoad ? false : true);
         var builtinSectionEl = createMirrorSection('Built-in Mirrors', builtinSvg, builtinMirrors, false, false);
 
         if (userMirrorsTop) {
