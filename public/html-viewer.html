@@ -719,15 +719,15 @@
 
       <div class="control-group">
         <div class="view-switcher" role="tablist" aria-label="Layout view mode">
-          <button type="button" id="view-split" class="view-chip active" title="Side-by-side split view">
+          <button type="button" id="view-split" class="view-chip active" role="tab" aria-selected="true" aria-controls="workspace" title="Side-by-side split view">
             <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line></svg>
             <span>Split View</span>
           </button>
-          <button type="button" id="view-editor" class="view-chip" title="Editor view only">
+          <button type="button" id="view-editor" class="view-chip" role="tab" aria-selected="false" aria-controls="workspace" title="Editor view only">
             <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
             <span>Full Editor</span>
           </button>
-          <button type="button" id="view-preview" class="view-chip" title="Preview frame only">
+          <button type="button" id="view-preview" class="view-chip" role="tab" aria-selected="false" aria-controls="workspace" title="Preview frame only">
             <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
             <span>Full Preview</span>
           </button>
@@ -1095,18 +1095,30 @@
       if (!workspace) return;
 
       workspace.classList.remove('mode-editor', 'mode-preview');
-      if (btnSplit) btnSplit.classList.remove('active');
-      if (btnEditor) btnEditor.classList.remove('active');
-      if (btnPreview) btnPreview.classList.remove('active');
+      [btnSplit, btnEditor, btnPreview].forEach(function (btn) {
+        if (btn) {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-selected', 'false');
+        }
+      });
 
       if (mode === 'editor') {
         workspace.classList.add('mode-editor');
-        if (btnEditor) btnEditor.classList.add('active');
+        if (btnEditor) {
+          btnEditor.classList.add('active');
+          btnEditor.setAttribute('aria-selected', 'true');
+        }
       } else if (mode === 'preview') {
         workspace.classList.add('mode-preview');
-        if (btnPreview) btnPreview.classList.add('active');
+        if (btnPreview) {
+          btnPreview.classList.add('active');
+          btnPreview.setAttribute('aria-selected', 'true');
+        }
       } else {
-        if (btnSplit) btnSplit.classList.add('active');
+        if (btnSplit) {
+          btnSplit.classList.add('active');
+          btnSplit.setAttribute('aria-selected', 'true');
+        }
       }
 
       try {
