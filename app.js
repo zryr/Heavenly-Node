@@ -260,16 +260,14 @@ function responseRedirectMiddleware(data) {
 function iframeSecurityHeadersResponseMiddleware(data) {
     if (!data || !data.headers) return;
 
-    // Strip x-frame-options (case-insensitive) so target sites can embed inside about:blank iframe
-    for (var key in data.headers) {
-        if (key.toLowerCase() === 'x-frame-options') {
-            delete data.headers[key];
-        }
-    }
-
-    // Clean frame-ancestors from content-security-policy (and report-only if present)
+    // Helper to clean frame-ancestors directive from CSP string
     var cleanCspDirectives = function(str) {
         if (typeof str !== 'string') return str;
+        // Performance optimization: Fast-path guard skips string splitting, trimming, and regex filtering
+        // when 'frame-ancestors' is not present in the CSP header string.
+        if (!/frame-ancestors/i.test(str)) {
+            return str;
+        }
         var directives = str.split(';');
         var filtered = [];
         for (var i = 0; i < directives.length; i++) {
@@ -281,28 +279,33 @@ function iframeSecurityHeadersResponseMiddleware(data) {
         return filtered.join('; ');
     };
 
-    var cspHeaders = [
-        'content-security-policy',
-        'content-security-policy-report-only',
-        'x-content-security-policy',
-        'x-webkit-csp'
-    ];
-    for (var h in data.headers) {
-        if (cspHeaders.indexOf(h.toLowerCase()) !== -1) {
-            var val = data.headers[h];
+    // Performance optimization: Single-pass iteration over data.headers.
+    // Handles both X-Frame-Options removal and Content-Security-Policy cleaning in a single loop,
+    // avoiding redundant multi-pass header enumeration and array indexOf lookups per header.
+    for (var key in data.headers) {
+        var lower = key.toLowerCase();
+        if (lower === 'x-frame-options') {
+            delete data.headers[key];
+        } else if (
+            lower === 'content-security-policy' ||
+            lower === 'content-security-policy-report-only' ||
+            lower === 'x-content-security-policy' ||
+            lower === 'x-webkit-csp'
+        ) {
+            var val = data.headers[key];
             if (Array.isArray(val)) {
                 var cleanedList = val.map(cleanCspDirectives).filter(function(v) { return v && v.length > 0; });
                 if (cleanedList.length > 0) {
-                    data.headers[h] = cleanedList;
+                    data.headers[key] = cleanedList;
                 } else {
-                    delete data.headers[h];
+                    delete data.headers[key];
                 }
             } else if (typeof val === 'string') {
                 var cleanedStr = cleanCspDirectives(val);
                 if (cleanedStr) {
-                    data.headers[h] = cleanedStr;
+                    data.headers[key] = cleanedStr;
                 } else {
-                    delete data.headers[h];
+                    delete data.headers[key];
                 }
             }
         }
