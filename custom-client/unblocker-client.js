@@ -1946,26 +1946,10 @@
               updated = true;
             }
 
-            // Migration: Re-sort built-in anime bookmarks so FMHY: Anime is under EverythingMoe and above AniSnatch
-            var animeBms = data.bookmarks.filter(function (b) { return b.categoryId === 'cat_anime' && b.builtIn; });
-            if (animeBms.length > 0) {
-              var animeBmMap = Object.create(null);
-              for (var aBi = 0; aBi < animeBms.length; aBi++) {
-                animeBmMap[animeBms[aBi].id] = animeBms[aBi];
-              }
-              var desiredAnimeOrder = ["bm_everythingmoe", "bm_fmhy_anime", "bm_anisnatch", "bm_miruro", "bm_aniclover", "bm_anidb"];
-              desiredAnimeOrder.forEach(function (id, index) {
-                var found = animeBmMap[id];
-                if (found && found.order !== index) {
-                  found.order = index;
-                  updated = true;
-                }
-              });
-            }
-
             data.bookmarks.forEach(function (bm) {
               if (!bm.subSectionId) {
-                bm.subSectionId = bm.builtIn ? 'builtin' : 'user';
+                var defaultBm = defaultBmMap[bm.id];
+                bm.subSectionId = defaultBm && defaultBm.subSectionId ? defaultBm.subSectionId : (bm.builtIn ? 'builtin' : 'user');
                 updated = true;
               }
             });
@@ -1985,10 +1969,6 @@
                   }
                   if (userBm.type !== defBm.type) {
                     userBm.type = defBm.type;
-                    updated = true;
-                  }
-                  if (defBm.subSectionId && userBm.subSectionId !== defBm.subSectionId) {
-                    userBm.subSectionId = defBm.subSectionId;
                     updated = true;
                   }
                   if (userBm.url !== defBm.url && defBm.url) {

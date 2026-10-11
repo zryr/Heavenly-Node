@@ -256,4 +256,18 @@ describe('Bookmark touch scrolling and deliberate handle dragging', function () 
     h.document.emit('dragstart', mouseDrag, true);
     assert.equal(mouseDrag.defaultPrevented, false);
   });
+
+  it('keeps modal section handles on the touch path without starting a duplicate native drag', function () {
+    const h = harness();
+    const rowTarget = { closest: selector => selector === '.section-order-row' ? {} : null };
+    h.touch('touchstart', 20, 20, { target: rowTarget });
+    assert.equal(h.context.bookmarkTouchInProgress, true);
+    h.tick(600);
+    const nativeDrag = h.event('dragstart', { target: rowTarget });
+    h.document.emit('dragstart', nativeDrag, true);
+    assert(nativeDrag.defaultPrevented && nativeDrag.immediateStopped);
+    assert.equal(h.calls.hold, 1);
+    h.touch('touchcancel');
+    assert.equal(h.calls.cancel, 1);
+  });
 });

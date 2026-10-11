@@ -33,9 +33,9 @@ describe("Sub-Sections Functionality & Data Model", function () {
   });
 
   it("should reconcile subSectionId on bookmarks during loadBookmarkData", function () {
-    assert.strictEqual(indexHtml.includes("bm.subSectionId = bm.builtIn ? 'builtin' : 'user';"), true);
-    assert.strictEqual(settingsHtml.includes("bm.subSectionId = bm.builtIn ? 'builtin' : 'user';"), true);
-    assert.strictEqual(clientJs.includes("bm.subSectionId = bm.builtIn ? 'builtin' : 'user';"), true);
+    [indexHtml, settingsHtml, clientJs].forEach(function (content) {
+      assert.strictEqual(content.includes("defaultBm.subSectionId : (bm.builtIn ? 'builtin' : 'user')"), true);
+    });
   });
 
   it("should configure accordion sections and synchronized toggle logic in Preset Bookmark Manager", function () {
