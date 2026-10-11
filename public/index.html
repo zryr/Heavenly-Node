@@ -809,6 +809,13 @@
     }
 
     /* Bookmark Section Cards */
+    .section-card,
+    .bookmarks-list,
+    .side-column,
+    .bottom-section-container {
+      touch-action: pan-y;
+    }
+
     .section-card {
       background: rgba(15, 23, 42, 0.8);
       backdrop-filter: blur(20px);
@@ -1027,6 +1034,7 @@
       border-radius: 8px;
       opacity: 0.5;
       transition: all 0.2s ease;
+      /* Only the dedicated handle reserves touch movement for deliberate dragging. */
       touch-action: none;
     }
 
@@ -1118,7 +1126,7 @@
       color: #f1f5f9;
       transition: transform 0.25s var(--ease-spring), border-color 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-spring), background 0.25s var(--ease-spring);
       gap: 8px;
-      touch-action: none;
+      touch-action: pan-y;
       will-change: transform;
     }
 
@@ -4967,7 +4975,163 @@
       });
     }
 
+    var cancelBookmarkTouchGesture = null;
+    var bookmarkTouchInProgress = false;
+    var bookmarkIgnoreMouseUntil = 0;
+    var suppressBookmarkClickUntil = 0;
+
+    function isBookmarkCompatibilityMouse(e) {
+      return e.sourceCapabilities ? e.sourceCapabilities.firesTouchEvents : bookmarkTouchInProgress || Date.now() < bookmarkIgnoreMouseUntil;
+    }
+
+    function cancelActiveBookmarkTouch() {
+      if (cancelBookmarkTouchGesture) cancelBookmarkTouchGesture();
+    }
+
+    document.addEventListener('touchstart', function (e) {
+      bookmarkTouchInProgress = bookmarkTouchInProgress || !!e.target.closest('.section-card');
+      if (bookmarkTouchInProgress) bookmarkIgnoreMouseUntil = Date.now() + 800;
+      suppressBookmarkClickUntil = 0;
+      if (e.touches.length !== 1) cancelActiveBookmarkTouch();
+    }, { passive: true, capture: true });
+    ['touchend', 'touchcancel'].forEach(function (type) {
+      document.addEventListener(type, function (e) {
+        if (suppressBookmarkClickUntil) suppressBookmarkClickUntil = Date.now() + 800;
+        if (bookmarkTouchInProgress) {
+          bookmarkTouchInProgress = e.touches.length > 0;
+          bookmarkIgnoreMouseUntil = Date.now() + 800;
+        }
+      }, { passive: true, capture: true });
+    });
+    document.addEventListener('mousedown', function (e) {
+      if (!isBookmarkCompatibilityMouse(e)) {
+        cancelActiveBookmarkTouch();
+        bookmarkTouchInProgress = false;
+        suppressBookmarkClickUntil = 0;
+        bookmarkIgnoreMouseUntil = 0;
+      }
+    }, true);
+    document.addEventListener('click', function (e) {
+      // A drop can rerender the original handle before the compatibility click arrives.
+      if (e.detail !== 0 && Date.now() < suppressBookmarkClickUntil) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    }, true);
+    document.addEventListener('dragstart', function (e) {
+      // Keep native HTML5 mouse dragging, but never let a card body start a touch drag.
+      if ((bookmarkTouchInProgress || Date.now() < bookmarkIgnoreMouseUntil) && e.target.closest('.section-card')) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    }, true);
+    function interruptBookmarkTouch() {
+      cancelActiveBookmarkTouch();
+      bookmarkTouchInProgress = false;
+    }
+    window.addEventListener('blur', interruptBookmarkTouch);
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) interruptBookmarkTouch();
+    });
+
+    function trackBookmarkTouch(e, handlers) {
+      cancelActiveBookmarkTouch();
+      var id = e.touches[0].identifier;
+      var finished = false;
+      function findTouch(touches) {
+        return Array.prototype.find.call(touches, function (touch) { return touch.identifier === id; });
+      }
+      function detach() {
+        finished = true;
+        document.removeEventListener('touchmove', move);
+        document.removeEventListener('touchend', end);
+        document.removeEventListener('touchcancel', cancel);
+        if (cancelBookmarkTouchGesture === cancel) cancelBookmarkTouchGesture = null;
+      }
+      function cancel() {
+        if (finished) return;
+        detach();
+        handlers.cancel();
+      }
+      function move(event) {
+        var touch = findTouch(event.touches);
+        if (!touch || event.touches.length !== 1) { cancel(); return; }
+        handlers.move(event, touch, cancel);
+      }
+      function end(event) {
+        if (!findTouch(event.changedTouches)) return;
+        detach();
+        handlers.end(event);
+      }
+      cancelBookmarkTouchGesture = cancel;
+      document.addEventListener('touchmove', move, { passive: handlers.passive });
+      document.addEventListener('touchend', end, { passive: false });
+      document.addEventListener('touchcancel', cancel, { passive: true });
+      return cancel;
+    }
+
+    function bindBookmarkTouchHandle(handle, hold, move, end, cancelDrag) {
+      handle.addEventListener('touchstart', function (e) {
+        e.stopPropagation();
+        if (e.touches.length !== 1) return;
+        var start = e.touches[0];
+        var held = false, dragging = false;
+        // Cancel any previous gesture before installing this hold timer.
+        cancelActiveBookmarkTouch();
+        var timer = setTimeout(function () { held = true; hold(start); }, 500);
+        trackBookmarkTouch(e, {
+          passive: false,
+          move: function (event, touch, cancel) {
+            var moved = Math.abs(touch.clientX - start.clientX) > 8 || Math.abs(touch.clientY - start.clientY) > 8;
+            if (!held && moved) {
+              suppressBookmarkClickUntil = Infinity;
+              cancel();
+              return;
+            }
+            if (!held || (!dragging && !moved)) return;
+            if (!dragging) closeReorderBar();
+            dragging = true;
+            suppressBookmarkClickUntil = Date.now() + 800;
+            if (event.cancelable) event.preventDefault();
+            move(event);
+          },
+          end: function (event) {
+            clearTimeout(timer);
+            if (dragging) {
+              suppressBookmarkClickUntil = Date.now() + 800;
+              if (event.cancelable) event.preventDefault();
+              end(event);
+            } else {
+              cancelDrag();
+            }
+          },
+          cancel: function () {
+            clearTimeout(timer);
+            if (dragging) suppressBookmarkClickUntil = Date.now() + 800;
+            if (held) closeReorderBar();
+            cancelDrag();
+          }
+        });
+      }, { passive: true });
+    }
+
+    function watchBookmarkCardPress(e, cancelPress) {
+      var start = e.touches[0];
+      trackBookmarkTouch(e, {
+        passive: true,
+        move: function (event, touch, cancel) {
+          if (Math.abs(touch.clientY - start.clientY) > 8 || Math.abs(touch.clientX - start.clientX) > 8) {
+            suppressBookmarkClickUntil = Infinity;
+            cancel();
+          }
+        },
+        end: cancelPress,
+        cancel: cancelPress
+      });
+    }
+
     function renderBookmarksUI() {
+      cancelActiveBookmarkTouch();
       var data = loadBookmarkData();
       var leftCol = $('left-column');
       var rightCol = $('right-column');
@@ -5018,6 +5182,7 @@
         // HTML5 Drag and drop for Category Sections
         card.ondragstart = function (e) {
           e.stopPropagation();
+          clearTimeout(pressTimer);
           card.classList.add('dragging');
           if (e.dataTransfer) {
             if (e.dataTransfer.setDragImage) {
@@ -5066,6 +5231,7 @@
         var isTouchDraggingCat = false;
 
         var startHandle = function (e) {
+          if (e.button !== 0 || isBookmarkCompatibilityMouse(e)) return;
           e.stopPropagation();
           var touch = e.touches ? e.touches[0] : e;
           startX = touch.clientX;
@@ -5082,7 +5248,7 @@
 
         var moveHandle = function (e) {
           var touch = e.touches ? e.touches[0] : e;
-          if (Math.abs(touch.clientX - startX) > 8 || Math.abs(touch.clientY - startY) > 8) {
+          if (Math.abs(touch.clientX - startX) > 8 || Math.abs(touch.clientY - startY) > 8 || isTouchDraggingCat) {
             if (pressTimer) clearTimeout(pressTimer);
             if (e.touches) {
               if (!isTouchDraggingCat) {
@@ -5110,7 +5276,7 @@
                       p.insertBefore(ghostCat, targetPos);
                     }
                   }
-                } else if (targetCol) {
+                } else if (targetCol && !targetCard) {
                   if (ghostCat.parentNode !== targetCol) {
                     targetCol.appendChild(ghostCat);
                   }
@@ -5121,6 +5287,7 @@
         };
 
         var endHandle = function (e) {
+          if (e.type === 'mouseup' && isBookmarkCompatibilityMouse(e)) return;
           if (pressTimer) clearTimeout(pressTimer);
           removePopoutAvatar();
           clearDragGhosts();
@@ -5154,7 +5321,7 @@
                   saveBookmarkData(data);
                   renderBookmarksUI();
                 }
-              } else if (targetCol) {
+              } else if (targetCol && !targetCard) {
                 var newSide = 'left';
                 if (targetCol.id === 'right-column') newSide = 'right';
                 else if (targetCol.id === 'bottom-container') newSide = 'bottom';
@@ -5173,9 +5340,18 @@
         handle.addEventListener('mousedown', startHandle);
         handle.addEventListener('mousemove', moveHandle);
         handle.addEventListener('mouseup', endHandle);
-        handle.addEventListener('touchstart', startHandle, { passive: true });
-        handle.addEventListener('touchmove', moveHandle, { passive: true });
-        handle.addEventListener('touchend', endHandle);
+        handle.addEventListener('mouseleave', function () { clearTimeout(pressTimer); });
+        bindBookmarkTouchHandle(handle, function (touch) {
+          startX = touch.clientX;
+          startY = touch.clientY;
+          handle.classList.add('selected');
+          openReorderBar({ type: 'category', id: cat.id, title: cat.title });
+        }, moveHandle, endHandle, function () {
+          isTouchDraggingCat = false;
+          card.classList.remove('dragging');
+          removePopoutAvatar();
+          clearDragGhosts();
+        });
 
         handle.onclick = function (e) {
           e.stopPropagation();
@@ -5367,6 +5543,7 @@
 
             bmCard.ondragstart = function (e) {
               e.stopPropagation();
+              clearTimeout(bmTimer);
               bmCard.classList.add('dragging');
               if (e.dataTransfer) {
                 if (e.dataTransfer.setDragImage) {
@@ -5464,8 +5641,10 @@
               var isCardLongPress = false;
 
               function startCardPress(e) {
+                if (e.type === 'mousedown' && (e.button !== 0 || isBookmarkCompatibilityMouse(e))) return;
                 if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
                 if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
+                if (e.type === 'touchstart') watchBookmarkCardPress(e, cancelCardPress);
                 isCardLongPress = false;
                 if (cardAnimTimer) clearTimeout(cardAnimTimer);
                 cardAnimTimer = setTimeout(function () {
@@ -5623,6 +5802,7 @@
             var isTouchDraggingBm = false;
 
             var startBmHandle = function (e) {
+              if (e.button !== 0 || isBookmarkCompatibilityMouse(e)) return;
               e.stopPropagation();
               var touch = e.touches ? e.touches[0] : e;
               bmSX = touch.clientX;
@@ -5639,7 +5819,7 @@
 
             var moveBmHandle = function (e) {
               var touch = e.touches ? e.touches[0] : e;
-              if (Math.abs(touch.clientX - bmSX) > 8 || Math.abs(touch.clientY - bmSY) > 8) {
+              if (Math.abs(touch.clientX - bmSX) > 8 || Math.abs(touch.clientY - bmSY) > 8 || isTouchDraggingBm) {
                 if (bmTimer) clearTimeout(bmTimer);
                 if (e.touches) {
                   if (!isTouchDraggingBm) {
@@ -5657,12 +5837,13 @@
                     var ghostBm = getBookmarkGhost();
 
                     if (targetBm && targetBm !== bmCard) {
-                      var p = targetBm.parentNode;
+                      var targetWrapper = targetBm.parentNode;
+                      var p = targetWrapper.parentNode;
                       if (p) {
                         var rect = targetBm.getBoundingClientRect();
-                        var isHorizontal = cat.side === 'bottom' || (getComputedStyle(p).display === 'grid');
+                        var isHorizontal = getComputedStyle(p).display === 'grid';
                         var isAfter = isHorizontal ? ((touch.clientX - rect.left) > (rect.width / 2)) : ((touch.clientY - rect.top) > (rect.height / 2));
-                        var targetPos = isAfter ? targetBm.nextSibling : targetBm;
+                        var targetPos = isAfter ? targetWrapper.nextSibling : targetWrapper;
                         if (ghostBm.parentNode !== p || ghostBm.nextSibling !== targetPos) {
                           p.insertBefore(ghostBm, targetPos);
                         }
@@ -5679,6 +5860,7 @@
             };
 
             var endBmHandle = function (e) {
+              if (e.type === 'mouseup' && isBookmarkCompatibilityMouse(e)) return;
               if (bmTimer) clearTimeout(bmTimer);
               removePopoutAvatar();
               clearDragGhosts();
@@ -5698,9 +5880,9 @@
                     var targetBm = allData.bookmarks.find(function (b) { return b.id === targetBmId; });
                     if (sourceBm && targetBm) {
                       sourceBm.categoryId = targetBm.categoryId;
-                      var parentList = targetBmCard.parentNode;
+                      var parentList = targetBmCard.closest('.bookmarks-list');
                       var rect = targetBmCard.getBoundingClientRect();
-                      var isHorizontal = cat.side === 'bottom' || (parentList && getComputedStyle(parentList).display === 'grid');
+                      var isHorizontal = parentList && getComputedStyle(parentList).display === 'grid';
                       var isAfter = isHorizontal ? ((endTouch.clientX - rect.left) > (rect.width / 2)) : ((endTouch.clientY - rect.top) > (rect.height / 2));
 
                       allData.bookmarks = allData.bookmarks.filter(function (b) { return b.id !== sourceBm.id; });
@@ -5732,9 +5914,18 @@
             bmHandle.addEventListener('mousedown', startBmHandle);
             bmHandle.addEventListener('mousemove', moveBmHandle);
             bmHandle.addEventListener('mouseup', endBmHandle);
-            bmHandle.addEventListener('touchstart', startBmHandle, { passive: true });
-            bmHandle.addEventListener('touchmove', moveBmHandle, { passive: true });
-            bmHandle.addEventListener('touchend', endBmHandle);
+            bmHandle.addEventListener('mouseleave', function () { clearTimeout(bmTimer); });
+            bindBookmarkTouchHandle(bmHandle, function (touch) {
+              bmSX = touch.clientX;
+              bmSY = touch.clientY;
+              bmHandle.classList.add('selected');
+              openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title });
+            }, moveBmHandle, endBmHandle, function () {
+              isTouchDraggingBm = false;
+              bmCard.classList.remove('dragging');
+              removePopoutAvatar();
+              clearDragGhosts();
+            });
 
             bmHandle.onclick = function (e) {
               e.preventDefault();
@@ -5831,8 +6022,10 @@
                 var isSbLongPress = false;
 
                 function startSbPress(e) {
+                  if (e.type === 'mousedown' && (e.button !== 0 || isBookmarkCompatibilityMouse(e))) return;
                   if (e.target.closest('.bookmark-card-edit-btn')) return;
                   if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
+                  if (e.type === 'touchstart') watchBookmarkCardPress(e, cancelSbPress);
                   isSbLongPress = false;
                   if (sbAnimTimer) clearTimeout(sbAnimTimer);
                   sbAnimTimer = setTimeout(function () {
