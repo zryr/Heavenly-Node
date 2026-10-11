@@ -2277,7 +2277,16 @@
             var optItem = document.createElement('div');
             optItem.setAttribute('role', 'option');
             optItem.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+            optItem.setAttribute('tabindex', '0');
+            optItem.setAttribute('aria-label', presetObj.title + (DEFAULT_PRESETS[k] ? '' : ' (Custom)') + (isSelected ? ' (Selected)' : ''));
             optItem.style.cssText = 'padding: 9px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; transition: all 0.15s ease;' + (isSelected ? 'background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #ffffff;' : 'color: #cbd5e1;');
+
+            optItem.onkeydown = function (e) {
+              if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+                e.preventDefault();
+                optItem.click();
+              }
+            };
 
             var leftGroup = document.createElement('div');
             leftGroup.style.cssText = 'display: flex; align-items: center; gap: 10px; overflow: hidden;';
@@ -2352,6 +2361,8 @@
 
           var chip = document.createElement('button');
           chip.type = 'button';
+          chip.setAttribute('aria-pressed', isInPool ? 'true' : 'false');
+          chip.setAttribute('aria-label', pObj.title + (isInPool ? ' (Included in pool)' : ' (Excluded from pool)'));
           chip.style.cssText = 'padding: 8px 10px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; transition: all 0.2s ease; font-family: inherit; font-size: 0.8rem; font-weight: 600;' +
             (isInPool
               ? 'background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #f8fafc; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);'
@@ -2546,6 +2557,10 @@
         if (btn) {
           btn.setAttribute('aria-expanded', 'true');
           btn.style.borderColor = '#38bdf8';
+        }
+        var selectedOpt = menu.querySelector('[aria-selected="true"]') || menu.querySelector('[role="option"]');
+        if (selectedOpt) {
+          setTimeout(function () { selectedOpt.focus(); }, 50);
         }
       }
     }
