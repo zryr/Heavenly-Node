@@ -90,6 +90,14 @@ Show Proxied URL is enabled by default and uses real top-level `/proxy/…` navi
 
 Existing saved about:blank preferences apply to both new controls until changed independently. Bookmark and history storage formats stay compatible. Heavenly history records visits in all supported proxy launch modes, including redirects, in-page URL changes, and back/forward navigation.
 
+### Quick Settings customization
+
+Use **Edit** in the homepage Quick Settings header, or **Customize Quick Settings** in Settings, to open the same editor. Show/hide shortcuts, reorder them with handles or Move Up/Down controls, and Save or Cancel the draft. Reset to Default restores the five navigation shortcuts with individual info icons off; it does not reset feature values. Header **Info** remains available even with no shortcuts shown.
+
+Layout and info-icon preferences live inside `heavenly_settings.quickSettings`. Existing users receive the default arrangement without a settings migration. Other tabs' feature changes are retained; competing layout changes require an explicit **Load saved layout** or **Keep my draft** choice before saving. Advanced shortcuts are opt-in. Panic Controls opens its existing configuration section rather than triggering a redirect. Widget changes retain saved positions and may require refreshing an open proxied website; master controls still take precedence.
+
+The Direct Connection Test Prompt control has been removed from Settings. Existing `skipBuiltinTestPrompt` preferences and per-bookmark launch choices remain supported. For new users, the existing connection-choice dialog remains enabled, including diagnostics and direct/proxy choices.
+
 ### Verification
 
 ```bash
@@ -99,10 +107,13 @@ npm test
 # This script starts its own local app and fixture servers.
 node test/browser/navigation_history.cjs
 node test/browser/quick_settings.cjs
+node test/browser/quick_settings_customization.cjs
 HEAVENLY_BROWSER=firefox node test/browser/navigation_history.cjs
 HEAVENLY_BROWSER=webkit node test/browser/navigation_history.cjs
 HEAVENLY_BROWSER=firefox node test/browser/quick_settings.cjs
 HEAVENLY_BROWSER=webkit node test/browser/quick_settings.cjs
+HEAVENLY_BROWSER=firefox node test/browser/quick_settings_customization.cjs
+HEAVENLY_BROWSER=webkit node test/browser/quick_settings_customization.cjs
 
 # Existing Chromium touch/ordering checks; start the app first.
 node test/browser/bookmark_management.cjs

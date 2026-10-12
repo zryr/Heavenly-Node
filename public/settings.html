@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <script src="/assets/heavenly-navigation.js"></script>
+  <link rel="stylesheet" href="/assets/quick-settings.css">
+  <script src="/assets/quick-settings-model.js"></script>
+  <script src="/assets/quick-settings.js"></script>
   <title>Heavenly: Settings</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" href="/assets/heavenly-logo.png">
@@ -1124,16 +1127,10 @@
 
         <div class="cards-grid">
 
-          <!-- Direct Connection Test Prompt Toggle for Built-in Bookmarks -->
           <div class="hero-card">
-            <div class="hero-card-header">
-              <label for="set-show-builtin-prompt" class="hero-card-title">Direct Connection Test Prompt</label>
-              <label class="switch-toggle">
-                <input type="checkbox" id="set-show-builtin-prompt" role="switch" checked>
-                <span class="slider-knob"></span>
-              </label>
-            </div>
-            <p class="hero-card-desc">Prompts you to test direct connection or open with proxy when clicking built-in bookmarks. Enable this if you previously checked 'Don't ask me again'.</p>
+            <h3 class="hero-card-title">Quick Settings Shortcuts</h3>
+            <p class="hero-card-desc" style="margin:8px 0">Choose the shortcuts shown on the homepage. Hiding a shortcut keeps its setting unchanged.</p>
+            <button type="button" id="customize-quick-settings-btn" class="export-import-btn" aria-haspopup="dialog" aria-controls="qs-editor">Customize Quick Settings</button>
           </div>
 
           <!-- Hero Card: Open Search Results in New Tab -->
@@ -1199,7 +1196,7 @@
       </div>
 
       <!-- Section 3: Panic Features -->
-      <div>
+      <div id="panic-controls" tabindex="-1">
         <h2 class="section-title">
           <svg style="width: 20px; height: 20px; fill: none; stroke: #f87171; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
           <span>Panic Controls</span>
@@ -1782,6 +1779,7 @@
     function saveSettings(settings) {
       try {
         HeavenlyNavigation.updateSettings(localStorage, settings);
+        window.dispatchEvent(new CustomEvent('heavenly:settings-change'));
       } catch (e) {}
     }
 
@@ -2200,7 +2198,6 @@
       if (randomPoolContainer) {
         randomPoolContainer.style.display = settings.randomizePresetEachSession ? 'block' : 'none';
       }
-      $('set-show-builtin-prompt').checked = !settings.skipBuiltinTestPrompt;
 
       var searchNewTabCb = $('set-search-new-tab');
       var mergeGoCb = $('set-merge-go-newtab');
@@ -2598,7 +2595,6 @@
         settings.autoCloak = $('set-auto-cloak').checked;
         settings.persistentCloak = $('set-persistent-cloak').checked;
         if ($('set-randomize-preset-session')) settings.randomizePresetEachSession = $('set-randomize-preset-session').checked;
-        settings.skipBuiltinTestPrompt = !$('set-show-builtin-prompt').checked;
         settings.openSearchInNewTab = $('set-search-new-tab') ? $('set-search-new-tab').checked : false;
         settings.mergeGoNewTab = $('set-merge-go-newtab') ? $('set-merge-go-newtab').checked : false;
         settings.openBookmarksInNewTab = $('set-bookmarks-new-tab') ? $('set-bookmarks-new-tab').checked : true;
@@ -2624,7 +2620,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-bookmarks-about-blank', 'set-search-about-blank', 'set-show-proxied-url', 'set-decoy-auto-timer', 'set-randomize-preset-session', 'set-show-builtin-prompt', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-bookmarks-about-blank', 'set-search-about-blank', 'set-show-proxied-url', 'set-decoy-auto-timer', 'set-randomize-preset-session', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
         var el = $(id);
         if (el) {
           el.onchange = function () {
@@ -3170,6 +3166,10 @@
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSettingsPage, { once: true });
     else initSettingsPage();
+    document.addEventListener('DOMContentLoaded', function () {
+      HeavenlyQuickSettings.init({ editorTrigger: $('customize-quick-settings-btn'), onChange: function () { syncSettingsToUI(); syncCloak(); } });
+      if (location.hash === '#panic-controls') $('panic-controls').focus({ preventScroll: true });
+    });
   </script>
 
 </body>

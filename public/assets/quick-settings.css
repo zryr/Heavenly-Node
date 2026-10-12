@@ -27,3 +27,47 @@
 @media (hover: hover) { .qs-pill-chip:not(:disabled):hover { border-color: #38bdf8; transform: translateY(-1px); } .qs-help-button:hover, .qs-help-close:hover { color: #e9d5ff; background: rgba(168,85,247,.12); } }
 @media (max-width: 420px) { #quick-settings-tray { gap: 10px; } .qs-pill-chip { padding: 8px 9px; gap: 5px; font-size: .72rem; } .qs-controls { gap: 2px; } }
 @media (prefers-reduced-motion: reduce) { .qs-pill-chip, .qs-help-button, .qs-help-popover { transition: none; transform: none; } #quick-settings-toggle-arrow { transition: none !important; } }
+.qs-help-button[hidden], .qs-panel-status:empty, [hidden].qs-editor-backdrop, .qs-editor-backdrop [hidden] { display: none; }
+.qs-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.qs-header-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px; }
+.qs-header-action { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-height: 44px; min-width: 44px; padding: 4px 7px; background: transparent; border: 0; border-radius: 10px; color: #94a3b8; font-family: inherit; font-size: .75rem; font-weight: 600; cursor: pointer; }
+.qs-header-action svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.qs-header-action:hover, .qs-header-action[aria-expanded="true"] { color: #7dd3fc; background: rgba(56,189,248,.07); }
+.qs-header-action:focus-visible { outline: 2px solid #7dd3fc; outline-offset: 2px; }
+.qs-panel-status, .qs-empty { flex-basis: 100%; margin: 0; color: #94a3b8; font-size: .7rem; line-height: 1.5; }
+.qs-help-entry + .qs-help-entry { margin-top: 12px; }
+.qs-help-entry h3 { margin: 0 0 3px; font-size: .78rem; color: #f3e8ff; }
+.qs-editor-backdrop { position: fixed; inset: 0; z-index: 20000; display: flex; align-items: center; justify-content: center; background: rgba(3,7,18,.8); padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom)); }
+.qs-editor-card { display: flex; flex-direction: column; width: 100%; max-width: 580px; max-height: calc(100vh - 24px); max-height: min(90dvh, calc(100vh - 24px)); border: 1px solid rgba(56,189,248,.35); border-radius: 22px; background: rgba(15,23,42,.98); color: #e2e8f0; box-shadow: 0 16px 48px rgba(0,0,0,.5); font-family: inherit; font-size: .83rem; line-height: 1.5; overflow: hidden; animation: qs-editor-enter .16s ease; }
+.qs-editor-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 20px 20px 12px; }
+.qs-editor-header h2 { font-size: 1.16rem; color: #bae6fd; margin: 0 0 5px; }
+.qs-editor-header p, .qs-editor-note { color: #94a3b8; font-size: .77rem; }
+.qs-editor-body { padding: 0 20px 16px; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
+.qs-editor-body h3 { color: #cbd5e1; font-size: .75rem; font-weight: 600; margin: 10px 0 6px; }
+.qs-editor-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.qs-editor-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 5px 6px 5px 10px; border: 1px solid rgba(148,163,184,.18); background: rgba(30,41,59,.38); border-radius: 12px; }
+.qs-editor-name { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.qs-editor-name svg { width: 17px; height: 17px; flex-shrink: 0; fill: none; stroke: #7dd3fc; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.qs-editor-actions { display: flex; align-items: center; flex-shrink: 0; }
+.qs-editor-card button, .qs-editor-card summary { min-height: 44px; min-width: 44px; padding: 7px 10px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: #cbd5e1; font-family: inherit; font-size: .8rem; cursor: pointer; }
+.qs-editor-card button:hover, .qs-editor-card summary:hover { color: #7dd3fc; background: rgba(56,189,248,.08); }
+.qs-editor-card button:disabled { color: #64748b; cursor: default; background: transparent; }
+.qs-editor-card button:focus-visible, .qs-editor-card summary:focus-visible, .qs-editor-card input:focus-visible { outline: 2px solid #38bdf8; outline-offset: 1px; }
+.qs-editor-card .qs-editor-handle { touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; font-size: 1.2rem; color: #94a3b8; }
+.qs-editor-handle.is-dragging { color: #38bdf8; background: rgba(56,189,248,.16); cursor: grabbing; }
+.qs-editor-row.qs-drop-before { border-top-color: #38bdf8; box-shadow: 0 -2px 0 #38bdf8; }
+.qs-editor-row.qs-drop-after { border-bottom-color: #38bdf8; box-shadow: 0 2px 0 #38bdf8; }
+#qs-editor-more { margin: 12px 0; }
+#qs-editor-more summary { color: #7dd3fc; }
+#qs-editor-available { margin-top: 6px; }
+.qs-editor-info { min-height: 44px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.qs-editor-info input { width: 18px; height: 18px; accent-color: #38bdf8; }
+.qs-editor-footer { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-top: 1px solid rgba(148,163,184,.15); }
+.qs-editor-footer > div { display: flex; gap: 6px; margin-left: auto; }
+.qs-editor-card .qs-primary { background: rgba(56,189,248,.16); color: #7dd3fc; border-color: rgba(56,189,248,.45); }
+#qs-editor-conflict { margin: 0 0 10px; padding: 10px; border: 1px solid rgba(192,132,252,.35); border-radius: 12px; background: rgba(88,28,135,.15); color: #e9d5ff; }
+#qs-editor-error { color: #fca5a5; }
+.qs-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@keyframes qs-editor-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 480px) { .qs-editor-header { padding: 16px 12px 10px; } .qs-editor-body { padding: 0 12px 12px; } .qs-editor-row { flex-wrap: wrap; } .qs-editor-actions { margin-left: auto; } .qs-header { flex-wrap: wrap; } .qs-header-actions { margin-left: auto; } }
+@media (prefers-reduced-motion: reduce) { .qs-editor-card { animation: none; } }

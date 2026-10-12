@@ -15,7 +15,7 @@ function pass(message) { checks++; console.log('PASS ' + message); }
   const errors = [];
   const page = await context.newPage();
   page.on('pageerror', error => errors.push(error.message));
-  const initial = { openBookmarksInNewTab: false, openSearchInNewTab: false, openBookmarksInAboutBlank: false, openSearchInAboutBlank: false, showProxiedUrl: true, futureOption: { keep: true }, panicKey: 'p' };
+  const initial = { openBookmarksInNewTab: false, openSearchInNewTab: false, openBookmarksInAboutBlank: false, openSearchInAboutBlank: false, showProxiedUrl: true, futureOption: { keep: true }, panicKey: 'p', quickSettings: { showInfoIcons: true } };
   await context.addInitScript(() => sessionStorage.setItem('heavenly_decoy_unlocked', 'true'));
   await page.goto(origin, { waitUntil: 'domcontentloaded' });
   await page.evaluate(initial => {

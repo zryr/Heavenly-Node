@@ -1,7 +1,7 @@
 /* Body-mounted, non-modal help: works without native popover support or dependencies. */
 (function (root) {
   'use strict';
-  root.HeavenlyQuickSettingsHelp = { init: function (tray) {
+  root.HeavenlyQuickSettingsHelp = { init: function (tray, describe) {
     var doc = tray.ownerDocument;
     var popover = doc.createElement('div');
     popover.id = 'qs-help-popover';
@@ -11,7 +11,7 @@
     popover.setAttribute('role', 'dialog');
     popover.setAttribute('aria-labelledby', 'qs-help-title');
     popover.setAttribute('aria-describedby', 'qs-help-text');
-    popover.innerHTML = '<div class="qs-help-heading"><span id="qs-help-title" class="qs-help-title"></span><button type="button" class="qs-help-close" aria-label="Close explanation">×</button></div><p id="qs-help-text"></p>';
+    popover.innerHTML = '<div class="qs-help-heading"><span id="qs-help-title" class="qs-help-title"></span><button type="button" class="qs-help-close" aria-label="Close explanation">×</button></div><div id="qs-help-text"></div>';
     doc.body.appendChild(popover);
     var trigger = null, hideTimer = null, frame = null;
 
@@ -39,7 +39,7 @@
       var anchor = trigger.getBoundingClientRect();
       if (!trigger.getClientRects().length || anchor.bottom < top || anchor.top > top + height) { close(false); return; }
       popover.style.width = Math.min(296, width - edge * 2) + 'px';
-      popover.style.maxHeight = Math.max(44, height - edge * 2) + 'px';
+      popover.style.maxHeight = Math.max(44, Math.min(420, height - edge * 2)) + 'px';
       var box = popover.getBoundingClientRect();
       var x = Math.max(left + edge, Math.min(anchor.left + anchor.width / 2 - box.width / 2, left + width - box.width - edge));
       var y = anchor.top - box.height - gap;
@@ -51,25 +51,33 @@
     function schedulePosition() {
       if (trigger && frame === null) frame = root.requestAnimationFrame(position);
     }
-    tray.querySelectorAll('[data-qs-help]').forEach(function (button) {
-      button.addEventListener('click', function () {
-        if (trigger === button) { close(true); return; }
-        close(false);
-        root.clearTimeout(hideTimer);
-        trigger = button;
-        var pill = doc.getElementById(button.getAttribute('data-qs-help'));
-        doc.getElementById('qs-help-title').textContent = pill.getAttribute('aria-label');
-        var explanation = doc.getElementById(pill.id + '-help').textContent;
-        if (pill.disabled) explanation += ' New Tab is currently required by about:blank.';
-        doc.getElementById('qs-help-text').textContent = explanation;
-        popover.hidden = false;
-        popover.removeAttribute('aria-hidden');
-        popover.querySelector('button').tabIndex = 0;
-        button.setAttribute('aria-expanded', 'true');
-        position();
-        popover.classList.add('is-open');
-        popover.focus({ preventScroll: true });
+    tray.addEventListener('click', function (event) {
+      var button = event.target.closest('[data-qs-help]');
+      if (!button || !tray.contains(button)) return;
+      if (trigger === button) { close(true); return; }
+      close(false);
+      root.clearTimeout(hideTimer);
+      trigger = button;
+      var content = describe(button.getAttribute('data-qs-help'));
+      doc.getElementById('qs-help-title').textContent = content.title;
+      var text = doc.getElementById('qs-help-text');
+      text.textContent = '';
+      content.entries.forEach(function (entry) {
+        var section = doc.createElement('div');
+        section.className = 'qs-help-entry';
+        if (content.entries.length > 1) {
+          var title = doc.createElement('h3'); title.textContent = entry.name; section.appendChild(title);
+        }
+        var paragraph = doc.createElement('p'); paragraph.textContent = entry.text; section.appendChild(paragraph);
+        text.appendChild(section);
       });
+      popover.hidden = false;
+      popover.removeAttribute('aria-hidden');
+      popover.querySelector('button').tabIndex = 0;
+      button.setAttribute('aria-expanded', 'true');
+      position();
+      popover.classList.add('is-open');
+      popover.focus({ preventScroll: true });
     });
     popover.querySelector('button').addEventListener('click', function () { close(true); });
     doc.addEventListener('pointerdown', function (event) {
