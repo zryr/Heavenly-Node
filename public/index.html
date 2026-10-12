@@ -2913,7 +2913,7 @@
             <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
             <span>Quick Settings</span>
           </div>
-          <button type="button" id="quick-settings-toggle-btn" aria-label="Toggle Quick Settings Tray" style="background: none; border: none; color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 6px; transition: color 0.2s ease;">
+          <button type="button" id="quick-settings-toggle-btn" aria-controls="quick-settings-tray" aria-expanded="false" aria-label="Toggle Quick Settings Tray" style="background: none; border: none; color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 6px; transition: color 0.2s ease;">
             <span id="quick-settings-toggle-text">Collapse</span>
             <svg id="quick-settings-toggle-arrow" style="width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.5; transform: rotate(180deg); transition: transform 0.25s ease;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
@@ -8296,6 +8296,18 @@
           updateBmSearchClearBtn();
           renderBookmarksUI();
         };
+
+        searchInput.onkeydown = function (e) {
+          if (e.key === 'Escape' || e.keyCode === 27) {
+            if (searchInput.value.length > 0) {
+              e.preventDefault();
+              e.stopPropagation();
+              searchInput.value = '';
+              updateBmSearchClearBtn();
+              renderBookmarksUI();
+            }
+          }
+        };
       }
 
       var bmTypeSelect = $('bm-type');
@@ -8918,6 +8930,7 @@
       var isExpanded = localStorage.getItem('heavenly_quick_settings_expanded') === 'true';
 
       function applyTrayExpanded(expanded) {
+        toggleBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
         if (expanded) {
           tray.style.display = 'flex';
           if (toggleText) toggleText.textContent = 'Collapse';
