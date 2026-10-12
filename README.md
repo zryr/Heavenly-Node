@@ -82,6 +82,33 @@ Get **Heavenly Node** running on your local machine in seconds:
 
 ---
 
+## Navigation Preferences
+
+Quick Settings groups bookmark and main search navigation separately. Each has a New Tab preference and an independent about:blank preference. about:blank takes precedence and always opens a new tab; the New Tab preference is remembered. Direct bookmarks open normally in that tab for compatibility.
+
+Show Proxied URL is enabled by default and uses real top-level `/proxy/…` navigation. Disabling it opens a Heavenly browsing page whose current website survives refresh within that browser session. about:blank keeps its native address; enabling Show Proxied URL displays the path inside Heavenly instead. Framed browsing includes Back, Forward, and Open normally controls. Pages that refuse framing recover through normal navigation, and Open normally remains available during slow loading.
+
+Existing saved about:blank preferences apply to both new controls until changed independently. Bookmark and history storage formats stay compatible. Heavenly history records visits in all supported proxy launch modes, including redirects, in-page URL changes, and back/forward navigation.
+
+### Verification
+
+```bash
+npm test
+
+# Optional browser regressions; requires Playwright in the test environment.
+# This script starts its own local app and fixture servers.
+node test/browser/navigation_history.cjs
+HEAVENLY_BROWSER=firefox node test/browser/navigation_history.cjs
+HEAVENLY_BROWSER=webkit node test/browser/navigation_history.cjs
+
+# Existing Chromium touch/ordering checks; start the app first.
+node test/browser/bookmark_management.cjs
+```
+
+Browser checks use isolated profiles and emulated touch viewports. They do not establish physical iPad or touchscreen verification.
+
+---
+
 ## 📜 License & Credits
 
 This project is open-source and released under the terms of the **[GNU Affero General Public License v3.0](https://www.gnu.org/licenses/agpl-3.0.html)**.

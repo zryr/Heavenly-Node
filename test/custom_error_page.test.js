@@ -443,6 +443,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
 
     describe('End-to-End HTTP requests to non-existent target URL', function() {
         it('should return Heavenly-themed HTML error page instead of plain text Internal Server Error', function(done) {
+            this.timeout(15000); // This request waits for a real DNS failure, which can exceed Mocha's 2s default.
             request(app)
                 .get('/proxy/https://invalid-nonexistent-domain-test12345.com/')
                 .expect('Content-Type', /html/)

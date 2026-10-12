@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <script src="/assets/heavenly-navigation.js"></script>
   <title>Heavenly: Settings</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" href="/assets/heavenly-logo.png">
@@ -977,16 +978,28 @@
             <p class="hero-card-desc">Continuously keeps your browser tab title and favicon disguised regardless of tab visibility.</p>
           </div>
 
-          <!-- Hero Card: Open in about:blank Cloak -->
           <div class="hero-card">
             <div class="hero-card-header">
-              <label for="set-about-blank" class="hero-card-title">Open in about:blank Cloak</label>
-              <label class="switch-toggle">
-                <input type="checkbox" id="set-about-blank" role="switch">
-                <span class="slider-knob"></span>
-              </label>
+              <label for="set-bookmarks-about-blank" class="hero-card-title">Bookmarks in about:blank</label>
+              <label class="switch-toggle"><input type="checkbox" id="set-bookmarks-about-blank" role="switch"><span class="slider-knob"></span></label>
             </div>
-            <p class="hero-card-desc">Launches proxied websites and bookmarks inside an about:blank cloaked tab to hide page history and URLs from browser address bars.</p>
+            <p class="hero-card-desc">Opens proxied bookmarks in a new about:blank tab. Your New Tab preference is remembered. Direct websites open normally for compatibility.</p>
+          </div>
+
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-search-about-blank" class="hero-card-title">Search in about:blank</label>
+              <label class="switch-toggle"><input type="checkbox" id="set-search-about-blank" role="switch"><span class="slider-knob"></span></label>
+            </div>
+            <p class="hero-card-desc">Opens main search/address bar navigation in a new about:blank tab, independently of bookmarks.</p>
+          </div>
+
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-show-proxied-url" class="hero-card-title">Show Proxied URL</label>
+              <label class="switch-toggle"><input type="checkbox" id="set-show-proxied-url" role="switch"><span class="slider-knob"></span></label>
+            </div>
+            <p class="hero-card-desc">Shows the real /proxy/ path in the browser address bar during normal browsing. Disable to use the Heavenly browsing page. about:blank keeps its own address and can show the path inside Heavenly. Open normally is always available if a site cannot load in a frame.</p>
           </div>
 
           <!-- Hero Card: Timed Decoy Auto-Unlock -->
@@ -1737,12 +1750,9 @@
     var DEFAULT_RANDOM_POOL = ['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva'];
 
     function loadSettings() {
-      var saved = {};
-      try {
-        saved = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
-      } catch (e) {}
+      var saved = HeavenlyNavigation.readSettings(localStorage);
 
-      return {
+      return Object.assign(HeavenlyNavigation.navigationSettings(saved), {
         autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
         persistentCloak: saved.persistentCloak || false,
         decoyAutoTimer: saved.decoyAutoTimer !== undefined ? Boolean(saved.decoyAutoTimer) : false,
@@ -1751,10 +1761,7 @@
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
-        openSearchInNewTab: saved.openSearchInNewTab || false,
         mergeGoNewTab: saved.mergeGoNewTab || false,
-        openBookmarksInNewTab: saved.openBookmarksInNewTab !== undefined ? saved.openBookmarksInNewTab : true,
-        openInAboutBlank: saved.openInAboutBlank !== undefined ? saved.openInAboutBlank : false,
         panicKeyEnable: saved.panicKeyEnable || false,
         panicKey: saved.panicKey || '`',
         touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
@@ -1768,12 +1775,12 @@
         dockPosition: saved.dockPosition || 'bottom',
         disableAllWidgets: saved.disableAllWidgets || false,
         disableAllFeatures: saved.disableAllFeatures || false
-      };
+      });
     }
 
     function saveSettings(settings) {
       try {
-        localStorage.setItem('heavenly_settings', JSON.stringify(settings));
+        HeavenlyNavigation.updateSettings(localStorage, settings);
       } catch (e) {}
     }
 
@@ -2203,8 +2210,11 @@
 
       var bmsNewTabCb = $('set-bookmarks-new-tab');
       if (bmsNewTabCb) bmsNewTabCb.checked = settings.openBookmarksInNewTab;
-      var aboutBlankCb = $('set-about-blank');
-      if (aboutBlankCb) aboutBlankCb.checked = Boolean(settings.openInAboutBlank);
+      $('set-bookmarks-about-blank').checked = settings.openBookmarksInAboutBlank;
+      $('set-search-about-blank').checked = settings.openSearchInAboutBlank;
+      $('set-show-proxied-url').checked = settings.showProxiedUrl;
+      if (bmsNewTabCb) bmsNewTabCb.disabled = settings.openBookmarksInAboutBlank;
+      if (searchNewTabCb) searchNewTabCb.disabled = settings.openSearchInAboutBlank;
       var decoyAutoTimerCb = $('set-decoy-auto-timer');
       if (decoyAutoTimerCb) decoyAutoTimerCb.checked = Boolean(settings.decoyAutoTimer);
 
@@ -2279,7 +2289,7 @@
             img.src = presetObj.icon;
             img.alt = 'Icon';
             img.style.cssText = 'width: 18px; height: 18px; object-fit: contain; border-radius: 4px; flex-shrink: 0;';
-            img.onerror = function () { this.src = 'https://ssl.gstatic.com/classroom/favicon.png'; };
+            img.onerror = function () { this.onerror = null; this.src = '/assets/heavenly-logo.png'; };
 
             var textSpan = document.createElement('span');
             textSpan.style.cssText = 'font-size: 0.88rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
@@ -2359,7 +2369,7 @@
           img.src = pObj.icon;
           img.alt = 'Icon';
           img.style.cssText = 'width: 16px; height: 16px; object-fit: contain; border-radius: 3px; flex-shrink: 0;';
-          img.onerror = function () { this.src = 'https://ssl.gstatic.com/classroom/favicon.png'; };
+          img.onerror = function () { this.onerror = null; this.src = '/assets/heavenly-logo.png'; };
 
           var textSpan = document.createElement('span');
           textSpan.style.cssText = 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
@@ -2591,7 +2601,9 @@
         settings.openSearchInNewTab = $('set-search-new-tab') ? $('set-search-new-tab').checked : false;
         settings.mergeGoNewTab = $('set-merge-go-newtab') ? $('set-merge-go-newtab').checked : false;
         settings.openBookmarksInNewTab = $('set-bookmarks-new-tab') ? $('set-bookmarks-new-tab').checked : true;
-        settings.openInAboutBlank = $('set-about-blank') ? $('set-about-blank').checked : false;
+        settings.openBookmarksInAboutBlank = $('set-bookmarks-about-blank').checked;
+        settings.openSearchInAboutBlank = $('set-search-about-blank').checked;
+        settings.showProxiedUrl = $('set-show-proxied-url').checked;
         settings.decoyAutoTimer = $('set-decoy-auto-timer') ? $('set-decoy-auto-timer').checked : false;
         settings.panicKeyEnable = $('set-panic-key-enable').checked;
         settings.panicKey = $('set-panic-key').value.trim();
@@ -2611,7 +2623,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-about-blank', 'set-decoy-auto-timer', 'set-randomize-preset-session', 'set-show-builtin-prompt', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-bookmarks-about-blank', 'set-search-about-blank', 'set-show-proxied-url', 'set-decoy-auto-timer', 'set-randomize-preset-session', 'set-show-builtin-prompt', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
         var el = $(id);
         if (el) {
           el.onchange = function () {
@@ -3148,11 +3160,15 @@
       }, { passive: false });
     })();
 
-    window.onload = function () {
+    function initSettingsPage() {
+      if (window.__heavenlySettingsInitialized) return;
+      window.__heavenlySettingsInitialized = true;
       bindSettingsEvents();
       initCloak();
       setTimeout(hideLoadingScreen, 300);
-    };
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSettingsPage, { once: true });
+    else initSettingsPage();
   </script>
 
 </body>

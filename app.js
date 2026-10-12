@@ -329,9 +329,11 @@ var unblockerConfig = {
     ]
 };
 
-// Serve our updated unblocker-client script before unblocker handles it
+// Bundle the shared browser helpers before the proxy client (no build tool required).
+var fs = require('fs');
+var unblockerClientBundle = fs.readFileSync(__dirname + '/public/assets/heavenly-navigation.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/custom-client/unblocker-client.js', 'utf8');
 app.get('/proxy/client/unblocker-client.js', function(req, res) {
-    res.sendFile(__dirname + '/custom-client/unblocker-client.js');
+    res.type('application/javascript').send(unblockerClientBundle);
 });
 
 // Middleware to normalize collapsed single-slash proxy URLs (e.g., /proxy/https:/ -> /proxy/https://)

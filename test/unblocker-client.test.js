@@ -1,4 +1,5 @@
 const assert = require('assert');
+const blankWindow = require('./helpers/wrapper.cjs');
 const { fixUrl, fixSrcset, initForWindow, isTopOrAboutBlankIframe, openAboutBlankLauncher } = require('../custom-client/unblocker-client.js');
 
 describe('unblocker-client.js DOM element rewriting & click interception', function () {
@@ -543,41 +544,18 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
     });
 
     describe('openAboutBlankLauncher', function () {
-      it('should open about:blank window and write full-screen cloaked iframe markup', function () {
-        let openedUrl = null;
-        let openedTarget = null;
-        let writtenHtml = '';
-        let docOpened = false;
-        let docClosed = false;
-
-        const mockBlankDoc = {
-          open: function () { docOpened = true; },
-          write: function (html) { writtenHtml += html; },
-          close: function () { docClosed = true; }
-        };
-
-        const mockBlankWin = {
-          document: mockBlankDoc
-        };
-
-        const mockWin = {
-          open: function (url, target) {
-            openedUrl = url;
-            openedTarget = target;
-            return mockBlankWin;
-          }
-        };
-
-        const result = openAboutBlankLauncher('https://example.com/target', 'Google Docs', 'https://example.com/icon.ico', mockWin);
-        assert.strictEqual(result, mockBlankWin);
+      it('preserves the blank document and builds its iframe through DOM APIs', function () {
+        const blank = blankWindow();
+        let openedUrl;
+        const win = { open(url) { openedUrl = url; return blank; } };
+        const url = 'http://localhost:8080/proxy/https://example.com/target';
+        assert.strictEqual(openAboutBlankLauncher(url, 'Google Docs', 'https://example.com/icon.ico', win), blank);
         assert.strictEqual(openedUrl, 'about:blank');
-        assert.strictEqual(openedTarget, '_blank');
-        assert.strictEqual(docOpened, true);
-        assert.strictEqual(docClosed, true);
-        assert.ok(writtenHtml.includes('<title>Google Docs</title>'));
-        assert.ok(writtenHtml.includes('<link rel="icon" type="image/x-icon" href="https://example.com/icon.ico">'));
-        assert.ok(writtenHtml.includes('width: 100vw; height: 100vh; border: none;'));
-        assert.ok(writtenHtml.includes('src="https://example.com/target"'));
+        assert.strictEqual(blank.location.href, 'about:blank');
+        assert.strictEqual(blank.document.title, 'Google Docs');
+        assert.strictEqual(blank.document.getElementById('heavenly-wrapper-frame').src, url);
+        assert.strictEqual(blank.document.head.children.find(el => el.rel === 'icon').href, 'https://example.com/icon.ico');
+        assert.strictEqual(blank.document.getElementById('heavenly-wrapper-recovery').href, url);
       });
 
       it('should alert user when popups are blocked (window.open returns null)', function () {
@@ -600,14 +578,7 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
     describe('Launcher Buttons in Dock & Nav Bar', function () {
       it('should include #dock-blank-btn in dock mode and trigger launcher on click', function () {
         let openedBlank = false;
-        let writtenDoc = '';
-
-        const mockBlankDoc = {
-          open: () => {},
-          write: (h) => { writtenDoc += h; },
-          close: () => {}
-        };
-        const mockBlankWin = { document: mockBlankDoc };
+        const mockBlankWin = blankWindow();
 
         const mockElement = function (tag) {
           this.tagName = tag.toUpperCase();
@@ -714,20 +685,13 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
         dockBlankBtn.elementListeners['click']({ stopPropagation: () => {} });
 
         assert.strictEqual(openedBlank, true, 'Clicking #dock-blank-btn should open about:blank window');
-        assert.ok(writtenDoc.includes('width: 100vw; height: 100vh; border: none;'), 'Should write cloaked iframe');
-        assert.ok(writtenDoc.includes('Google Docs'), 'Should use active preset title');
+        assert.ok(mockBlankWin.document.getElementById('heavenly-wrapper-frame'), 'Should create a cloaked iframe');
+        assert.strictEqual(mockBlankWin.document.title, 'Google Docs', 'Should use active preset title');
       });
 
       it('should include #nav-blank-btn in floating nav mode and trigger launcher on click', function () {
         let openedBlank = false;
-        let writtenDoc = '';
-
-        const mockBlankDoc = {
-          open: () => {},
-          write: (h) => { writtenDoc += h; },
-          close: () => {}
-        };
-        const mockBlankWin = { document: mockBlankDoc };
+        const mockBlankWin = blankWindow();
 
         const mockElement = function (tag) {
           this.tagName = tag.toUpperCase();
@@ -834,7 +798,7 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
         navBlankBtn.elementListeners['click']({ stopPropagation: () => {} });
 
         assert.strictEqual(openedBlank, true, 'Clicking #nav-blank-btn should open about:blank window');
-        assert.ok(writtenDoc.includes('width: 100vw; height: 100vh; border: none;'), 'Should write cloaked iframe');
+        assert.ok(mockBlankWin.document.getElementById('heavenly-wrapper-frame'), 'Should create a cloaked iframe');
       });
     });
 

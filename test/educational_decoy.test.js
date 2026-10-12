@@ -158,6 +158,7 @@ describe('Educational Decoy Landing Screen Overlay (Milestone 2)', function () {
       };
 
       const ctx = {
+        HeavenlyNavigation: require('../public/assets/heavenly-navigation.js'),
         $: mock$,
         mockSessionStorage: mockSessionStorage,
         sessionStorage: mockSessionStorage,

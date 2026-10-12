@@ -13,6 +13,7 @@
       }
     } catch (e) {}
   </script>
+  <script src="/assets/heavenly-navigation.js"></script>
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1212,13 +1213,6 @@
     .section-order-row .drag-dots-handle { background: transparent; border: none; min-width: 36px; min-height: 36px; }
     .section-order-step { padding: 8px; min-width: 36px; min-height: 36px; }
     .bar-btn:disabled { opacity: 0.4; cursor: default; }
-    .bookmark-select-checkbox { width: 20px; height: 20px; flex-shrink: 0; accent-color: #38bdf8; cursor: pointer; }
-    .bookmark-card.is-selected { border-color: #38bdf8; background: rgba(56, 189, 248, 0.12); }
-    .bookmark-selection-mode .bookmark-card .drag-dots-handle { display: none; }
-    .bookmark-selection-mode .section-header .drag-dots-handle { pointer-events: none; opacity: 0.2; }
-    .bookmark-selection-mode { padding-bottom: 130px; }
-    #bookmark-selection-bar { width: max-content; }
-    #bookmark-selection-bar .bar-info { border: none; }
     #cat-edit-cancel[hidden] { display: none; }
     .management-hint { color: #94a3b8; font-size: 0.82rem; line-height: 1.5; margin: 0; }
 
@@ -1637,6 +1631,17 @@
       background-color: #ffffff;
       box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
     }
+
+    #quick-settings-tray { display: flex; flex-direction: column; gap: 8px; }
+    .qs-navigation-group { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+    .qs-group-label { width: 76px; color: #94a3b8; font-size: 0.74rem; font-weight: 600; }
+    .qs-navigation-hint { color: #94a3b8; font-size: 0.72rem; line-height: 1.5; margin: 1px 0; }
+    .qs-pill-chip { min-height: 44px; }
+    #search-newtab-btn:not(.collapsed) { min-height: 44px; }
+    .qs-pill-chip:disabled { opacity: 0.55; cursor: default; transform: none; }
+    .qs-pill-chip:focus-visible { outline: 2px solid #38bdf8; outline-offset: 3px; }
+    @media (max-width: 420px) { .qs-group-label { width: 100%; } .qs-pill-chip { font-size: 0.73rem; padding: 8px 10px; } }
+    @media (prefers-reduced-motion: reduce) { .qs-pill-chip { transition: none; } }
 
     /* Quick Settings Pill Tray */
     .qs-pill-chip {
@@ -2893,7 +2898,6 @@
           <input type="text" id="bm-universal-search" placeholder="Search bookmarks, folders & categories..." autocomplete="off" aria-label="Search bookmarks and folders" style="padding-left: 40px; padding-right: 44px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); font-size: 0.9rem;" />
           <button type="button" id="bm-search-clear-btn" class="url-clear-btn" aria-label="Clear bookmark search input" title="Clear search input">✕</button>
         </div>
-        <button id="bookmark-select-btn" type="button" class="bar-btn bar-btn-primary" aria-pressed="false" style="margin-top: 10px;">Select bookmarks</button>
       </div>
 
       <div class="brand-header" style="margin-bottom: 32px;">
@@ -2919,18 +2923,22 @@
           </button>
         </div>
 
-        <div id="quick-settings-tray" style="display: flex; flex-wrap: wrap; gap: 8px; transition: all 0.3s ease;">
-          <button type="button" id="pill-bm-newtab" class="qs-pill-chip" title="Toggle opening bookmarks in new tab">
-            <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            <span>Bookmarks in New Tab</span>
-            <span class="pill-dot"></span>
-          </button>
-
-          <button type="button" id="pill-search-newtab" class="qs-pill-chip" title="Toggle opening search results in new tab">
-            <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <span>Search in New Tab</span>
-            <span class="pill-dot"></span>
-          </button>
+        <div id="quick-settings-tray">
+          <div class="qs-navigation-group" role="group" aria-label="Bookmark navigation">
+            <span class="qs-group-label">Bookmarks</span>
+            <button type="button" id="pill-bm-newtab" class="qs-pill-chip" aria-label="Bookmarks in New Tab" aria-pressed="false"><span>New Tab</span><span class="pill-dot"></span></button>
+            <button type="button" id="pill-bm-blank" class="qs-pill-chip" aria-label="Bookmarks in about:blank" aria-pressed="false"><span>about:blank</span><span class="pill-dot"></span></button>
+          </div>
+          <div class="qs-navigation-group" role="group" aria-label="Search navigation">
+            <span class="qs-group-label">Search</span>
+            <button type="button" id="pill-search-newtab" class="qs-pill-chip" aria-label="Search in New Tab" aria-pressed="false"><span>New Tab</span><span class="pill-dot"></span></button>
+            <button type="button" id="pill-search-blank" class="qs-pill-chip" aria-label="Search in about:blank" aria-pressed="false"><span>about:blank</span><span class="pill-dot"></span></button>
+          </div>
+          <div class="qs-navigation-group" role="group" aria-label="URL presentation">
+            <button type="button" id="pill-proxy-url" class="qs-pill-chip" aria-pressed="false"><span>Show Proxied URL</span><span class="pill-dot"></span></button>
+          </div>
+          <p id="qs-navigation-hint" class="qs-navigation-hint">about:blank opens a new tab; your New Tab preference is remembered. Direct websites open normally.</p>
+          <p id="qs-url-hint" class="qs-navigation-hint">Show Proxied URL uses the browser address bar normally, and displays the path inside Heavenly in about:blank.</p>
         </div>
       </div>
 
@@ -2998,7 +3006,6 @@
       <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
       <span>Move Section</span>
     </button>
-    <button id="bar-select-multiple" type="button" class="bar-btn bar-btn-primary" style="display: none;">Select multiple</button>
     <button id="bar-move-top" type="button" class="bar-btn bar-btn-primary" aria-label="Bring selected item to top">
       <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
       <span>Bring to Top</span>
@@ -3019,30 +3026,6 @@
   </div>
 
   <!-- Add Bookmark / Category Modal -->
-  <div id="bookmark-selection-bar" class="reorder-action-bar" role="region" aria-label="Selected bookmarks">
-    <span id="bookmark-selection-count" class="bar-info" role="status" aria-live="polite">0 selected</span>
-    <button id="bookmark-selection-move" type="button" class="bar-btn bar-btn-primary" disabled>Move</button>
-    <button id="bookmark-selection-share" type="button" class="bar-btn bar-btn-primary" disabled>Share</button>
-    <button id="bookmark-selection-done" type="button" class="bar-btn bar-btn-close">Done</button>
-  </div>
-
-  <div id="bookmark-move-modal" class="modal-backdrop">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="bookmark-move-title" style="max-width: 480px;">
-      <div class="modal-header">
-        <span id="bookmark-move-title" class="modal-title">Move bookmarks</span>
-        <button id="bookmark-move-close" type="button" class="modal-close-btn" aria-label="Cancel move">✕</button>
-      </div>
-      <form id="bookmark-move-form" style="display: flex; flex-direction: column; gap: 14px;">
-        <div class="form-group"><label for="bookmark-move-category" class="form-label">Category</label><select id="bookmark-move-category" class="form-select" required></select></div>
-        <div class="form-group"><label for="bookmark-move-section" class="form-label">Section</label><select id="bookmark-move-section" class="form-select" required></select></div>
-        <div style="display: flex; gap: 10px;">
-          <button id="bookmark-move-cancel" type="button" class="bar-btn bar-btn-close">Cancel</button>
-          <button type="submit" class="modal-submit-btn" style="flex: 1; margin: 0;">Move bookmarks</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <div id="add-modal" class="modal-backdrop">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div class="modal-header">
@@ -3741,56 +3724,14 @@
     // --- Milestone 3: about:blank Tab Cloaking Launcher ---
     function launchInAboutBlank(url, customTitle, customIcon) {
       if (!url) return false;
-      var settings = loadSettings();
-      var preset = resolveLandingActivePreset(settings);
-      var cloakTitle = customTitle || preset.title || 'Classes';
-      var cloakIcon = customIcon || preset.icon || '/assets/heavenly-logo.png';
-
-      var blankTab = null;
-      try {
-        blankTab = window.open('about:blank', '_blank');
-      } catch (e) {}
-
-      if (!blankTab) {
-        var proceed = window.confirm('Popup was blocked by your browser! To use about:blank cloaking, please allow popups for this site. Click OK to open directly in this tab instead.');
-        if (proceed) {
-          showLoadingScreen();
-          window.location.href = url;
-        }
-        return false;
-      }
-
-      try {
-        var doc = blankTab.document;
-        if (doc) {
-          doc.open();
-          var safeTitle = escapeHtml(cloakTitle);
-          var safeIcon = escapeHtml(cloakIcon);
-          var safeUrl = escapeHtml(url);
-          var html = '<!DOCTYPE html>\n<html>\n<head>\n' +
-            '<meta charset="UTF-8">\n' +
-            '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
-            '<title>' + safeTitle + '</title>\n' +
-            (safeIcon ? '<link rel="icon" type="image/x-icon" href="' + safeIcon + '">\n<link rel="shortcut icon" href="' + safeIcon + '">\n' : '') +
-            '<style>\n' +
-            '  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }\n' +
-            '  iframe { width: 100vw; height: 100vh; border: none; display: block; outline: none; margin: 0; padding: 0; }\n' +
-            '</style>\n' +
-            '</head>\n<body>\n' +
-            '<iframe src="' + safeUrl + '" allowfullscreen="true" style="width: 100vw; height: 100vh; border: none;"></iframe>\n' +
-            '</body>\n</html>';
-          doc.write(html);
-          doc.close();
-          return true;
-        }
-      } catch (err) {
-        try {
-          blankTab.location.href = url;
-          return true;
-        } catch (e) {}
-      }
-      return true;
+      var preset = resolveLandingActivePreset(loadSettings());
+      return HeavenlyNavigation.openBlank(window, url, {
+        title: customTitle || preset.title || 'Classes',
+        icon: customIcon || preset.icon || '/assets/heavenly-logo.png',
+        showProxiedUrl: loadSettings().showProxiedUrl
+      });
     }
+
 
     function showLoadingScreen() {
       var loader = $('heavenly-loading-screen');
@@ -3814,15 +3755,10 @@
       var settings = loadSettings();
       var goBtn = $('search-go-btn');
       var newTabBtn = $('search-newtab-btn');
-
-      if (settings.openSearchInNewTab) {
-        if (goBtn) goBtn.value = 'Go (New Tab)';
-        if (newTabBtn) newTabBtn.classList.add('collapsed');
-      } else {
-        if (goBtn) goBtn.value = 'Go';
-        if (newTabBtn) newTabBtn.classList.remove('collapsed');
-      }
+      if (goBtn) goBtn.value = settings.openSearchInAboutBlank ? 'Go (about:blank)' : settings.openSearchInNewTab ? 'Go (New Tab)' : 'Go';
+      if (newTabBtn) newTabBtn.classList.toggle('collapsed', settings.openSearchInAboutBlank || settings.openSearchInNewTab);
     }
+
 
     function processSearchSubmission(inNewTab) {
       var url = $('url').value.trim();
@@ -3833,26 +3769,17 @@
         return false;
       }
 
-      if (url.substr(0, 4) !== "http") {
-        if (url.includes('.') && !url.includes(' ')) {
-          url = "https://" + url;
-        } else {
-          url = "https://google.com/search?q=" + encodeURIComponent(url);
-        }
+      if (!/^https?:\/\//i.test(url)) {
+        url = url.includes('.') && !/\s|^[a-z][a-z0-9+.-]*:/i.test(url) ? 'https://' + url : 'https://google.com/search?q=' + encodeURIComponent(url);
       }
-
-      var proxiedUrl = location.protocol + '//' + location.host + '/proxy/' + url;
+      if (!HeavenlyNavigation.remoteUrl(url)) return false;
       var settings = loadSettings();
-      if (settings.openInAboutBlank) {
-        launchInAboutBlank(proxiedUrl);
-        return false;
-      }
-      if (inNewTab) {
-        window.open(proxiedUrl, '_blank', 'noopener');
-      } else {
-        showLoadingScreen();
-        window.location = proxiedUrl;
-      }
+      var preset = resolveLandingActivePreset(settings);
+      var result = HeavenlyNavigation.launch(window, location.origin + '/proxy/' + url, {
+        settings: settings, kind: 'search', newTab: inNewTab,
+        title: preset.title, icon: preset.icon, showProxiedUrl: settings.showProxiedUrl
+      });
+      if (result === window && settings.showProxiedUrl) showLoadingScreen();
       return false;
     }
 
@@ -3916,12 +3843,9 @@
     var DEFAULT_RANDOM_POOL = ['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva'];
 
     function loadSettings() {
-      var saved = {};
-      try {
-        saved = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
-      } catch (e) {}
+      var saved = HeavenlyNavigation.readSettings(localStorage);
 
-      return {
+      return Object.assign(HeavenlyNavigation.navigationSettings(saved), {
         autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
         persistentCloak: saved.persistentCloak || false,
         randomizePresetEachSession: saved.randomizePresetEachSession || false,
@@ -3929,12 +3853,9 @@
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
-        openSearchInNewTab: saved.openSearchInNewTab || false,
         mergeGoNewTab: saved.mergeGoNewTab || false,
-        openBookmarksInNewTab: saved.openBookmarksInNewTab !== undefined ? saved.openBookmarksInNewTab : true,
-        openInAboutBlank: saved.openInAboutBlank !== undefined ? saved.openInAboutBlank : true,
         decoyAutoTimer: saved.decoyAutoTimer !== undefined ? Boolean(saved.decoyAutoTimer) : false
-      };
+      });
     }
 
     // --- Landing Page Tab Cloaking ---
@@ -4051,12 +3972,9 @@
 
     // --- Browsing History Manager ---
     function loadHistory() {
-      try {
-        return JSON.parse(localStorage.getItem('heavenly_history') || '[]');
-      } catch (e) {
-        return [];
-      }
+      return HeavenlyNavigation.loadHistory(localStorage, location.origin);
     }
+
 
     function saveHistory(history) {
       try {
@@ -4142,7 +4060,7 @@
           var current = loadHistory();
           var realIndex = current.findIndex(function (h) { return h.url === item.url; });
           if (realIndex > -1) {
-            current.splice(realIndex, 1);
+            current = current.filter(function (h) { return h.url !== item.url; });
             saveHistory(current);
             renderHistoryDropdown($('url').value, true);
           }
@@ -4154,6 +4072,7 @@
 
         card.onclick = selectCard;
         card.onkeydown = function (e) {
+          if (e.target !== card) return;
           if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
             e.preventDefault();
             selectCard();
@@ -4222,6 +4141,10 @@
         dropdown.classList.add('active');
         input.setAttribute('aria-expanded', 'true');
       };
+
+      window.addEventListener('storage', function (e) {
+        if (e.key === 'heavenly_history' && dropdown.classList.contains('active')) renderHistoryDropdown(input.value);
+      });
 
       input.onfocus = function () {
         updateClearBtnVisibility();
@@ -4336,9 +4259,7 @@
           var emoeModal = $('everythingmoe-modal');
           var reorderBar = $('reorder-bar');
           var bmSearch = $('bm-universal-search');
-          if ($('bookmark-move-modal').classList.contains('active')) {
-            closeBookmarkMoveModal();
-          } else if ($('share-modal').classList.contains('active')) {
+          if ($('share-modal').classList.contains('active')) {
             closeShareModal();
           } else if (julesDevModal && julesDevModal.classList.contains('active')) {
             closeJulesDevModal();
@@ -4362,8 +4283,7 @@
             closeAddModal();
           } else if (reorderBar && reorderBar.classList.contains('active')) {
             closeReorderBar();
-          } else if (bookmarkSelectionMode) {
-            setBookmarkSelectionMode(false);
+
           } else if (dropdown.classList.contains('active')) {
             hideDropdown();
           } else if (bmSearch && bmSearch.value) {
@@ -4869,14 +4789,12 @@
           img.src = 'https://ssl.gstatic.com/classroom/favicon.png';
         }
       }
-      img.onerror = function () { this.src = 'https://ssl.gstatic.com/classroom/favicon.png'; };
+      img.onerror = function () { this.onerror = null; this.src = '/assets/heavenly-logo.png'; };
       return img;
     }
 
     // Selected item state for bottom action bar
     var selectedItemState = null; // { type: 'category'|'bookmark', id: string, title: string, categoryId?: string }
-    var bookmarkSelectionMode = false;
-    var selectedBookmarkIds = new Set();
     var categorySectionDraft = [];
     var categorySectionDragId = null;
     var categorySectionDrop = null;
@@ -5037,7 +4955,6 @@
       if (moveCatBtn) {
         moveCatBtn.style.display = item.type === 'bookmark' ? 'inline-flex' : 'none';
       }
-      $('bar-select-multiple').style.display = item.type === 'bookmark' ? 'inline-flex' : 'none';
       if (bar) bar.classList.add('active');
     }
 
@@ -5217,82 +5134,6 @@
       renderCategorySectionOrder();
     }
 
-    function updateBookmarkSelection() {
-      $('bookmark-selection-count').textContent = selectedBookmarkIds.size + ' selected';
-      $('bookmark-selection-move').disabled = !selectedBookmarkIds.size;
-      $('bookmark-selection-share').disabled = !selectedBookmarkIds.size;
-      document.querySelectorAll('.bookmark-card[data-bm-id]').forEach(function (card) {
-        var checked = selectedBookmarkIds.has(card.dataset.bmId);
-        card.classList.toggle('is-selected', checked);
-        var checkbox = card.querySelector('.bookmark-select-checkbox');
-        if (checkbox) checkbox.checked = checked;
-      });
-    }
-
-    function setBookmarkSelectionMode(active) {
-      cancelActiveBookmarkTouch();
-      closeReorderBar();
-      bookmarkSelectionMode = active;
-      selectedBookmarkIds.clear();
-      document.body.classList.toggle('bookmark-selection-mode', active);
-      $('bookmark-selection-bar').classList.toggle('active', active);
-      $('bookmark-select-btn').setAttribute('aria-pressed', String(active));
-      $('bookmark-select-btn').textContent = active ? 'Done selecting' : 'Select bookmarks';
-      renderBookmarksUI();
-      updateBookmarkSelection();
-    }
-
-    function moveSelectedBookmarks(data, ids, categoryId, sectionId) {
-      var cat = data.categories.find(function (c) { return c.id === categoryId && !c.hidden; });
-      if (!cat || !cat.subSections.some(function (s) { return s.id === sectionId; })) return false;
-      var selected = data.bookmarks.filter(function (b) { return ids.has(b.id) && !b.hidden; });
-      selected.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
-      var order = data.bookmarks.reduce(function (max, b) {
-        return b.categoryId === categoryId && !ids.has(b.id) ? Math.max(max, b.order || 0) : max;
-      }, -1);
-      selected.forEach(function (bm) {
-        bm.categoryId = categoryId;
-        bm.subSectionId = sectionId;
-        bm.order = ++order;
-      });
-      return selected.length > 0;
-    }
-
-    function closeBookmarkMoveModal() {
-      $('bookmark-move-modal').classList.remove('active');
-      restoreLastFocus();
-    }
-
-    function openBookmarkMoveModal() {
-      if (!selectedBookmarkIds.size) return;
-      lastFocusedElement = document.activeElement;
-      var data = loadBookmarkData();
-      var categorySelect = $('bookmark-move-category');
-      var sectionSelect = $('bookmark-move-section');
-      categorySelect.innerHTML = '';
-      data.categories.filter(function (c) { return !c.hidden; }).forEach(function (cat) {
-        var option = document.createElement('option');
-        option.value = cat.id;
-        option.textContent = cat.title;
-        categorySelect.appendChild(option);
-      });
-      categorySelect.onchange = function () {
-        sectionSelect.innerHTML = '';
-        var cat = data.categories.find(function (c) { return c.id === categorySelect.value; });
-        if (!cat) return;
-        cat.subSections.forEach(function (section) {
-          var option = document.createElement('option');
-          option.value = section.id;
-          option.textContent = section.title;
-          sectionSelect.appendChild(option);
-        });
-        if (cat.subSections.some(function (s) { return s.id === 'user'; })) sectionSelect.value = 'user';
-      };
-      categorySelect.onchange();
-      $('bookmark-move-modal').classList.add('active');
-      categorySelect.focus();
-    }
-
     var cancelBookmarkTouchGesture = null;
     var bookmarkTouchInProgress = false;
     var bookmarkIgnoreMouseUntil = 0;
@@ -5451,10 +5292,6 @@
     function renderBookmarksUI() {
       cancelActiveBookmarkTouch();
       var data = loadBookmarkData();
-      selectedBookmarkIds.forEach(function (id) {
-        if (!data.bookmarks.some(function (b) { return b.id === id && !b.hidden; })) selectedBookmarkIds.delete(id);
-      });
-      updateBookmarkSelection();
       var leftCol = $('left-column');
       var rightCol = $('right-column');
       var bottomCol = $('bottom-container');
@@ -5847,27 +5684,17 @@
         function renderBookmarkListSection(bmList, targetContainer) {
           bmList.forEach(function (bm) {
             var isFolderType = bm.type === 'folder' || bm.type === 'folder_bookmark';
-            var isFolderExpanded = !bookmarkSelectionMode && (!!expandedFolders[bm.id] || !!searchQuery);
+            var isFolderExpanded = !!expandedFolders[bm.id] || !!searchQuery;
 
             var bmWrapper = document.createElement('div');
             bmWrapper.style.display = 'flex';
             bmWrapper.style.flexDirection = 'column';
             bmWrapper.style.gap = '4px';
 
-            var bmCard = document.createElement(bookmarkSelectionMode || bm.type === 'folder' ? 'div' : 'a');
+            var bmCard = document.createElement(bm.type === 'folder' ? 'div' : 'a');
             bmCard.className = 'bookmark-card';
-            bmCard.setAttribute('draggable', String(!bookmarkSelectionMode));
+            bmCard.setAttribute('draggable', 'true');
             bmCard.setAttribute('data-bm-id', bm.id);
-            if (bookmarkSelectionMode) {
-              bmCard.classList.toggle('is-selected', selectedBookmarkIds.has(bm.id));
-              var checkbox = document.createElement('input');
-              checkbox.type = 'checkbox';
-              checkbox.className = 'bookmark-select-checkbox';
-              checkbox.checked = selectedBookmarkIds.has(bm.id);
-              checkbox.setAttribute('aria-label', 'Select ' + bm.title);
-              bmCard.appendChild(checkbox);
-            }
-
             bmCard.ondragstart = function (e) {
               e.stopPropagation();
               clearTimeout(bmTimer);
@@ -5968,7 +5795,6 @@
               var isCardLongPress = false;
 
               function startCardPress(e) {
-                if (bookmarkSelectionMode) return;
                 if (e.type === 'mousedown' && (e.button !== 0 || isBookmarkCompatibilityMouse(e))) return;
                 if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
                 if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
@@ -6023,22 +5849,10 @@
                   return;
                 }
 
-                var settings = {};
-                try {
-                  settings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
-                } catch (err) {}
-
-                var targetMode = settings.openBookmarksInNewTab !== false ? '_blank' : '_self';
+                var settings = loadSettings();
                 if (settings.skipBuiltinTestPrompt) {
                   e.preventDefault();
-                  if (settings.openInAboutBlank) {
-                    launchInAboutBlank(proxiedUrl, bm.title, bm.icon);
-                  } else if (targetMode === '_blank') {
-                    window.open(proxiedUrl, '_blank', 'noopener');
-                  } else {
-                    showLoadingScreen();
-                    window.location.href = proxiedUrl;
-                  }
+                  openTargetUrlWithSetting(proxiedUrl);
                   return;
                 }
 
@@ -6398,22 +6212,10 @@
                     return;
                   }
 
-                  var settings = {};
-                  try {
-                    settings = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
-                  } catch (err) {}
-
-                  var targetMode = settings.openBookmarksInNewTab !== false ? '_blank' : '_self';
+                  var settings = loadSettings();
                   if (settings.skipBuiltinTestPrompt) {
                     e.preventDefault();
-                    if (settings.openInAboutBlank) {
-                      launchInAboutBlank(sbProxiedUrl, sb.title, sb.icon);
-                    } else if (targetMode === '_blank') {
-                      window.open(sbProxiedUrl, '_blank', 'noopener');
-                    } else {
-                      showLoadingScreen();
-                      window.location.href = sbProxiedUrl;
-                    }
+                    openTargetUrlWithSetting(sbProxiedUrl);
                     return;
                   }
 
@@ -7183,17 +6985,13 @@
     function openTargetUrlWithSetting(targetUrl) {
       if (!targetUrl) return;
       var settings = loadSettings();
-      if (settings.openInAboutBlank) {
-        launchInAboutBlank(targetUrl);
-        return;
-      }
-      if (settings.openBookmarksInNewTab !== false) {
-        window.open(targetUrl, '_blank', 'noopener');
-      } else {
-        showLoadingScreen();
-        window.location.href = targetUrl;
-      }
+      var preset = resolveLandingActivePreset(settings);
+      return HeavenlyNavigation.launch(window, targetUrl, {
+        settings: settings, kind: 'bookmark', title: preset.title, icon: preset.icon,
+        showProxiedUrl: settings.showProxiedUrl
+      });
     }
+
 
     function toggleBrokenLinkState(url) {
       if (!url) return;
@@ -8214,54 +8012,6 @@
 
     function initBookmarksManager() {
       $('cat-edit-cancel').onclick = closeAddModal;
-      $('bookmark-select-btn').onclick = function () { setBookmarkSelectionMode(!bookmarkSelectionMode); };
-      $('bookmark-selection-done').onclick = function () { setBookmarkSelectionMode(false); $('bookmark-select-btn').focus(); };
-      $('bookmark-selection-move').onclick = openBookmarkMoveModal;
-      $('bookmark-selection-share').onclick = function () { openShareModal(new Set(selectedBookmarkIds)); };
-      $('bar-select-multiple').onclick = function () {
-        if (!selectedItemState || selectedItemState.type !== 'bookmark') return;
-        var id = selectedItemState.id;
-        setBookmarkSelectionMode(true);
-        selectedBookmarkIds.add(id);
-        updateBookmarkSelection();
-      };
-      ['bookmark-move-close', 'bookmark-move-cancel'].forEach(function (id) { $(id).onclick = closeBookmarkMoveModal; });
-      $('bookmark-move-modal').onclick = function (e) { if (e.target === this) closeBookmarkMoveModal(); };
-      $('bookmark-move-form').onsubmit = function (e) {
-        e.preventDefault();
-        var data = loadBookmarkData();
-        if (!moveSelectedBookmarks(data, selectedBookmarkIds, $('bookmark-move-category').value, $('bookmark-move-section').value)) return;
-        saveBookmarkData(data);
-        closeBookmarkMoveModal();
-        setBookmarkSelectionMode(false);
-        $('bookmark-select-btn').focus();
-      };
-      document.addEventListener('click', function (e) {
-        if (!bookmarkSelectionMode) return;
-        var card = e.target.closest('.bookmark-card[data-bm-id]');
-        if (!card || !card.closest('.section-card')) return;
-        e.stopImmediatePropagation();
-        var id = card.dataset.bmId;
-        if (e.target.classList.contains('bookmark-select-checkbox')) {
-          if (e.target.checked) selectedBookmarkIds.add(id);
-          else selectedBookmarkIds.delete(id);
-        } else {
-          e.preventDefault();
-          if (selectedBookmarkIds.has(id)) selectedBookmarkIds.delete(id);
-          else selectedBookmarkIds.add(id);
-        }
-        updateBookmarkSelection();
-      }, true);
-      document.addEventListener('touchstart', function (e) {
-        if (!bookmarkSelectionMode || e.touches.length !== 1) return;
-        if (e.target.closest('.bookmark-card[data-bm-id]')) watchBookmarkCardPress(e, function () {});
-      }, { passive: true, capture: true });
-      document.addEventListener('dragstart', function (e) {
-        if (bookmarkSelectionMode && e.target.closest('.section-card')) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-        }
-      }, true);
       renderBookmarksUI();
 
       setupContainerDropTarget($('left-column'), 'left');
@@ -8468,69 +8218,51 @@
 
       window.bindLongPressToElement = function (btn, prefType, getTargetUrlFn, onCompleteCloseModal) {
         if (!btn) return;
-
         var timer = null;
         var animTimer = null;
         var isLongPress = false;
-
-        function startPress(e) {
-          if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
-          isLongPress = false;
-          if (animTimer) clearTimeout(animTimer);
-          animTimer = setTimeout(function () {
-            btn.classList.add('pressing');
-          }, 100);
-          timer = setTimeout(function () {
-            isLongPress = true;
-            btn.classList.remove('pressing');
-            saveBookmarkLaunchPref(prefType);
-            saveQuickSaveWidgetTogglePref();
-            if (onCompleteCloseModal) {
-              onCompleteCloseModal();
-            } else {
-              closeBuiltinTestModal();
-              closeEverythingMoeNoticeModal();
-            }
-            openTargetUrlWithSetting(getTargetUrlFn());
-          }, 500);
+        var suppressClick = false;
+        function completeLaunch(longPress) {
+          var targetUrl = getTargetUrlFn();
+          if (longPress) saveBookmarkLaunchPref(prefType);
+          else saveBuiltinPromptPref();
+          saveQuickSaveWidgetTogglePref();
+          if (onCompleteCloseModal) onCompleteCloseModal();
+          else { closeBuiltinTestModal(); closeEverythingMoeNoticeModal(); }
+          openTargetUrlWithSetting(targetUrl);
         }
-
+        function startPress(e) {
+          if (e.type === 'mousedown' && e.button !== 0) return;
+          if (e.touches && e.touches.length > 1) return;
+          isLongPress = false;
+          suppressClick = false;
+          animTimer = setTimeout(function () { btn.classList.add('pressing'); }, 100);
+          timer = setTimeout(function () { isLongPress = true; btn.classList.remove('pressing'); }, 500);
+        }
         function cancelPress() {
-          if (animTimer) {
-            clearTimeout(animTimer);
-            animTimer = null;
-          }
-          if (timer) {
-            clearTimeout(timer);
-            timer = null;
-          }
+          clearTimeout(animTimer);
+          clearTimeout(timer);
           btn.classList.remove('pressing');
         }
-
-        btn.addEventListener('mousedown', startPress);
-        btn.addEventListener('touchstart', startPress, { passive: true });
-
-        btn.addEventListener('mouseup', cancelPress);
-        btn.addEventListener('mouseleave', cancelPress);
-        btn.addEventListener('touchend', cancelPress);
-        btn.addEventListener('touchcancel', cancelPress);
-
-        btn.onclick = function (e) {
+        function release(e) {
+          cancelPress();
           if (isLongPress) {
             e.preventDefault();
-            e.stopPropagation();
             isLongPress = false;
-            return;
+            suppressClick = true;
+            completeLaunch(true);
           }
-          saveBuiltinPromptPref();
-          saveQuickSaveWidgetTogglePref();
-          if (onCompleteCloseModal) {
-            onCompleteCloseModal();
-          } else {
-            closeBuiltinTestModal();
-            closeEverythingMoeNoticeModal();
-          }
-          openTargetUrlWithSetting(getTargetUrlFn());
+        }
+        btn.addEventListener('mousedown', startPress);
+        btn.addEventListener('touchstart', startPress, { passive: true });
+        btn.addEventListener('mouseup', release);
+        btn.addEventListener('touchend', release, { passive: false });
+        ['mouseleave', 'touchcancel', 'touchmove'].forEach(function (type) {
+          btn.addEventListener(type, function () { cancelPress(); isLongPress = false; }, { passive: true });
+        });
+        btn.onclick = function (e) {
+          if (suppressClick) { e.preventDefault(); e.stopPropagation(); suppressClick = false; return; }
+          completeLaunch(false);
         };
       };
 
@@ -8800,6 +8532,7 @@
         if (isNaN(idx) || idx < 0 || idx >= availableCats.length) return;
 
         bm.categoryId = availableCats[idx].id;
+        bm.subSectionId = availableCats[idx].subSections.some(function (section) { return section.id === 'user'; }) ? 'user' : availableCats[idx].subSections[0].id;
         bm.order = 999;
         saveBookmarkData(data);
         closeReorderBar();
@@ -8915,7 +8648,8 @@
       var toggleArrow = $('quick-settings-toggle-arrow');
       if (!tray || !toggleBtn) return;
 
-      var isExpanded = localStorage.getItem('heavenly_quick_settings_expanded') === 'true';
+      var isExpanded = false;
+      try { isExpanded = localStorage.getItem('heavenly_quick_settings_expanded') === 'true'; } catch (e) {}
 
       function applyTrayExpanded(expanded) {
         if (expanded) {
@@ -8933,72 +8667,49 @@
 
       toggleBtn.onclick = function () {
         isExpanded = !isExpanded;
-        localStorage.setItem('heavenly_quick_settings_expanded', isExpanded ? 'true' : 'false');
+        try { localStorage.setItem('heavenly_quick_settings_expanded', isExpanded ? 'true' : 'false'); } catch (e) {}
         applyTrayExpanded(isExpanded);
       };
 
+      var pills = [
+        ['pill-bm-newtab', 'openBookmarksInNewTab', 'openBookmarksInAboutBlank'],
+        ['pill-bm-blank', 'openBookmarksInAboutBlank'],
+        ['pill-search-newtab', 'openSearchInNewTab', 'openSearchInAboutBlank'],
+        ['pill-search-blank', 'openSearchInAboutBlank'],
+        ['pill-proxy-url', 'showProxiedUrl']
+      ];
       function updatePillStates() {
         var settings = loadSettings();
-        var bmPill = $('pill-bm-newtab');
-        var searchPill = $('pill-search-newtab');
-
-        if (bmPill) {
-          if (settings.openBookmarksInNewTab !== false) {
-            bmPill.classList.add('active');
-            bmPill.setAttribute('aria-pressed', 'true');
-          } else {
-            bmPill.classList.remove('active');
-            bmPill.setAttribute('aria-pressed', 'false');
-          }
-        }
-
-        if (searchPill) {
-          if (settings.openSearchInNewTab) {
-            searchPill.classList.add('active');
-            searchPill.setAttribute('aria-pressed', 'true');
-          } else {
-            searchPill.classList.remove('active');
-            searchPill.setAttribute('aria-pressed', 'false');
-          }
-        }
-
+        pills.forEach(function (item) {
+          var pill = $(item[0]);
+          if (!pill) return;
+          pill.classList.toggle('active', settings[item[1]]);
+          pill.setAttribute('aria-pressed', String(settings[item[1]]));
+          pill.disabled = !!(item[2] && settings[item[2]]);
+          pill.title = pill.disabled ? 'about:blank already opens a new tab; your preference is remembered' : 'Toggle ' + (pill.getAttribute('aria-label') || pill.textContent.trim());
+          pill.setAttribute('aria-describedby', item[1] === 'showProxiedUrl' ? 'qs-url-hint' : 'qs-navigation-hint');
+        });
+        toggleBtn.setAttribute('aria-expanded', String(isExpanded));
+        toggleBtn.setAttribute('aria-controls', 'quick-settings-tray');
         syncSearchFormUI();
       }
-
-      var bmPill = $('pill-bm-newtab');
-      if (bmPill) {
-        bmPill.onclick = function () {
-          var settings = loadSettings();
-          settings.openBookmarksInNewTab = settings.openBookmarksInNewTab === false;
-          try {
-            localStorage.setItem('heavenly_settings', JSON.stringify(settings));
-          } catch (e) {}
+      pills.forEach(function (item) {
+        $(item[0]).onclick = function () {
+          var patch = {};
+          patch[item[1]] = !loadSettings()[item[1]];
+          try { HeavenlyNavigation.updateSettings(localStorage, patch); } catch (e) {}
           updatePillStates();
         };
-      }
-
-      var searchPill = $('pill-search-newtab');
-      if (searchPill) {
-        searchPill.onclick = function () {
-          var settings = loadSettings();
-          settings.openSearchInNewTab = !settings.openSearchInNewTab;
-          try {
-            localStorage.setItem('heavenly_settings', JSON.stringify(settings));
-          } catch (e) {}
-          updatePillStates();
-        };
-      }
-
-      updatePillStates();
-
-      window.addEventListener('storage', function (e) {
-        if (e.key === 'heavenly_settings') {
-          updatePillStates();
-        }
       });
+      var previousToggle = toggleBtn.onclick;
+      toggleBtn.onclick = function () { previousToggle(); updatePillStates(); };
+      updatePillStates();
+      window.addEventListener('storage', function (e) { if (e.key === 'heavenly_settings') updatePillStates(); });
     }
 
-    window.onload = function () {
+    function initLandingPage() {
+      if (window.__heavenlyLandingInitialized) return;
+      window.__heavenlyLandingInitialized = true;
       initLandingCloak();
       initHistoryDropdown();
       initQuickSettingsTray();
@@ -9018,7 +8729,9 @@
       checkError();
       initAcademyDecoy();
       setTimeout(hideLoadingScreen, 300);
-    };
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLandingPage, { once: true });
+    else initLandingPage();
 
     window.addEventListener('pageshow', function (e) {
       initAcademyDecoy();
