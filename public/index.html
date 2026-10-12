@@ -5015,7 +5015,11 @@
       removePopoutAvatar();
     });
 
-    function openReorderBar(item) {
+    function openReorderBar(item, handle) {
+      document.querySelectorAll('.drag-dots-handle.selected').forEach(function (el) {
+        el.classList.remove('selected');
+      });
+      handle.classList.add('selected');
       selectedItemState = item;
       var bar = $('reorder-bar');
       var info = $('bar-target-info');
@@ -5539,8 +5543,7 @@
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             e.stopPropagation();
-            handle.classList.add('selected');
-            openReorderBar({ type: 'category', id: cat.id, title: cat.title });
+            openReorderBar({ type: 'category', id: cat.id, title: cat.title }, handle);
           }
         };
 
@@ -5558,8 +5561,7 @@
 
           pressTimer = setTimeout(function () {
             if (!isTouchDraggingCat) {
-              handle.classList.add('selected');
-              openReorderBar({ type: 'category', id: cat.id, title: cat.title });
+              openReorderBar({ type: 'category', id: cat.id, title: cat.title }, handle);
             }
           }, 500);
         };
@@ -5662,8 +5664,7 @@
         bindBookmarkTouchHandle(handle, function (touch) {
           startX = touch.clientX;
           startY = touch.clientY;
-          handle.classList.add('selected');
-          openReorderBar({ type: 'category', id: cat.id, title: cat.title });
+          openReorderBar({ type: 'category', id: cat.id, title: cat.title }, handle);
         }, moveHandle, endHandle, function () {
           isTouchDraggingCat = false;
           card.classList.remove('dragging');
@@ -5674,8 +5675,7 @@
         handle.onclick = function (e) {
           e.stopPropagation();
           if (isTouchDraggingCat) return;
-          handle.classList.add('selected');
-          openReorderBar({ type: 'category', id: cat.id, title: cat.title });
+          openReorderBar({ type: 'category', id: cat.id, title: cat.title }, handle);
         };
 
         var titleText = document.createElement('span');
@@ -6120,8 +6120,7 @@
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 e.stopPropagation();
-                bmHandle.classList.add('selected');
-                openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title });
+                openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }, bmHandle);
               }
             };
 
@@ -6139,8 +6138,7 @@
 
               bmTimer = setTimeout(function () {
                 if (!isTouchDraggingBm) {
-                  bmHandle.classList.add('selected');
-                  openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title });
+                  openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }, bmHandle);
                 }
               }, 500);
             };
@@ -6246,8 +6244,7 @@
             bindBookmarkTouchHandle(bmHandle, function (touch) {
               bmSX = touch.clientX;
               bmSY = touch.clientY;
-              bmHandle.classList.add('selected');
-              openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title });
+              openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }, bmHandle);
             }, moveBmHandle, endBmHandle, function () {
               isTouchDraggingBm = false;
               bmCard.classList.remove('dragging');
@@ -6259,8 +6256,7 @@
               e.preventDefault();
               e.stopPropagation();
               if (isTouchDraggingBm) return;
-              bmHandle.classList.add('selected');
-              openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title });
+              openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }, bmHandle);
             };
 
             bmCard.appendChild(bmLeft);

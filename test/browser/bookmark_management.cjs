@@ -42,6 +42,42 @@ const baseUrl = process.env.HEAVENLY_BASE_URL || 'http://127.0.0.1:8080/';
     await touch(cancel ? 'touchCancel' : 'touchEnd');
     await delay(100);
   }
+  async function assertSingleHandle(selector, title) {
+    assert.equal(await page.locator('.section-card .drag-dots-handle.selected').count(), 1);
+    assert(await page.locator(selector).evaluate(el => el.classList.contains('selected')));
+    assert.equal(await page.locator('#bar-target-info').textContent(), title);
+  }
+  for (const id of [0, 1, 2]) {
+    const selector = '.bookmark-card[data-bm-id="test_' + id + '"] .drag-dots-handle';
+    await page.locator(selector).tap();
+    await assertSingleHandle(selector, 'Bookmark ' + id);
+  }
+  const categoryHandle = '[data-category-id="test_a"] .section-header .drag-dots-handle';
+  await page.locator(categoryHandle).tap();
+  await assertSingleHandle(categoryHandle, 'Favorites');
+  const bookmarkHandle = '.bookmark-card[data-bm-id="test_0"] .drag-dots-handle';
+  await page.locator(bookmarkHandle).click();
+  await assertSingleHandle(bookmarkHandle, 'Bookmark 0');
+  await page.locator(categoryHandle).focus();
+  await page.keyboard.press('Enter');
+  await assertSingleHandle(categoryHandle, 'Favorites');
+  await page.locator(bookmarkHandle).focus();
+  await page.keyboard.press('Space');
+  await assertSingleHandle(bookmarkHandle, 'Bookmark 0');
+  console.log('PASS only one bookmark/category handle stays selected after taps, clicks and keyboard activation');
+  for (const [selector, title] of [[categoryHandle, 'Favorites'], [bookmarkHandle, 'Bookmark 0']]) {
+    await page.locator(selector).scrollIntoViewIfNeeded();
+    const box = await page.locator(selector).boundingBox();
+    await touch('touchStart', box.x + box.width / 2, box.y + box.height / 2);
+    await delay(550);
+    await assertSingleHandle(selector, title);
+    await touch('touchEnd');
+    await delay(100);
+    await assertSingleHandle(selector, title);
+  }
+  await page.locator('#bar-close').tap();
+  assert.equal(await page.locator('.section-card .drag-dots-handle.selected').count(), 0);
+  console.log('PASS handle long presses replace the previous highlight and closing clears it');
   await page.locator('[data-category-id="test_a"] .section-header .drag-dots-handle').tap();
   await page.locator('#bar-edit').tap();
   assert.equal(await page.locator('#modal-title').textContent(), 'Edit Category');
@@ -156,13 +192,13 @@ const baseUrl = process.env.HEAVENLY_BASE_URL || 'http://127.0.0.1:8080/';
   await delay(600);
   assert.deepEqual(await page.locator('.section-order-row').evaluateAll(rows => rows.map(r => r.dataset.sectionId)), initialDraft);
   assert.equal(await page.locator('.section-order-row.dragging, .section-order-row .selected').count(), 0);
+  await page.locator('.section-order-row .drag-dots-handle').first().scrollIntoViewIfNeeded();
   box = await page.locator('#cat-sections-list').boundingBox();
   const handleBox = await page.locator('.section-order-row .drag-dots-handle').first().boundingBox();
   await touch('touchStart', handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
-  await delay(550);
+  await page.waitForFunction(() => categorySectionDragId !== null, null, { timeout: 2000 });
   await touch('touchMove', box.x + box.width / 2, box.y + box.height - 10);
-  await delay(250);
-  assert((await page.locator('#cat-sections-list').evaluate(el => el.scrollTop)) > 40);
+  await page.waitForFunction(() => document.getElementById('cat-sections-list').scrollTop > 40, null, { timeout: 2000 });
   await touch('touchCancel');
   const stoppedScroll = await page.locator('#cat-sections-list').evaluate(el => el.scrollTop);
   await delay(100);
