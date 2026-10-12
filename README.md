@@ -98,8 +98,11 @@ npm test
 # Optional browser regressions; requires Playwright in the test environment.
 # This script starts its own local app and fixture servers.
 node test/browser/navigation_history.cjs
+node test/browser/quick_settings.cjs
 HEAVENLY_BROWSER=firefox node test/browser/navigation_history.cjs
 HEAVENLY_BROWSER=webkit node test/browser/navigation_history.cjs
+HEAVENLY_BROWSER=firefox node test/browser/quick_settings.cjs
+HEAVENLY_BROWSER=webkit node test/browser/quick_settings.cjs
 
 # Existing Chromium touch/ordering checks; start the app first.
 node test/browser/bookmark_management.cjs

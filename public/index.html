@@ -14,6 +14,8 @@
     } catch (e) {}
   </script>
   <script src="/assets/heavenly-navigation.js"></script>
+  <link rel="stylesheet" href="/assets/quick-settings.css">
+  <script src="/assets/quick-settings-help.js"></script>
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1632,61 +1634,6 @@
       box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
     }
 
-    #quick-settings-tray { display: flex; flex-direction: column; gap: 8px; }
-    .qs-navigation-group { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
-    .qs-group-label { width: 76px; color: #94a3b8; font-size: 0.74rem; font-weight: 600; }
-    .qs-navigation-hint { color: #94a3b8; font-size: 0.72rem; line-height: 1.5; margin: 1px 0; }
-    .qs-pill-chip { min-height: 44px; }
-    #search-newtab-btn:not(.collapsed) { min-height: 44px; }
-    .qs-pill-chip:disabled { opacity: 0.55; cursor: default; transform: none; }
-    .qs-pill-chip:focus-visible { outline: 2px solid #38bdf8; outline-offset: 3px; }
-    @media (max-width: 420px) { .qs-group-label { width: 100%; } .qs-pill-chip { font-size: 0.73rem; padding: 8px 10px; } }
-    @media (prefers-reduced-motion: reduce) { .qs-pill-chip { transition: none; } }
-
-    /* Quick Settings Pill Tray */
-    .qs-pill-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 14px;
-      border-radius: 20px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      background: rgba(30, 41, 59, 0.5);
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      color: #94a3b8;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      user-select: none;
-    }
-
-    .qs-pill-chip:hover {
-      border-color: rgba(56, 189, 248, 0.4);
-      color: #e0f2fe;
-      transform: translateY(-1px);
-    }
-
-    .qs-pill-chip.active {
-      background: rgba(56, 189, 248, 0.18);
-      border-color: rgba(56, 189, 248, 0.5);
-      color: #38bdf8;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
-    }
-
-    .pill-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #64748b;
-      transition: all 0.25s ease;
-    }
-
-    .qs-pill-chip.active .pill-dot {
-      background: #38bdf8;
-      box-shadow: 0 0 6px #38bdf8;
-    }
-
     /* Animations & Smooth Transitions */
     @keyframes slideFadeDown {
       0% {
@@ -2924,21 +2871,46 @@
         </div>
 
         <div id="quick-settings-tray">
-          <div class="qs-navigation-group" role="group" aria-label="Bookmark navigation">
+          <div class="qs-navigation-group" role="group" aria-label="Bookmarks navigation">
             <span class="qs-group-label">Bookmarks</span>
-            <button type="button" id="pill-bm-newtab" class="qs-pill-chip" aria-label="Bookmarks in New Tab" aria-pressed="false"><span>New Tab</span><span class="pill-dot"></span></button>
-            <button type="button" id="pill-bm-blank" class="qs-pill-chip" aria-label="Bookmarks in about:blank" aria-pressed="false"><span>about:blank</span><span class="pill-dot"></span></button>
+            <div class="qs-controls">
+              <div class="qs-setting">
+                <button type="button" id="pill-bm-newtab" class="qs-pill-chip" aria-label="Bookmarks in New Tab" aria-pressed="false" aria-describedby="pill-bm-newtab-help"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg><span class="qs-pill-copy"><span>New Tab</span><span class="qs-required" hidden>Required</span></span><span class="pill-dot" aria-hidden="true"></span></button>
+                <button type="button" class="qs-help-button" aria-label="About Bookmarks in New Tab" aria-expanded="false" aria-haspopup="dialog" aria-controls="qs-help-popover" data-qs-help="pill-bm-newtab"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></button>
+                <span id="pill-bm-newtab-help" hidden>Open bookmarks in a new browser tab. With about:blank on, a new tab is required; this preference is remembered for when you turn about:blank off.</span>
+              </div>
+              <div class="qs-setting">
+                <button type="button" id="pill-bm-blank" class="qs-pill-chip" aria-label="Bookmarks in about:blank" aria-pressed="false" aria-describedby="pill-bm-blank-help"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M7 6h.01M11 6h.01"/></svg><span class="qs-pill-copy"><span>about:blank</span><span class="qs-required" hidden>Required</span></span><span class="pill-dot" aria-hidden="true"></span></button>
+                <button type="button" class="qs-help-button" aria-label="About Bookmarks in about:blank" aria-expanded="false" aria-haspopup="dialog" aria-controls="qs-help-popover" data-qs-help="pill-bm-blank"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></button>
+                <span id="pill-bm-blank-help" hidden>Open proxied bookmarks inside an about:blank tab when supported. This always opens a new tab. Direct websites open normally; if a site cannot load inside the wrapper, Heavenly opens it normally instead.</span>
+              </div>
+            </div>
           </div>
           <div class="qs-navigation-group" role="group" aria-label="Search navigation">
             <span class="qs-group-label">Search</span>
-            <button type="button" id="pill-search-newtab" class="qs-pill-chip" aria-label="Search in New Tab" aria-pressed="false"><span>New Tab</span><span class="pill-dot"></span></button>
-            <button type="button" id="pill-search-blank" class="qs-pill-chip" aria-label="Search in about:blank" aria-pressed="false"><span>about:blank</span><span class="pill-dot"></span></button>
+            <div class="qs-controls">
+              <div class="qs-setting">
+                <button type="button" id="pill-search-newtab" class="qs-pill-chip" aria-label="Search in New Tab" aria-pressed="false" aria-describedby="pill-search-newtab-help"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg><span class="qs-pill-copy"><span>New Tab</span><span class="qs-required" hidden>Required</span></span><span class="pill-dot" aria-hidden="true"></span></button>
+                <button type="button" class="qs-help-button" aria-label="About Search in New Tab" aria-expanded="false" aria-haspopup="dialog" aria-controls="qs-help-popover" data-qs-help="pill-search-newtab"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></button>
+                <span id="pill-search-newtab-help" hidden>Open websites from the main address or search field in a new browser tab. With about:blank on, a new tab is required; this preference is remembered for when you turn about:blank off.</span>
+              </div>
+              <div class="qs-setting">
+                <button type="button" id="pill-search-blank" class="qs-pill-chip" aria-label="Search in about:blank" aria-pressed="false" aria-describedby="pill-search-blank-help"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M7 6h.01M11 6h.01"/></svg><span class="qs-pill-copy"><span>about:blank</span><span class="qs-required" hidden>Required</span></span><span class="pill-dot" aria-hidden="true"></span></button>
+                <button type="button" class="qs-help-button" aria-label="About Search in about:blank" aria-expanded="false" aria-haspopup="dialog" aria-controls="qs-help-popover" data-qs-help="pill-search-blank"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></button>
+                <span id="pill-search-blank-help" hidden>Open destinations from the main address or search field inside an about:blank tab when supported. This always opens a new tab. If the wrapper cannot load a website, Heavenly opens it normally instead.</span>
+              </div>
+            </div>
           </div>
           <div class="qs-navigation-group" role="group" aria-label="URL presentation">
-            <button type="button" id="pill-proxy-url" class="qs-pill-chip" aria-pressed="false"><span>Show Proxied URL</span><span class="pill-dot"></span></button>
+            <span class="qs-group-label">General</span>
+            <div class="qs-controls">
+              <div class="qs-setting">
+                <button type="button" id="pill-proxy-url" class="qs-pill-chip" aria-label="Show Proxied URL" aria-pressed="false" aria-describedby="pill-proxy-url-help"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m10 13 4-4M15 7l2-2a4.24 4.24 0 0 1 6 6l-4 4a4.24 4.24 0 0 1-6 0M9 17l-2 2a4.24 4.24 0 0 1-6-6l4-4a4.24 4.24 0 0 1 6 0"/></svg><span class="qs-pill-copy"><span>Show Proxied URL</span><span class="qs-required" hidden>Required</span></span><span class="pill-dot" aria-hidden="true"></span></button>
+                <button type="button" class="qs-help-button" aria-label="About Show Proxied URL" aria-expanded="false" aria-haspopup="dialog" aria-controls="qs-help-popover" data-qs-help="pill-proxy-url"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></button>
+                <span id="pill-proxy-url-help" hidden>On: normal navigation shows the website’s proxied address in the browser address bar. Off: Heavenly uses a browsing wrapper when supported. In about:blank, the browser address stays about:blank; turning this on shows the proxied address inside Heavenly instead. Browser restrictions and compatibility fallbacks still apply.</span>
+              </div>
+            </div>
           </div>
-          <p id="qs-navigation-hint" class="qs-navigation-hint">about:blank opens a new tab; your New Tab preference is remembered. Direct websites open normally.</p>
-          <p id="qs-url-hint" class="qs-navigation-hint">Show Proxied URL uses the browser address bar normally, and displays the path inside Heavenly in about:blank.</p>
         </div>
       </div>
 
@@ -8665,10 +8637,12 @@
         }
       }
 
+      var help = HeavenlyQuickSettingsHelp.init(tray);
       applyTrayExpanded(isExpanded);
 
       toggleBtn.onclick = function () {
         isExpanded = !isExpanded;
+        if (!isExpanded) help.close(false);
         try { localStorage.setItem('heavenly_quick_settings_expanded', isExpanded ? 'true' : 'false'); } catch (e) {}
         applyTrayExpanded(isExpanded);
       };
@@ -8685,11 +8659,12 @@
         pills.forEach(function (item) {
           var pill = $(item[0]);
           if (!pill) return;
-          pill.classList.toggle('active', settings[item[1]]);
-          pill.setAttribute('aria-pressed', String(settings[item[1]]));
           pill.disabled = !!(item[2] && settings[item[2]]);
+          pill.classList.toggle('active', pill.disabled || settings[item[1]]);
+          pill.setAttribute('aria-pressed', String(pill.disabled || settings[item[1]]));
+          pill.querySelector('.qs-required').hidden = !pill.disabled;
           pill.title = pill.disabled ? 'about:blank already opens a new tab; your preference is remembered' : 'Toggle ' + (pill.getAttribute('aria-label') || pill.textContent.trim());
-          pill.setAttribute('aria-describedby', item[1] === 'showProxiedUrl' ? 'qs-url-hint' : 'qs-navigation-hint');
+
         });
         toggleBtn.setAttribute('aria-expanded', String(isExpanded));
         toggleBtn.setAttribute('aria-controls', 'quick-settings-tray');
