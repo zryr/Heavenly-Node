@@ -282,6 +282,20 @@ function pass(message) { checks++; console.log('PASS ' + message); }
   assert.deepEqual(errors, []);
   pass('malformed history is recoverable and the browser reports no uncaught application errors');
   await page.screenshot({ path: '/tmp/heavenly-quick-settings-' + engine + '.png', fullPage: false });
+  const storageDenied = await context.newPage();
+  await storageDenied.addInitScript(() => {
+    Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('Storage access denied', 'SecurityError'); } });
+  });
+  await storageDenied.goto(origin + '/', { waitUntil: 'domcontentloaded' });
+  await storageDenied.waitForFunction(() => !!document.getElementById('pill-proxy-url').onclick);
+  await storageDenied.locator('#url').fill(remote + '/first');
+  await storageDenied.locator('#search-go-btn').click();
+  await storageDenied.waitForURL(proxied('/first'));
+  await storageDenied.locator('#spa').click();
+  await storageDenied.waitForURL(proxied('/spa?q=1#part'));
+  await storageDenied.close();
+  assert.deepEqual(errors, []);
+  pass('navigation and controls remain usable when the browser denies storage access');
   console.log(`${checks} browser checks passed (${engine}; emulated touch viewport, no physical device verification)`);
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => {
   if (browser) await browser.close();

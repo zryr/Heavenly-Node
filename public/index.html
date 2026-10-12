@@ -3843,7 +3843,8 @@
     var DEFAULT_RANDOM_POOL = ['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva'];
 
     function loadSettings() {
-      var saved = HeavenlyNavigation.readSettings(localStorage);
+      var saved = {};
+      try { saved = HeavenlyNavigation.readSettings(localStorage); } catch (e) {}
 
       return Object.assign(HeavenlyNavigation.navigationSettings(saved), {
         autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
@@ -3972,7 +3973,8 @@
 
     // --- Browsing History Manager ---
     function loadHistory() {
-      return HeavenlyNavigation.loadHistory(localStorage, location.origin);
+      try { return HeavenlyNavigation.loadHistory(localStorage, location.origin); }
+      catch (e) { return []; }
     }
 
 

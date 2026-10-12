@@ -80,6 +80,17 @@ describe('Navigation settings compatibility', () => {
     assert.equal(navigation.launchMode(settings, 'search', true).newTab, true);
   });
   for (const page of ['index.html', 'settings.html']) {
+    it(`keeps ${page} usable when the browser denies access to the storage object itself`, () => {
+      const html = fs.readFileSync(require.resolve('../public/' + page), 'utf8');
+      const start = html.indexOf('    function loadSettings(');
+      const end = html.indexOf('\n    }', start) + 6;
+      const sandbox = { HeavenlyNavigation: navigation, DEFAULT_RANDOM_POOL: [] };
+      Object.defineProperty(sandbox, 'localStorage', { get() { throw new Error('SecurityError'); } });
+      vm.createContext(sandbox);
+      vm.runInContext(html.slice(start, end), sandbox);
+      assert.equal(sandbox.loadSettings().showProxiedUrl, true);
+      assert.equal(sandbox.loadSettings().openSearchInAboutBlank, false);
+    });
     it(`retains unknown preferences through the ${page} settings reader`, () => {
       const html = fs.readFileSync(require.resolve('../public/' + page), 'utf8');
       const start = html.indexOf('    function loadSettings(');
@@ -169,6 +180,16 @@ describe('Safe launch and wrapper recovery', () => {
 });
 
 describe('History normalization and persistence', () => {
+  it('keeps the history dropdown usable when access to storage is denied', () => {
+    const html = fs.readFileSync(require.resolve('../public/index.html'), 'utf8');
+    const start = html.indexOf('    function loadHistory(');
+    const end = html.indexOf('\n    }', start) + 6;
+    const sandbox = { HeavenlyNavigation: navigation, location: { origin: 'https://heavenly.test' } };
+    Object.defineProperty(sandbox, 'localStorage', { get() { throw new Error('SecurityError'); } });
+    vm.createContext(sandbox);
+    vm.runInContext(html.slice(start, end), sandbox);
+    assert.equal(sandbox.loadHistory().length, 0);
+  });
   it('keeps valid legacy entries and metadata while rejecting malformed entries and duplicates', () => {
     const store = storage({ heavenly_history: [null, { url: 'javascript:alert(1)' }, { url: 'https://example.test', title: 'Example', timestamp: 123 }, { url: 'https://example.test/', title: 'Duplicate' }] });
     assert.deepEqual(navigation.loadHistory(store), [{ url: 'https://example.test/', title: 'Example', timestamp: 123 }]);
