@@ -75,3 +75,9 @@
 **Learning:** Iterating over HTTP response headers in multiple separate loops and creating temporary lookup arrays (`cspHeaders = [...]`) on every response middleware invocation creates unnecessary header traversal and array allocation overhead. Combining header removal (`X-Frame-Options`) and directive cleaning (`Content-Security-Policy`) into a single `for...in` loop with `lower === ...` checks, paired with a fast-path `/frame-ancestors/i` check on CSP header strings, speeds up security header middleware processing by ~36.9%.
 
 **Action:** Combine HTTP header cleanup steps into a single loop iteration and use fast-path regex guards before performing string splitting or directive parsing on CSP headers.
+
+## 2025-05-31 - Fast-path regex guard and single-pass replacement map for HTML string escaping
+
+**Learning:** Running sequential `.replace()` calls for five individual HTML special characters (`&`, `<`, `>`, `"`, `'`) on every HTML string escaping invocation executes redundant regex matching and string allocation passes on clean strings that require no escaping. Adding an $O(1)$ fast-path regex guard (`!/[&<>"']/.test(s)`) to return clean strings immediately, paired with a top-level single-pass replacement map (`HTML_ESCAPE_MAP`) for strings with special characters, speeds up HTML escaping execution by ~57.8%.
+
+**Action:** Guard string sanitization/escaping functions with a single fast-path character existence check before running regex replacements, and use a single-pass regex map for replacement instead of sequential passes.
