@@ -1,0 +1,125 @@
+/* Compact editors for existing settings; save only edited fields, never shortcut layout. */
+(function (root) {
+  'use strict';
+  var gear = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 2 .5.7 2 2 .8 1.9-.4 1.4 1.4-.4 1.9.8 2 2 .7.5 2-.5 2-2 .7-.8 2 .4 1.9-1.4 1.4-1.9-.4-2 .8-.7 2-2 .5-2-.5-.7-2-2-.8-1.9.4-1.4-1.4.4-1.9-.8-2-2-.7-.5-2 .5-2 2-.7.8-2-.4-1.9 1.4-1.4 1.9.4 2-.8.7-2z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var model = root.HeavenlyQuickSettingsModel;
+  function read() { try { return root.HeavenlyNavigation.readSettings(root.localStorage); } catch (e) { return {}; } }
+  root.HeavenlyQuickSettingsConfig = { init: function (options) {
+    var doc = root.document, kind = null, baseline = {}, draft = {}, saving = false, conflicts = [];
+    var modal = doc.createElement('div'); modal.id = 'qs-context-editor'; modal.className = 'qs-editor-backdrop'; modal.hidden = true;
+    modal.innerHTML = '<section class="qs-editor-card qs-context-card" role="dialog" aria-modal="true" aria-labelledby="qs-context-title" aria-describedby="qs-context-description">' +
+      '<header class="qs-editor-header"><div><h2 id="qs-context-title"></h2><p id="qs-context-description"></p></div><button type="button" data-dialog-close aria-label="Cancel configuration">×</button></header>' +
+      '<div class="qs-editor-body"><div id="qs-context-conflict" role="status" hidden><p>These settings changed elsewhere. Your edits are kept. Load the saved values or choose to keep your edits.</p><button type="button" id="qs-context-load">Load saved settings</button><button type="button" id="qs-context-keep">Keep my changes</button></div>' +
+      '<p id="qs-context-master" class="qs-context-notice" role="status" hidden></p><div id="qs-context-controls"></div><div id="qs-context-preview" class="qs-cloak-preview" hidden><span class="qs-group-label">Selected preset preview</span><div><img id="qs-context-icon" alt="" width="20" height="20"><span id="qs-context-preview-title"></span></div></div>' +
+      '<p id="qs-context-note" class="qs-editor-note"></p><p id="qs-context-error" role="alert" hidden></p></div>' +
+      '<footer class="qs-editor-footer"><a id="qs-context-advanced" href="/settings.html">Advanced settings</a><div><button type="button" data-dialog-close>Cancel</button><button type="button" id="qs-context-save" class="qs-primary">Save</button></div></footer></section>';
+    doc.body.appendChild(modal);
+    function get(id) { return doc.getElementById('qs-context-' + id); }
+    var dialog = root.HeavenlyQuickSettingsDialog.create(modal, { fallbackFocus: options.fallbackFocus, onClose: function () { kind = null; conflicts = []; } });
+    function presets(settings) {
+      var custom = settings.customPresets;
+      if (!custom || typeof custom !== 'object' || Array.isArray(custom)) custom = {};
+      return Object.assign({}, options.presets || {}, custom);
+    }
+    function dirty(key) { return draft[key] !== baseline[key]; }
+    function blocked(field, settings) {
+      if (field.key === 'selectedPreset') return false;
+      if (settings.disableAllFeatures) return true;
+      if (kind === 'widgets' && field.key !== 'disableAllWidgets') return !!draft.disableAllWidgets;
+      return false;
+    }
+    function updatePreview(settings) {
+      if (kind !== 'cloaking') return;
+      var preset = presets(settings)[draft.selectedPreset];
+      get('preview-title').textContent = preset && typeof preset.title === 'string' ? preset.title : 'Preset unavailable — choose another or open advanced settings.';
+      var icon = get('icon');
+      var source = preset && typeof preset.icon === 'string' ? preset.icon : '';
+      icon.hidden = !source || (icon.getAttribute('src') === source && icon.complete && !icon.naturalWidth);
+      if (source && icon.getAttribute('src') !== source) { icon.onerror = function () { icon.hidden = true; }; icon.src = source; }
+    }
+    function render(settings, rebuild) {
+      var definitions = model.configurations[kind], controls = get('controls'), allPresets = presets(settings);
+      var focusedKey = doc.activeElement && doc.activeElement.getAttribute('data-config-field');
+      if (rebuild) controls.textContent = '';
+      definitions.forEach(function (field) {
+        var input = controls.querySelector('[data-config-field="' + field.key + '"]');
+        if (!input) {
+          var label = doc.createElement('label'); label.className = 'qs-context-field';
+          var text = doc.createElement('span'); text.textContent = field.label; label.appendChild(text);
+          input = doc.createElement(field.type === 'select' ? 'select' : 'input');
+          if (field.type === 'checkbox') input.type = 'checkbox';
+          input.dataset.configField = field.key;
+          input.id = 'qs-config-' + field.key; label.htmlFor = input.id;
+          input.setAttribute('aria-describedby', 'qs-context-note');
+          label.appendChild(input); controls.appendChild(label);
+          input.addEventListener('change', function () {
+            draft[field.key] = field.type === 'checkbox' ? (field.inverted ? !input.checked : input.checked) : input.value;
+            get('error').hidden = true; refresh();
+          });
+        }
+        if (field.type === 'select') {
+          var available = field.values ? field.values.map(function (value) { return [value, value.charAt(0).toUpperCase() + value.slice(1)]; }) : Object.keys(allPresets).filter(function (key) { var preset = allPresets[key]; return preset && typeof preset.title === 'string'; }).map(function (key) { var preset = allPresets[key]; return [key, preset.title + (Object.prototype.hasOwnProperty.call(options.presets || {}, key) ? '' : ' (Custom)')]; });
+          input.textContent = '';
+          if (!available.some(function (option) { return option[0] === draft[field.key]; })) available.unshift([draft[field.key], 'Saved option unavailable']);
+          available.forEach(function (entry) { var option = doc.createElement('option'); option.value = entry[0]; option.textContent = entry[1]; input.appendChild(option); });
+          input.value = draft[field.key];
+        } else input.checked = field.inverted ? !draft[field.key] : !!draft[field.key];
+        input.disabled = blocked(field, settings);
+      });
+      get('master').hidden = !settings.disableAllFeatures && !(kind === 'widgets' && draft.disableAllWidgets);
+      get('master').textContent = settings.disableAllFeatures ? 'Disable All Features pauses these controls. Your saved choices are kept; manage the master control in advanced settings.' : 'Proxied Widgets is off. Individual widget and dock choices are kept for when widgets are enabled.';
+      get('note').textContent = kind === 'widgets' ? 'Refresh an already open proxied website to apply widget changes. Saved floating positions are kept. These controls change features, not shortcut visibility.' : 'Changing the preset keeps Auto and Persistent Cloaking unchanged. Create or edit custom presets in advanced settings.' + (settings.randomizePresetEachSession ? ' Session randomization is on, so the active tab may use a different preset.' : '');
+      get('conflict').hidden = conflicts.length === 0; get('save').disabled = conflicts.length !== 0;
+      updatePreview(settings);
+      if (rebuild && focusedKey) { var focused = controls.querySelector('[data-config-field="' + focusedKey + '"]'); if (focused && !focused.disabled) focused.focus(); }
+    }
+    function refresh() {
+      if (modal.hidden || saving) return;
+      var current = read(), values = model.configValues(kind, current);
+      conflicts = [];
+      Object.keys(values).forEach(function (key) {
+        if (dirty(key)) { if (values[key] !== baseline[key] && values[key] !== draft[key]) conflicts.push(key); }
+        else { baseline[key] = values[key]; draft[key] = values[key]; }
+      });
+      render(current, false);
+    }
+    function open(mode, trigger) {
+      if (!model.configurations[mode] || !modal.hidden || doc.querySelector('.qs-editor-backdrop:not([hidden])')) return;
+      if (options.beforeOpen) options.beforeOpen();
+      kind = mode; var current = read(); baseline = model.configValues(kind, current); draft = Object.assign({}, baseline); conflicts = [];
+      get('title').textContent = kind === 'widgets' ? 'Widget settings' : 'Tab Cloaking';
+      get('description').textContent = kind === 'widgets' ? 'Configure the existing dock and proxied-page widgets.' : 'Choose when to cloak tabs and which saved preset to use.';
+      get('preview').hidden = kind !== 'cloaking'; get('error').hidden = true;
+      get('advanced').href = '/settings.html#' + (kind === 'widgets' ? 'widget-settings' : 'tab-cloaking');
+      render(current, true); dialog.open(trigger);
+    }
+    // A full-Settings link may only change the hash on this page. Close the
+    // modal before native navigation so its backdrop never traps that route.
+    get('advanced').onclick = function () { dialog.close(); };
+    get('load').onclick = function () { var current = read(); baseline = model.configValues(kind, current); draft = Object.assign({}, baseline); conflicts = []; render(current, false); get('save').focus(); };
+    get('keep').onclick = function () {
+      var values = model.configValues(kind, read());
+      conflicts.forEach(function (key) { baseline[key] = values[key]; }); conflicts = []; refresh(); get('save').focus();
+    };
+    get('save').onclick = function () {
+      refresh(); if (conflicts.length) return;
+      var current = read(), patch = model.configPatch(kind, baseline, draft);
+      var paused = model.configurations[kind].some(function (field) { return field.key in patch && field.key !== 'selectedPreset' && (current.disableAllFeatures || (kind === 'widgets' && field.key !== 'disableAllWidgets' && current.disableAllWidgets && !dirty('disableAllWidgets'))); });
+      if (paused) { get('error').hidden = false; get('error').textContent = 'A master control pauses an edited feature. Enable the feature or use advanced settings before saving; your draft is kept.'; return; }
+      if (patch.selectedPreset && !presets(current)[patch.selectedPreset]) { get('error').hidden = false; get('error').textContent = 'This preset is no longer available. Choose another preset; your other edits are kept.'; return; }
+      saving = true;
+      var success = !Object.keys(patch).length || options.write(patch);
+      saving = false;
+      if (success) dialog.close(); else { get('error').hidden = false; get('error').textContent = 'Could not save. Your draft is kept. Check that browser storage is available and try again.'; }
+    };
+    doc.addEventListener('click', function (event) {
+      var trigger = event.target.closest('[data-qs-config]'); if (trigger) open(trigger.getAttribute('data-qs-config'), trigger);
+    });
+    function button(mode, label, id) {
+      var node = doc.createElement('button'); node.type = 'button'; node.id = id; node.className = 'qs-config-button'; node.innerHTML = gear;
+      node.setAttribute('aria-label', label); node.title = label; node.setAttribute('data-qs-config', mode); node.setAttribute('aria-haspopup', 'dialog'); node.setAttribute('aria-controls', 'qs-context-editor');
+      return node;
+    }
+    return { button: button, refresh: refresh };
+  } };
+})(window);

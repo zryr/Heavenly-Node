@@ -61,4 +61,26 @@ describe('Quick Settings customization model', function () {
     assert.strictEqual(item.key, undefined);
     assert(item.help.includes('does not trigger a panic redirect'));
   });
+  it('adds Auto Tab Cloaking without enabling or reordering existing shortcuts on upgrade', function () {
+    const item = model.items.find(item => item.id === 'pill-tab-cloak');
+    assert.strictEqual(item.key, 'autoCloak');
+    assert.strictEqual(item.configure, 'cloaking');
+    const saved = { quickSettings: { order: ['pill-widgets', 'pill-proxy-url'], visible: ['pill-widgets'], showInfoIcons: true } };
+    assert.deepStrictEqual(model.layout(saved).order.slice(0, 2), saved.quickSettings.order);
+    assert(!model.layout(saved).visible.includes(item.id));
+    assert(model.layout({ quickSettings: { visible: [item.id] } }).visible.includes(item.id));
+  });
+  it('contextual widget patches update only edited existing settings', function () {
+    const baseline = model.configValues('widgets', { dockPosition: 'left', showMagnifier: false });
+    const draft = Object.assign({}, baseline, { dockPosition: 'right', showNavHome: false });
+    assert.deepStrictEqual(model.configPatch('widgets', baseline, draft), { dockPosition: 'right', showNavHome: false });
+    assert.strictEqual(baseline.showMagnifier, false);
+    assert.strictEqual(baseline.useWidgetDock, true);
+    assert(!('quickSettings' in draft));
+  });
+  it('choosing a cloak preset changes neither Auto nor Persistent Cloaking', function () {
+    const baseline = model.configValues('cloaking', { autoCloak: true, persistentCloak: false, selectedPreset: 'classroom' });
+    assert.deepStrictEqual(model.configPatch('cloaking', baseline, Object.assign({}, baseline, { selectedPreset: 'custom' })), { selectedPreset: 'custom' });
+  });
+
 });

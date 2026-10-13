@@ -15,7 +15,7 @@
     var section = options.section;
     var editorTrigger = options.editorTrigger;
     var draft = null, baseline = null, externalLayout = false, lastSettings = null;
-    var previousFocus = null, background = [], drag = null, dragFrame = null;
+    var drag = null, dragFrame = null;
     var modal = doc.createElement('div');
     modal.id = 'qs-editor';
     modal.className = 'qs-editor-backdrop';
@@ -23,7 +23,7 @@
     modal.innerHTML = '<section class="qs-editor-card" role="dialog" aria-modal="true" aria-labelledby="qs-editor-title" aria-describedby="qs-editor-description">' +
       '<header class="qs-editor-header"><div><h2 id="qs-editor-title">Customize Quick Settings</h2><p id="qs-editor-description">Choose which shortcuts appear in Quick Settings. Hiding a shortcut keeps its setting unchanged.</p></div><button type="button" data-editor-close aria-label="Cancel customization">×</button></header>' +
       '<div class="qs-editor-body"><div id="qs-editor-conflict" role="status" hidden><p id="qs-editor-conflict-text"></p><div id="qs-editor-conflict-actions" hidden><button type="button" id="qs-editor-load">Load saved layout</button><button type="button" id="qs-editor-keep">Keep my draft</button></div></div>' +
-      '<h3>Visible shortcuts</h3><ol id="qs-editor-visible" class="qs-editor-list"></ol><p id="qs-editor-empty" hidden>No shortcuts selected. Info and Edit remain available.</p>' +
+      '<h3>Visible shortcuts</h3><ol id="qs-editor-visible" class="qs-editor-list"></ol><p id="qs-editor-empty" hidden>No shortcuts selected. Edit remains available.</p>' +
       '<details id="qs-editor-more"><summary>Add More Shortcuts</summary><ul id="qs-editor-available" class="qs-editor-list"></ul></details>' +
       '<label class="qs-editor-info"><input id="qs-editor-info-icons" type="checkbox">Show info icons beside shortcuts</label><p class="qs-editor-note">Visibility here controls the shortcut only. Use its pill to change the feature. Widget changes may require refreshing an open proxied website.</p>' +
       '<p id="qs-editor-announcement" class="qs-sr-only" aria-live="polite"></p><p id="qs-editor-error" role="alert" hidden></p></div>' +
@@ -46,13 +46,20 @@
       }) : [{ name: 'Quick Settings', text: 'No shortcuts are shown. Use Edit to add shortcuts without changing their saved settings.' }] };
     }
     var help = section ? root.HeavenlyQuickSettingsHelp.init(section, entries) : null;
+    var config = root.HeavenlyQuickSettingsConfig.init({ presets: options.presets, write: write, fallbackFocus: function () { return editorTrigger; }, beforeOpen: function () { if (help) help.close(false); } });
     function renderPanel() {
       if (!tray) return;
       var settings = read(), saved = model.layout(settings);
-      var focusId = doc.activeElement && doc.activeElement.id;
+      if (!modal.hidden && draft) saved.showInfoIcons = draft.showInfoIcons;
+      var active = doc.activeElement;
+      var focusedInPanel = !!active && (section.contains(active) || active.id === 'qs-help-popover');
+      var focusId = active && active.id;
+      if (focusId === 'qs-help-popover') { var anchor = section.querySelector('[data-qs-help][aria-expanded="true"]'); focusId = anchor && anchor.id; }
       if (help) help.close(false);
       tray.textContent = '';
-      var group, controls, groupName;
+      var headerInfo = doc.getElementById('quick-settings-info-btn');
+      if (headerInfo) headerInfo.hidden = saved.showInfoIcons;
+      var group, controls, groupName, widgetGearAdded = false;
       saved.order.forEach(function (id) {
         if (saved.visible.indexOf(id) === -1) return;
         var item = itemById(id), state = model.state(item, settings);
@@ -62,7 +69,9 @@
           group.setAttribute('role', 'group'); group.setAttribute('aria-label', item.group + ' shortcuts');
           var label = doc.createElement('span'); label.className = 'qs-group-label'; label.textContent = item.group;
           controls = doc.createElement('div'); controls.className = 'qs-controls';
-          group.appendChild(label); group.appendChild(controls); tray.appendChild(group);
+          var heading = doc.createElement('div'); heading.className = 'qs-group-heading'; heading.appendChild(label);
+          if (item.group === 'Widgets' && !widgetGearAdded) { heading.appendChild(config.button('widgets', 'Configure widgets', 'qs-widgets-config-btn')); widgetGearAdded = true; }
+          group.appendChild(heading); group.appendChild(controls); tray.appendChild(group);
         }
         var unit = doc.createElement('div'); unit.className = 'qs-setting';
         var pill = doc.createElement('button'); pill.type = 'button'; pill.id = id; pill.className = 'qs-pill-chip';
@@ -84,6 +93,7 @@
           }
         };
         unit.appendChild(pill);
+        if (item.configure) unit.appendChild(config.button(item.configure, 'Configure Tab Cloaking', id + '-config'));
         var info = doc.createElement('button'); info.type = 'button'; info.className = 'qs-help-button';
         info.hidden = !saved.showInfoIcons; info.id = id + '-info'; info.innerHTML = svg(infoIcon);
         info.setAttribute('data-qs-help', id); info.setAttribute('aria-label', 'About ' + item.name);
@@ -91,6 +101,7 @@
         var explanation = doc.createElement('span'); explanation.id = id + '-help'; explanation.hidden = true; explanation.textContent = item.help + (state.reason ? ' ' + state.reason : '');
         unit.appendChild(info); unit.appendChild(explanation); controls.appendChild(unit);
       });
+      tray.classList.toggle('qs-has-widget-settings', widgetGearAdded);
       if (!saved.visible.length) {
         var empty = doc.createElement('p'); empty.className = 'qs-empty'; empty.textContent = 'Use Edit to add shortcuts.'; tray.appendChild(empty);
       }
@@ -100,7 +111,7 @@
         status.textContent = (nav.openBookmarksInAboutBlank && nav.openSearchInAboutBlank ? 'Bookmarks and search' : nav.openBookmarksInAboutBlank ? 'Bookmarks' : 'Search') + ': about:blank keeps the address inside Heavenly.';
       }
       tray.appendChild(status);
-      if (focusId && doc.getElementById(focusId)) doc.getElementById(focusId).focus({ preventScroll: true });
+      if (focusId) { var focused = doc.getElementById(focusId); if (focused && focused.getClientRects().length && !focused.disabled) focused.focus({ preventScroll: true }); else if (focusedInPanel) editorTrigger.focus({ preventScroll: true }); }
     }
     function conflict(current) {
       externalLayout = true;
@@ -112,6 +123,7 @@
     function refresh() {
       renderPanel();
       if (options.onChange) options.onChange();
+      config.refresh();
       if (!modal.hidden) {
         var current = read();
         if (signature(model.layout(current)) !== baseline) conflict(current);
@@ -219,43 +231,21 @@
       modal.querySelectorAll('.qs-drop-before, .qs-drop-after').forEach(function (node) { node.classList.remove('qs-drop-before', 'qs-drop-after'); });
     }
     function open() {
-      previousFocus = doc.activeElement; if (help) help.close(false);
+      if (help) help.close(false);
       var current = read(); draft = model.layout(current); baseline = signature(draft); lastSettings = signature(current); externalLayout = false;
       doc.getElementById('qs-editor-conflict').hidden = true; doc.getElementById('qs-editor-conflict-actions').hidden = true; doc.getElementById('qs-editor-error').hidden = true;
       doc.getElementById('qs-editor-save').disabled = false;
       doc.getElementById('qs-editor-more').open = false;
-      renderEditor(); modal.hidden = false;
-      modal.dataset.previousOverflow = doc.body.style.overflow;
-      doc.body.style.overflow = 'hidden';
-      background = Array.from(doc.body.children).filter(function (node) { return node !== modal && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE'; }).map(function (node) {
-        var saved = { node: node, inert: node.inert, aria: node.getAttribute('aria-hidden') };
-        node.inert = true; node.setAttribute('aria-hidden', 'true'); return saved;
-      });
-      card.querySelector('[data-editor-close]').focus({ preventScroll: true });
+      renderEditor(); dialog.open();
     }
-    function close() {
-      cancelDrag(); modal.hidden = true; draft = null; doc.body.style.overflow = modal.dataset.previousOverflow || '';
-      background.forEach(function (saved) { saved.node.inert = saved.inert; if (saved.aria === null) saved.node.removeAttribute('aria-hidden'); else saved.node.setAttribute('aria-hidden', saved.aria); });
-      background = [];
-      if (previousFocus && previousFocus.isConnected) previousFocus.focus({ preventScroll: true });
-    }
+    var dialog = root.HeavenlyQuickSettingsDialog.create(modal, { onClose: function () { cancelDrag(); draft = null; renderPanel(); }, fallbackFocus: function () { return editorTrigger; } });
+    function close() { dialog.close(); }
     editorTrigger.addEventListener('click', open);
-    modal.querySelectorAll('[data-editor-close]').forEach(function (button) { button.onclick = close; });
-    modal.addEventListener('click', function (event) { if (event.target === modal) close(); });
-    modal.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); close(); }
-      if (event.key === 'Tab') {
-        var focusable = Array.from(card.querySelectorAll('button:not(:disabled), input, summary')).filter(function (node) { return node.getClientRects().length; });
-        var first = focusable[0], last = focusable[focusable.length - 1];
-        if (event.shiftKey && doc.activeElement === first) { event.preventDefault(); last.focus(); }
-        else if (!event.shiftKey && doc.activeElement === last) { event.preventDefault(); first.focus(); }
-      }
-    });
-    doc.getElementById('qs-editor-info-icons').onchange = function (event) { draft.showInfoIcons = event.target.checked; };
-    doc.getElementById('qs-editor-reset').onclick = function () { cancelDrag(); draft = model.layout({}); renderEditor(); announce('Default shortcuts restored in draft. Save to apply.'); };
+    doc.getElementById('qs-editor-info-icons').onchange = function (event) { draft.showInfoIcons = event.target.checked; renderPanel(); };
+    doc.getElementById('qs-editor-reset').onclick = function () { cancelDrag(); draft = model.layout({}); renderEditor(); renderPanel(); announce('Default shortcuts restored in draft. Save to apply.'); };
     doc.getElementById('qs-editor-load').onclick = function () {
       cancelDrag(); var current = read(); draft = model.layout(current); baseline = signature(draft); lastSettings = signature(current); externalLayout = false;
-      doc.getElementById('qs-editor-conflict').hidden = true; doc.getElementById('qs-editor-conflict-actions').hidden = true; doc.getElementById('qs-editor-save').disabled = false; renderEditor();
+      doc.getElementById('qs-editor-conflict').hidden = true; doc.getElementById('qs-editor-conflict-actions').hidden = true; doc.getElementById('qs-editor-save').disabled = false; renderEditor(); renderPanel();
       modal.querySelector('[data-editor-close]').focus();
     };
     doc.getElementById('qs-editor-keep').onclick = function () {

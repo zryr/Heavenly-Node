@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="/assets/quick-settings.css">
   <script src="/assets/quick-settings-model.js"></script>
   <script src="/assets/quick-settings-help.js"></script>
+  <script src="/assets/quick-settings-dialog.js"></script>
+  <script src="/assets/quick-settings-config.js"></script>
   <script src="/assets/quick-settings.js"></script>
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -8607,6 +8609,7 @@
         tray: tray,
         section: $('quick-settings-section'),
         editorTrigger: $('quick-settings-edit-btn'),
+        presets: DEFAULT_PRESETS,
         onChange: function () { syncSearchFormUI(); syncLandingCloak(); }
       });
       function syncTray() {

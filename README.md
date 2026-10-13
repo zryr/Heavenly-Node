@@ -92,9 +92,11 @@ Existing saved about:blank preferences apply to both new controls until changed 
 
 ### Quick Settings customization
 
-Use **Edit** in the homepage Quick Settings header, or **Customize Quick Settings** in Settings, to open the same editor. Show/hide shortcuts, reorder them with handles or Move Up/Down controls, and Save or Cancel the draft. Reset to Default restores the five navigation shortcuts with individual info icons off; it does not reset feature values. Header **Info** remains available even with no shortcuts shown.
+Use **Edit** in the homepage Quick Settings header, or **Customize Quick Settings** in Settings, to open the same editor. Show/hide shortcuts, reorder them with handles or Move Up/Down controls, and Save or Cancel the draft. Reset to Default restores the five navigation shortcuts with individual info icons off; it does not reset feature values. Header **Info** is shown when individual info icons are off; enabling individual icons hides the header action. Both modes use the same help content. The checkbox previews this change immediately, with Save/Cancel controlling persistence.
 
 Layout and info-icon preferences live inside `heavenly_settings.quickSettings`. Existing users receive the default arrangement without a settings migration. Other tabs' feature changes are retained; competing layout changes require an explicit **Load saved layout** or **Keep my draft** choice before saving. Advanced shortcuts are opt-in. Panic Controls opens its existing configuration section rather than triggering a redirect. Widget changes retain saved positions and may require refreshing an open proxied website; master controls still take precedence.
+
+The Widgets heading has one gear for the existing dock, dock edge, and individual widget preferences. The optional **Tab Cloaking** shortcut toggles Auto Tab Cloaking and has a gear for Auto/Persistent Cloaking and saved presets, including custom presets. These compact editors stage changes and save only edited fields. Selecting a preset never toggles cloaking preferences. Conflicting edits from another tab require an explicit choice, while unedited fields adopt the latest values. Advanced links open the existing full Settings sections; the same editors remain available there when shortcuts are hidden.
 
 The Direct Connection Test Prompt control has been removed from Settings. Existing `skipBuiltinTestPrompt` preferences and per-bookmark launch choices remain supported. For new users, the existing connection-choice dialog remains enabled, including diagnostics and direct/proxy choices.
 
@@ -108,12 +110,15 @@ npm test
 node test/browser/navigation_history.cjs
 node test/browser/quick_settings.cjs
 node test/browser/quick_settings_customization.cjs
+node test/browser/quick_settings_context.cjs
 HEAVENLY_BROWSER=firefox node test/browser/navigation_history.cjs
 HEAVENLY_BROWSER=webkit node test/browser/navigation_history.cjs
 HEAVENLY_BROWSER=firefox node test/browser/quick_settings.cjs
 HEAVENLY_BROWSER=webkit node test/browser/quick_settings.cjs
 HEAVENLY_BROWSER=firefox node test/browser/quick_settings_customization.cjs
 HEAVENLY_BROWSER=webkit node test/browser/quick_settings_customization.cjs
+HEAVENLY_BROWSER=firefox node test/browser/quick_settings_context.cjs
+HEAVENLY_BROWSER=webkit node test/browser/quick_settings_context.cjs
 
 # Existing Chromium touch/ordering checks; start the app first.
 node test/browser/bookmark_management.cjs

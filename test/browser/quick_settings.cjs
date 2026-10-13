@@ -110,7 +110,7 @@ function pass(message) { checks++; console.log('PASS ' + message); }
   await page.setViewportSize({ width: 820, height: 1180 });
   await page.evaluate(() => {
     const panel = document.querySelector('.container'); panel.style.overflow = 'hidden';
-    window.scrollTo(0, document.querySelector('[data-qs-help]').getBoundingClientRect().top + window.scrollY - 12);
+    window.scrollTo(0, document.querySelector('[data-qs-help="pill-bm-newtab"]').getBoundingClientRect().top + window.scrollY - 12);
   });
   await help(ids[0]).click(); await visible(); await insideViewport();
   assert.equal(await popover.evaluate(node => node.parentElement === document.body), true);

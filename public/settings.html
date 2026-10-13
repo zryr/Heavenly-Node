@@ -6,6 +6,8 @@
   <script src="/assets/heavenly-navigation.js"></script>
   <link rel="stylesheet" href="/assets/quick-settings.css">
   <script src="/assets/quick-settings-model.js"></script>
+  <script src="/assets/quick-settings-dialog.js"></script>
+  <script src="/assets/quick-settings-config.js"></script>
   <script src="/assets/quick-settings.js"></script>
   <title>Heavenly: Settings</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -952,7 +954,8 @@
       <div>
         <h2 class="section-title">
           <svg style="width: 20px; height: 20px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          <span>Tab Cloaking</span>
+          <span id="tab-cloaking" tabindex="-1">Tab Cloaking</span>
+          <button type="button" class="qs-config-button" data-qs-config="cloaking" aria-label="Quick Tab Cloaking settings" aria-haspopup="dialog" aria-controls="qs-context-editor">Configure</button>
         </h2>
 
         <div class="cards-grid">
@@ -1243,10 +1246,11 @@
       </div>
 
       <!-- Section 4: Widget Controls & Reset -->
-      <div>
+      <div id="widget-settings" tabindex="-1">
         <h2 class="section-title">
           <svg style="width: 20px; height: 20px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
           <span>Proxied Page Widgets & Customization</span>
+          <button type="button" class="qs-config-button" data-qs-config="widgets" aria-label="Quick widget settings" aria-haspopup="dialog" aria-controls="qs-context-editor">Configure</button>
         </h2>
 
         <div class="cards-grid">
@@ -1324,6 +1328,7 @@
               </label>
             </div>
             <p class="hero-card-desc">Docks all active widgets inside a collapsible bar on the screen edge. Drag the tab to any viewport edge (left, right, top, bottom) to snap and position it.</p>
+            <label for="set-dock-position" class="qs-context-field"><span>Dock edge</span><select id="set-dock-position"><option value="bottom">Bottom</option><option value="top">Top</option><option value="left">Left</option><option value="right">Right</option></select></label>
             <div style="font-size: 0.78rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 6px 10px; margin-top: 4px; display: flex; align-items: center; gap: 6px; font-weight: 500;">
               <svg style="width: 14px; height: 14px; fill: none; stroke: #38bdf8; stroke-width: 2; flex-shrink: 0;" viewBox="0 0 24 24"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"></path></svg>
               <span>Hint: You can click & drag the dock bar pull tab to any edge of your screen on proxied pages!</span>
@@ -2189,7 +2194,8 @@
       ].join('\n');
     }
 
-    function syncSettingsToUI() {
+    var lastSyncedDockPosition = null;
+    function syncSettingsToUI(options) {
       var settings = loadSettings();
       $('set-auto-cloak').checked = settings.autoCloak;
       $('set-persistent-cloak').checked = settings.persistentCloak;
@@ -2226,6 +2232,9 @@
       $('set-show-nav-search').checked = settings.showNavSearch;
       $('set-show-nav-home').checked = settings.showNavHome;
       $('set-use-widget-dock').checked = settings.useWidgetDock;
+      var edge = ['bottom', 'top', 'left', 'right'].indexOf(settings.dockPosition) !== -1 ? settings.dockPosition : 'bottom';
+      $('set-dock-position').value = edge;
+      if (lastSyncedDockPosition !== edge) { $('preview-dock-pos-select').value = edge; lastSyncedDockPosition = edge; }
       $('set-disable-all-widgets').checked = settings.disableAllWidgets;
       $('set-disable-all-features').checked = settings.disableAllFeatures;
 
@@ -2406,7 +2415,7 @@
         });
       }
 
-      renderBookmarkManager();
+      if (!options || !options.skipBookmarks) renderBookmarkManager();
       updateLivePreview();
     }
 
@@ -2516,7 +2525,7 @@
       });
       window.addEventListener('storage', function (e) {
         if (e.key === 'heavenly_settings') {
-          syncSettingsToUI();
+          syncSettingsToUI({ skipBookmarks: true });
           syncCloak();
         }
       });
@@ -2629,6 +2638,8 @@
           };
         }
       });
+
+      $('set-dock-position').onchange = function () { saveSettings({ dockPosition: this.value }); syncSettingsToUI({ skipBookmarks: true }); };
 
       ['set-panic-key', 'set-panic-url'].forEach(function (id) {
         $(id).oninput = updateHandler;
@@ -3167,8 +3178,9 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSettingsPage, { once: true });
     else initSettingsPage();
     document.addEventListener('DOMContentLoaded', function () {
-      HeavenlyQuickSettings.init({ editorTrigger: $('customize-quick-settings-btn'), onChange: function () { syncSettingsToUI(); syncCloak(); } });
-      if (location.hash === '#panic-controls') $('panic-controls').focus({ preventScroll: true });
+      HeavenlyQuickSettings.init({ editorTrigger: $('customize-quick-settings-btn'), presets: DEFAULT_PRESETS, onChange: function () { syncSettingsToUI({ skipBookmarks: true }); syncCloak(); } });
+      var target = location.hash && $(location.hash.slice(1));
+      if (target && ['#panic-controls', '#widget-settings', '#tab-cloaking'].indexOf(location.hash) !== -1) target.focus({ preventScroll: true });
     });
   </script>
 

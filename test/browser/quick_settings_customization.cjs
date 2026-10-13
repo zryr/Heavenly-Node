@@ -149,7 +149,7 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   for (const [name, width, height] of [['phone', 320, 740], ['iPad portrait', 820, 1180], ['iPad landscape', 1180, 820], ['Chromebook', 1366, 768], ['desktop', 1920, 1080]]) {
     await page.setViewportSize({ width, height }); await open(page);
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-    const box = await page.locator('.qs-editor-card').boundingBox();
+    const box = await page.locator('#qs-editor .qs-editor-card').boundingBox();
     assert(box.x >= 0 && box.y >= 0 && box.x + box.width <= width && box.y + box.height <= height);
     await page.locator('#qs-editor-save').focus(); await page.keyboard.press('Tab');
     assert(await page.locator('.qs-editor-header [data-editor-close]').evaluate(node => node === document.activeElement));
@@ -188,14 +188,14 @@ const pass = message => { checks++; console.log('PASS ' + message); };
     await touch('touchStart', a.x + 20, a.y + 20); await page.waitForTimeout(450);
     await touch('touchMove', b.x + 20, b.y + 5); await touch('touchEnd');
     assert.equal((await draftIds(page))[0], 'pill-proxy-url'); await cancel(page);
-    await open(page); const scroll = page.locator('.qs-editor-body'); const s = await scroll.boundingBox();
+    await open(page); const scroll = page.locator('#qs-editor .qs-editor-body'); const s = await scroll.boundingBox();
     const beforeScrollOrder = await draftIds(page);
     await touch('touchStart', s.x + 35, s.y + s.height - 35); await touch('touchMove', s.x + 35, s.y + 45); await touch('touchEnd');
     assert.deepEqual(await draftIds(page), beforeScrollOrder); await cancel(page);
     await cdp.detach(); pass('native Chromium emulated touch handle drag works; row scrolling does not reorder');
   }
   await page.emulateMedia({ reducedMotion: 'reduce' }); await open(page);
-  assert.equal(await page.locator('.qs-editor-card').evaluate(node => getComputedStyle(node).animationName), 'none'); await cancel(page);
+  assert.equal(await page.locator('#qs-editor .qs-editor-card').evaluate(node => getComputedStyle(node).animationName), 'none'); await cancel(page);
   await page.screenshot({ path: '/tmp/heavenly-custom-' + engine + '.png' });
   const blocked = await context.newPage(); blocked.setDefaultTimeout(15000);
   await blocked.addInitScript(() => { const original = Storage.prototype.setItem; Storage.prototype.setItem = function (key, value) { if (key === 'heavenly_settings') throw new Error('Storage blocked'); return original.call(this, key, value); }; });

@@ -25,7 +25,8 @@
     { id: 'pill-panic-settings', group: 'Privacy', label: 'Panic Controls', name: 'Panic Controls configuration', href: '/settings.html#panic-controls', icon: 'panic', help: 'Open the existing Panic Controls settings to configure the panic key, touch button, and destination. This shortcut does not trigger a panic redirect or change your panic key.' },
     { id: 'pill-touch-panic', group: 'Privacy', label: 'Touch Panic Overlay', name: 'Touch Panic Overlay', key: 'touchPanic', defaultValue: true, icon: 'touch', master: 'features', help: 'Show the existing emergency touch button on supported proxied pages. The button uses your saved panic destination. Refresh an already open proxied website to apply this change.' },
     { id: 'pill-widget-dock', group: 'Widgets', label: 'Widget Dock', name: 'Widget Dock', key: 'useWidgetDock', defaultValue: true, icon: 'dock', master: 'widgets', help: 'Group enabled proxied-page widgets in the existing collapsible dock. Turning this off uses floating widgets. Saved widget and dock positions are kept. Refresh an already open proxied website to apply this change.' },
-    { id: 'pill-widgets', group: 'Widgets', label: 'Proxied Widgets', name: 'Proxied Widgets', key: 'disableAllWidgets', inverted: true, icon: 'widgets', master: 'features', help: 'On: allow your saved proxied-page widgets to appear. Off: hide all proxied-page widgets. Individual widget preferences and positions are kept. Refresh an already open proxied website to apply this change. Disable All Features still takes precedence.' }
+    { id: 'pill-widgets', group: 'Widgets', label: 'Proxied Widgets', name: 'Proxied Widgets', key: 'disableAllWidgets', inverted: true, icon: 'widgets', master: 'features', help: 'On: allow your saved proxied-page widgets to appear. Off: hide all proxied-page widgets. Individual widget preferences and positions are kept. Refresh an already open proxied website to apply this change. Disable All Features still takes precedence.' },
+    { id: 'pill-tab-cloak', group: 'Privacy', label: 'Tab Cloaking', name: 'Auto Tab Cloaking', key: 'autoCloak', icon: 'cloak', master: 'features', configure: 'cloaking', help: 'Use your selected tab title and icon when a supported Heavenly tab is in the background, then restore its original appearance when you return. Persistent Cloaking keeps the disguise on all the time. Use the settings button to choose a preset; changing a preset keeps both cloak preferences unchanged.' }
   ];
   var ids = items.map(function (item) { return item.id; });
   var defaults = ids.slice(0, 5);
@@ -61,5 +62,32 @@
     var paused = !!(item.master && (settings.disableAllFeatures || (item.master === 'widgets' && settings.disableAllWidgets)));
     return { enabled: !paused && (required || enabled), disabled: required || paused, badge: required ? 'Required' : paused ? 'Paused' : '', reason: required ? 'New Tab is currently required by about:blank; your preference is remembered.' : paused ? 'A master control in Settings temporarily disables this feature; your preference is remembered.' : '' };
   }
-  return { items: items, icons: icons, layout: layout, mergeLayout: mergeLayout, state: state };
+  var configurations = {
+    widgets: [
+      { key: 'disableAllWidgets', label: 'Proxied Widgets', type: 'checkbox', inverted: true, defaultValue: false },
+      { key: 'useWidgetDock', label: 'Widget Dock', type: 'checkbox', defaultValue: true },
+      { key: 'dockPosition', label: 'Dock edge', type: 'select', defaultValue: 'bottom', values: ['bottom', 'top', 'left', 'right'] },
+      { key: 'showScrollLock', label: 'Scroll Lock', type: 'checkbox', defaultValue: true },
+      { key: 'showMagnifier', label: 'Magnifier', type: 'checkbox', defaultValue: true },
+      { key: 'showNavBookmark', label: 'Bookmark Page button', type: 'checkbox', defaultValue: true },
+      { key: 'showNavSearch', label: 'Quick Search bar', type: 'checkbox', defaultValue: true },
+      { key: 'showNavHome', label: 'Home button', type: 'checkbox', defaultValue: true }
+    ],
+    cloaking: [
+      { key: 'autoCloak', label: 'Auto Tab Cloaking', type: 'checkbox', defaultValue: false },
+      { key: 'persistentCloak', label: 'Persistent Cloaking', type: 'checkbox', defaultValue: false },
+      { key: 'selectedPreset', label: 'Cloak preset', type: 'select', defaultValue: 'classroom' }
+    ]
+  };
+  function configValues(kind, settings) {
+    var result = {};
+    configurations[kind].forEach(function (field) { result[field.key] = settings[field.key] === undefined ? field.defaultValue : settings[field.key]; });
+    return result;
+  }
+  function configPatch(kind, baseline, draft) {
+    var patch = {};
+    configurations[kind].forEach(function (field) { if (draft[field.key] !== baseline[field.key]) patch[field.key] = draft[field.key]; });
+    return patch;
+  }
+  return { configurations: configurations, configValues: configValues, configPatch: configPatch, items: items, icons: icons, layout: layout, mergeLayout: mergeLayout, state: state };
 });
