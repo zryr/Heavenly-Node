@@ -88,19 +88,17 @@ describe('Quick Settings customization model', function () {
     const settings = { quickSettings: { order: ['pill-touch-panic', 'pill-bm-blank', 'pill-tab-cloak', 'pill-widgets', 'pill-persistent-cloak'], visible: ['pill-touch-panic', 'pill-bm-blank', 'pill-tab-cloak', 'pill-persistent-cloak'] } };
     const original = JSON.stringify(settings), grouped = model.groups(settings);
     assert.deepStrictEqual(grouped.map(group => group.name), ['Privacy', 'Bookmarks']);
-    assert.deepStrictEqual(grouped[0].items.map(item => item.id), ['pill-touch-panic', 'pill-tab-cloak', 'pill-persistent-cloak']);
+    assert.deepStrictEqual(grouped[0].items.map(item => item.id), ['pill-touch-panic', 'pill-tab-cloak']);
     assert.strictEqual(JSON.stringify(settings), original);
     assert.deepStrictEqual(model.groups({ quickSettings: { visible: [] } }), []);
   });
-  it('keeps independent cloak flags active together and pauses both without changing preferences', function () {
-    const saved = { autoCloak: true, persistentCloak: true };
-    for (const key of ['autoCloak', 'persistentCloak']) {
-      const item = model.items.find(item => item.key === key);
-      assert.strictEqual(model.state(item, saved).enabled, true);
-      assert.strictEqual(model.state(item, { ...saved, disableAllFeatures: true }).enabled, false);
-      assert.strictEqual(model.state(item, { ...saved, disableAllFeatures: true }).disabled, true);
-    }
-    assert.strictEqual(model.state(model.items.find(item => item.key === 'persistentCloak'), { autoCloak: false, persistentCloak: true }).enabled, true);
+  it('shows effective Persistent state without changing the Auto toggle or master preference', function () {
+    const item = model.items.find(item => item.key === 'autoCloak');
+    const state = model.state(item, { autoCloak: false, persistentCloak: true });
+    assert.strictEqual(state.enabled, false); assert.strictEqual(state.effectiveEnabled, true); assert.strictEqual(state.badge, 'Persistent');
+    assert.strictEqual(model.state(item, { autoCloak: true, persistentCloak: true }).badge, 'Auto + Persistent');
+    const paused = model.state(item, { autoCloak: false, persistentCloak: true, disableAllFeatures: true });
+    assert.strictEqual(paused.effectiveEnabled, false); assert.strictEqual(paused.disabled, true); assert.strictEqual(paused.badge, 'Paused');
   });
   it('reports a missing panic key as setup rather than active while preserving legacy default', function () {
     const item = model.items.find(item => item.key === 'panicKeyEnable');
@@ -113,5 +111,39 @@ describe('Quick Settings customization model', function () {
     assert.deepStrictEqual(model.configPatch('panic', baseline, { ...baseline, panicKeyEnable: false }), { panicKeyEnable: false });
     assert.deepStrictEqual(model.configPatch('panic', baseline, { ...baseline, touchPanic: false }), { touchPanic: false });
     assert.strictEqual(model.configValues('panic', { panicKey: '' }).panicKey, '');
+  });
+  it('migrates a visible retired shortcut in place without changing underlying settings or future layout fields', function () {
+    const saved = { persistentCloak: true, autoCloak: false, quickSettings: { order: ['pill-widgets', 'pill-persistent-cloak', 'pill-bm-blank', 'pill-tab-cloak', 'future-shortcut'], visible: ['pill-persistent-cloak', 'pill-bm-blank', 'future-shortcut'], future: true } };
+    const copy = JSON.stringify(saved), layout = model.layout(saved);
+    assert(!model.items.some(item => item.id === 'pill-persistent-cloak'));
+    assert.deepStrictEqual(layout.order.slice(0, 3), ['pill-widgets', 'pill-tab-cloak', 'pill-bm-blank']);
+    assert.deepStrictEqual(layout.visible, ['pill-tab-cloak', 'pill-bm-blank']);
+    const merged = model.mergeLayout(saved, layout);
+    assert(!merged.order.includes('pill-persistent-cloak')); assert(!merged.visible.includes('pill-persistent-cloak'));
+    assert(merged.order.includes('future-shortcut')); assert(merged.visible.includes('future-shortcut')); assert.strictEqual(merged.future, true);
+    assert.strictEqual(JSON.stringify(saved), copy);
+  });
+  it('retains an already visible Tab Cloaking position and never reveals either hidden cloak shortcut', function () {
+    const settings = { quickSettings: { order: ['pill-persistent-cloak', 'pill-widgets', 'pill-tab-cloak'], visible: ['pill-persistent-cloak', 'pill-tab-cloak'] } };
+    assert.deepStrictEqual(model.layout(settings).order.slice(0, 2), ['pill-widgets', 'pill-tab-cloak']);
+    assert.deepStrictEqual(model.layout(settings).visible, ['pill-tab-cloak']);
+    settings.quickSettings.visible = ['pill-widgets'];
+    assert.deepStrictEqual(model.layout(settings).visible, ['pill-widgets']);
+  });
+  it('compares staged pool arrays by value and writes only deliberate edits', function () {
+    const baseline = model.configValues('cloaking', { randomPool: ['google', 'custom', 'unavailable'], randomizePresetEachSession: true });
+    const equal = { ...baseline, randomPool: baseline.randomPool.slice() };
+    assert.deepStrictEqual(model.configPatch('cloaking', baseline, equal), {});
+    assert.deepStrictEqual(model.configPatch('cloaking', baseline, { ...equal, randomizePresetEachSession: false }), { randomizePresetEachSession: false });
+    assert.deepStrictEqual(model.configPatch('cloaking', baseline, { ...equal, randomPool: [] }), { randomPool: [] });
+  });
+  it('shares existing defaults and preserves saved custom/unavailable pool entries during individual edits', function () {
+    const pool = require('../public/assets/cloak-pool');
+    assert.deepStrictEqual(model.configValues('cloaking', {}).randomPool, pool.defaults);
+    const saved = ['google', 'custom', 'unavailable'];
+    assert.deepStrictEqual(pool.toggle(saved, 'google'), ['custom', 'unavailable']);
+    assert.deepStrictEqual(pool.all(saved, { google: { title: 'Google' }, docs: { title: 'Docs' }, custom: { title: 'Saved' } }), ['google', 'custom', 'unavailable', 'docs']);
+    assert.deepStrictEqual(saved, ['google', 'custom', 'unavailable']);
+    assert.deepStrictEqual(pool.values({ randomPool: [] }), []);
   });
 });

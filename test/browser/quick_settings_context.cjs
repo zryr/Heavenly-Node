@@ -19,7 +19,7 @@ function pass(message) { checks++; console.log('PASS ' + message); }
   async function ready(target) { await target.locator('#qs-context-editor').waitFor({ state: 'attached' }); await target.waitForFunction(() => document.getElementById('heavenly-loading-screen').style.display === 'none'); }
   const saved = () => page.evaluate(() => JSON.parse(localStorage.getItem('heavenly_settings') || '{}'));
   const values = () => page.evaluate(() => ['heavenly_bookmarks', 'heavenly_tabs', 'heavenly_history', 'heavenly_scroll_lock_pos', 'heavenly_magnifier_pos', 'heavenly_nav_pos', 'heavenly_panic_pos', 'heavenly_save_widget_pos', 'heavenly_lens_pos'].map(key => localStorage.getItem(key)));
-  const initial = { autoCloak: false, persistentCloak: false, selectedPreset: 'classroom', useWidgetDock: true, dockPosition: 'left', showMagnifier: true, disableAllWidgets: false, futureFlag: { keep: true }, customPresets: { custom: { title: 'Custom Study Tab', icon: '/assets/heavenly-logo.png' } }, quickSettings: { order: ['pill-widgets', 'pill-widget-dock', ...model.layout({}).order.filter(id => !['pill-widgets', 'pill-widget-dock'].includes(id))], visible: [...model.layout({}).visible, 'pill-widgets', 'pill-widget-dock', 'pill-persistent-cloak'], showInfoIcons: false } };
+  const initial = { autoCloak: false, persistentCloak: false, selectedPreset: 'classroom', useWidgetDock: true, dockPosition: 'left', showMagnifier: true, disableAllWidgets: false, futureFlag: { keep: true }, customPresets: { custom: { title: 'Custom Study Tab', icon: '/assets/heavenly-logo.png' } }, quickSettings: { order: ['pill-widgets', 'pill-widget-dock', ...model.layout({}).order.filter(id => !['pill-widgets', 'pill-widget-dock'].includes(id))], visible: [...model.layout({}).visible, 'pill-widgets', 'pill-widget-dock', 'pill-touch-panic'], showInfoIcons: false } };
   await page.goto(origin, { waitUntil: 'domcontentloaded' }); await ready(page);
   await page.evaluate(initial => {
     localStorage.setItem('heavenly_settings', JSON.stringify(initial));
@@ -120,44 +120,46 @@ function pass(message) { checks++; console.log('PASS ' + message); }
   await open('cloaking'); await page.locator('#qs-config-selectedPreset').selectOption('custom'); await save();
   assert.equal((await saved()).autoCloak, true); assert.equal((await saved()).persistentCloak, false); assert.equal((await saved()).selectedPreset, 'custom');
   assert.deepEqual((await saved()).quickSettings, addedLayout);
-  await page.locator('#pill-persistent-cloak').click(); assert.equal(await page.title(), 'Custom Study Tab');
+  await open('cloaking'); await page.locator('#qs-config-persistentCloak').check(); await save(); assert.equal(await page.title(), 'Custom Study Tab');
   await open('cloaking'); assert.equal(await page.locator('#qs-config-persistentCloak').isChecked(), true);
   await page.locator('#qs-config-selectedPreset').selectOption('google'); await save();
   assert.equal((await saved()).persistentCloak, true); assert.equal(await page.title(), 'Google');
   await other.bringToFront(); await other.waitForFunction(() => document.getElementById('preset-select').value === 'google');
   assert.equal(await other.locator('#set-persistent-cloak').isChecked(), true);
   await page.bringToFront(); await open('cloaking'); await page.locator('#qs-config-persistentCloak').uncheck(); await save();
-  assert.equal(await page.locator('#pill-persistent-cloak').getAttribute('aria-pressed'), 'false');
+  assert.equal(await page.locator('#pill-tab-cloak .qs-required').isVisible(), false);
   pass('saved/custom presets preview without writing; selecting presets never changes cloak toggles and both Persistent interfaces synchronize');
 
   await page.locator('#quick-settings-edit-btn').click();
   await page.locator('[data-visibility="pill-widgets"]').click(); await page.locator('[data-visibility="pill-widget-dock"]').click(); await page.locator('[data-visibility="pill-tab-cloak"]').click(); await page.locator('#qs-editor-save').click();
   assert.equal(await page.locator('#qs-widgets-config-btn').count(), 0); assert.equal(await page.locator('#pill-tab-cloak-config').count(), 0);
   await open('widgets', other); assert.equal(await other.locator('#qs-config-dockPosition').inputValue(), 'left'); await cancel(other);
-  await open('cloaking', other); assert.equal(await other.locator('#qs-config-selectedPreset').inputValue(), 'google'); await cancel(other);
+  assert.equal(await other.locator('[data-qs-config="cloaking"]').count(), 0); assert.equal(await other.locator('#preset-select').inputValue(), 'google'); assert.equal(await other.locator('#set-auto-cloak').isChecked(), true);
   assert.equal((await saved()).autoCloak, true);
-  pass('hiding groups removes their gears without changing values; both contextual editors remain accessible in Settings');
+  pass('hiding groups removes their gears without changing values; widget editor and complete cloaking controls remain accessible in Settings');
 
+  await page.bringToFront(); await page.locator('#quick-settings-edit-btn').click(); await page.locator('#qs-editor-more summary').click(); await page.locator('[data-visibility="pill-tab-cloak"]').click(); await page.locator('#qs-editor-save').click();
   for (const [name, width, height] of [['phone', 320, 740], ['iPad portrait', 820, 1180], ['iPad landscape', 1180, 820], ['Chromebook', 1366, 768], ['desktop', 1920, 1080]]) {
-    await other.setViewportSize({ width, height });
+    await other.setViewportSize({ width, height }); await page.setViewportSize({ width, height });
     for (const mode of ['widgets', 'cloaking']) {
-      await open(mode, other, 'tap');
-      const box = await other.locator('#qs-context-editor [role="dialog"]').boundingBox();
+      const target = mode === 'widgets' ? other : page;
+      await open(mode, target, 'tap');
+      const box = await target.locator('#qs-context-editor [role="dialog"]').boundingBox();
       assert(box.x >= 0 && box.y >= 0 && box.x + box.width <= width && box.y + box.height <= height);
-      assert(await other.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-      await other.locator('#qs-context-save').focus(); await other.keyboard.press('Tab');
-      assert(await other.locator('#qs-context-editor .qs-editor-header [data-dialog-close]').evaluate(node => node === document.activeElement));
-      await other.keyboard.press('Shift+Tab'); assert(await other.locator('#qs-context-save').evaluate(node => node === document.activeElement));
-      if (width === 820) await other.screenshot({ path: '/tmp/heavenly-context-' + engine + '-' + mode + '.png' });
-      await cancel(other);
+      assert(await target.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+      await target.locator('#qs-context-save').focus(); await target.keyboard.press('Tab');
+      assert(await target.locator('#qs-context-editor .qs-editor-header [data-dialog-close]').evaluate(node => node === document.activeElement));
+      await target.keyboard.press('Shift+Tab'); assert(await target.locator('#qs-context-save').evaluate(node => node === document.activeElement));
+      if (width === 820) await target.screenshot({ path: '/tmp/heavenly-context-' + engine + '-' + mode + '.png' });
+      await cancel(target);
     }
     pass(name + ' contextual editors fit without overflow and support touch, trapped keyboard focus and Escape');
   }
-  await other.emulateMedia({ reducedMotion: 'reduce' }); await open('cloaking', other);
-  assert.equal(await other.locator('#qs-context-editor .qs-editor-card').evaluate(node => getComputedStyle(node).animationName), 'none');
-  const advanced = await other.locator('#qs-context-advanced').getAttribute('href'); assert.equal(advanced, '/settings.html#tab-cloaking');
-  await other.locator('#qs-context-advanced').click(); await other.locator('#qs-context-editor').waitFor({ state: 'hidden' });
-  assert.equal(new URL(other.url()).hash, '#tab-cloaking');
+  await page.emulateMedia({ reducedMotion: 'reduce' }); await open('cloaking');
+  assert.equal(await page.locator('#qs-context-editor .qs-editor-card').evaluate(node => getComputedStyle(node).animationName), 'none');
+  const advanced = await page.locator('#qs-context-advanced').getAttribute('href'); assert.equal(advanced, '/settings.html#tab-cloaking');
+  await page.locator('#qs-context-advanced').click(); await page.locator('#qs-context-editor').waitFor({ state: 'hidden' });
+  assert.equal(new URL(page.url()).hash, '#tab-cloaking');
   await page.reload({ waitUntil: 'domcontentloaded' }); await ready(page);
   assert.equal((await saved()).selectedPreset, 'google'); assert.equal((await saved()).dockPosition, 'left'); assert.deepEqual(await values(), dataBefore);
   assert.deepEqual((await saved()).futureFlag, { keep: true }); assert.deepEqual(errors, []);

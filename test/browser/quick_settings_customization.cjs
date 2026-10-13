@@ -48,21 +48,24 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   assert.deepEqual(await settings(), initial);
   pass('Cancel discards staged visibility and info-icon changes without touching settings');
   await open(page); await visibility(page, 'pill-bm-newtab').click();
-  await page.locator('#qs-editor-more summary').click(); await visibility(page, 'pill-persistent-cloak').click();
+  await page.locator('#qs-editor-more summary').click(); await visibility(page, 'pill-tab-cloak').click();
   await page.locator('#qs-editor-info-icons').check();
-  for (let i = 0; i < 4; i++) { await page.locator('[data-handle="pill-persistent-cloak"]').focus(); await page.keyboard.press('ArrowUp'); }
-  assert.equal((await draftIds(page))[0], 'pill-persistent-cloak');
+  for (let i = 0; i < 4; i++) { await page.locator('[data-handle="pill-tab-cloak"]').focus(); await page.keyboard.press('ArrowUp'); }
+  assert.equal((await draftIds(page))[0], 'pill-tab-cloak');
   await save(page);
-  assert.equal((await layoutIds(page))[0], 'pill-persistent-cloak');
+  assert.equal((await layoutIds(page))[0], 'pill-tab-cloak');
   assert(!(await layoutIds(page)).includes('pill-bm-newtab'));
   assert.equal((await settings()).openBookmarksInNewTab, false);
   assert.equal((await settings()).persistentCloak, false);
   assert.deepEqual(await data(), before);
   pass('visibility, keyboard ordering and optional icons persist without changing hidden feature values or user data');
-  await page.locator('#pill-persistent-cloak').click();
+  await page.locator('#pill-tab-cloak-config').click(); await page.locator('#qs-config-persistentCloak').check(); await page.locator('#qs-context-save').click();
   assert.equal((await settings()).persistentCloak, true); assert.equal(await page.title(), 'Google Classroom');
-  await page.locator('#pill-persistent-cloak').click(); assert.equal((await settings()).persistentCloak, false); assert.equal(await page.title(), 'Heavenly');
-  pass('Persistent Cloaking toggles the existing preset and restores the page title');
+  await page.locator('#pill-tab-cloak').click(); assert.equal((await settings()).autoCloak, true); assert.equal((await settings()).persistentCloak, true);
+  await page.locator('#pill-tab-cloak').click(); assert.equal((await settings()).autoCloak, false); assert.equal(await page.locator('#pill-tab-cloak .qs-required').innerText(), 'Persistent');
+  await page.locator('#pill-tab-cloak-config').click(); await page.locator('#qs-config-persistentCloak').uncheck(); await page.locator('#qs-context-save').click();
+  assert.equal((await settings()).persistentCloak, false); assert.equal(await page.title(), 'Heavenly');
+  pass('unified cloaking toggles Auto independently and configures Persistent without losing the original title');
 
   const other = await context.newPage(); other.setDefaultTimeout(15000);
   await other.goto(origin + '/settings.html', { waitUntil: 'domcontentloaded' }); await ready(other);
@@ -70,7 +73,7 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   assert.equal(await other.locator('#set-panic-key').inputValue(), 'p');
   await open(other); assert.deepEqual(await draftIds(other), await layoutIds(page)); await cancel(other);
   await page.reload({ waitUntil: 'domcontentloaded' }); await ready(page);
-  assert.equal((await layoutIds(page))[0], 'pill-persistent-cloak');
+  assert.equal((await layoutIds(page))[0], 'pill-tab-cloak');
   pass('Settings and homepage use the same saved editor; removal of the prompt control retains panic and legacy values');
 
   await open(page); await visibility(page, 'pill-search-blank').click();

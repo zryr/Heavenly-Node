@@ -1,8 +1,8 @@
 (function (root, factory) {
   'use strict';
-  if (typeof module === 'object' && module.exports) module.exports = factory(require('./heavenly-navigation'));
-  else root.HeavenlyQuickSettingsModel = factory(root.HeavenlyNavigation);
-})(typeof window !== 'undefined' ? window : this, function (navigation) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./heavenly-navigation'), require('./cloak-pool'));
+  else root.HeavenlyQuickSettingsModel = factory(root.HeavenlyNavigation, root.HeavenlyCloakPool);
+})(typeof window !== 'undefined' ? window : this, function (navigation, pool) {
   'use strict';
   var icons = {
     tab: '<path d="M15 3h6v6M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/>',
@@ -21,8 +21,7 @@
     { id: 'pill-search-newtab', group: 'Search', label: 'New Tab', name: 'Search in New Tab', key: 'openSearchInNewTab', icon: 'tab', requiredBy: 'openSearchInAboutBlank', help: 'Open websites from the main address or search field in a new browser tab. With about:blank on, a new tab is required; your New Tab preference is remembered for when you turn about:blank off.' },
     { id: 'pill-search-blank', group: 'Search', label: 'about:blank', name: 'Search in about:blank', key: 'openSearchInAboutBlank', icon: 'blank', help: 'Open destinations from the main address or search field inside an about:blank tab when supported. This always opens a new tab. If the wrapper cannot load a site, Heavenly opens it normally instead.' },
     { id: 'pill-proxy-url', group: 'General', label: 'Show Proxied URL', name: 'Show Proxied URL', key: 'showProxiedUrl', icon: 'link', help: 'On: normal navigation shows the website’s proxied address in the browser address bar. Off: Heavenly uses a browsing wrapper when supported. In about:blank, the address bar stays about:blank; this setting shows the proxied address inside Heavenly instead. Browser restrictions and compatibility fallbacks still apply.' },
-    { id: 'pill-tab-cloak', group: 'Privacy', label: 'Tab Cloaking', name: 'Auto Tab Cloaking', key: 'autoCloak', icon: 'cloak', master: 'features', configure: 'cloaking', help: 'Use your selected tab title and icon when a supported Heavenly tab is in the background, then restore its original appearance when you return. Persistent Cloaking keeps the disguise on all the time. Use the settings button to choose a preset; changing a preset keeps both cloak preferences unchanged.' },
-    { id: 'pill-persistent-cloak', group: 'Privacy', label: 'Persistent Cloaking', name: 'Persistent Cloaking', key: 'persistentCloak', icon: 'cloak', master: 'features', help: 'Keep your selected tab title and icon on Heavenly and supported proxied pages. Choose the title and icon in Settings. Auto Tab Cloaking only cloaks background tabs. These modes are independent; turning either off preserves the other mode and your selected preset.' },
+    { id: 'pill-tab-cloak', group: 'Privacy', label: 'Tab Cloaking', name: 'Tab Cloaking', key: 'autoCloak', icon: 'cloak', master: 'features', configure: 'cloaking', help: 'This pill toggles Auto Tab Cloaking: cloak supported tabs in the background, then restore their appearance on return. Persistent Cloaking independently keeps the disguise on all the time; its badge shows when it remains active. Use the gear to manage both modes, presets, and session randomization. Changing identity choices never toggles either cloak mode.' },
     { id: 'pill-panic-settings', group: 'Privacy', label: 'Panic Key', name: 'Panic Key', key: 'panicKeyEnable', icon: 'panic', master: 'features', configure: 'panic', help: 'Enable the saved keyboard shortcut on supported proxied pages. This pill does not trigger a panic redirect. Use its settings button to change the key, destination, or independent Touch Panic Overlay. Disabling the shortcut keeps your key and destination.' },
     { id: 'pill-touch-panic', group: 'Privacy', label: 'Touch Panic Overlay', name: 'Touch Panic Overlay', key: 'touchPanic', defaultValue: true, icon: 'touch', master: 'features', help: 'Show the existing emergency touch button on supported proxied pages. The button uses your saved panic destination. Refresh an already open proxied website to apply this change.' },
     { id: 'pill-widget-dock', group: 'Widgets', label: 'Widget Dock', name: 'Widget Dock', key: 'useWidgetDock', defaultValue: true, icon: 'dock', master: 'widgets', help: 'Group enabled proxied-page widgets in the existing collapsible dock. Turning this off uses floating widgets. Saved widget and dock positions are kept. Refresh an already open proxied website to apply this change.' },
@@ -48,10 +47,18 @@
   function layout(settings) {
     var saved = settings && settings.quickSettings;
     if (!saved || typeof saved !== 'object' || Array.isArray(saved)) saved = {};
-    var order = Array.isArray(saved.order) ? validIds(saved.order) : [];
+    // Replace a visible legacy Persistent shortcut in place. If Tab Cloaking
+    // was already visible, retain its chosen position and remove only the retired ID.
+    var legacy = 'pill-persistent-cloak', cloak = 'pill-tab-cloak';
+    var replaceLegacy = Array.isArray(saved.visible) && saved.visible.indexOf(legacy) !== -1 && saved.visible.indexOf(cloak) === -1;
+    function migrate(value) {
+      if (!Array.isArray(value)) return value;
+      return value.filter(function (id) { return !(replaceLegacy && id === cloak); }).map(function (id) { return id === legacy && replaceLegacy ? cloak : id; }).filter(function (id) { return id !== legacy; });
+    }
+    var order = Array.isArray(saved.order) ? validIds(migrate(saved.order)) : [];
     return {
       order: order.concat(ids.filter(function (id) { return order.indexOf(id) === -1; })),
-      visible: Array.isArray(saved.visible) ? validIds(saved.visible) : defaults.slice(),
+      visible: Array.isArray(saved.visible) ? validIds(migrate(saved.visible)) : defaults.slice(),
       showInfoIcons: saved.showInfoIcons === true
     };
   }
@@ -60,7 +67,7 @@
     if (!saved || typeof saved !== 'object' || Array.isArray(saved)) saved = {};
     var normalized = layout({ quickSettings: draft });
     // Keep unknown fields/shortcut IDs for forward compatibility during a downgrade.
-    function unknown(value) { return Array.isArray(value) ? value.filter(function (id) { return typeof id === 'string' && ids.indexOf(id) === -1; }) : []; }
+    function unknown(value) { return Array.isArray(value) ? value.filter(function (id) { return typeof id === 'string' && id !== 'pill-persistent-cloak' && ids.indexOf(id) === -1; }) : []; }
     return Object.assign({}, saved, normalized, {
       order: normalized.order.concat(unknown(saved.order)),
       visible: normalized.visible.concat(unknown(saved.visible))
@@ -76,7 +83,13 @@
     if (!paused && needsKey) return { enabled: false, disabled: false, badge: 'Set key', reason: 'Choose a panic key using the adjacent settings button before enabling this shortcut.' };
     var reason = required ? 'New Tab is currently required by about:blank; your preference is remembered.' : '';
     if (paused) reason = settings.disableAllFeatures ? 'Disable All Privacy & Widget Overlays in Settings pauses this feature; your saved preference is kept. Open its configuration or Settings master controls to resume it.' : 'Proxied Widgets is off in Settings. Enable it to resume the dock; your saved choices are kept.';
-    return { enabled: !paused && (required || enabled), disabled: required || paused, badge: required ? 'Required' : paused ? 'Paused' : '', reason: reason };
+    var badge = required ? 'Required' : paused ? 'Paused' : '';
+    var effectiveEnabled = !paused && (required || enabled);
+    if (item.key === 'autoCloak' && !paused && settings.persistentCloak) {
+      effectiveEnabled = true; badge = enabled ? 'Auto + Persistent' : 'Persistent';
+      reason = 'Persistent Cloaking is on; Auto Tab Cloaking is ' + (enabled ? 'on' : 'off') + '. The pill toggles Auto only; use the gear to configure either mode.';
+    }
+    return { enabled: !paused && (required || enabled), effectiveEnabled: effectiveEnabled, disabled: required || paused, badge: badge, reason: reason };
   }
   var configurations = {
     widgets: [
@@ -98,18 +111,21 @@
     cloaking: [
       { key: 'autoCloak', label: 'Auto Tab Cloaking', type: 'checkbox', defaultValue: false },
       { key: 'persistentCloak', label: 'Persistent Cloaking', type: 'checkbox', defaultValue: false },
+      { key: 'randomizePresetEachSession', label: 'Randomize Preset Each Session', type: 'checkbox', defaultValue: false },
+      { key: 'randomPool', label: 'Randomizer Preset Pool', type: 'pool' },
       { key: 'selectedPreset', label: 'Cloak preset', type: 'select', defaultValue: 'classroom' }
     ]
   };
   function configValues(kind, settings) {
     var result = {};
-    configurations[kind].forEach(function (field) { result[field.key] = settings[field.key] === undefined ? field.defaultValue : settings[field.key]; });
+    configurations[kind].forEach(function (field) { result[field.key] = field.type === 'pool' ? pool.values(settings) : settings[field.key] === undefined ? field.defaultValue : settings[field.key]; });
     return result;
   }
+  function same(a, b) { return Array.isArray(a) || Array.isArray(b) ? JSON.stringify(a) === JSON.stringify(b) : a === b; }
   function configPatch(kind, baseline, draft) {
     var patch = {};
-    configurations[kind].forEach(function (field) { if (draft[field.key] !== baseline[field.key]) patch[field.key] = draft[field.key]; });
+    configurations[kind].forEach(function (field) { if (!same(draft[field.key], baseline[field.key])) patch[field.key] = draft[field.key]; });
     return patch;
   }
-  return { groups: groups, configurations: configurations, configValues: configValues, configPatch: configPatch, items: items, icons: icons, layout: layout, mergeLayout: mergeLayout, state: state };
+  return { same: same, groups: groups, configurations: configurations, configValues: configValues, configPatch: configPatch, items: items, icons: icons, layout: layout, mergeLayout: mergeLayout, state: state };
 });

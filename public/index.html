@@ -15,6 +15,7 @@
   </script>
   <script src="/assets/heavenly-navigation.js"></script>
   <link rel="stylesheet" href="/assets/quick-settings.css">
+  <script src="/assets/cloak-pool.js"></script>
   <script src="/assets/quick-settings-model.js"></script>
   <script src="/assets/quick-settings-help.js"></script>
   <script src="/assets/quick-settings-dialog.js"></script>
@@ -3780,7 +3781,7 @@
       canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" }
     };
 
-    var DEFAULT_RANDOM_POOL = ['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva'];
+    var DEFAULT_RANDOM_POOL = HeavenlyCloakPool.defaults.slice();
 
     function loadSettings() {
       var saved = {};

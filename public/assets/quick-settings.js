@@ -35,6 +35,9 @@
     function write(patch) {
       try { root.HeavenlyNavigation.updateSettings(root.localStorage, patch); }
       catch (e) { return false; }
+      // Match the existing pool editor: invalidate this tab's session choice
+      // only after a successful save, before hosts apply their existing rules.
+      if (Object.prototype.hasOwnProperty.call(patch, 'randomPool')) { try { root.sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {} }
       root.dispatchEvent(new root.CustomEvent('heavenly:settings-change'));
       return true;
     }
@@ -76,14 +79,14 @@
           var id = item.id, state = model.state(item, settings);
           var unit = doc.createElement('div'); unit.className = 'qs-setting';
           var pill = doc.createElement('button'); pill.type = 'button'; pill.id = id; pill.className = 'qs-pill-chip';
-          pill.setAttribute('aria-label', item.name); pill.setAttribute('aria-describedby', id + '-help');
+          pill.setAttribute('aria-label', item.key === 'autoCloak' ? 'Auto Tab Cloaking' : item.name); pill.setAttribute('aria-describedby', id + '-help');
           pill.innerHTML = svg(model.icons[item.icon]) + '<span class="qs-pill-copy"><span>' + item.label + '</span><span class="qs-required" hidden></span></span>' + (item.href ? '' : '<span class="pill-dot" aria-hidden="true"></span>');
           if (!item.href) {
-            pill.classList.toggle('active', state.enabled); pill.disabled = state.disabled;
+            pill.classList.toggle('active', state.effectiveEnabled === undefined ? state.enabled : state.effectiveEnabled); pill.disabled = state.disabled;
             pill.setAttribute('aria-pressed', String(state.enabled));
             var badge = pill.querySelector('.qs-required'); badge.hidden = !state.badge; badge.textContent = state.badge;
           }
-          pill.title = item.href ? 'Open ' + item.name : state.reason || 'Toggle ' + item.name;
+          pill.title = item.href ? 'Open ' + item.name : state.reason || 'Toggle ' + (item.key === 'autoCloak' ? 'Auto Tab Cloaking' : item.name);
           pill.onclick = function () {
             if (item.href) { root.location.href = item.href; return; }
             var patch = {}, latest = read(), current = model.state(item, latest);
@@ -179,6 +182,9 @@
       var visible = doc.getElementById('qs-editor-visible'), available = doc.getElementById('qs-editor-available');
       visible.textContent = ''; available.textContent = '';
       draft.order.forEach(function (id) { var shown = draft.visible.indexOf(id) !== -1; (shown ? visible : available).appendChild(row(itemById(id), shown)); });
+      var more = doc.getElementById('qs-editor-more');
+      more.hidden = available.children.length === 0;
+      if (more.hidden) more.open = false;
       doc.getElementById('qs-editor-empty').hidden = draft.visible.length !== 0;
       doc.getElementById('qs-editor-info-icons').checked = draft.showInfoIcons;
     }

@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <script src="/assets/heavenly-navigation.js"></script>
   <link rel="stylesheet" href="/assets/quick-settings.css">
+  <script src="/assets/cloak-pool.js"></script>
   <script src="/assets/quick-settings-model.js"></script>
   <script src="/assets/quick-settings-dialog.js"></script>
   <script src="/assets/quick-settings-config.js"></script>
@@ -955,7 +956,6 @@
         <h2 class="section-title">
           <svg style="width: 20px; height: 20px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
           <span id="tab-cloaking" tabindex="-1">Tab Cloaking</span>
-          <button type="button" class="qs-config-button" data-qs-config="cloaking" aria-label="Quick Tab Cloaking settings" aria-haspopup="dialog" aria-controls="qs-context-editor">Configure</button>
         </h2>
 
         <div class="cards-grid">
@@ -1749,7 +1749,7 @@
       ]
     };
 
-    var DEFAULT_RANDOM_POOL = ['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva'];
+    var DEFAULT_RANDOM_POOL = HeavenlyCloakPool.defaults.slice();
 
     function loadSettings() {
       var saved = {};
@@ -2356,62 +2356,10 @@
         var allPoolPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
         var currentPool = settings.randomPool || DEFAULT_RANDOM_POOL.slice();
 
-        Object.keys(allPoolPresets).forEach(function (key) {
-          var pObj = allPoolPresets[key];
-          var isInPool = currentPool.indexOf(key) !== -1;
-
-          var chip = document.createElement('button');
-          chip.type = 'button';
-          chip.setAttribute('aria-pressed', isInPool ? 'true' : 'false');
-          chip.setAttribute('aria-label', pObj.title + (isInPool ? ' (Included in pool)' : ' (Excluded from pool)'));
-          chip.style.cssText = 'padding: 8px 10px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; transition: all 0.2s ease; font-family: inherit; font-size: 0.8rem; font-weight: 600;' +
-            (isInPool
-              ? 'background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #f8fafc; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);'
-              : 'background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8;');
-
-          var leftGroup = document.createElement('div');
-          leftGroup.style.cssText = 'display: flex; align-items: center; gap: 6px; overflow: hidden;';
-
-          var img = document.createElement('img');
-          img.src = pObj.icon;
-          img.alt = 'Icon';
-          img.style.cssText = 'width: 16px; height: 16px; object-fit: contain; border-radius: 3px; flex-shrink: 0;';
-          img.onerror = function () { this.onerror = null; this.src = '/assets/heavenly-logo.png'; };
-
-          var textSpan = document.createElement('span');
-          textSpan.style.cssText = 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
-          textSpan.textContent = pObj.title.split(' - ')[0].split(' | ')[0].split(' – ')[0];
-
-          leftGroup.appendChild(img);
-          leftGroup.appendChild(textSpan);
-          chip.appendChild(leftGroup);
-
-          var checkBadge = document.createElement('span');
-          checkBadge.style.cssText = 'display: flex; align-items: center; justify-content: center; flex-shrink: 0;';
-          checkBadge.innerHTML = isInPool
-            ? '<svg style="width: 14px; height: 14px; fill: none; stroke: #38bdf8; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-            : '<svg style="width: 14px; height: 14px; fill: none; stroke: #64748b; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle></svg>';
-          chip.appendChild(checkBadge);
-
-          chip.onclick = function () {
-            var st = loadSettings();
-            var activePool = st.randomPool ? st.randomPool.slice() : DEFAULT_RANDOM_POOL.slice();
-
-            var idx = activePool.indexOf(key);
-            if (idx !== -1) {
-              activePool.splice(idx, 1);
-            } else {
-              activePool.push(key);
-            }
-
-            st.randomPool = activePool;
-            try { sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {}
-            saveSettings(st);
-            syncSettingsToUI();
-            syncCloak();
-          };
-
-          poolChipsContainer.appendChild(chip);
+        HeavenlyCloakPool.render(poolChipsContainer, allPoolPresets, currentPool, function (nextPool) {
+          var st = loadSettings(); st.randomPool = nextPool;
+          try { sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {}
+          saveSettings(st); syncSettingsToUI({ skipBookmarks: true }); syncCloak();
         });
       }
 
@@ -2712,8 +2660,7 @@
       if (poolSelectAllBtn) {
         poolSelectAllBtn.onclick = function () {
           var st = loadSettings();
-          var allKeys = Object.keys(Object.assign({}, DEFAULT_PRESETS, st.customPresets));
-          st.randomPool = allKeys;
+          st.randomPool = HeavenlyCloakPool.all(st.randomPool || DEFAULT_RANDOM_POOL, Object.assign({}, DEFAULT_PRESETS, st.customPresets));
           try { sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {}
           saveSettings(st);
           syncSettingsToUI();

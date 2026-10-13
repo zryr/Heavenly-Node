@@ -72,7 +72,7 @@
 @media (max-width: 480px) { .qs-editor-header { padding: 16px 12px 10px; } .qs-editor-body { padding: 0 12px 12px; } .qs-editor-row { flex-wrap: wrap; } .qs-editor-actions { margin-left: auto; } .qs-header { flex-wrap: wrap; } .qs-header-actions { margin-left: auto; } }
 @media (prefers-reduced-motion: reduce) { .qs-editor-card { animation: none; } }
 .qs-header-action[hidden] { display: none; }
-.qs-group-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 20px; }
+.qs-group-heading { display: flex; align-items: center; justify-content: flex-start; gap: 4px; min-height: 20px; }
 .qs-config-button { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-width: 44px; min-height: 44px; padding: 7px; border: 0; border-radius: 12px; color: #94a3b8; background: transparent; font-family: inherit; font-size: .75rem; cursor: pointer; }
 .qs-config-button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .qs-config-button:focus-visible { outline: 2px solid #7dd3fc; outline-offset: 2px; }
@@ -115,3 +115,35 @@
 .qs-pill-chip:disabled:not(.active) { color: #94a3b8; }
 @media (hover: hover) { .qs-help-guide summary:hover { background: rgba(168,85,247,.08); } }
 @media (prefers-reduced-motion: reduce) { .qs-help-guide summary .qs-guide-arrow { transition: none; } }
+
+/* Native scrollbars, scoped to the actual Quick Settings scrolling surfaces. */
+.qs-editor-body, .qs-help-popover:not(.qs-help-guide), .qs-help-guide #qs-help-text {
+  --qs-scroll-thumb: #64748b;
+  color-scheme: dark;
+  scrollbar-width: thin;
+  scrollbar-color: var(--qs-scroll-thumb) transparent;
+  scrollbar-gutter: stable;
+}
+.qs-editor-body::-webkit-scrollbar, .qs-help-popover:not(.qs-help-guide)::-webkit-scrollbar, .qs-help-guide #qs-help-text::-webkit-scrollbar { width: 8px; height: 8px; }
+.qs-editor-body::-webkit-scrollbar-track, .qs-help-popover:not(.qs-help-guide)::-webkit-scrollbar-track, .qs-help-guide #qs-help-text::-webkit-scrollbar-track { background: transparent; margin-block: 4px; }
+.qs-editor-body::-webkit-scrollbar-thumb, .qs-help-popover:not(.qs-help-guide)::-webkit-scrollbar-thumb, .qs-help-guide #qs-help-text::-webkit-scrollbar-thumb { background: var(--qs-scroll-thumb); border: 2px solid transparent; border-radius: 10px; background-clip: padding-box; }
+.qs-editor-body:focus-within, .qs-help-popover:not(.qs-help-guide):focus-within, .qs-help-guide #qs-help-text:focus-within { --qs-scroll-thumb: #38bdf8; }
+@media (hover: hover) {
+  .qs-editor-body:hover, .qs-help-popover:not(.qs-help-guide):hover, .qs-help-guide #qs-help-text:hover { --qs-scroll-thumb: #38bdf8; }
+}
+@media (forced-colors: active) {
+  .qs-editor-body, .qs-help-popover:not(.qs-help-guide), .qs-help-guide #qs-help-text { scrollbar-color: auto; }
+}
+/* The same native pool chips serve Settings and the staged quick editor. */
+.cloak-pool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 6px; }
+.cloak-pool-chip { display: flex; align-items: center; gap: 7px; min-width: 0; min-height: 44px; padding: 8px 10px; border: 1px solid rgba(148,163,184,.22); border-radius: 12px; color: #94a3b8; background: rgba(30,41,59,.5); font: inherit; font-size: .8rem; cursor: pointer; }
+.cloak-pool-chip img { flex-shrink: 0; object-fit: contain; border-radius: 3px; }
+.cloak-pool-chip > span:not(.cloak-pool-mark) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cloak-pool-chip .cloak-pool-mark { margin-left: auto; flex-shrink: 0; }
+.cloak-pool-chip[aria-pressed="true"], .qs-editor-card .cloak-pool-chip[aria-pressed="true"] { color: #bae6fd; border-color: rgba(56,189,248,.45); background: rgba(56,189,248,.14); }
+.cloak-pool-chip:focus-visible { outline: 2px solid #38bdf8; outline-offset: 1px; }
+#qs-context-pool { margin-top: 12px; }
+#qs-context-pool summary { color: #7dd3fc; }
+#qs-context-pool-count { color: #94a3b8; font-size: .72rem; margin-left: 6px; }
+.qs-pool-actions { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0 8px; }
+#qs-context-pool-note { margin-top: 8px; }
