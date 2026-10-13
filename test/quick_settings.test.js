@@ -55,10 +55,11 @@ describe('Quick Settings customization model', function () {
     assert.strictEqual(model.state(widgets, { disableAllWidgets: true }).enabled, false);
     assert.strictEqual(model.state(widgets, { disableAllFeatures: true }).disabled, true);
   });
-  it('Panic Controls is a configuration link with no setting or redirect action', function () {
+  it('Panic Key reuses the stored shortcut ID and existing activation preference without redirecting', function () {
     const item = model.items.find(item => item.id === 'pill-panic-settings');
-    assert.strictEqual(item.href, '/settings.html#panic-controls');
-    assert.strictEqual(item.key, undefined);
+    assert.strictEqual(item.href, undefined);
+    assert.strictEqual(item.key, 'panicKeyEnable');
+    assert.strictEqual(item.configure, 'panic');
     assert(item.help.includes('does not trigger a panic redirect'));
   });
   it('adds Auto Tab Cloaking without enabling or reordering existing shortcuts on upgrade', function () {
@@ -83,4 +84,34 @@ describe('Quick Settings customization model', function () {
     assert.deepStrictEqual(model.configPatch('cloaking', baseline, Object.assign({}, baseline, { selectedPreset: 'custom' })), { selectedPreset: 'custom' });
   });
 
+  it('collects interleaved shortcuts into unique groups without changing saved layout or visibility', function () {
+    const settings = { quickSettings: { order: ['pill-touch-panic', 'pill-bm-blank', 'pill-tab-cloak', 'pill-widgets', 'pill-persistent-cloak'], visible: ['pill-touch-panic', 'pill-bm-blank', 'pill-tab-cloak', 'pill-persistent-cloak'] } };
+    const original = JSON.stringify(settings), grouped = model.groups(settings);
+    assert.deepStrictEqual(grouped.map(group => group.name), ['Privacy', 'Bookmarks']);
+    assert.deepStrictEqual(grouped[0].items.map(item => item.id), ['pill-touch-panic', 'pill-tab-cloak', 'pill-persistent-cloak']);
+    assert.strictEqual(JSON.stringify(settings), original);
+    assert.deepStrictEqual(model.groups({ quickSettings: { visible: [] } }), []);
+  });
+  it('keeps independent cloak flags active together and pauses both without changing preferences', function () {
+    const saved = { autoCloak: true, persistentCloak: true };
+    for (const key of ['autoCloak', 'persistentCloak']) {
+      const item = model.items.find(item => item.key === key);
+      assert.strictEqual(model.state(item, saved).enabled, true);
+      assert.strictEqual(model.state(item, { ...saved, disableAllFeatures: true }).enabled, false);
+      assert.strictEqual(model.state(item, { ...saved, disableAllFeatures: true }).disabled, true);
+    }
+    assert.strictEqual(model.state(model.items.find(item => item.key === 'persistentCloak'), { autoCloak: false, persistentCloak: true }).enabled, true);
+  });
+  it('reports a missing panic key as setup rather than active while preserving legacy default', function () {
+    const item = model.items.find(item => item.key === 'panicKeyEnable');
+    assert.strictEqual(model.state(item, { panicKeyEnable: true }).enabled, true);
+    assert.strictEqual(model.state(item, { panicKeyEnable: true, panicKey: '' }).badge, 'Set key');
+    assert.strictEqual(model.state(item, { panicKeyEnable: true, panicKey: ' ', disableAllFeatures: true }).badge, 'Paused');
+  });
+  it('disabling either panic feature saves only its activation flag and retains key and destination', function () {
+    const baseline = model.configValues('panic', { panicKeyEnable: true, panicKey: 'Escape', panicUrl: 'https://example.com', touchPanic: true });
+    assert.deepStrictEqual(model.configPatch('panic', baseline, { ...baseline, panicKeyEnable: false }), { panicKeyEnable: false });
+    assert.deepStrictEqual(model.configPatch('panic', baseline, { ...baseline, touchPanic: false }), { touchPanic: false });
+    assert.strictEqual(model.configValues('panic', { panicKey: '' }).panicKey, '');
+  });
 });

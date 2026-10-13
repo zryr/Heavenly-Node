@@ -10,7 +10,7 @@
     modal.innerHTML = '<section class="qs-editor-card qs-context-card" role="dialog" aria-modal="true" aria-labelledby="qs-context-title" aria-describedby="qs-context-description">' +
       '<header class="qs-editor-header"><div><h2 id="qs-context-title"></h2><p id="qs-context-description"></p></div><button type="button" data-dialog-close aria-label="Cancel configuration">×</button></header>' +
       '<div class="qs-editor-body"><div id="qs-context-conflict" role="status" hidden><p>These settings changed elsewhere. Your edits are kept. Load the saved values or choose to keep your edits.</p><button type="button" id="qs-context-load">Load saved settings</button><button type="button" id="qs-context-keep">Keep my changes</button></div>' +
-      '<p id="qs-context-master" class="qs-context-notice" role="status" hidden></p><div id="qs-context-controls"></div><div id="qs-context-preview" class="qs-cloak-preview" hidden><span class="qs-group-label">Selected preset preview</span><div><img id="qs-context-icon" alt="" width="20" height="20"><span id="qs-context-preview-title"></span></div></div>' +
+      '<p id="qs-context-master" class="qs-context-notice" role="status" hidden></p><a id="qs-context-master-link" href="/settings.html#master-controls" hidden>Manage master controls</a><div id="qs-context-controls"></div><div id="qs-context-preview" class="qs-cloak-preview" hidden><span class="qs-group-label">Selected preset preview</span><div><img id="qs-context-icon" alt="" width="20" height="20"><span id="qs-context-preview-title"></span></div></div>' +
       '<p id="qs-context-note" class="qs-editor-note"></p><p id="qs-context-error" role="alert" hidden></p></div>' +
       '<footer class="qs-editor-footer"><a id="qs-context-advanced" href="/settings.html">Advanced settings</a><div><button type="button" data-dialog-close>Cancel</button><button type="button" id="qs-context-save" class="qs-primary">Save</button></div></footer></section>';
     doc.body.appendChild(modal);
@@ -23,7 +23,7 @@
     }
     function dirty(key) { return draft[key] !== baseline[key]; }
     function blocked(field, settings) {
-      if (field.key === 'selectedPreset') return false;
+      if (field.key === 'selectedPreset' || (kind === 'panic' && field.type === 'text')) return false;
       if (settings.disableAllFeatures) return true;
       if (kind === 'widgets' && field.key !== 'disableAllWidgets') return !!draft.disableAllWidgets;
       return false;
@@ -47,12 +47,14 @@
           var label = doc.createElement('label'); label.className = 'qs-context-field';
           var text = doc.createElement('span'); text.textContent = field.label; label.appendChild(text);
           input = doc.createElement(field.type === 'select' ? 'select' : 'input');
-          if (field.type === 'checkbox') input.type = 'checkbox';
+          if (field.type !== 'select') input.type = field.type;
+          if (field.maxLength) input.maxLength = field.maxLength;
+          if (field.inputMode) input.inputMode = field.inputMode;
           input.dataset.configField = field.key;
           input.id = 'qs-config-' + field.key; label.htmlFor = input.id;
           input.setAttribute('aria-describedby', 'qs-context-note');
           label.appendChild(input); controls.appendChild(label);
-          input.addEventListener('change', function () {
+          input.addEventListener(field.type === 'text' ? 'input' : 'change', function () {
             draft[field.key] = field.type === 'checkbox' ? (field.inverted ? !input.checked : input.checked) : input.value;
             get('error').hidden = true; refresh();
           });
@@ -63,12 +65,14 @@
           if (!available.some(function (option) { return option[0] === draft[field.key]; })) available.unshift([draft[field.key], 'Saved option unavailable']);
           available.forEach(function (entry) { var option = doc.createElement('option'); option.value = entry[0]; option.textContent = entry[1]; input.appendChild(option); });
           input.value = draft[field.key];
-        } else input.checked = field.inverted ? !draft[field.key] : !!draft[field.key];
+        } else if (field.type === 'checkbox') input.checked = field.inverted ? !draft[field.key] : !!draft[field.key];
+        else if (input.value !== draft[field.key]) input.value = draft[field.key];
         input.disabled = blocked(field, settings);
       });
+      get('master-link').hidden = !settings.disableAllFeatures;
       get('master').hidden = !settings.disableAllFeatures && !(kind === 'widgets' && draft.disableAllWidgets);
-      get('master').textContent = settings.disableAllFeatures ? 'Disable All Features pauses these controls. Your saved choices are kept; manage the master control in advanced settings.' : 'Proxied Widgets is off. Individual widget and dock choices are kept for when widgets are enabled.';
-      get('note').textContent = kind === 'widgets' ? 'Refresh an already open proxied website to apply widget changes. Saved floating positions are kept. These controls change features, not shortcut visibility.' : 'Changing the preset keeps Auto and Persistent Cloaking unchanged. Create or edit custom presets in advanced settings.' + (settings.randomizePresetEachSession ? ' Session randomization is on, so the active tab may use a different preset.' : '');
+      get('master').textContent = settings.disableAllFeatures ? 'Disable All Privacy & Widget Overlays pauses these controls. Your saved choices are kept; manage the master control in advanced settings.' : 'Proxied Widgets is off. Individual widget and dock choices are kept for when widgets are enabled.';
+      get('note').textContent = kind === 'widgets' ? 'Refresh an already open proxied website to apply widget changes. Saved floating positions are kept. These controls change features, not shortcut visibility.' : kind === 'panic' ? 'Use an existing key name (such as Escape) or keyboard code (such as Backquote). Configuring these values never redirects you. Disabling Panic Key keeps the key and destination. Refresh an open proxied page to apply Touch Panic Overlay visibility changes.' : 'Changing the preset keeps Auto and Persistent Cloaking unchanged. Create or edit custom presets in advanced settings.' + (settings.randomizePresetEachSession ? ' Session randomization is on, so the active tab may use a different preset.' : '');
       get('conflict').hidden = conflicts.length === 0; get('save').disabled = conflicts.length !== 0;
       updatePreview(settings);
       if (rebuild && focusedKey) { var focused = controls.querySelector('[data-config-field="' + focusedKey + '"]'); if (focused && !focused.disabled) focused.focus(); }
@@ -87,15 +91,15 @@
       if (!model.configurations[mode] || !modal.hidden || doc.querySelector('.qs-editor-backdrop:not([hidden])')) return;
       if (options.beforeOpen) options.beforeOpen();
       kind = mode; var current = read(); baseline = model.configValues(kind, current); draft = Object.assign({}, baseline); conflicts = [];
-      get('title').textContent = kind === 'widgets' ? 'Widget settings' : 'Tab Cloaking';
-      get('description').textContent = kind === 'widgets' ? 'Configure the existing dock and proxied-page widgets.' : 'Choose when to cloak tabs and which saved preset to use.';
+      get('title').textContent = kind === 'widgets' ? 'Widget settings' : kind === 'panic' ? 'Panic Controls' : 'Tab Cloaking';
+      get('description').textContent = kind === 'widgets' ? 'Configure the existing dock and proxied-page widgets.' : kind === 'panic' ? 'Configure the existing keyboard shortcut and touch button.' : 'Choose when to cloak tabs and which saved preset to use.';
       get('preview').hidden = kind !== 'cloaking'; get('error').hidden = true;
-      get('advanced').href = '/settings.html#' + (kind === 'widgets' ? 'widget-settings' : 'tab-cloaking');
+      get('advanced').href = '/settings.html#' + (kind === 'widgets' ? 'widget-settings' : kind === 'panic' ? 'panic-controls' : 'tab-cloaking');
       render(current, true); dialog.open(trigger);
     }
     // A full-Settings link may only change the hash on this page. Close the
     // modal before native navigation so its backdrop never traps that route.
-    get('advanced').onclick = function () { dialog.close(); };
+    get('advanced').onclick = get('master-link').onclick = function () { dialog.close(); };
     get('load').onclick = function () { var current = read(); baseline = model.configValues(kind, current); draft = Object.assign({}, baseline); conflicts = []; render(current, false); get('save').focus(); };
     get('keep').onclick = function () {
       var values = model.configValues(kind, read());
@@ -103,8 +107,14 @@
     };
     get('save').onclick = function () {
       refresh(); if (conflicts.length) return;
-      var current = read(), patch = model.configPatch(kind, baseline, draft);
-      var paused = model.configurations[kind].some(function (field) { return field.key in patch && field.key !== 'selectedPreset' && (current.disableAllFeatures || (kind === 'widgets' && field.key !== 'disableAllWidgets' && current.disableAllWidgets && !dirty('disableAllWidgets'))); });
+      var current = read();
+      if (kind === 'panic') {
+        if (dirty('panicKey')) draft.panicKey = draft.panicKey.trim();
+        if (dirty('panicUrl')) draft.panicUrl = draft.panicUrl.trim() || 'https://classroom.google.com';
+        if (draft.panicKeyEnable && !draft.panicKey.trim()) { get('error').hidden = false; get('error').textContent = 'Choose a panic key before enabling the keyboard shortcut.'; get('controls').querySelector('[data-config-field="panicKey"]').focus(); return; }
+      }
+      var patch = model.configPatch(kind, baseline, draft);
+      var paused = model.configurations[kind].some(function (field) { return field.key in patch && field.key !== 'selectedPreset' && !(kind === 'panic' && field.type === 'text') && (current.disableAllFeatures || (kind === 'widgets' && field.key !== 'disableAllWidgets' && current.disableAllWidgets && !dirty('disableAllWidgets'))); });
       if (paused) { get('error').hidden = false; get('error').textContent = 'A master control pauses an edited feature. Enable the feature or use advanced settings before saving; your draft is kept.'; return; }
       if (patch.selectedPreset && !presets(current)[patch.selectedPreset]) { get('error').hidden = false; get('error').textContent = 'This preset is no longer available. Choose another preset; your other edits are kept.'; return; }
       saving = true;
@@ -120,6 +130,6 @@
       node.setAttribute('aria-label', label); node.title = label; node.setAttribute('data-qs-config', mode); node.setAttribute('aria-haspopup', 'dialog'); node.setAttribute('aria-controls', 'qs-context-editor');
       return node;
     }
-    return { button: button, refresh: refresh };
+    return { button: button, refresh: refresh, open: open };
   } };
 })(window);

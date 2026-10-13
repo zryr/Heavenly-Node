@@ -15,13 +15,14 @@
     var section = options.section;
     var editorTrigger = options.editorTrigger;
     var draft = null, baseline = null, externalLayout = false, lastSettings = null;
+    var syncedSettings = signature(read());
     var drag = null, dragFrame = null;
     var modal = doc.createElement('div');
     modal.id = 'qs-editor';
     modal.className = 'qs-editor-backdrop';
     modal.hidden = true;
     modal.innerHTML = '<section class="qs-editor-card" role="dialog" aria-modal="true" aria-labelledby="qs-editor-title" aria-describedby="qs-editor-description">' +
-      '<header class="qs-editor-header"><div><h2 id="qs-editor-title">Customize Quick Settings</h2><p id="qs-editor-description">Choose which shortcuts appear in Quick Settings. Hiding a shortcut keeps its setting unchanged.</p></div><button type="button" data-editor-close aria-label="Cancel customization">×</button></header>' +
+      '<header class="qs-editor-header"><div><h2 id="qs-editor-title">Customize Quick Settings</h2><p id="qs-editor-description">Choose which shortcuts appear in Quick Settings. Hiding a shortcut keeps its setting unchanged. Categories follow their first shortcut; shortcuts stay in your chosen order within each category.</p></div><button type="button" data-editor-close aria-label="Cancel customization">×</button></header>' +
       '<div class="qs-editor-body"><div id="qs-editor-conflict" role="status" hidden><p id="qs-editor-conflict-text"></p><div id="qs-editor-conflict-actions" hidden><button type="button" id="qs-editor-load">Load saved layout</button><button type="button" id="qs-editor-keep">Keep my draft</button></div></div>' +
       '<h3>Visible shortcuts</h3><ol id="qs-editor-visible" class="qs-editor-list"></ol><p id="qs-editor-empty" hidden>No shortcuts selected. Edit remains available.</p>' +
       '<details id="qs-editor-more"><summary>Add More Shortcuts</summary><ul id="qs-editor-available" class="qs-editor-list"></ul></details>' +
@@ -39,10 +40,10 @@
     }
     function entries(id) {
       var settings = read(), saved = model.layout(settings);
-      var list = id === 'all' ? saved.order.filter(function (key) { return saved.visible.indexOf(key) !== -1; }).map(itemById) : [itemById(id)];
-      return { title: id === 'all' ? 'Quick Settings' : list[0].name, entries: list.length ? list.map(function (item) {
+      var list = id === 'all' ? model.groups(settings).reduce(function (items, group) { return items.concat(group.items); }, []) : [itemById(id)];
+      return { guide: id === 'all', title: id === 'all' ? 'Quick Settings Guide' : list[0].name, entries: list.length ? list.map(function (item) {
         var state = model.state(item, settings);
-        return { name: item.name, text: item.help + (state.reason ? ' ' + state.reason : '') };
+        return { id: item.id, group: item.group, icon: model.icons[item.icon], name: item.name, text: item.help + (state.reason ? ' ' + state.reason : '') };
       }) : [{ name: 'Quick Settings', text: 'No shortcuts are shown. Use Edit to add shortcuts without changing their saved settings.' }] };
     }
     var help = section ? root.HeavenlyQuickSettingsHelp.init(section, entries) : null;
@@ -52,54 +53,56 @@
       var settings = read(), saved = model.layout(settings);
       if (!modal.hidden && draft) saved.showInfoIcons = draft.showInfoIcons;
       var active = doc.activeElement;
-      var focusedInPanel = !!active && (section.contains(active) || active.id === 'qs-help-popover');
+      var popover = doc.getElementById('qs-help-popover');
+      var focusedInHelp = !!active && popover && popover.contains(active);
+      var focusedInPanel = !!active && (section.contains(active) || focusedInHelp);
       var focusId = active && active.id;
-      if (focusId === 'qs-help-popover') { var anchor = section.querySelector('[data-qs-help][aria-expanded="true"]'); focusId = anchor && anchor.id; }
+      if (focusedInHelp) { var anchor = section.querySelector('[data-qs-help][aria-expanded="true"]'); focusId = anchor && anchor.id; }
       if (help) help.close(false);
       tray.textContent = '';
       var headerInfo = doc.getElementById('quick-settings-info-btn');
       if (headerInfo) headerInfo.hidden = saved.showInfoIcons;
-      var group, controls, groupName, widgetGearAdded = false;
-      saved.order.forEach(function (id) {
-        if (saved.visible.indexOf(id) === -1) return;
-        var item = itemById(id), state = model.state(item, settings);
-        if (groupName !== item.group) {
-          groupName = item.group;
-          group = doc.createElement('div'); group.className = 'qs-navigation-group';
-          group.setAttribute('role', 'group'); group.setAttribute('aria-label', item.group + ' shortcuts');
-          var label = doc.createElement('span'); label.className = 'qs-group-label'; label.textContent = item.group;
-          controls = doc.createElement('div'); controls.className = 'qs-controls';
-          var heading = doc.createElement('div'); heading.className = 'qs-group-heading'; heading.appendChild(label);
-          if (item.group === 'Widgets' && !widgetGearAdded) { heading.appendChild(config.button('widgets', 'Configure widgets', 'qs-widgets-config-btn')); widgetGearAdded = true; }
-          group.appendChild(heading); group.appendChild(controls); tray.appendChild(group);
-        }
-        var unit = doc.createElement('div'); unit.className = 'qs-setting';
-        var pill = doc.createElement('button'); pill.type = 'button'; pill.id = id; pill.className = 'qs-pill-chip';
-        pill.setAttribute('aria-label', item.name); pill.setAttribute('aria-describedby', id + '-help');
-        pill.innerHTML = svg(model.icons[item.icon]) + '<span class="qs-pill-copy"><span>' + item.label + '</span><span class="qs-required" hidden></span></span>' + (item.href ? '' : '<span class="pill-dot" aria-hidden="true"></span>');
-        if (!item.href) {
-          pill.classList.toggle('active', state.enabled); pill.disabled = state.disabled;
-          pill.setAttribute('aria-pressed', String(state.enabled));
-          var badge = pill.querySelector('.qs-required'); badge.hidden = !state.badge; badge.textContent = state.badge;
-        }
-        pill.title = item.href ? 'Open Panic Controls settings' : state.reason || 'Toggle ' + item.name;
-        pill.onclick = function () {
-          if (item.href) { root.location.href = item.href; return; }
-          var patch = {}, current = model.state(item, read());
-          if (current.disabled) return;
-          patch[item.key] = item.inverted ? current.enabled : !current.enabled;
-          if (!write(patch)) {
-            var status = doc.getElementById('qs-panel-status'); status.textContent = 'Could not save this setting. Browser storage may be unavailable.';
+      var widgetGearAdded = false;
+      model.groups(settings).forEach(function (category) {
+        var group, controls;
+        group = doc.createElement('div'); group.className = 'qs-navigation-group';
+        group.setAttribute('role', 'group'); group.setAttribute('aria-label', category.name + ' shortcuts');
+        var label = doc.createElement('span'); label.className = 'qs-group-label'; label.textContent = category.name;
+        controls = doc.createElement('div'); controls.className = 'qs-controls';
+        var heading = doc.createElement('div'); heading.className = 'qs-group-heading'; heading.appendChild(label);
+        if (category.name === 'Widgets' && !widgetGearAdded) { heading.appendChild(config.button('widgets', 'Configure widgets', 'qs-widgets-config-btn')); widgetGearAdded = true; }
+        group.appendChild(heading); group.appendChild(controls); tray.appendChild(group);
+        category.items.forEach(function (item) {
+          var id = item.id, state = model.state(item, settings);
+          var unit = doc.createElement('div'); unit.className = 'qs-setting';
+          var pill = doc.createElement('button'); pill.type = 'button'; pill.id = id; pill.className = 'qs-pill-chip';
+          pill.setAttribute('aria-label', item.name); pill.setAttribute('aria-describedby', id + '-help');
+          pill.innerHTML = svg(model.icons[item.icon]) + '<span class="qs-pill-copy"><span>' + item.label + '</span><span class="qs-required" hidden></span></span>' + (item.href ? '' : '<span class="pill-dot" aria-hidden="true"></span>');
+          if (!item.href) {
+            pill.classList.toggle('active', state.enabled); pill.disabled = state.disabled;
+            pill.setAttribute('aria-pressed', String(state.enabled));
+            var badge = pill.querySelector('.qs-required'); badge.hidden = !state.badge; badge.textContent = state.badge;
           }
-        };
-        unit.appendChild(pill);
-        if (item.configure) unit.appendChild(config.button(item.configure, 'Configure Tab Cloaking', id + '-config'));
-        var info = doc.createElement('button'); info.type = 'button'; info.className = 'qs-help-button';
-        info.hidden = !saved.showInfoIcons; info.id = id + '-info'; info.innerHTML = svg(infoIcon);
-        info.setAttribute('data-qs-help', id); info.setAttribute('aria-label', 'About ' + item.name);
-        info.setAttribute('aria-expanded', 'false'); info.setAttribute('aria-haspopup', 'dialog'); info.setAttribute('aria-controls', 'qs-help-popover');
-        var explanation = doc.createElement('span'); explanation.id = id + '-help'; explanation.hidden = true; explanation.textContent = item.help + (state.reason ? ' ' + state.reason : '');
-        unit.appendChild(info); unit.appendChild(explanation); controls.appendChild(unit);
+          pill.title = item.href ? 'Open ' + item.name : state.reason || 'Toggle ' + item.name;
+          pill.onclick = function () {
+            if (item.href) { root.location.href = item.href; return; }
+            var patch = {}, latest = read(), current = model.state(item, latest);
+            if (current.disabled) return;
+            if (item.configure === 'panic' && typeof latest.panicKey === 'string' && !latest.panicKey.trim()) { config.open('panic', pill); return; }
+            patch[item.key] = item.inverted ? current.enabled : !current.enabled;
+            if (!write(patch)) {
+              var status = doc.getElementById('qs-panel-status'); status.textContent = 'Could not save this setting. Browser storage may be unavailable.';
+            }
+          };
+          unit.appendChild(pill);
+          if (item.configure) unit.appendChild(config.button(item.configure, 'Configure ' + item.label, id + '-config'));
+          var info = doc.createElement('button'); info.type = 'button'; info.className = 'qs-help-button';
+          info.hidden = !saved.showInfoIcons; info.id = id + '-info'; info.innerHTML = svg(infoIcon);
+          info.setAttribute('data-qs-help', id); info.setAttribute('aria-label', 'About ' + item.name);
+          info.setAttribute('aria-expanded', 'false'); info.setAttribute('aria-haspopup', 'dialog'); info.setAttribute('aria-controls', 'qs-help-popover');
+          var explanation = doc.createElement('span'); explanation.id = id + '-help'; explanation.hidden = true; explanation.textContent = item.help + (state.reason ? ' ' + state.reason : '');
+          unit.appendChild(info); unit.appendChild(explanation); controls.appendChild(unit);
+        });
       });
       tray.classList.toggle('qs-has-widget-settings', widgetGearAdded);
       if (!saved.visible.length) {
@@ -121,6 +124,7 @@
       doc.getElementById('qs-editor-save').disabled = true;
     }
     function refresh() {
+      syncedSettings = signature(read());
       renderPanel();
       if (options.onChange) options.onChange();
       config.refresh();
@@ -264,7 +268,9 @@
     // Both same-window saves and cross-tab changes refresh the panel, not the draft.
     root.addEventListener('heavenly:settings-change', refresh);
     root.addEventListener('storage', function (event) { if (!event.key || event.key === 'heavenly_settings') refresh(); });
-    root.addEventListener('pageshow', refresh);
+    // A delayed initial pageshow must not interrupt help or configuration focus.
+    // Restore from the back/forward cache, or refresh if saved values changed.
+    root.addEventListener('pageshow', function (event) { if (event.persisted || signature(read()) !== syncedSettings) refresh(); });
     root.addEventListener('blur', cancelDrag);
     doc.addEventListener('visibilitychange', function () { if (doc.hidden) cancelDrag(); });
     var hint = doc.createElement('p'); hint.id = 'qs-editor-drag-hint'; hint.className = 'qs-sr-only'; hint.textContent = 'Hold the handle to drag. Use Up and Down arrows or the Move buttons to reorder.'; card.appendChild(hint);

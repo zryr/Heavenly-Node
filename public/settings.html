@@ -908,7 +908,7 @@
       <!-- Section 0: Master Shortcuts & Overrides (At the top) -->
       <div>
         <div class="hero-card" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(30, 41, 59, 0.75);">
-          <details style="width: 100%;">
+          <details id="master-controls" style="width: 100%;">
             <summary style="cursor: pointer; list-style: none; font-size: 1rem; font-weight: 700; color: #f8fafc; display: flex; align-items: center; justify-content: space-between; user-select: none;">
               <span class="hero-card-title" style="color: #fca5a5; font-size: 1.05rem;">
                 <svg style="width: 20px; height: 20px; fill: none; stroke: #f87171; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path><path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
@@ -1202,7 +1202,7 @@
       <div id="panic-controls" tabindex="-1">
         <h2 class="section-title">
           <svg style="width: 20px; height: 20px; fill: none; stroke: #f87171; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-          <span>Panic Controls</span>
+          <span>Panic Controls</span><button type="button" class="qs-config-button" data-qs-config="panic" aria-label="Quick panic settings" aria-haspopup="dialog" aria-controls="qs-context-editor">Configure</button>
         </h2>
 
         <div class="cards-grid">
@@ -1766,7 +1766,7 @@
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
         mergeGoNewTab: saved.mergeGoNewTab || false,
         panicKeyEnable: saved.panicKeyEnable || false,
-        panicKey: saved.panicKey || '`',
+        panicKey: typeof saved.panicKey === 'string' ? saved.panicKey : '`',
         touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
         panicUrl: saved.panicUrl || 'https://classroom.google.com',
         showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
@@ -2421,6 +2421,7 @@
 
     // --- Tab Cloaking ---
     var originalTitle = document.title;
+    var appliedCloakTitle = null;
 
     function resolveActivePreset(settings) {
       if (!settings) settings = loadSettings();
@@ -2458,10 +2459,11 @@
       var head = document.head || document.getElementsByTagName('head')[0];
 
       if (isCloaked) {
-        if (document.title && document.title !== preset.title) {
+        if (document.title && document.title !== appliedCloakTitle) {
           originalTitle = document.title;
         }
         document.title = preset.title;
+        appliedCloakTitle = preset.title;
 
         if (head) {
           var iconLinks = document.querySelectorAll("link[rel*='icon']");
@@ -2489,6 +2491,7 @@
         if (originalTitle) {
           document.title = originalTitle;
         }
+        appliedCloakTitle = null;
 
         var cloakLink2 = document.getElementById('heavenly-cloak-icon');
         if (cloakLink2 && cloakLink2.parentNode) {
@@ -2509,7 +2512,9 @@
 
     function syncCloak() {
       var settings = loadSettings();
-      if (settings.persistentCloak) {
+      if (settings.disableAllFeatures) {
+        applyCloak(false, settings);
+      } else if (settings.persistentCloak) {
         applyCloak(true, settings);
       } else if (settings.autoCloak && document.hidden) {
         applyCloak(true, settings);
@@ -3178,6 +3183,9 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSettingsPage, { once: true });
     else initSettingsPage();
     document.addEventListener('DOMContentLoaded', function () {
+      function revealMasterControls() { if (location.hash === '#master-controls') $('master-controls').open = true; }
+      revealMasterControls();
+      window.addEventListener('hashchange', revealMasterControls);
       HeavenlyQuickSettings.init({ editorTrigger: $('customize-quick-settings-btn'), presets: DEFAULT_PRESETS, onChange: function () { syncSettingsToUI({ skipBookmarks: true }); syncCloak(); } });
       var target = location.hash && $(location.hash.slice(1));
       if (target && ['#panic-controls', '#widget-settings', '#tab-cloaking'].indexOf(location.hash) !== -1) target.focus({ preventScroll: true });

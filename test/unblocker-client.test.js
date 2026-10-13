@@ -405,6 +405,62 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
     });
   });
 
+  describe('Live privacy preferences', function () {
+    function client(saved, readyState = 'complete') {
+      const listeners = {};
+      const win = {
+        location: { href: 'http://localhost/proxy/https://example.com', origin: 'http://localhost' },
+        document: { title: 'Original page', readyState, hidden: false, addEventListener(type, listener) { (listeners['document:' + type] || (listeners['document:' + type] = [])).push(listener); }, getElementsByTagName: () => [], querySelectorAll: () => [], getElementById: () => null, documentElement: { addEventListener() {} } },
+        addEventListener(type, listener) { (listeners[type] || (listeners[type] = [])).push(listener); },
+        localStorage: { getItem(key) { return key === 'heavenly_settings' ? JSON.stringify(saved) : null; } }
+      };
+      win.top = win;
+      initForWindow({ prefix: '/proxy/', url: 'https://example.com' }, win);
+      return { win, listeners };
+    }
+    it('honors live keyboard enable, disable, key/code and destination changes without reinitializing', function () {
+      const saved = { panicKeyEnable: false, panicKey: 'p', touchPanic: false, disableAllWidgets: true };
+      const { win, listeners } = client(saved);
+      const press = (key, code) => listeners.keydown.forEach(listener => listener({ key, code }));
+      const original = win.location.href;
+      press('p', 'KeyP'); assert.strictEqual(win.location.href, original);
+      Object.assign(saved, { panicKeyEnable: true, panicUrl: 'https://example.com/panic' });
+      press('p', 'KeyP'); assert.strictEqual(win.location.href, saved.panicUrl);
+      win.location.href = original; saved.panicKeyEnable = false;
+      press('p', 'KeyP'); assert.strictEqual(win.location.href, original);
+      Object.assign(saved, { panicKeyEnable: true, panicKey: 'F8', panicUrl: 'https://example.com/updated' });
+      press('p', 'KeyP'); assert.strictEqual(win.location.href, original);
+      press('different', 'F8'); assert.strictEqual(win.location.href, saved.panicUrl);
+      assert.strictEqual(listeners.keydown.length, 1);
+    });
+    it('retains external master changes while the upstream document is still loading', function () {
+      const saved = { persistentCloak: true, selectedPreset: 'google', touchPanic: false, disableAllWidgets: true };
+      const { win, listeners } = client(saved, 'loading');
+      saved.disableAllFeatures = true;
+      listeners.storage.forEach(listener => listener({ key: 'heavenly_settings' }));
+      win.document.readyState = 'complete';
+      listeners['document:DOMContentLoaded'].forEach(listener => listener());
+      assert.strictEqual(win.document.title, 'Original page');
+      saved.disableAllFeatures = false;
+      listeners.storage.forEach(listener => listener({ key: 'heavenly_settings' }));
+      assert.strictEqual(win.document.title, 'Google');
+      saved.disableAllFeatures = true;
+      listeners.storage.forEach(listener => listener({ key: null }));
+      assert.strictEqual(win.document.title, 'Original page');
+    });
+    it('attaches privacy handlers while initially paused, retaining choices and honoring master changes', function () {
+      const saved = { disableAllFeatures: true, panicKeyEnable: true, panicKey: 'p', panicUrl: 'https://example.com/panic', touchPanic: false, disableAllWidgets: true };
+      const { win, listeners } = client(saved), original = win.location.href;
+      listeners.keydown[0]({ key: 'p' }); assert.strictEqual(win.location.href, original);
+      saved.disableAllFeatures = false;
+      listeners.keydown[0]({ key: 'p' }); assert.strictEqual(win.location.href, saved.panicUrl);
+      win.location.href = original; saved.panicKey = '';
+      listeners.keydown[0]({ key: '`' }); assert.strictEqual(win.location.href, original);
+      assert.strictEqual(saved.panicKeyEnable, true);
+      assert.strictEqual(listeners.keydown.length, 1);
+    });
+  });
+
   describe('Draggable Touch Panic Overlay', function () {
     it('should inject panic overlay, handle mouse & touch dragging, clamp bounds, and persist position', function () {
       let savedPanicPos = null;

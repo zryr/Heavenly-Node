@@ -868,7 +868,7 @@
       selectedPreset: saved.selectedPreset || 'classroom',
       customPresets: saved.customPresets || {},
       panicKeyEnable: saved.panicKeyEnable || false,
-      panicKey: saved.panicKey || '`',
+      panicKey: typeof saved.panicKey === 'string' ? saved.panicKey : '`',
       touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
       panicUrl: saved.panicUrl || 'https://classroom.google.com',
       showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
@@ -897,10 +897,10 @@
       if (settings.disableAllFeatures) {
         var existingPanic = window.document ? window.document.getElementById('heavenly-touch-panic-root') : null;
         if (existingPanic) existingPanic.remove();
-        return;
       }
 
       var currentlyCloaked = false;
+      var appliedCloakTitle = null;
       var latestOriginalTitle = window.document ? window.document.title : '';
       if (window.document && window.document.title && !isPresetTitle(window.document.title, settings)) {
         window.__heavenlyOriginalTitle = window.document.title;
@@ -917,11 +917,12 @@
         var head = window.document.head || window.document.getElementsByTagName('head')[0];
 
         if (isCloaked) {
-          if (window.document.title && !isPresetTitle(window.document.title, settings)) {
+          if (window.document.title && window.document.title !== appliedCloakTitle && !isPresetTitle(window.document.title, settings)) {
             latestOriginalTitle = window.document.title;
             window.__heavenlyOriginalTitle = latestOriginalTitle;
           }
           window.document.title = preset.title;
+          appliedCloakTitle = preset.title;
 
           if (head) {
             var iconLinks = window.document.querySelectorAll("link[rel*='icon']");
@@ -949,6 +950,7 @@
           if (latestOriginalTitle) {
             window.document.title = latestOriginalTitle;
           }
+          appliedCloakTitle = null;
 
           var cloakLink2 = window.document.getElementById('heavenly-cloak-icon');
           if (cloakLink2 && cloakLink2.parentNode) {
@@ -971,11 +973,13 @@
       function syncCloak(refresh) {
         // The injected client can run before the upstream <title> is parsed.
         // Wait for it before changing document.title, so history keeps the real title.
-        if (window.document && window.document.readyState === 'loading') return;
         if (refresh || !settings) {
           settings = loadHeavenlySettings(window);
         }
-        if (settings.persistentCloak) {
+        if (window.document && window.document.readyState === 'loading') return;
+        if (settings.disableAllFeatures) {
+          applyCloak(false);
+        } else if (settings.persistentCloak) {
           applyCloak(true);
         } else if (settings.autoCloak && window.document.hidden) {
           applyCloak(true);
@@ -989,21 +993,25 @@
 
       // Visibility change event
       window.addEventListener('visibilitychange', function () {
-        syncCloak();
+        syncCloak(true);
       });
 
       // DOM load events to ensure cloak runs once head is populated
       if (window.document) {
         if (window.document.readyState === 'loading') {
-          window.document.addEventListener('DOMContentLoaded', function () { syncCloak(); });
+          window.document.addEventListener('DOMContentLoaded', function () { syncCloak(true); });
         }
-        window.addEventListener('load', function () { syncCloak(); });
+        window.addEventListener('load', function () { syncCloak(true); });
       }
 
       // Cross-tab settings synchronization
       window.addEventListener('storage', function (e) {
-        if (e.key === 'heavenly_settings') {
+        if (!e.key || e.key === 'heavenly_settings') {
           syncCloak(true);
+          if (settings.disableAllFeatures || !settings.touchPanic) {
+            var panicOverlay = window.document && window.document.getElementById('heavenly-touch-panic-root');
+            if (panicOverlay) panicOverlay.remove();
+          }
         }
       });
 
@@ -1045,17 +1053,19 @@
       }
 
       // 3. Panic Key Shortcut
-      if (settings.panicKeyEnable && settings.panicKey) {
-        window.addEventListener('keydown', function (e) {
-          if (e.key === settings.panicKey || e.code === settings.panicKey) {
-            window.location.href = settings.panicUrl || 'https://classroom.google.com';
-          }
-        }, true);
-      }
+      window.addEventListener('keydown', function (e) {
+        var current = loadHeavenlySettings(window);
+        if (!current.disableAllFeatures && current.panicKeyEnable && current.panicKey &&
+            (e.key === current.panicKey || e.code === current.panicKey)) {
+          window.location.href = current.panicUrl || 'https://classroom.google.com';
+        }
+      }, true);
 
       // 4. Touch Panic Overlay Button
-      if (settings.touchPanic) {
+      if (settings.touchPanic && !settings.disableAllFeatures) {
         function injectPanicOverlay() {
+          var current = loadHeavenlySettings(window);
+          if (current.disableAllFeatures || !current.touchPanic) return;
           if (!window.document || !window.document.body) return;
           if (window.document.getElementById('heavenly-touch-panic-root')) return;
 
@@ -1135,7 +1145,8 @@
           var startLeft = 0, startTop = 0;
 
           function triggerPanic() {
-            window.location.href = settings.panicUrl || 'https://classroom.google.com';
+            var current = loadHeavenlySettings(window);
+            if (!current.disableAllFeatures && current.touchPanic) window.location.href = current.panicUrl || 'https://classroom.google.com';
           }
 
           var onDown = function (e) {
@@ -4688,9 +4699,9 @@
     // Performance optimization: Load settings once and pass to all initializers
     // to avoid redundant localStorage reads and JSON.parse calls (~49% speedup)
     var settings = loadHeavenlySettings(window);
-    if (!settings.disableAllFeatures) {
-      initHeavenlyCloakAndPanic(window, settings, config);
-    }
+    // Privacy handlers stay attached while paused so master changes can resume
+    // existing cloaking and panic preferences without installing another handler.
+    initHeavenlyCloakAndPanic(window, settings, config);
     if (!settings.disableAllWidgets && !settings.disableAllFeatures) {
       initHeavenlyWidgets(window, settings, config);
       initManualIconPickerWidget(config, window, settings);

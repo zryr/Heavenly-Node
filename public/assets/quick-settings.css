@@ -78,7 +78,6 @@
 .qs-config-button:focus-visible { outline: 2px solid #7dd3fc; outline-offset: 2px; }
 .qs-context-card { max-width: 440px; }
 .qs-context-field { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 4px 0; font-size: .82rem; color: #cbd5e1; }
-.qs-context-field input { width: 19px; height: 19px; flex-shrink: 0; accent-color: #38bdf8; cursor: pointer; }
 .qs-context-field select { width: 54%; min-width: 0; min-height: 44px; padding: 7px; border: 1px solid rgba(148,163,184,.25); border-radius: 10px; background: #0f172a; color: #e2e8f0; font-family: inherit; font-size: 16px; }
 .qs-context-field input:disabled, .qs-context-field select:disabled { opacity: .5; cursor: default; }
 .qs-cloak-preview { margin: 10px 0; padding: 12px; background: rgba(56,189,248,.06); border-radius: 12px; }
@@ -92,3 +91,27 @@
 @media (hover: hover) { .qs-config-button:hover { color: #7dd3fc; background: rgba(56,189,248,.08); } }
 
 #quick-settings-tray.qs-has-widget-settings .qs-group-heading { min-height: 44px; }
+/* The guide scrolls independently while its title and dismissal remain visible. */
+.qs-help-guide { display: flex; flex-direction: column; overflow: hidden; padding: 16px; }
+.qs-help-guide .qs-help-heading, #qs-help-intro { flex-shrink: 0; }
+.qs-help-guide .qs-help-title { font-size: .95rem; }
+#qs-help-intro { color: #b5a9c9; margin: 4px 0 12px; font-size: .77rem; line-height: 1.6; }
+#qs-help-intro[hidden] { display: none; }
+.qs-help-guide #qs-help-text { min-height: 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
+.qs-guide-category + .qs-guide-category { margin-top: 14px; }
+.qs-guide-category h3 { margin: 0 0 5px; color: #b5a9c9; }
+.qs-help-guide .qs-help-entry { margin: 0; border-bottom: 1px solid rgba(192,132,252,.12); }
+.qs-help-guide summary { display: flex; align-items: center; gap: 9px; min-height: 44px; padding: 8px 4px; list-style: none; cursor: pointer; color: #f3e8ff; font-weight: 600; border-radius: 7px; }
+.qs-help-guide summary::-webkit-details-marker { display: none; }
+.qs-help-guide summary svg { width: 16px; height: 16px; flex-shrink: 0; fill: none; stroke: #c4b5fd; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.qs-help-guide summary .qs-guide-arrow { width: 13px; height: 13px; margin-left: auto; transition: transform .14s ease; }
+.qs-help-guide details[open] .qs-guide-arrow { transform: rotate(90deg); }
+.qs-help-guide summary:focus-visible { outline: 2px solid #7dd3fc; outline-offset: -2px; }
+.qs-help-guide details p { margin: 2px 4px 12px 29px; color: #d8cbe8; line-height: 1.65; overflow-wrap: anywhere; }
+.qs-context-field input[type="checkbox"] { width: 19px; height: 19px; flex-shrink: 0; accent-color: #38bdf8; cursor: pointer; }
+.qs-context-field input[type="text"] { width: 54%; min-width: 0; min-height: 44px; height: auto; padding: 7px; border: 1px solid rgba(148,163,184,.25); border-radius: 10px; background: #0f172a; color: #e2e8f0; font-family: inherit; font-size: 16px; cursor: text; }
+#qs-context-master-link[hidden] { display: none; }
+#qs-context-master-link { display: inline-flex; align-items: center; min-height: 44px; color: #7dd3fc; font-size: .8rem; }
+.qs-pill-chip:disabled:not(.active) { color: #94a3b8; }
+@media (hover: hover) { .qs-help-guide summary:hover { background: rgba(168,85,247,.08); } }
+@media (prefers-reduced-motion: reduce) { .qs-help-guide summary .qs-guide-arrow { transition: none; } }
