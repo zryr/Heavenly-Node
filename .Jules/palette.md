@@ -17,3 +17,7 @@
 ## 2026-10-07 - Dynamic Drag Handle & Reorder Bar Keyboard Accessibility
 **Learning:** Drag handles dynamically rendered as `<div>` elements without `tabindex="0"`, `role="button"`, `aria-label`, and `onkeydown` listeners render bookmark reorder menus completely inaccessible to keyboard and screen reader users.
 **Action:** Configure drag handle `<div>` elements with `role="button"`, `tabindex="0"`, descriptive `aria-label`, `:focus-visible` outline styles, and `onkeydown` handlers for `Enter` and `Space` keys to open reorder action menus.
+
+## 2026-10-13 - Code Editor Area & Action Toolbar Accessibility
+**Learning:** Textareas and icon/text action buttons in code editor interfaces without explicit `aria-label` attributes leave screen reader users unaware of their purpose, while status indicator bars require `aria-live="polite"` to dynamically announce execution and editor updates.
+**Action:** Always add descriptive `aria-label` attributes to code editor textareas and action toolbar buttons, and configure status indicators with `aria-live="polite"`.
