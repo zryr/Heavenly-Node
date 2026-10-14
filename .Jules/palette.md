@@ -17,3 +17,7 @@
 ## 2026-10-07 - Dynamic Drag Handle & Reorder Bar Keyboard Accessibility
 **Learning:** Drag handles dynamically rendered as `<div>` elements without `tabindex="0"`, `role="button"`, `aria-label`, and `onkeydown` listeners render bookmark reorder menus completely inaccessible to keyboard and screen reader users.
 **Action:** Configure drag handle `<div>` elements with `role="button"`, `tabindex="0"`, descriptive `aria-label`, `:focus-visible` outline styles, and `onkeydown` handlers for `Enter` and `Space` keys to open reorder action menus.
+
+## 2026-10-08 - Modal Tab Navigation & Quick Settings Switch Accessibility
+**Learning:** Modal creation tabs and quick settings pill buttons rendered as generic `<button>` elements without `role="tab"` / `role="switch"` and `aria-selected` / `aria-pressed` fail to communicate active selection and toggle states to screen readers and keyboard users.
+**Action:** Wrap modal tab controls in `role="tablist"`, set `role="tab"` and `role="switch"`, link `aria-controls` / `aria-label`, and dynamically synchronize `aria-selected` and `aria-pressed` attributes on state changes.
