@@ -2772,10 +2772,19 @@
 
       // --- Granular Export & Import Logic ---
       var parsedImportData = null;
+      var lastFocusedElement = null;
+
+      function restoreLastFocus() {
+        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+          try { lastFocusedElement.focus(); } catch (e) {}
+        }
+        lastFocusedElement = null;
+      }
 
       function closeExportModal() {
         var modal = $('export-modal');
         if (modal) modal.classList.remove('active');
+        restoreLastFocus();
       }
 
       function closeImportModal() {
@@ -2786,9 +2795,11 @@
         if (fileInput) fileInput.value = '';
         $('import-step-1').style.display = 'flex';
         $('import-step-2').style.display = 'none';
+        restoreLastFocus();
       }
 
       $('open-export-modal-btn').onclick = function () {
+        lastFocusedElement = document.activeElement;
         var bmsData = loadBookmarkData();
         var settingsData = loadSettings();
         var container = $('export-tree-container');
@@ -2872,6 +2883,8 @@
         });
 
         $('export-modal').classList.add('active');
+        var closeBtn = $('close-export-modal-btn');
+        if (closeBtn) closeBtn.focus();
       };
 
       $('close-export-modal-btn').onclick = closeExportModal;
@@ -2932,11 +2945,14 @@
 
       // Import Modal File Reader & Tree Builder
       $('open-import-modal-btn').onclick = function () {
+        lastFocusedElement = document.activeElement;
         $('import-step-1').style.display = 'flex';
         $('import-step-2').style.display = 'none';
         var fileInput = $('import-file-input');
         if (fileInput) fileInput.value = '';
         $('import-modal').classList.add('active');
+        var closeBtn = $('close-import-modal-btn');
+        if (closeBtn) closeBtn.focus();
       };
 
       $('import-file-input').onchange = function (e) {
