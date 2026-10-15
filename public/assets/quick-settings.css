@@ -52,7 +52,7 @@
 .qs-editor-card button, .qs-editor-card summary { min-height: 44px; min-width: 44px; padding: 7px 10px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: #cbd5e1; font-family: inherit; font-size: .8rem; cursor: pointer; }
 .qs-editor-card button:hover, .qs-editor-card summary:hover { color: #7dd3fc; background: rgba(56,189,248,.08); }
 .qs-editor-card button:disabled { color: #64748b; cursor: default; background: transparent; }
-.qs-editor-card button:focus-visible, .qs-editor-card summary:focus-visible, .qs-editor-card input:focus-visible { outline: 2px solid #38bdf8; outline-offset: 1px; }
+.qs-editor-card button:focus-visible, .qs-editor-card summary:focus-visible, .qs-editor-card input:focus-visible, .qs-editor-card select:focus-visible { outline: 2px solid #38bdf8; outline-offset: 1px; }
 .qs-editor-card .qs-editor-handle { touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; font-size: 1.2rem; color: #94a3b8; }
 .qs-editor-handle.is-dragging { color: #38bdf8; background: rgba(56,189,248,.16); cursor: grabbing; }
 .qs-editor-row.qs-drop-before { border-top-color: #38bdf8; box-shadow: 0 -2px 0 #38bdf8; }
@@ -108,7 +108,22 @@
 .qs-help-guide details[open] .qs-guide-arrow { transform: rotate(90deg); }
 .qs-help-guide summary:focus-visible { outline: 2px solid #7dd3fc; outline-offset: -2px; }
 .qs-help-guide details p { margin: 2px 4px 12px 29px; color: #d8cbe8; line-height: 1.65; overflow-wrap: anywhere; }
-.qs-context-field input[type="checkbox"] { width: 19px; height: 19px; flex-shrink: 0; accent-color: #38bdf8; cursor: pointer; }
+/* Match Settings switches without inheriting its global slider/input rules. */
+.qs-context-switch { position: relative; display: inline-flex; width: 48px; height: 26px; flex: 0 0 48px; }
+.qs-context-switch input[type="checkbox"] { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; opacity: 0; cursor: pointer; z-index: 1; }
+.qs-context-track { position: absolute; inset: 0; border: 1px solid #64748b; border-radius: 30px; background: #334155; pointer-events: none; transition: background-color .16s ease, border-color .16s ease; }
+.qs-context-track::before { content: ""; position: absolute; width: 18px; height: 18px; top: 3px; left: 3px; border-radius: 50%; background: #cbd5e1; transition: transform .16s ease; }
+.qs-context-switch input:checked + .qs-context-track { background: #0284c7; border-color: #38bdf8; }
+.qs-context-switch input:checked + .qs-context-track::before { transform: translateX(22px); background: #fff; }
+.qs-context-switch input:focus-visible + .qs-context-track { outline: 2px solid #7dd3fc; outline-offset: 3px; }
+.qs-context-switch input:disabled { cursor: default; }
+.qs-context-switch input:disabled + .qs-context-track { opacity: .5; }
+@media (hover: hover) { .qs-context-switch input:not(:disabled):hover + .qs-context-track { border-color: #7dd3fc; } }
+@media (prefers-reduced-motion: reduce) { .qs-context-track, .qs-context-track::before { transition: none; } }
+@media (forced-colors: active) {
+  .qs-context-switch input[type="checkbox"] { opacity: 1; appearance: auto; accent-color: auto; }
+  .qs-context-track { display: none; }
+}
 .qs-context-field input[type="text"] { width: 54%; min-width: 0; min-height: 44px; height: auto; padding: 7px; border: 1px solid rgba(148,163,184,.25); border-radius: 10px; background: #0f172a; color: #e2e8f0; font-family: inherit; font-size: 16px; cursor: text; }
 #qs-context-master-link[hidden] { display: none; }
 #qs-context-master-link { display: inline-flex; align-items: center; min-height: 44px; color: #7dd3fc; font-size: .8rem; }
@@ -134,6 +149,30 @@
 @media (forced-colors: active) {
   .qs-editor-body, .qs-help-popover:not(.qs-help-guide), .qs-help-guide #qs-help-text { scrollbar-color: auto; }
 }
+/* Purple information surfaces share native scrollbar geometry, not editor colors. */
+.qs-help-popover:not(.qs-help-guide), .qs-help-guide #qs-help-text { --qs-scroll-thumb: #8975a5; }
+.qs-help-guide #qs-help-text { padding-right: 5px; }
+.qs-help-popover:not(.qs-help-guide):focus-within, .qs-help-guide #qs-help-text:focus-within { --qs-scroll-thumb: #c084fc; }
+@media (hover: hover) { .qs-help-popover:not(.qs-help-guide):hover, .qs-help-guide #qs-help-text:hover { --qs-scroll-thumb: #c084fc; } }
+/* Only the homepage viewport; leave Settings and other scrolling regions alone. */
+html.qs-homepage { color-scheme: dark; scrollbar-width: thin; scrollbar-color: #475569 #030712; }
+html.qs-homepage::-webkit-scrollbar { width: 8px; height: 8px; }
+html.qs-homepage::-webkit-scrollbar-track { background: #030712; }
+html.qs-homepage::-webkit-scrollbar-thumb { background: #475569; border: 2px solid #030712; border-radius: 10px; }
+html.qs-homepage::-webkit-scrollbar-thumb:hover { background: #64748b; }
+@media (forced-colors: active) { html.qs-homepage { scrollbar-color: auto; } }
+/* Consistent compact forms and a fixed, wrapping footer above the scrolling body. */
+.qs-context-field > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.qs-context-form-field { flex-direction: column; align-items: stretch; gap: 6px; padding: 8px 0; }
+.qs-context-form-field select, .qs-context-form-field input[type="text"] { width: 100%; }
+.qs-context-card .qs-editor-header, .qs-context-card .qs-editor-footer { flex-shrink: 0; }
+.qs-context-card .qs-editor-body { min-height: 0; }
+.qs-context-card .qs-editor-header p { margin: 0; line-height: 1.5; }
+.qs-context-card .qs-editor-body h3 { color: #94a3b8; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; margin: 14px 0 6px; }
+.qs-context-card .qs-editor-body h3:first-child { margin-top: 2px; }
+.qs-context-card .qs-editor-note { margin: 12px 0 0; line-height: 1.6; }
+.qs-context-card select:focus-visible, .qs-context-card input[type="text"]:focus-visible { outline-offset: 2px; }
+.qs-context-card .qs-editor-footer { background: rgba(15,23,42,.98); }
 /* The same native pool chips serve Settings and the staged quick editor. */
 .cloak-pool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 6px; }
 .cloak-pool-chip { display: flex; align-items: center; gap: 7px; min-width: 0; min-height: 44px; padding: 8px 10px; border: 1px solid rgba(148,163,184,.22); border-radius: 12px; color: #94a3b8; background: rgba(30,41,59,.5); font: inherit; font-size: .8rem; cursor: pointer; }

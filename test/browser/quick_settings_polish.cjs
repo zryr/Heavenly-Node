@@ -52,13 +52,13 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   async function scrollbar(selector) {
     await page.mouse.move(1, 1);
     const styles = await page.locator(selector).evaluate(node => { const css = getComputedStyle(node); return { scheme: css.colorScheme, width: css.scrollbarWidth, colors: css.scrollbarColor, overflow: css.overflowY, thumb: css.getPropertyValue('--qs-scroll-thumb').trim() }; });
-    assert.equal(styles.scheme, 'dark'); assert.equal(styles.thumb, '#64748b'); assert.equal(styles.overflow, 'auto');
+    assert.equal(styles.scheme, 'dark'); assert.equal(styles.thumb, selector === '#qs-help-text' ? '#8975a5' : '#64748b'); assert.equal(styles.overflow, 'auto');
     if (await page.evaluate(() => CSS.supports('scrollbar-width', 'thin'))) {
       // Firefox may resolve thin to none for touch-mode native overlay scrollbars.
       if (engine === 'firefox' && styles.width === 'none') assert(await page.evaluate(() => Array.from(document.styleSheets).filter(sheet => sheet.href && sheet.href.endsWith('/assets/quick-settings.css')).some(sheet => Array.from(sheet.cssRules).some(rule => rule.selectorText && rule.selectorText.includes('.qs-editor-body,') && rule.style.scrollbarWidth === 'thin'))));
       else assert.equal(styles.width, 'thin');
     }
-    if (await page.evaluate(() => CSS.supports('scrollbar-color', '#64748b transparent'))) assert(styles.colors.includes('100, 116, 139'));
+    if (await page.evaluate(() => CSS.supports('scrollbar-color', '#64748b transparent'))) assert(styles.colors.includes(selector === '#qs-help-text' ? '137, 117, 165' : '100, 116, 139'));
     const overflows = await page.locator(selector).evaluate(node => { node.scrollTop = 0; return node.scrollHeight > node.clientHeight; });
     if (overflows) {
       await page.locator(selector).hover(); await page.mouse.wheel(0, 160);

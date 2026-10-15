@@ -57,7 +57,16 @@
           input.dataset.configField = field.key;
           input.id = 'qs-config-' + field.key; label.htmlFor = input.id;
           input.setAttribute('aria-describedby', 'qs-context-note');
-          label.appendChild(input); controls.appendChild(label);
+          if (field.type === 'checkbox') {
+            // Keep the native, labelled input and its existing change handler.
+            // A scoped visual switch avoids platform checkbox glyph clipping.
+            var toggle = doc.createElement('span'); toggle.className = 'qs-context-switch';
+            var track = doc.createElement('span'); track.className = 'qs-context-track'; track.setAttribute('aria-hidden', 'true');
+            input.setAttribute('role', 'switch'); toggle.appendChild(input); toggle.appendChild(track); label.appendChild(toggle);
+          } else {
+            label.classList.add('qs-context-form-field'); label.appendChild(input);
+          }
+          controls.appendChild(label);
           input.addEventListener(field.type === 'text' ? 'input' : 'change', function () {
             draft[field.key] = field.type === 'checkbox' ? (field.inverted ? !input.checked : input.checked) : input.value;
             get('error').hidden = true; refresh();
