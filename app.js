@@ -314,6 +314,7 @@ function iframeSecurityHeadersResponseMiddleware(data) {
 
 var unblockerConfig = {
     prefix: '/proxy/',
+    clientScripts: false,
     requestMiddleware: [
         headersMiddleware,
         newgroundsMiddleware,
@@ -321,6 +322,7 @@ var unblockerConfig = {
         youtube.processRequest
     ],
     responseMiddleware: [
+        require('./lib/proxy-client-injector'),
         responseRedirectMiddleware,
         responseLinkHeaderMiddleware,
         iframeSecurityHeadersResponseMiddleware,

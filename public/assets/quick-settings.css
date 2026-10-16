@@ -60,8 +60,8 @@
 #qs-editor-more { margin: 12px 0; }
 #qs-editor-more summary { color: #7dd3fc; }
 #qs-editor-available { margin-top: 6px; }
-.qs-editor-info { min-height: 44px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-.qs-editor-info input { width: 18px; height: 18px; accent-color: #38bdf8; }
+.qs-editor-info { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 0; cursor: pointer; }
+.qs-editor-info > span:first-child { min-width: 0; overflow-wrap: anywhere; }
 .qs-editor-footer { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-top: 1px solid rgba(148,163,184,.15); }
 .qs-editor-footer > div { display: flex; gap: 6px; margin-left: auto; }
 .qs-editor-card .qs-primary { background: rgba(56,189,248,.16); color: #7dd3fc; border-color: rgba(56,189,248,.45); }
@@ -109,20 +109,20 @@
 .qs-help-guide summary:focus-visible { outline: 2px solid #7dd3fc; outline-offset: -2px; }
 .qs-help-guide details p { margin: 2px 4px 12px 29px; color: #d8cbe8; line-height: 1.65; overflow-wrap: anywhere; }
 /* Match Settings switches without inheriting its global slider/input rules. */
-.qs-context-switch { position: relative; display: inline-flex; width: 48px; height: 26px; flex: 0 0 48px; }
-.qs-context-switch input[type="checkbox"] { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; opacity: 0; cursor: pointer; z-index: 1; }
-.qs-context-track { position: absolute; inset: 0; border: 1px solid #64748b; border-radius: 30px; background: #334155; pointer-events: none; transition: background-color .16s ease, border-color .16s ease; }
-.qs-context-track::before { content: ""; position: absolute; width: 18px; height: 18px; top: 3px; left: 3px; border-radius: 50%; background: #cbd5e1; transition: transform .16s ease; }
-.qs-context-switch input:checked + .qs-context-track { background: #0284c7; border-color: #38bdf8; }
-.qs-context-switch input:checked + .qs-context-track::before { transform: translateX(22px); background: #fff; }
-.qs-context-switch input:focus-visible + .qs-context-track { outline: 2px solid #7dd3fc; outline-offset: 3px; }
-.qs-context-switch input:disabled { cursor: default; }
-.qs-context-switch input:disabled + .qs-context-track { opacity: .5; }
-@media (hover: hover) { .qs-context-switch input:not(:disabled):hover + .qs-context-track { border-color: #7dd3fc; } }
-@media (prefers-reduced-motion: reduce) { .qs-context-track, .qs-context-track::before { transition: none; } }
+.qs-switch { position: relative; display: inline-flex; width: 48px; height: 26px; flex: 0 0 48px; }
+.qs-switch input[type="checkbox"] { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; opacity: 0; cursor: pointer; z-index: 1; }
+.qs-switch-track { position: absolute; inset: 0; border: 1px solid #64748b; border-radius: 30px; background: #334155; pointer-events: none; transition: background-color .16s ease, border-color .16s ease; }
+.qs-switch-track::before { content: ""; position: absolute; width: 18px; height: 18px; top: 3px; left: 3px; border-radius: 50%; background: #cbd5e1; transition: transform .16s ease; }
+.qs-switch input:checked + .qs-switch-track { background: #0284c7; border-color: #38bdf8; }
+.qs-switch input:checked + .qs-switch-track::before { transform: translateX(22px); background: #fff; }
+.qs-switch input:focus-visible + .qs-switch-track { outline: 2px solid #7dd3fc; outline-offset: 3px; }
+.qs-switch input:disabled { cursor: default; }
+.qs-switch input:disabled + .qs-switch-track { opacity: .5; }
+@media (hover: hover) { .qs-switch input:not(:disabled):hover + .qs-switch-track { border-color: #7dd3fc; } }
+@media (prefers-reduced-motion: reduce) { .qs-switch-track, .qs-switch-track::before { transition: none; } }
 @media (forced-colors: active) {
-  .qs-context-switch input[type="checkbox"] { opacity: 1; appearance: auto; accent-color: auto; }
-  .qs-context-track { display: none; }
+  .qs-switch input[type="checkbox"] { opacity: 1; appearance: auto; accent-color: auto; }
+  .qs-switch-track { display: none; }
 }
 .qs-context-field input[type="text"] { width: 54%; min-width: 0; min-height: 44px; height: auto; padding: 7px; border: 1px solid rgba(148,163,184,.25); border-radius: 10px; background: #0f172a; color: #e2e8f0; font-family: inherit; font-size: 16px; cursor: text; }
 #qs-context-master-link[hidden] { display: none; }

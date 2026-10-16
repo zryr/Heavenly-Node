@@ -61,6 +61,20 @@
     var prefix = config.prefix;
     var prefixLen = prefix.length;
 
+    // The deployment toolbar is hosting infrastructure, not remote-site content.
+    // Its runtime derives iframe origins from currentScript.src. Proxying that
+    // script turns its feedback frame into a remote-site 404, which can inject
+    // another toolbar. Keep only this verified HTTPS runtime namespace direct.
+    if (urlStr.indexOf('/_next-live/') !== -1) {
+      var runtime = urlStr;
+      if (runtime.startsWith(prefix)) runtime = runtime.slice(prefixLen);
+      else if (runtime.startsWith(location.origin + prefix)) runtime = runtime.slice((location.origin + prefix).length);
+      try {
+        var runtimeUrl = new URL(runtime);
+        if (runtimeUrl.origin === 'https://vercel.live' && runtimeUrl.pathname.startsWith('/_next-live/')) return runtimeUrl.href;
+      } catch (e) {}
+    }
+
     // Performance optimization: Use String.prototype.startsWith instead of substr() slicing
     // to avoid creating temporary string slice allocations on hot URL rewriter paths (~60% speedup)
     if (urlStr.startsWith(prefix)) {
@@ -4685,6 +4699,9 @@
   }
 
   function initForWindow(config, window) {
+    // Older/cached injected documents may contain a second initializer.
+    if (window.__heavenlyClientInitialized) return;
+    window.__heavenlyClientInitialized = true;
     console.log("[Heavenly Debug] Initializing unblocker client scripts for window", config, window);
     if (!config.proxyOrigin) config.proxyOrigin = (window.location && window.location.origin) || '';
     initLocationPrototype(config, window);

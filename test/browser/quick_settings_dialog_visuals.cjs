@@ -24,7 +24,7 @@ const pass = message => { checks++; console.log('PASS ' + message); };
       const box = input.getBoundingClientRect(), label = input.closest('label').getBoundingClientRect(), track = input.nextElementSibling, css = getComputedStyle(track), knob = getComputedStyle(track, '::before');
       return { role: input.getAttribute('role'), label: input.labels.length, width: box.width, height: box.height, inside: box.left >= label.left && box.right <= label.right && box.top >= label.top && box.bottom <= label.bottom, target: label.height, radius: css.borderRadius, knob: knob.width, transform: knob.transform, checked: input.checked };
     }));
-    assert(rows.length); for (const row of rows) { assert.equal(row.role, 'switch'); assert(row.label); assert.equal(row.width, 48); assert.equal(row.height, 26); assert(row.inside); assert(row.target >= 48); assert.equal(row.radius, '30px'); assert.equal(row.knob, '18px'); }
+    assert(rows.length); for (const row of rows) { assert.equal(row.role, 'switch'); assert(row.label); assert(Math.abs(row.width - 48) < .01); assert(Math.abs(row.height - 26) < .01); assert(row.inside); assert(row.target >= 48); assert.equal(row.radius, '30px'); assert.equal(row.knob, '18px'); }
   }
   const root = await page.evaluate(() => { const css = getComputedStyle(document.documentElement); return { color: css.scrollbarColor, width: css.scrollbarWidth, scheme: css.colorScheme }; });
   assert.equal(root.scheme, 'dark'); if (root.color) assert(root.color.includes('71, 85, 105')); if (root.width && root.width !== 'none') assert.equal(root.width, 'thin');
@@ -58,8 +58,22 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   await page.locator('#pill-tab-cloak-config').click(); assert(await auto.isDisabled()); assert.equal(await auto.evaluate(input => getComputedStyle(input.nextElementSibling).opacity), '0.5'); await page.keyboard.press('Escape');
   await page.evaluate(() => { const settings = JSON.parse(localStorage.getItem('heavenly_settings')); delete settings.disableAllFeatures; localStorage.setItem('heavenly_settings', JSON.stringify(settings)); dispatchEvent(new CustomEvent('heavenly:settings-change')); });
   pass('master-paused switches remain disabled and visibly unavailable without altering feature state');
+  const edit = page.locator('#quick-settings-edit-btn'), info = page.locator('#qs-editor-info-icons');
+  const beforeInfo = await saved(); await edit.click(); await info.scrollIntoViewIfNeeded(); await info.focus(); await page.keyboard.press('Tab'); await page.keyboard.press('Shift+Tab'); await page.keyboard.press('Space');
+  assert(await info.isChecked()); assert.equal(await info.evaluate(node => node.getAttribute('role')), 'switch');
+  assert.equal(await info.evaluate(node => getComputedStyle(node.nextElementSibling).outlineStyle), 'solid');
+  assert.deepEqual(await saved(), beforeInfo); await page.keyboard.press('Escape');
+  await edit.click(); assert.equal(await info.isChecked(), false); await info.check(); await page.locator('#qs-editor-save').click();
+  assert.equal((await saved()).quickSettings.showInfoIcons, true); assert.equal(await page.locator('#quick-settings-info-btn').isVisible(), false);
+  await edit.click(); await info.uncheck(); await page.locator('#qs-editor-save').click(); assert.deepEqual(await saved(), beforeInfo);
+  pass('customization uses the same labelled switch, keyboard focus and staged Save/Cancel without changing unrelated settings');
   for (const [width, height] of [[320,740], [820,1180], [1180,820], [1366,768], [1920,1080]]) {
     await page.setViewportSize({ width, height });
+    await edit.click(); await info.scrollIntoViewIfNeeded();
+    const geometry = await info.evaluate(input => { const box=input.getBoundingClientRect(), label=input.closest('label').getBoundingClientRect();return { width:box.width,height:box.height,inside:box.left>=label.left&&box.right<=label.right&&box.top>=label.top&&box.bottom<=label.bottom,target:label.height }; });
+    assert(Math.abs(geometry.width-48)<.01);assert(Math.abs(geometry.height-26)<.01);assert(geometry.inside);assert(geometry.target>=48);
+    if (engine === 'firefox' && width === 820) await page.screenshot({path:'/tmp/heavenly-fixed-info-firefox.png',animations:'disabled'});
+    await page.keyboard.press('Escape');
     for (const selector of ['#pill-tab-cloak-config', '#pill-panic-settings-config', '#qs-widgets-config-btn']) {
       await page.locator(selector).click(); await switchGeometry();
       if (selector.includes('cloak')) {
@@ -104,7 +118,7 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   await page.locator('[data-qs-config="panic"]').click(); await switchGeometry(); await page.keyboard.press('Escape');
   pass('shared switches render on Settings too, with homepage scrollbar styling kept scoped');
   await page.goto(origin, { waitUntil: 'domcontentloaded' }); await page.waitForFunction(() => document.getElementById('heavenly-loading-screen').style.display === 'none');
-  await page.emulateMedia({ reducedMotion: 'reduce' }); await page.locator('#pill-tab-cloak-config').click(); assert.equal(await page.locator('.qs-context-track').first().evaluate(node => getComputedStyle(node).transitionDuration), '0s');
+  await page.emulateMedia({ reducedMotion: 'reduce' }); await page.locator('#pill-tab-cloak-config').click(); assert.equal(await page.locator('.qs-switch-track').first().evaluate(node => getComputedStyle(node).transitionDuration), '0s');
   if (engine === 'chromium') { await page.emulateMedia({ forcedColors: 'active' }); assert.equal(await auto.evaluate(node => getComputedStyle(node).opacity), '1'); assert.equal(await auto.evaluate(node => getComputedStyle(node.nextElementSibling).display), 'none'); }
   await page.keyboard.press('Escape'); assert.deepEqual(errors, []);
   pass('reduced motion and error-free controls' + (engine === 'chromium' ? ', including native forced-colors fallback' : ''));
