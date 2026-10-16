@@ -3,6 +3,8 @@
 
   var navigation = typeof module !== "undefined" && module.exports ? require("../public/assets/heavenly-navigation.js") : global.HeavenlyNavigation;
 
+  var icons = typeof module !== "undefined" && module.exports ? require("../public/assets/heavenly-icons.js") : global.HeavenlyIcons;
+
   // todo:
   // - postMessage
   // - open
@@ -78,7 +80,7 @@
     // Performance optimization: Use String.prototype.startsWith instead of substr() slicing
     // to avoid creating temporary string slice allocations on hot URL rewriter paths (~60% speedup)
     if (urlStr.startsWith(prefix)) {
-      return urlStr;
+      return urlStr.replace(/^(\/proxy\/https?:\/)([^/])/i, "$1/$2");
     }
 
     // Early fast-path: non-HTTP/HTTPS schemes that should not be proxied
@@ -145,7 +147,7 @@
       url.origin === location.origin &&
       url.pathname.substr(0, prefixLen) === prefix
     ) {
-      return urlStr;
+      return urlStr.replace(/(\/proxy\/https?:\/)([^/])/i, "$1/$2");
     }
 
     // don't break data: urls, about:blank, etc
@@ -167,174 +169,18 @@
     return prefix + url.href;
   }
 
-  function initLocationPrototype(config, window) {
-    if (!window.Location || !window.Location.prototype) return;
-    var proto = window.Location.prototype;
-    if (proto.__heavenlyLocUnproxied) return;
-    proto.__heavenlyLocUnproxied = true;
-
-    var prefix = config.prefix || '/proxy/';
-    var prefixLen = prefix.length;
-
-    var nativeGetters = {};
-    ['pathname', 'href', 'search', 'hash', 'origin'].forEach(function (prop) {
-      var desc;
-      var p = proto;
-      while (p && !(desc = Object.getOwnPropertyDescriptor(p, prop))) {
-        p = Object.getPrototypeOf(p);
-      }
-      if (desc && desc.get) {
-        nativeGetters[prop] = desc.get;
-      }
-    });
-
-    function getNativeLocProp(loc, prop) {
-      if (loc && loc['_raw' + prop] !== undefined) {
-        return loc['_raw' + prop];
-      }
-      if (nativeGetters[prop]) {
-        try {
-          var val = nativeGetters[prop].call(loc);
-          if (val !== undefined && val !== null) return val;
-        } catch (e) {}
-      }
-      return loc && loc['_' + prop] !== undefined ? loc['_' + prop] : '';
-    }
-
-    function getTargetRemoteObj(loc) {
-      if (!loc) return null;
-      var path = getNativeLocProp(loc, 'pathname');
-      if (typeof path !== 'string' || path.substr(0, prefixLen) !== prefix) return null;
-
-      var currentRemoteHref = path.substr(prefixLen) + getNativeLocProp(loc, 'search') + getNativeLocProp(loc, 'hash');
-      while (currentRemoteHref && currentRemoteHref.indexOf(prefix) !== -1) {
-        var idx = currentRemoteHref.indexOf(prefix);
-        currentRemoteHref = currentRemoteHref.substring(idx + prefixLen);
-      }
-      if (currentRemoteHref && currentRemoteHref.indexOf(":/") !== -1 && currentRemoteHref.indexOf("://") === -1) {
-        currentRemoteHref = currentRemoteHref.replace(/^(https?:\/)([^\/])/i, "$1/$2");
-      }
-      if (currentRemoteHref && !currentRemoteHref.startsWith("http://") && !currentRemoteHref.startsWith("https://")) {
-        currentRemoteHref = "https://" + currentRemoteHref;
-      }
-
-      var cacheKey = path + getNativeLocProp(loc, 'search') + getNativeLocProp(loc, 'hash');
-      if (loc._heavenlyTargetCacheKey === cacheKey && loc._heavenlyTargetObj) {
-        return loc._heavenlyTargetObj;
-      }
-
-      try {
-        var targetObj = new URL(currentRemoteHref);
-        loc._heavenlyTargetCacheKey = cacheKey;
-        loc._heavenlyTargetObj = targetObj;
-        return targetObj;
-      } catch (e) {
-        return null;
-      }
-    }
-
-    function overrideLocProp(prop, getterFn) {
-      var desc;
-      var p = proto;
-      while (p && !(desc = Object.getOwnPropertyDescriptor(p, prop))) {
-        p = Object.getPrototypeOf(p);
-      }
-      var initialVal = (desc && 'value' in desc) ? desc.value : undefined;
-      var nativeGet = nativeGetters[prop] || (desc && desc.get ? desc.get : null);
-      var nativeSet = desc && desc.set ? desc.set : null;
-      Object.defineProperty(proto, prop, {
-        get: function () {
-          if (this['_raw' + prop] === undefined && initialVal !== undefined) {
-            this['_raw' + prop] = initialVal;
-          }
-          if (Object.prototype.hasOwnProperty.call(this, prop)) {
-            var ownVal = this[prop];
-            if (typeof ownVal === 'string' && ownVal.startsWith(prefix)) {
-              this['_raw' + prop] = ownVal;
-              delete this[prop];
-            }
-          }
-          var targetObj = getTargetRemoteObj(this);
-          if (targetObj) {
-            return getterFn(targetObj);
-          }
-          if (nativeGet) return nativeGet.call(this);
-          return this['_' + prop] !== undefined ? this['_' + prop] : (this['_raw' + prop] !== undefined ? this['_raw' + prop] : '');
-        },
-        set: function (val) {
-          if (nativeSet) {
-            return nativeSet.call(this, val);
-          }
-          this['_' + prop] = val;
-        },
-        configurable: true,
-        enumerable: desc ? desc.enumerable : true
-      });
-    }
-
-    overrideLocProp('pathname', function (targetObj) { return targetObj.pathname; });
-    overrideLocProp('href', function (targetObj) { return targetObj.href; });
-    overrideLocProp('search', function (targetObj) { return targetObj.search; });
-    overrideLocProp('hash', function (targetObj) { return targetObj.hash; });
-    overrideLocProp('origin', function (targetObj) { return targetObj.origin; });
-
-    if (window.Document && window.Document.prototype) {
-      var docProto = window.Document.prototype;
-      var docDesc = Object.getOwnPropertyDescriptor(docProto, 'location');
-      if (docDesc && docDesc.get) {
-        var nativeDocLocGet = docDesc.get;
-        Object.defineProperty(docProto, 'location', {
-          get: function () {
-            return nativeDocLocGet.call(this);
-          },
-          set: function (val) {
-            if (typeof val === 'string') {
-              val = fixUrl(val, config, window.location);
-            }
-            if (docDesc.set) {
-              return docDesc.set.call(this, val);
-            }
-            window.location.href = val;
-          },
-          configurable: true,
-          enumerable: docDesc.enumerable
-        });
-      }
-    }
-
-    if (window.URL) {
-      var NativeURL = window.URL;
-      function HeavenlyURL(urlArg, baseArg) {
-        if (typeof urlArg === 'string' && urlArg.startsWith(prefix)) {
-          var unproxied = urlArg.substr(prefixLen);
-          if (unproxied.indexOf(":/") !== -1 && unproxied.indexOf("://") === -1) {
-            unproxied = unproxied.replace(/^(https?:\/)([^\/])/i, "$1/$2");
-          }
-          if (!unproxied.startsWith("http://") && !unproxied.startsWith("https://")) {
-            unproxied = "https://" + unproxied;
-          }
-          urlArg = unproxied;
-        }
-        if (baseArg && typeof baseArg === 'string' && baseArg.startsWith(prefix)) {
-          var baseUnproxied = baseArg.substr(prefixLen);
-          if (baseUnproxied.indexOf(":/") !== -1 && baseUnproxied.indexOf("://") === -1) {
-            baseUnproxied = baseUnproxied.replace(/^(https?:\/)([^\/])/i, "$1/$2");
-          }
-          if (!baseUnproxied.startsWith("http://") && !baseUnproxied.startsWith("https://")) {
-            baseUnproxied = "https://" + baseUnproxied;
-          }
-          baseArg = baseUnproxied;
-        }
-        if (baseArg !== undefined) {
-          return new NativeURL(urlArg, baseArg);
-        }
-        return new NativeURL(urlArg);
-      }
-      HeavenlyURL.prototype = NativeURL.prototype;
-      if (NativeURL.createObjectURL) HeavenlyURL.createObjectURL = NativeURL.createObjectURL;
-      if (NativeURL.revokeObjectURL) HeavenlyURL.revokeObjectURL = NativeURL.revokeObjectURL;
-      window.URL = HeavenlyURL;
-    }
+  // URL and Location must retain their native origin/path semantics. Framework
+  // routers validate relative URLs against the real document origin; pretending
+  // /proxy/https://host/path has the remote origin breaks those checks. Browsers
+  // also expose non-configurable Location own properties, so prototype spoofing
+  // cannot reliably virtualize location. Rewrite requests/history explicitly.
+  function repairDocumentProxyPath(config, window) {
+    if (!window.history || !window.history.replaceState || !window.location) return;
+    var loc = window.location;
+    var path = loc.pathname || '';
+    var repaired = path.replace(/^(\/proxy\/https?:\/)([^/])/i, '$1/$2');
+    if (repaired === path) return;
+    window.history.replaceState(window.history.state, '', repaired + (loc.search || '') + (loc.hash || ''));
   }
 
   function initElementPrototypes(config, window) {
@@ -1458,10 +1304,30 @@
 
 
   function getPresetSvg(key, size) {
-    var path = PRESET_SVG_PATHS[key];
-    if (!path) return null;
-    var sz = size || '18px';
-    return '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24">' + path + '</svg>';
+    if (icons && icons.svg) return icons.svg(key, size);
+    if (typeof key !== 'string' || key.indexOf('preset:') !== 0) return null;
+    return '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a20 20 0 0 1 0 18M12 3a20 20 0 0 0 0 18"/></svg>';
+  }
+
+  function goHeavenlyHome(win, config) {
+    var origin = config.proxyOrigin || win.location.origin;
+    try {
+      var wrapper = win.parent && win.parent.__heavenlyWrapper;
+      if (wrapper && wrapper.frame.contentWindow === win && wrapper.home) {
+        if (win.parent.postMessage) win.parent.postMessage('heavenly:home', origin);
+        else wrapper.home();
+        return;
+      }
+      (win.top || win).location.href = origin + '/';
+    } catch (e) {
+      // The wrapper also recognizes a Heavenly root loaded in its own frame.
+      win.location.href = origin + '/';
+    }
+  }
+
+  function scrollLockMarkup(enabled) {
+    var shackle = enabled ? 'M7 11V7a5 5 0 0 1 10 0v4' : 'M7 11V7a5 5 0 0 1 9-3';
+    return '<svg aria-hidden="true" class="title-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="' + shackle + '"/></svg><span>' + (enabled ? 'ON' : 'OFF') + '</span>';
   }
 
   function openDirectSitePreview(window, directUrl) {
@@ -2021,9 +1887,8 @@
         }
       } catch (e) {}
 
-      var path = window.location.pathname;
       var prefix = (config && config.prefix) ? config.prefix : '/proxy/';
-      var unproxiedUrl = path.startsWith(prefix) ? path.substr(prefix.length) + window.location.search + window.location.hash : window.location.href;
+      var unproxiedUrl = getDirectRemoteUrl(window, config);
       var title = window.__heavenlyOriginalTitle || window.document.title || unproxiedUrl;
       var domain = '';
       try {
@@ -2252,7 +2117,8 @@
       saveBtn.onclick = function () {
         var finalCat = catSelect.value || data.categories[0].id;
         var finalTitle = titleInput.value.trim() || unproxiedUrl;
-        var finalUrl = urlInput.value.trim() || unproxiedUrl;
+        var finalUrl = navigation.remoteUrl(urlInput.value.trim() || unproxiedUrl, config.proxyOrigin, prefix);
+        if (!finalUrl) { window.alert('Enter a valid HTTP or HTTPS bookmark address.'); return; }
         var finalIcon = iconInput.value.trim() || defaultFavicon;
 
         data.bookmarks.push({
@@ -2390,12 +2256,14 @@
 
       function updateLockUI(btn, isEnabled) {
         if (!btn) return;
+        btn.setAttribute('aria-pressed', String(isEnabled));
+        btn.setAttribute('aria-label', 'Scroll Lock ' + (isEnabled ? 'on' : 'off'));
         if (isEnabled) {
           btn.classList.add('active');
-          btn.innerHTML = '<span>🔒 ON</span>';
+          btn.innerHTML = scrollLockMarkup(true);
         } else {
           btn.classList.remove('active');
-          btn.innerHTML = '<span>🔓 OFF</span>';
+          btn.innerHTML = scrollLockMarkup(false);
         }
       }
 
@@ -3240,7 +3108,7 @@
           var items = [];
 
           if (showNavHome) {
-            items.push('<button type="button" class="btn-ctrl" id="dock-home-btn" title="Go Home"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
+            items.push('<button type="button" class="btn-ctrl" id="dock-home-btn" title="Return to Heavenly Home"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
           items.push('<button type="button" class="btn-ctrl" id="dock-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
@@ -3256,7 +3124,7 @@
           }
 
           if (showScrollLock) {
-            items.push('<div class="dock-item"><span style="font-size:12px;font-weight:600;color:#e0f2fe;">Scroll Lock</span><button type="button" class="btn-toggle" id="dock-scroll-btn"><svg class="title-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg><span>OFF</span></button></div>');
+            items.push('<div class="dock-item"><span style="font-size:12px;font-weight:600;color:#e0f2fe;">Scroll Lock</span><button type="button" class="btn-toggle" id="dock-scroll-btn" aria-label="Scroll Lock off" aria-pressed="false">' + scrollLockMarkup(false) + '</button></div>');
           }
 
           if (showMagnifier) {
@@ -3488,7 +3356,7 @@
             var homeBtn = dockBar.querySelector('#dock-home-btn');
             if (homeBtn) homeBtn.addEventListener('click', function (e) {
               e.stopPropagation();
-              (window.top || window).location.href = config.proxyOrigin + '/';
+              goHeavenlyHome(window, config);
             });
           }
 
@@ -3611,7 +3479,7 @@
             '    <svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 0 0 18"></path><path d="M3 12h18"></path></svg>',
             '    <span>Scroll Lock</span>',
             '  </div>',
-            '  <button type="button" class="btn-toggle" id="toggle-btn"><span>🔓 OFF</span></button>',
+            '  <button type="button" class="btn-toggle" id="toggle-btn" aria-label="Scroll Lock off" aria-pressed="false">' + scrollLockMarkup(false) + '</button>',
             '  <button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>',
             '</div>'
           ].join('\n');
@@ -3732,7 +3600,7 @@
           }
 
           if (showNavHome) {
-            navHtml.push('<button type="button" class="btn-ctrl" id="nav-home-btn" title="Go to Homepage"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
+            navHtml.push('<button type="button" class="btn-ctrl" id="nav-home-btn" title="Return to Heavenly Home"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
           navHtml.push('<button type="button" class="btn-ctrl" id="nav-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
@@ -3804,7 +3672,7 @@
             var homeBtn = navWidget.querySelector('#nav-home-btn') || (navShadow.querySelector ? navShadow.querySelector('#nav-home-btn') : null);
             if (homeBtn) homeBtn.addEventListener('click', function (e) {
               e.stopPropagation();
-              (window.top || window).location.href = config.proxyOrigin + '/';
+              goHeavenlyHome(window, config);
             });
           }
 
@@ -4709,9 +4577,9 @@
     // Older/cached injected documents may contain a second initializer.
     if (window.__heavenlyClientInitialized) return;
     window.__heavenlyClientInitialized = true;
-    console.log("[Heavenly Debug] Initializing unblocker client scripts for window", config, window);
+
     if (!config.proxyOrigin) config.proxyOrigin = (window.location && window.location.origin) || '';
-    initLocationPrototype(config, window);
+    repairDocumentProxyPath(config, window);
     initElementPrototypes(config, window);
     initMutationObserverAndClicks(config, window);
     initXMLHttpRequest(config, window);
@@ -4773,7 +4641,7 @@
       // leave no trace
       delete global.unblockerInit;
     }
-    console.log("unblocker client scripts initialized");
+
   }
 
   // either export things for testing or put the init method into the global scope to be called
@@ -4785,6 +4653,8 @@
     module.exports = {
       initForWindow: initForWindow,
       fixUrl: fixUrl,
+      getPresetSvg: getPresetSvg,
+      goHeavenlyHome: goHeavenlyHome,
       fixSrcset: fixSrcset,
       isTopOrAboutBlankIframe: isTopOrAboutBlankIframe,
       openAboutBlankLauncher: openAboutBlankLauncher,

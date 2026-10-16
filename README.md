@@ -86,7 +86,7 @@ Get **Heavenly Node** running on your local machine in seconds:
 
 Quick Settings groups bookmark and main search navigation separately. Each has a New Tab preference and an independent about:blank preference. about:blank takes precedence and always opens a new tab; the New Tab preference is remembered. Direct bookmarks open normally in that tab for compatibility.
 
-Show Proxied URL is enabled by default and uses real top-level `/proxy/…` navigation. Disabling it opens a Heavenly browsing page whose current website survives refresh within that browser session. about:blank keeps its native address; enabling Show Proxied URL displays the path inside Heavenly instead. Framed browsing includes Back, Forward, and Open normally controls. Pages that refuse framing recover through normal navigation, and Open normally remains available during slow loading.
+Show Proxied URL is enabled by default and uses real top-level `/proxy/…` navigation. Disabling it opens a Heavenly browsing page whose current website survives refresh within that browser session. about:blank keeps its native address; enabling Show Proxied URL displays the path inside Heavenly instead. Framed browsing includes Back, Forward, and Open normally controls. Pages that refuse framing retain the wrapper and offer explicit Open normally recovery, which also remains available during slow loading.
 
 Existing saved about:blank preferences apply to both new controls until changed independently. Bookmark and history storage formats stay compatible. Heavenly history records visits in all supported proxy launch modes, including redirects, in-page URL changes, and back/forward navigation.
 
@@ -108,6 +108,7 @@ npm test
 # Optional browser regressions; requires Playwright in the test environment.
 # This script starts its own local app and fixture servers.
 node test/browser/navigation_history.cjs
+node test/browser/proxy_widgets_diagnostics.cjs
 node test/browser/quick_settings.cjs
 node test/browser/quick_settings_customization.cjs
 node test/browser/quick_settings_context.cjs
@@ -123,6 +124,8 @@ HEAVENLY_BROWSER=webkit node test/browser/quick_settings_context.cjs
 # Existing Chromium touch/ordering checks; start the app first.
 node test/browser/bookmark_management.cjs
 ```
+
+Proxy findings, development-only error diagnostics, and compatibility limitations are documented in [Proxy compatibility investigation](docs/proxy-compatibility.md).
 
 Browser checks use isolated profiles and emulated touch viewports. They do not establish physical iPad or touchscreen verification.
 

@@ -83,7 +83,7 @@ describe('Bookmark management and saved ordering', function () {
     verify(loaded);
     const client = fs.readFileSync(path.join(__dirname, '../custom-client/unblocker-client.js'), 'utf8');
     c.storage = c.localStorage;
-    vm.runInContext(client.slice(client.indexOf('      var data = JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));'), client.indexOf('      var path = window.location.pathname;')), c);
+    vm.runInContext(client.slice(client.indexOf('      var data = JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));'), client.indexOf("      var prefix = (config && config.prefix) ? config.prefix")), c);
     verify(c.data);
   });
 

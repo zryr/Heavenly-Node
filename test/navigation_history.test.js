@@ -143,10 +143,13 @@ describe('Safe launch and wrapper recovery', () => {
     assert.equal(navigation.openBlank(win, url, {}), blank);
     assert.equal(blank.location.href, url);
   });
-  it('falls back to top-level navigation on an iframe error', () => {
+  it('retains the wrapper and offers explicit recovery on an iframe error', () => {
     const win = blankWindow();
     navigation.mountWrapper(win, url, {});
     win.document.getElementById('heavenly-wrapper-frame').onerror();
+    assert.equal(win.location.href, 'about:blank');
+    assert.match(win.document.getElementById('heavenly-wrapper-status').textContent, /Choose Open normally/);
+    win.document.getElementById('heavenly-wrapper-recovery').onclick({ preventDefault() {} });
     assert.equal(win.location.href, url);
   });
   it('restores hosted browsing without putting the target URL in the address', () => {

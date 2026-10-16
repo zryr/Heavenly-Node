@@ -251,9 +251,12 @@ function pass(message) { checks++; console.log('PASS ' + message); }
   await home({ showProxiedUrl: false });
   await context.route(proxied('/blocked'), route => route.fulfill({ status: 200, headers: { 'content-type': 'text/html', 'content-security-policy': "frame-ancestors 'none'" }, body: '<h1>Recovered page</h1>' }));
   await search('/blocked');
+  await page.locator('#heavenly-wrapper-status').filter({ hasText: /Choose Open normally/ }).waitFor();
+  assert(page.url().includes('/browse.html#'));
+  await page.locator('#heavenly-wrapper-recovery').click();
   await page.waitForURL(proxied('/blocked'));
   assert.equal(await page.locator('h1').textContent(), 'Recovered page');
-  pass('a website that refuses framing automatically recovers through real top-level navigation');
+  pass('frame restrictions keep the wrapper visible with explicit normal-navigation recovery');
 
   await home({ persistentCloak: true, selectedPreset: 'docs', openSearchInAboutBlank: true });
   const cloaked = await search('/first', true);

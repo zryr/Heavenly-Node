@@ -15,11 +15,13 @@ var Unblocker = require('unblocker');
 var Transform = require('stream').Transform;
 var youtube = require('unblocker/examples/youtube/youtube.js')
 
+var diagnostics = require('./lib/proxy-diagnostics');
 var app = express();
 app.set('trust proxy', true);
 
 // Strip X-Frame-Options on Express app routes so Heavenly pages can embed inside the about:blank iframe
 app.use((req, res, next) => {
+    if (req.url.indexOf('/proxy/') === 0) return next();
     res.removeHeader('X-Frame-Options');
     var origSetHeader = res.setHeader;
     res.setHeader = function(name, val) {
@@ -258,58 +260,15 @@ function responseRedirectMiddleware(data) {
 }
 
 function iframeSecurityHeadersResponseMiddleware(data) {
-    if (!data || !data.headers) return;
-
-    // Helper to clean frame-ancestors directive from CSP string
-    var cleanCspDirectives = function(str) {
-        if (typeof str !== 'string') return str;
-        // Performance optimization: Fast-path guard skips string splitting, trimming, and regex filtering
-        // when 'frame-ancestors' is not present in the CSP header string.
-        if (!/frame-ancestors/i.test(str)) {
-            return str;
+    if (!data || !data.headers || !data.remoteResponse || !data.remoteResponse.headers) return;
+    // node-unblocker's default CSP middleware removes upstream CSP. Restore
+    // these restrictions unchanged; frame refusal must use explicit recovery.
+    var original = data.remoteResponse.headers;
+    Object.keys(original).forEach(function(key) {
+        if (/^(?:x-frame-options|content-security-policy(?:-report-only)?|x-content-security-policy|x-webkit-csp|x-content-type-options)$/i.test(key)) {
+            data.headers[key] = original[key];
         }
-        var directives = str.split(';');
-        var filtered = [];
-        for (var i = 0; i < directives.length; i++) {
-            var trimmed = directives[i].trim();
-            if (trimmed.length > 0 && !/^frame-ancestors(\s|$)/i.test(trimmed)) {
-                filtered.push(trimmed);
-            }
-        }
-        return filtered.join('; ');
-    };
-
-    // Performance optimization: Single-pass iteration over data.headers.
-    // Handles both X-Frame-Options removal and Content-Security-Policy cleaning in a single loop,
-    // avoiding redundant multi-pass header enumeration and array indexOf lookups per header.
-    for (var key in data.headers) {
-        var lower = key.toLowerCase();
-        if (lower === 'x-frame-options') {
-            delete data.headers[key];
-        } else if (
-            lower === 'content-security-policy' ||
-            lower === 'content-security-policy-report-only' ||
-            lower === 'x-content-security-policy' ||
-            lower === 'x-webkit-csp'
-        ) {
-            var val = data.headers[key];
-            if (Array.isArray(val)) {
-                var cleanedList = val.map(cleanCspDirectives).filter(function(v) { return v && v.length > 0; });
-                if (cleanedList.length > 0) {
-                    data.headers[key] = cleanedList;
-                } else {
-                    delete data.headers[key];
-                }
-            } else if (typeof val === 'string') {
-                var cleanedStr = cleanCspDirectives(val);
-                if (cleanedStr) {
-                    data.headers[key] = cleanedStr;
-                } else {
-                    delete data.headers[key];
-                }
-            }
-        }
-    }
+    });
 }
 
 var unblockerConfig = {
@@ -333,9 +292,15 @@ var unblockerConfig = {
 
 // Bundle the shared browser helpers before the proxy client (no build tool required).
 var fs = require('fs');
-var unblockerClientBundle = fs.readFileSync(__dirname + '/public/assets/heavenly-navigation.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/custom-client/unblocker-client.js', 'utf8');
+var unblockerClientBundle = fs.readFileSync(__dirname + '/public/assets/heavenly-icons.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-navigation.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/custom-client/unblocker-client.js', 'utf8');
 app.get('/proxy/client/unblocker-client.js', function(req, res) {
     res.type('application/javascript').send(unblockerClientBundle);
+});
+
+app.get('/__heavenly/dev-diagnostics.js', function(req, res) {
+    res.setHeader('Cache-Control', 'no-store');
+    if (!diagnostics.enabled()) return res.status(404).end();
+    res.type('application/javascript').send(fs.readFileSync(__dirname + '/lib/dev-diagnostics-client.js', 'utf8'));
 });
 
 // Middleware to normalize collapsed single-slash proxy URLs (e.g., /proxy/https:/ -> /proxy/https://)
@@ -389,6 +354,13 @@ function renderHeavenlyErrorPage(opts) {
     var safeErrorType = escapeHtml(errorType);
     var safeTargetUrl = escapeHtml(targetUrl);
     var safeDetails = escapeHtml(details);
+    var diagnosticData = diagnostics.snapshot(opts);
+    var developerPanel = diagnosticData ? '<details id="heavenly-dev-details" class="details-box"><summary>Developer Details</summary>' +
+        '<p>Error metadata only. URL paths, credentials, queries, headers and exception messages are omitted.</p>' +
+        '<label><input type="checkbox" id="heavenly-dev-opt-in"> Capture sanitized event types in this tab (reload to apply)</label>' +
+        '<pre id="heavenly-dev-json" style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;max-height:300px;overflow:auto;user-select:text">' + escapeHtml(JSON.stringify(diagnosticData, null, 2)) + '</pre>' +
+        '<button class="btn-action btn-secondary" id="heavenly-dev-copy" type="button">Copy Diagnostics</button><span id="heavenly-dev-copy-status" role="status"></span></details>' +
+        '<script src="/__heavenly/dev-diagnostics.js"></script>' : '';
 
     return '<!DOCTYPE html>\n' +
 '<html lang="en">\n' +
@@ -553,10 +525,10 @@ function renderHeavenlyErrorPage(opts) {
 '      <div class="error-desc">' + safeDetails + '</div>\n' +
 '    </div>\n' +
 '    <div class="actions-group">\n' +
-'      <button type="button" onclick="window.location.reload();" class="btn-action btn-primary">\n' +
+'      <a href="" class="btn-action btn-primary">\n' +
 '        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>\n' +
 '        <span>Try Again</span>\n' +
-'      </button>\n' +
+'      </a>\n' +
 (safeTargetUrl ? '      <a href="' + safeTargetUrl + '" target="_blank" rel="noopener" class="btn-action btn-secondary">\n' +
 '        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>\n' +
 '        <span>Test Direct Connection (No Proxy)</span>\n' +
@@ -566,6 +538,7 @@ function renderHeavenlyErrorPage(opts) {
 '        <span>Return to Heavenly Home</span>\n' +
 '      </a>\n' +
 '    </div>\n' +
+developerPanel +
 '    <div class="footer-note">Heavenly Web Proxy &bull; Ethereal &bull; Streamlined</div>\n' +
 '  </div>\n' +
 '</body>\n' +
@@ -576,7 +549,15 @@ app.renderHeavenlyErrorPage = renderHeavenlyErrorPage;
 
 var unblocker = new Unblocker(unblockerConfig);
 
-// this line must appear before any express.static calls (or anything else that sends responses)
+// Reserve Heavenly's own routes before Unblocker's Referer-based recovery.
+// Otherwise Home (and our logo/scripts) becomes the upstream site's root/assets
+// whenever the request comes from a proxied document.
+var heavenlyPages = { '/': 'index.html', '/index.html': 'index.html', '/settings.html': 'settings.html', '/browse.html': 'browse.html', '/html-viewer.html': 'html-viewer.html' };
+app.get(Object.keys(heavenlyPages), function(req, res) {
+    res.sendFile(__dirname + '/public/' + heavenlyPages[req.path]);
+});
+app.use('/assets', express.static(__dirname + '/public/assets', { fallthrough: false }));
+app.use('/vendor', express.static(__dirname + '/public/vendor', { fallthrough: false }));
 app.use(unblocker);
 
 // serve up static files *after* the proxy is run
@@ -653,42 +634,38 @@ function heavenlyErrorMiddleware(err, req, res, next) {
         }
     }
 
-    var code = (err && (err.code || err.errno)) || '';
-    var statusCode = 502;
-    var errorType = 'Server Not Found';
+    var classification = diagnostics.classify(err);
+    var code = classification.code;
+    var statusCode = classification.status;
+    var errorType = classification.category;
     var details = 'An error occurred while connecting to the requested website through Heavenly Proxy.';
-
-    if (code === 'ENOTFOUND' || code === 'EAI_AGAIN') {
-        statusCode = 502;
-        errorType = 'Server Not Found';
-        details = 'Heavenly could not connect or resolve the server address at ' + (targetUrl || 'this website') + '. Check that the website address is typed correctly.';
+    if (code === 'ENOTFOUND') {
+        details = 'Heavenly could not connect or resolve the server address at ' + (targetUrl || 'this website') + '. DNS lookup failed from this server; check the address or try again later.';
+    } else if (code === 'EAI_AGAIN') {
+        details = 'The DNS lookup for ' + (targetUrl || 'this website') + ' temporarily failed. Try again later; this does not establish that the website is offline.';
     } else if (code === 'ECONNREFUSED') {
-        statusCode = 502;
-        errorType = 'Connection Refused';
         details = 'The target server at ' + (targetUrl || 'this website') + ' refused the connection. The server may be offline or down for maintenance.';
-    } else if (code === 'ETIMEDOUT' || code === 'ESOCKETTIMEDOUT') {
-        statusCode = 504;
-        errorType = 'Connection Timed Out';
+    } else if (classification.phase === 'timeout') {
         details = 'The connection to ' + (targetUrl || 'this website') + ' timed out before a response was received.';
     } else if (code === 'ECONNRESET' || code === 'EPIPE') {
-        statusCode = 502;
-        errorType = 'Connection Reset';
         details = 'The connection to the target website was unexpectedly reset.';
-    } else if (err && err.status && err.status >= 400 && err.status < 600) {
-        statusCode = err.status;
-        errorType = 'Error ' + err.status;
-        details = err.message || details;
-    } else if (err && err.message) {
-        details = err.message;
+    } else if (classification.phase === 'tls') {
+        details = 'Heavenly could not establish a verified secure connection to the target website. TLS verification remains enabled.';
     }
+    // Exception messages can contain private headers, paths and credentials.
+    // Only known, application-owned explanations are rendered, even in dev.
 
     var html = renderHeavenlyErrorPage({
         statusCode: statusCode,
         errorType: errorType,
         targetUrl: targetUrl,
-        details: details
+        details: details,
+        phase: classification.phase,
+        code: code,
+        requestPath: reqPath
     });
 
+    res.setHeader('Cache-Control', 'no-store');
     res.status(statusCode);
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
@@ -714,10 +691,13 @@ function serverErrorResponseMiddleware(data) {
                 statusCode: status,
                 errorType: errorType,
                 targetUrl: targetUrl,
-                details: details
+                details: details,
+                phase: 'response',
+                requestPath: data.clientRequest && data.clientRequest.originalUrl
             });
 
             data.headers = data.headers || {};
+            data.headers['cache-control'] = 'no-store';
             data.headers['content-type'] = 'text/html; charset=utf-8';
             data.headers['content-length'] = Buffer.byteLength(html).toString();
 
