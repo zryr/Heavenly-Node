@@ -1,6 +1,8 @@
 (function (global) {
   "use strict";
 
+  var navigation = typeof module !== "undefined" && module.exports ? require("../public/assets/heavenly-navigation.js") : global.HeavenlyNavigation;
+
   // todo:
   // - postMessage
   // - open
@@ -58,6 +60,20 @@
 
     var prefix = config.prefix;
     var prefixLen = prefix.length;
+
+    // The deployment toolbar is hosting infrastructure, not remote-site content.
+    // Its runtime derives iframe origins from currentScript.src. Proxying that
+    // script turns its feedback frame into a remote-site 404, which can inject
+    // another toolbar. Keep only this verified HTTPS runtime namespace direct.
+    if (urlStr.indexOf('/_next-live/') !== -1) {
+      var runtime = urlStr;
+      if (runtime.startsWith(prefix)) runtime = runtime.slice(prefixLen);
+      else if (runtime.startsWith(location.origin + prefix)) runtime = runtime.slice((location.origin + prefix).length);
+      try {
+        var runtimeUrl = new URL(runtime);
+        if (runtimeUrl.origin === 'https://vercel.live' && runtimeUrl.pathname.startsWith('/_next-live/')) return runtimeUrl.href;
+      } catch (e) {}
+    }
 
     // Performance optimization: Use String.prototype.startsWith instead of substr() slicing
     // to avoid creating temporary string slice allocations on hot URL rewriter paths (~60% speedup)
@@ -738,27 +754,26 @@
   // notes: look at bindHistoryStateFunctions_ - it looks like it checks the contentWindow.history of an iframe *fitst*, then it's __proto__, then the global history api
   //        - so, we need to inject this into iframes also
   function initPushState(config, window) {
-    if (!window.history || !window.history.pushState) return;
-
-    var _pushState = window.history.pushState;
-    window.history.pushState = function (state, title, url) {
-      if (url) {
-        url = fixUrl(url, config, window.location);
-        config.url = new URL(url, config.url);
-        return _pushState.call(window.history, state, title, url);
-      }
-    };
-
-    if (!window.history.replaceState) return;
-    var _replaceState = window.history.replaceState;
-    window.history.replaceState = function (state, title, url) {
-      if (url) {
-        url = fixUrl(url, config, window.location);
-        config.url = new URL(url, config.url);
-        return _replaceState.call(window.history, state, title, url);
-      }
-    };
+    if (!window.history || !window.history.pushState || window.history.__heavenlyWrapped) return;
+    ['pushState', 'replaceState'].forEach(function (method) {
+      var native = window.history[method];
+      if (!native) return;
+      window.history[method] = function () {
+        var args = Array.prototype.slice.call(arguments);
+        if (args.length > 2 && args[2] !== null && args[2] !== undefined && args[2] !== '') {
+          args[2] = fixUrl(args[2], config, window.location);
+        }
+        var result = native.apply(window.history, args);
+        // Update only after native history accepts the URL. Omitted URLs still update state.
+        var remote = navigation.currentRemoteUrl(window, config);
+        if (remote) config.url = remote;
+        if (window.__heavenlyNavigationChanged) window.__heavenlyNavigationChanged();
+        return result;
+      };
+    });
+    window.history.__heavenlyWrapped = true;
   }
+
 
   function isPresetTitle(title, settings) {
     if (!title) return false;
@@ -771,6 +786,7 @@
     ) {
       return true;
     }
+    if (DEFAULT_PRESET_TITLES.indexOf(title) !== -1) return true;
     // Direct matching in custom presets avoiding presetTitles array allocation
     if (settings && settings.customPresets) {
       for (var k in settings.customPresets) {
@@ -802,6 +818,7 @@
     lee_college: { title: "Home | Lee College", icon: "https://www.google.com/s2/favicons?domain=www.lee.edu&sz=64" },
     canva: { title: "Canva", icon: "https://www.canva.com/favicon.ico" }
   };
+  var DEFAULT_PRESET_TITLES = Object.keys(DEFAULT_PRESETS).map(function (key) { return DEFAULT_PRESETS[key].title; });
 
   function resolveActivePreset(settings, win) {
     if (!settings) return DEFAULT_PRESETS.classroom;
@@ -850,12 +867,13 @@
     var saved = {};
     if (raw) {
       try {
-        saved = JSON.parse(raw);
+        var parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) saved = parsed;
       } catch (e) {}
     }
 
     _lastRawSettings = raw;
-    _cachedHeavenlySettings = {
+    _cachedHeavenlySettings = Object.assign(navigation.navigationSettings(saved), {
       autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
       persistentCloak: saved.persistentCloak || false,
       decoyAutoTimer: saved.decoyAutoTimer !== undefined ? Boolean(saved.decoyAutoTimer) : false,
@@ -864,7 +882,7 @@
       selectedPreset: saved.selectedPreset || 'classroom',
       customPresets: saved.customPresets || {},
       panicKeyEnable: saved.panicKeyEnable || false,
-      panicKey: saved.panicKey || '`',
+      panicKey: typeof saved.panicKey === 'string' ? saved.panicKey : '`',
       touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
       panicUrl: saved.panicUrl || 'https://classroom.google.com',
       showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
@@ -877,7 +895,7 @@
       expandDirection: saved.expandDirection || 'left',
       disableAllWidgets: saved.disableAllWidgets || false,
       disableAllFeatures: saved.disableAllFeatures || false
-    };
+    });
 
     return _cachedHeavenlySettings;
   }
@@ -893,10 +911,10 @@
       if (settings.disableAllFeatures) {
         var existingPanic = window.document ? window.document.getElementById('heavenly-touch-panic-root') : null;
         if (existingPanic) existingPanic.remove();
-        return;
       }
 
       var currentlyCloaked = false;
+      var appliedCloakTitle = null;
       var latestOriginalTitle = window.document ? window.document.title : '';
       if (window.document && window.document.title && !isPresetTitle(window.document.title, settings)) {
         window.__heavenlyOriginalTitle = window.document.title;
@@ -913,11 +931,12 @@
         var head = window.document.head || window.document.getElementsByTagName('head')[0];
 
         if (isCloaked) {
-          if (window.document.title && !isPresetTitle(window.document.title, settings)) {
+          if (window.document.title && window.document.title !== appliedCloakTitle && !isPresetTitle(window.document.title, settings)) {
             latestOriginalTitle = window.document.title;
             window.__heavenlyOriginalTitle = latestOriginalTitle;
           }
           window.document.title = preset.title;
+          appliedCloakTitle = preset.title;
 
           if (head) {
             var iconLinks = window.document.querySelectorAll("link[rel*='icon']");
@@ -945,6 +964,7 @@
           if (latestOriginalTitle) {
             window.document.title = latestOriginalTitle;
           }
+          appliedCloakTitle = null;
 
           var cloakLink2 = window.document.getElementById('heavenly-cloak-icon');
           if (cloakLink2 && cloakLink2.parentNode) {
@@ -965,10 +985,15 @@
 
       // Performance optimization: Reuse passed-in settings instead of re-reading localStorage & JSON.parse on every cloak evaluation
       function syncCloak(refresh) {
+        // The injected client can run before the upstream <title> is parsed.
+        // Wait for it before changing document.title, so history keeps the real title.
         if (refresh || !settings) {
           settings = loadHeavenlySettings(window);
         }
-        if (settings.persistentCloak) {
+        if (window.document && window.document.readyState === 'loading') return;
+        if (settings.disableAllFeatures) {
+          applyCloak(false);
+        } else if (settings.persistentCloak) {
           applyCloak(true);
         } else if (settings.autoCloak && window.document.hidden) {
           applyCloak(true);
@@ -982,21 +1007,25 @@
 
       // Visibility change event
       window.addEventListener('visibilitychange', function () {
-        syncCloak();
+        syncCloak(true);
       });
 
       // DOM load events to ensure cloak runs once head is populated
       if (window.document) {
         if (window.document.readyState === 'loading') {
-          window.document.addEventListener('DOMContentLoaded', function () { syncCloak(); });
+          window.document.addEventListener('DOMContentLoaded', function () { syncCloak(true); });
         }
-        window.addEventListener('load', function () { syncCloak(); });
+        window.addEventListener('load', function () { syncCloak(true); });
       }
 
       // Cross-tab settings synchronization
       window.addEventListener('storage', function (e) {
-        if (e.key === 'heavenly_settings') {
+        if (!e.key || e.key === 'heavenly_settings') {
           syncCloak(true);
+          if (settings.disableAllFeatures || !settings.touchPanic) {
+            var panicOverlay = window.document && window.document.getElementById('heavenly-touch-panic-root');
+            if (panicOverlay) panicOverlay.remove();
+          }
         }
       });
 
@@ -1009,7 +1038,6 @@
               if (!isPresetTitle(window.document.title, settings)) {
                 latestOriginalTitle = window.document.title;
                 window.__heavenlyOriginalTitle = latestOriginalTitle;
-                if (config) saveToHeavenlyHistory(window, config);
               }
               window.document.title = preset.title;
             }
@@ -1027,7 +1055,6 @@
             if (window.document.title && !isPresetTitle(window.document.title, settings)) {
               latestOriginalTitle = window.document.title;
               window.__heavenlyOriginalTitle = latestOriginalTitle;
-              if (config) saveToHeavenlyHistory(window, config);
             }
           }
         });
@@ -1040,17 +1067,19 @@
       }
 
       // 3. Panic Key Shortcut
-      if (settings.panicKeyEnable && settings.panicKey) {
-        window.addEventListener('keydown', function (e) {
-          if (e.key === settings.panicKey || e.code === settings.panicKey) {
-            window.location.href = settings.panicUrl || 'https://classroom.google.com';
-          }
-        }, true);
-      }
+      window.addEventListener('keydown', function (e) {
+        var current = loadHeavenlySettings(window);
+        if (!current.disableAllFeatures && current.panicKeyEnable && current.panicKey &&
+            (e.key === current.panicKey || e.code === current.panicKey)) {
+          window.location.href = current.panicUrl || 'https://classroom.google.com';
+        }
+      }, true);
 
       // 4. Touch Panic Overlay Button
-      if (settings.touchPanic) {
+      if (settings.touchPanic && !settings.disableAllFeatures) {
         function injectPanicOverlay() {
+          var current = loadHeavenlySettings(window);
+          if (current.disableAllFeatures || !current.touchPanic) return;
           if (!window.document || !window.document.body) return;
           if (window.document.getElementById('heavenly-touch-panic-root')) return;
 
@@ -1130,7 +1159,8 @@
           var startLeft = 0, startTop = 0;
 
           function triggerPanic() {
-            window.location.href = settings.panicUrl || 'https://classroom.google.com';
+            var current = loadHeavenlySettings(window);
+            if (!current.disableAllFeatures && current.touchPanic) window.location.href = current.panicUrl || 'https://classroom.google.com';
           }
 
           var onDown = function (e) {
@@ -1423,68 +1453,9 @@
   }
 
   function getDirectRemoteUrl(window, config) {
-    try {
-      var prefix = (config && config.prefix) || '/proxy/';
-      var prefixLen = prefix.length;
-      var loc = window.location;
-      var urlStr = '';
-
-      if (loc.pathname.startsWith(prefix)) {
-        urlStr = loc.pathname.substr(prefixLen) + loc.search + loc.hash;
-      } else if (config && config.url) {
-        urlStr = config.url;
-      }
-
-      while (urlStr && urlStr.indexOf(prefix) !== -1) {
-        var idx = urlStr.indexOf(prefix);
-        urlStr = urlStr.substring(idx + prefixLen);
-      }
-
-      if (urlStr && urlStr.indexOf(":/") !== -1 && urlStr.indexOf("://") === -1) {
-        urlStr = urlStr.replace(/^(https?:\/)([^\/])/i, "$1/$2");
-      }
-
-      if (urlStr && !urlStr.startsWith('http://') && !urlStr.startsWith('https://')) {
-        urlStr = 'https://' + urlStr;
-      }
-
-      return urlStr;
-    } catch (e) {
-      return (config && config.url) || '';
-    }
+    return navigation.currentRemoteUrl(window, config);
   }
 
-  // Performance optimization: Pre-define static SVG inner paths map outside getPresetSvg handler
-  // Avoids allocating 28 string objects and recreating svgMap object literal on every function call (~78% speedup)
-  var PRESET_SVG_PATHS = {
-    'preset:sparkles': '<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>',
-    'preset:gamepad': '<line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><circle cx="15" cy="13" r="1"></circle><circle cx="18" cy="11" r="1"></circle><rect x="2" y="6" width="20" height="12" rx="5"></rect>',
-    'preset:star': '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>',
-    'preset:folder': '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>',
-    'preset:list': '<line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line>',
-    'preset:globe': '<circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>',
-    'preset:bookmark': '<path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path>',
-    'preset:film': '<rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line>',
-    'preset:tv': '<rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline>',
-    'preset:zap': '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>',
-    'preset:shield': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>',
-    'preset:heart': '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>',
-    'preset:flame': '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>',
-    'preset:code': '<polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline>',
-    'preset:music': '<path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle>',
-    'preset:camera': '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle>',
-    'preset:book': '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>',
-    'preset:tag': '<path d="M12 2H2v10l11.29 11.29a1 1 0 0 0 1.41 0l7.29-7.29a1 1 0 0 0 0-1.41L12 2z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>',
-    'preset:grid': '<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>',
-    'preset:layers': '<polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline>',
-    'preset:terminal': '<polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line>',
-    'preset:rocket': '<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-3.05 11a22.35 22.35 0 0 1-3.95 2z"></path>',
-    'preset:user': '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>',
-    'preset:lock': '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>',
-    'preset:cpu': '<rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="15" x2="23" y2="15"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="15" x2="4" y2="15"></line>',
-    'preset:wrench': '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>',
-    'preset:coffee': '<path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line>'
-  };
 
   function getPresetSvg(key, size) {
     var path = PRESET_SVG_PATHS[key];
@@ -2334,6 +2305,8 @@
     if (!win) return false;
     try {
       if (win === win.top) return true;
+      var wrapper = win.parent && win.parent.__heavenlyWrapper;
+      if (wrapper && wrapper.frame && wrapper.frame.contentWindow === win) return true;
     } catch (e) {
       return false;
     }
@@ -2352,74 +2325,21 @@
   }
 
   function getActiveProxiedUrl(win, config) {
-    try {
-      win = win || window;
-      var prefix = (config && config.prefix) || '/proxy/';
-      var origin = (win.location && win.location.origin && win.location.origin !== 'null' && win.location.origin.indexOf('http') === 0) ? win.location.origin : '';
-
-      if (win.location && win.location.pathname && win.location.pathname.indexOf(prefix) !== -1) {
-        return origin + win.location.pathname + (win.location.search || '') + (win.location.hash || '');
-      }
-
-      var targetUrl = getDirectRemoteUrl(win, config);
-      if (targetUrl) {
-        return origin + prefix + targetUrl;
-      }
-
-      if (win.location && win.location.href) {
-        if (win.location.href.indexOf(prefix) !== -1) {
-          return win.location.href;
-        }
-        return origin + prefix + win.location.href;
-      }
-    } catch (e) {}
-    return (config && config.url) ? (((config && config.prefix) || '/proxy/') + config.url) : '';
+    win = win || window;
+    var target = navigation.currentRemoteUrl(win, config);
+    var origin = (config && config.proxyOrigin) || (win.location && win.location.origin) || '';
+    return target ? origin + ((config && config.prefix) || '/proxy/') + target : '';
   }
+
 
   function openAboutBlankLauncher(url, title, favicon, win) {
     win = win || window;
-    var blankTab = null;
-    try {
-      blankTab = win.open('about:blank', '_blank');
-    } catch (e) {}
-
-    if (!blankTab) {
-      if (typeof win.alert === 'function') {
-        win.alert('Popup blocked! Please allow popups for this site to use about:blank cloaking.');
-      }
-      return null;
-    }
-
-    try {
-      var doc = blankTab.document;
-      if (doc) {
-        doc.open();
-        var safeTitle = escapeHtml(title || 'Classes');
-        var safeFavicon = escapeHtml(favicon || '');
-        var safeUrl = escapeHtml(url || '');
-        var html = '<!DOCTYPE html>\n<html>\n<head>\n' +
-          '<meta charset="UTF-8">\n' +
-          '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
-          '<title>' + safeTitle + '</title>\n' +
-          (safeFavicon ? '<link rel="icon" type="image/x-icon" href="' + safeFavicon + '">\n<link rel="shortcut icon" href="' + safeFavicon + '">\n' : '') +
-          '<style>\n' +
-          '  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }\n' +
-          '  iframe { width: 100vw; height: 100vh; border: none; display: block; outline: none; margin: 0; padding: 0; }\n' +
-          '</style>\n' +
-          '</head>\n<body>\n' +
-          '<iframe src="' + safeUrl + '" allowfullscreen="true" style="width: 100vw; height: 100vh; border: none;"></iframe>\n' +
-          '</body>\n</html>';
-        doc.write(html);
-        doc.close();
-      }
-    } catch (err) {
-      try {
-        blankTab.location.href = url;
-      } catch (e) {}
-    }
-
-    return blankTab;
+    return navigation.openBlank(win, url, {
+      title: title || 'Classes', icon: favicon || '',
+      showProxiedUrl: loadHeavenlySettings(win).showProxiedUrl
+    });
   }
+
 
   function launchActiveInAboutBlank(win, settings, config) {
     win = win || window;
@@ -3561,7 +3481,7 @@
             var homeBtn = dockBar.querySelector('#dock-home-btn');
             if (homeBtn) homeBtn.addEventListener('click', function (e) {
               e.stopPropagation();
-              (window.top || window).location.href = 'https://heavenly-node.vercel.app/';
+              (window.top || window).location.href = config.proxyOrigin + '/';
             });
           }
 
@@ -3578,6 +3498,7 @@
           if (showNavSearch) {
             var goBtn = dockBar.querySelector('#dock-go-btn');
             var searchInput = dockBar.querySelector('#dock-search-input');
+            if (searchInput && settings.showProxiedUrl) { searchInput.value = getDirectRemoteUrl(window, config); searchInput.__heavenlyDisplayedUrl = searchInput.value; }
             var handleNav = function () {
               if (!searchInput) return;
               var val = searchInput.value.trim();
@@ -3839,6 +3760,7 @@
           if (showNavSearch) {
             var goBtn = navWidget.querySelector('#nav-go-btn') || (navShadow.querySelector ? navShadow.querySelector('#nav-go-btn') : null);
             var searchInput = navWidget.querySelector('#nav-search-input') || (navShadow.querySelector ? navShadow.querySelector('#nav-search-input') : null);
+            if (searchInput && settings.showProxiedUrl) { searchInput.value = getDirectRemoteUrl(window, config); searchInput.__heavenlyDisplayedUrl = searchInput.value; }
 
             if (goBtn) goBtn.addEventListener('click', function (e) { e.stopPropagation(); handleNavigate(); });
             if (searchInput) searchInput.addEventListener('keydown', function (e) {
@@ -3875,7 +3797,7 @@
             var homeBtn = navWidget.querySelector('#nav-home-btn') || (navShadow.querySelector ? navShadow.querySelector('#nav-home-btn') : null);
             if (homeBtn) homeBtn.addEventListener('click', function (e) {
               e.stopPropagation();
-              (window.top || window).location.href = 'https://heavenly-node.vercel.app/';
+              (window.top || window).location.href = config.proxyOrigin + '/';
             });
           }
 
@@ -4299,53 +4221,79 @@
     } catch (e) {}
   }
 
-  function saveToHeavenlyHistory(window, config, settings) {
+  function saveToHeavenlyHistory(window, config, settings, metadataOnly) {
     try {
       if (!isTopOrAboutBlankIframe(window)) return;
-
-      var path = window.location.pathname;
-      var prefix = config.prefix || '/proxy/';
-      if (!path.startsWith(prefix)) return;
-
-      var targetUrl = path.substr(prefix.length) + window.location.search + window.location.hash;
-      if (!targetUrl || targetUrl.startsWith('about:') || targetUrl.startsWith('data:')) return;
-
-      if (!settings) {
-        settings = loadHeavenlySettings(window);
-      }
-      var rawTitle = window.__heavenlyOriginalTitle || window.document.title || targetUrl;
-      var title = isPresetTitle(rawTitle, settings) ? targetUrl : rawTitle;
-
-      var storage = window.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
-      if (!storage) return;
-
-      var current = JSON.parse(storage.getItem('heavenly_history') || '[]');
-
-      // Performance optimization: Fast-path check if most recent entry is already identical
-      // Avoids redundant array filtering, slicing, and localStorage serialization overhead
-      if (current.length > 0 && current[0].url === targetUrl && current[0].title === title) {
-        return;
-      }
-
-      // Filter out existing duplicates of this url
-      current = current.filter(function (item) {
-        return item.url !== targetUrl;
-      });
-
-      // Add to beginning of array
-      current.unshift({
-        url: targetUrl,
-        title: title
-      });
-
-      // Limit to 20 items
-      if (current.length > 20) {
-        current = current.slice(0, 20);
-      }
-
-      storage.setItem('heavenly_history', JSON.stringify(current));
+      var targetUrl = navigation.currentRemoteUrl(window, config);
+      if (!targetUrl) return;
+      settings = settings || loadHeavenlySettings(window);
+      var title = window.document.title;
+      var cloakIcon = window.document.getElementById && window.document.getElementById('heavenly-cloak-icon');
+      if (isPresetTitle(title, settings) && (window.__heavenlyOriginalTitle || cloakIcon)) title = window.__heavenlyOriginalTitle || targetUrl;
+      navigation.recordHistory(window.localStorage, targetUrl, title, metadataOnly, config.proxyOrigin);
     } catch (e) {}
   }
+
+  function initHeavenlyNavigationHistory(window, config) {
+    if (!window.document || !isTopOrAboutBlankIframe(window) || window.__heavenlyHistoryInitialized) return;
+    window.__heavenlyHistoryInitialized = true;
+    var lastUrl = '';
+    function syncPresentation() {
+      var targetUrl = navigation.currentRemoteUrl(window, config);
+      if (!targetUrl) return;
+      config.url = targetUrl;
+      var settings = loadHeavenlySettings(window);
+      ['heavenly-dock-root', 'heavenly-nav-root'].forEach(function (id) {
+        var root = window.document.getElementById ? window.document.getElementById(id) : null;
+        root = root && (root.shadowRoot || root);
+        var input = root && root.querySelector ? root.querySelector('#dock-search-input, #nav-search-input') : null;
+        if (!input) return;
+        if (root.activeElement === input || window.document.activeElement === input) return;
+        if (input.value && input.value !== input.__heavenlyDisplayedUrl) return;
+        input.value = settings.showProxiedUrl ? targetUrl : '';
+        input.__heavenlyDisplayedUrl = input.value;
+      });
+      try {
+        var wrapper = window.parent && window.parent.__heavenlyWrapper;
+        if (wrapper && wrapper.frame.contentWindow === window) {
+          wrapper.update(getActiveProxiedUrl(window, config), targetUrl);
+        }
+      } catch (e) {}
+    }
+    function onNavigation() {
+      var url = navigation.currentRemoteUrl(window, config);
+      if (url && url !== lastUrl) {
+        lastUrl = url;
+        saveToHeavenlyHistory(window, config);
+      }
+      syncPresentation();
+    }
+    window.__heavenlyNavigationChanged = onNavigation;
+    window.addEventListener('popstate', onNavigation);
+    window.addEventListener('hashchange', onNavigation);
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) { lastUrl = ''; onNavigation(); }
+    });
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'heavenly_settings') syncPresentation();
+    });
+    function start() {
+      onNavigation();
+      if (window.MutationObserver && window.document.head) {
+        var observer = new window.MutationObserver(function (changes) {
+          var changedTitle = changes.some(function (change) {
+            var node = change.target.nodeType === 3 ? change.target.parentNode : change.target;
+            return (node && node.tagName === 'TITLE') || Array.prototype.some.call(change.addedNodes || [], function (el) { return el.tagName === 'TITLE'; });
+          });
+          if (changedTitle) saveToHeavenlyHistory(window, config, null, true);
+        });
+        observer.observe(window.document.head, { childList: true, subtree: true, characterData: true });
+      }
+    }
+    if (window.document.readyState === 'loading') window.document.addEventListener('DOMContentLoaded', start, { once: true });
+    else start();
+  }
+
 
   function initFolderQuickSaveWidget(config, window, settings) {
     try {
@@ -4751,7 +4699,11 @@
   }
 
   function initForWindow(config, window) {
+    // Older/cached injected documents may contain a second initializer.
+    if (window.__heavenlyClientInitialized) return;
+    window.__heavenlyClientInitialized = true;
     console.log("[Heavenly Debug] Initializing unblocker client scripts for window", config, window);
+    if (!config.proxyOrigin) config.proxyOrigin = (window.location && window.location.origin) || '';
     initLocationPrototype(config, window);
     initElementPrototypes(config, window);
     initMutationObserverAndClicks(config, window);
@@ -4764,9 +4716,9 @@
     // Performance optimization: Load settings once and pass to all initializers
     // to avoid redundant localStorage reads and JSON.parse calls (~49% speedup)
     var settings = loadHeavenlySettings(window);
-    if (!settings.disableAllFeatures) {
-      initHeavenlyCloakAndPanic(window, settings, config);
-    }
+    // Privacy handlers stay attached while paused so master changes can resume
+    // existing cloaking and panic preferences without installing another handler.
+    initHeavenlyCloakAndPanic(window, settings, config);
     if (!settings.disableAllWidgets && !settings.disableAllFeatures) {
       initHeavenlyWidgets(window, settings, config);
       initManualIconPickerWidget(config, window, settings);
@@ -4774,13 +4726,7 @@
       initNewgroundsPagination(config, window, settings);
     }
 
-    if (window.document && (window.document.readyState === 'interactive' || window.document.readyState === 'complete')) {
-      saveToHeavenlyHistory(window, config, settings);
-    } else if (window.document) {
-      window.document.addEventListener('DOMContentLoaded', function () {
-        saveToHeavenlyHistory(window, config, settings);
-      });
-    }
+    initHeavenlyNavigationHistory(window, config);
 
     // Touch event guard for injected client modal dialogues to prevent top overscroll / elastic bounce
     (function initClientModalTouchGuard() {

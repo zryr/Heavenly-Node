@@ -3,6 +3,13 @@
 
 <head>
   <meta charset="UTF-8">
+  <script src="/assets/heavenly-navigation.js"></script>
+  <link rel="stylesheet" href="/assets/quick-settings.css">
+  <script src="/assets/cloak-pool.js"></script>
+  <script src="/assets/quick-settings-model.js"></script>
+  <script src="/assets/quick-settings-dialog.js"></script>
+  <script src="/assets/quick-settings-config.js"></script>
+  <script src="/assets/quick-settings.js"></script>
   <title>Heavenly: Settings</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" href="/assets/heavenly-logo.png">
@@ -902,7 +909,7 @@
       <!-- Section 0: Master Shortcuts & Overrides (At the top) -->
       <div>
         <div class="hero-card" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(30, 41, 59, 0.75);">
-          <details style="width: 100%;">
+          <details id="master-controls" style="width: 100%;">
             <summary style="cursor: pointer; list-style: none; font-size: 1rem; font-weight: 700; color: #f8fafc; display: flex; align-items: center; justify-content: space-between; user-select: none;">
               <span class="hero-card-title" style="color: #fca5a5; font-size: 1.05rem;">
                 <svg style="width: 20px; height: 20px; fill: none; stroke: #f87171; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path><path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
@@ -948,7 +955,7 @@
       <div>
         <h2 class="section-title">
           <svg style="width: 20px; height: 20px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          <span>Tab Cloaking</span>
+          <span id="tab-cloaking" tabindex="-1">Tab Cloaking</span>
         </h2>
 
         <div class="cards-grid">
@@ -977,16 +984,28 @@
             <p class="hero-card-desc">Continuously keeps your browser tab title and favicon disguised regardless of tab visibility.</p>
           </div>
 
-          <!-- Hero Card: Open in about:blank Cloak -->
           <div class="hero-card">
             <div class="hero-card-header">
-              <label for="set-about-blank" class="hero-card-title">Open in about:blank Cloak</label>
-              <label class="switch-toggle">
-                <input type="checkbox" id="set-about-blank" role="switch">
-                <span class="slider-knob"></span>
-              </label>
+              <label for="set-bookmarks-about-blank" class="hero-card-title">Bookmarks in about:blank</label>
+              <label class="switch-toggle"><input type="checkbox" id="set-bookmarks-about-blank" role="switch"><span class="slider-knob"></span></label>
             </div>
-            <p class="hero-card-desc">Launches proxied websites and bookmarks inside an about:blank cloaked tab to hide page history and URLs from browser address bars.</p>
+            <p class="hero-card-desc">Opens proxied bookmarks in a new about:blank tab. Your New Tab preference is remembered. Direct websites open normally for compatibility.</p>
+          </div>
+
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-search-about-blank" class="hero-card-title">Search in about:blank</label>
+              <label class="switch-toggle"><input type="checkbox" id="set-search-about-blank" role="switch"><span class="slider-knob"></span></label>
+            </div>
+            <p class="hero-card-desc">Opens main search/address bar navigation in a new about:blank tab, independently of bookmarks.</p>
+          </div>
+
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <label for="set-show-proxied-url" class="hero-card-title">Show Proxied URL</label>
+              <label class="switch-toggle"><input type="checkbox" id="set-show-proxied-url" role="switch"><span class="slider-knob"></span></label>
+            </div>
+            <p class="hero-card-desc">Shows the real /proxy/ path in the browser address bar during normal browsing. Disable to use the Heavenly browsing page. about:blank keeps its own address and can show the path inside Heavenly. Open normally is always available if a site cannot load in a frame.</p>
           </div>
 
           <!-- Hero Card: Timed Decoy Auto-Unlock -->
@@ -1111,16 +1130,10 @@
 
         <div class="cards-grid">
 
-          <!-- Direct Connection Test Prompt Toggle for Built-in Bookmarks -->
           <div class="hero-card">
-            <div class="hero-card-header">
-              <label for="set-show-builtin-prompt" class="hero-card-title">Direct Connection Test Prompt</label>
-              <label class="switch-toggle">
-                <input type="checkbox" id="set-show-builtin-prompt" role="switch" checked>
-                <span class="slider-knob"></span>
-              </label>
-            </div>
-            <p class="hero-card-desc">Prompts you to test direct connection or open with proxy when clicking built-in bookmarks. Enable this if you previously checked 'Don't ask me again'.</p>
+            <h3 class="hero-card-title">Quick Settings Shortcuts</h3>
+            <p class="hero-card-desc" style="margin:8px 0">Choose the shortcuts shown on the homepage. Hiding a shortcut keeps its setting unchanged.</p>
+            <button type="button" id="customize-quick-settings-btn" class="export-import-btn" aria-haspopup="dialog" aria-controls="qs-editor">Customize Quick Settings</button>
           </div>
 
           <!-- Hero Card: Open Search Results in New Tab -->
@@ -1186,10 +1199,10 @@
       </div>
 
       <!-- Section 3: Panic Features -->
-      <div>
+      <div id="panic-controls" tabindex="-1">
         <h2 class="section-title">
           <svg style="width: 20px; height: 20px; fill: none; stroke: #f87171; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-          <span>Panic Controls</span>
+          <span>Panic Controls</span><button type="button" class="qs-config-button" data-qs-config="panic" aria-label="Quick panic settings" aria-haspopup="dialog" aria-controls="qs-context-editor">Configure</button>
         </h2>
 
         <div class="cards-grid">
@@ -1233,10 +1246,11 @@
       </div>
 
       <!-- Section 4: Widget Controls & Reset -->
-      <div>
+      <div id="widget-settings" tabindex="-1">
         <h2 class="section-title">
           <svg style="width: 20px; height: 20px; fill: none; stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
           <span>Proxied Page Widgets & Customization</span>
+          <button type="button" class="qs-config-button" data-qs-config="widgets" aria-label="Quick widget settings" aria-haspopup="dialog" aria-controls="qs-context-editor">Configure</button>
         </h2>
 
         <div class="cards-grid">
@@ -1314,6 +1328,7 @@
               </label>
             </div>
             <p class="hero-card-desc">Docks all active widgets inside a collapsible bar on the screen edge. Drag the tab to any viewport edge (left, right, top, bottom) to snap and position it.</p>
+            <label for="set-dock-position" class="qs-context-field"><span>Dock edge</span><select id="set-dock-position"><option value="bottom">Bottom</option><option value="top">Top</option><option value="left">Left</option><option value="right">Right</option></select></label>
             <div style="font-size: 0.78rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 6px 10px; margin-top: 4px; display: flex; align-items: center; gap: 6px; font-weight: 500;">
               <svg style="width: 14px; height: 14px; fill: none; stroke: #38bdf8; stroke-width: 2; flex-shrink: 0;" viewBox="0 0 24 24"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"></path></svg>
               <span>Hint: You can click & drag the dock bar pull tab to any edge of your screen on proxied pages!</span>
@@ -1734,15 +1749,13 @@
       ]
     };
 
-    var DEFAULT_RANDOM_POOL = ['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva'];
+    var DEFAULT_RANDOM_POOL = HeavenlyCloakPool.defaults.slice();
 
     function loadSettings() {
       var saved = {};
-      try {
-        saved = JSON.parse(localStorage.getItem('heavenly_settings') || '{}');
-      } catch (e) {}
+      try { saved = HeavenlyNavigation.readSettings(localStorage); } catch (e) {}
 
-      return {
+      return Object.assign(HeavenlyNavigation.navigationSettings(saved), {
         autoCloak: saved.autoCloak !== undefined ? saved.autoCloak : false,
         persistentCloak: saved.persistentCloak || false,
         decoyAutoTimer: saved.decoyAutoTimer !== undefined ? Boolean(saved.decoyAutoTimer) : false,
@@ -1751,12 +1764,9 @@
         selectedPreset: saved.selectedPreset || 'classroom',
         customPresets: saved.customPresets || {},
         skipBuiltinTestPrompt: saved.skipBuiltinTestPrompt || false,
-        openSearchInNewTab: saved.openSearchInNewTab || false,
         mergeGoNewTab: saved.mergeGoNewTab || false,
-        openBookmarksInNewTab: saved.openBookmarksInNewTab !== undefined ? saved.openBookmarksInNewTab : true,
-        openInAboutBlank: saved.openInAboutBlank !== undefined ? saved.openInAboutBlank : false,
         panicKeyEnable: saved.panicKeyEnable || false,
-        panicKey: saved.panicKey || '`',
+        panicKey: typeof saved.panicKey === 'string' ? saved.panicKey : '`',
         touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
         panicUrl: saved.panicUrl || 'https://classroom.google.com',
         showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
@@ -1768,12 +1778,13 @@
         dockPosition: saved.dockPosition || 'bottom',
         disableAllWidgets: saved.disableAllWidgets || false,
         disableAllFeatures: saved.disableAllFeatures || false
-      };
+      });
     }
 
     function saveSettings(settings) {
       try {
-        localStorage.setItem('heavenly_settings', JSON.stringify(settings));
+        HeavenlyNavigation.updateSettings(localStorage, settings);
+        window.dispatchEvent(new CustomEvent('heavenly:settings-change'));
       } catch (e) {}
     }
 
@@ -2183,7 +2194,8 @@
       ].join('\n');
     }
 
-    function syncSettingsToUI() {
+    var lastSyncedDockPosition = null;
+    function syncSettingsToUI(options) {
       var settings = loadSettings();
       $('set-auto-cloak').checked = settings.autoCloak;
       $('set-persistent-cloak').checked = settings.persistentCloak;
@@ -2192,7 +2204,6 @@
       if (randomPoolContainer) {
         randomPoolContainer.style.display = settings.randomizePresetEachSession ? 'block' : 'none';
       }
-      $('set-show-builtin-prompt').checked = !settings.skipBuiltinTestPrompt;
 
       var searchNewTabCb = $('set-search-new-tab');
       var mergeGoCb = $('set-merge-go-newtab');
@@ -2203,8 +2214,11 @@
 
       var bmsNewTabCb = $('set-bookmarks-new-tab');
       if (bmsNewTabCb) bmsNewTabCb.checked = settings.openBookmarksInNewTab;
-      var aboutBlankCb = $('set-about-blank');
-      if (aboutBlankCb) aboutBlankCb.checked = Boolean(settings.openInAboutBlank);
+      $('set-bookmarks-about-blank').checked = settings.openBookmarksInAboutBlank;
+      $('set-search-about-blank').checked = settings.openSearchInAboutBlank;
+      $('set-show-proxied-url').checked = settings.showProxiedUrl;
+      if (bmsNewTabCb) bmsNewTabCb.disabled = settings.openBookmarksInAboutBlank;
+      if (searchNewTabCb) searchNewTabCb.disabled = settings.openSearchInAboutBlank;
       var decoyAutoTimerCb = $('set-decoy-auto-timer');
       if (decoyAutoTimerCb) decoyAutoTimerCb.checked = Boolean(settings.decoyAutoTimer);
 
@@ -2218,6 +2232,9 @@
       $('set-show-nav-search').checked = settings.showNavSearch;
       $('set-show-nav-home').checked = settings.showNavHome;
       $('set-use-widget-dock').checked = settings.useWidgetDock;
+      var edge = ['bottom', 'top', 'left', 'right'].indexOf(settings.dockPosition) !== -1 ? settings.dockPosition : 'bottom';
+      $('set-dock-position').value = edge;
+      if (lastSyncedDockPosition !== edge) { $('preview-dock-pos-select').value = edge; lastSyncedDockPosition = edge; }
       $('set-disable-all-widgets').checked = settings.disableAllWidgets;
       $('set-disable-all-features').checked = settings.disableAllFeatures;
 
@@ -2279,7 +2296,7 @@
             img.src = presetObj.icon;
             img.alt = 'Icon';
             img.style.cssText = 'width: 18px; height: 18px; object-fit: contain; border-radius: 4px; flex-shrink: 0;';
-            img.onerror = function () { this.src = 'https://ssl.gstatic.com/classroom/favicon.png'; };
+            img.onerror = function () { this.onerror = null; this.src = '/assets/heavenly-logo.png'; };
 
             var textSpan = document.createElement('span');
             textSpan.style.cssText = 'font-size: 0.88rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
@@ -2339,71 +2356,20 @@
         var allPoolPresets = Object.assign({}, DEFAULT_PRESETS, settings.customPresets);
         var currentPool = settings.randomPool || DEFAULT_RANDOM_POOL.slice();
 
-        Object.keys(allPoolPresets).forEach(function (key) {
-          var pObj = allPoolPresets[key];
-          var isInPool = currentPool.indexOf(key) !== -1;
-
-          var chip = document.createElement('button');
-          chip.type = 'button';
-          chip.setAttribute('aria-pressed', isInPool ? 'true' : 'false');
-          chip.setAttribute('aria-label', pObj.title + (isInPool ? ' (Included in pool)' : ' (Excluded from pool)'));
-          chip.style.cssText = 'padding: 8px 10px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; transition: all 0.2s ease; font-family: inherit; font-size: 0.8rem; font-weight: 600;' +
-            (isInPool
-              ? 'background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #f8fafc; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);'
-              : 'background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8;');
-
-          var leftGroup = document.createElement('div');
-          leftGroup.style.cssText = 'display: flex; align-items: center; gap: 6px; overflow: hidden;';
-
-          var img = document.createElement('img');
-          img.src = pObj.icon;
-          img.alt = 'Icon';
-          img.style.cssText = 'width: 16px; height: 16px; object-fit: contain; border-radius: 3px; flex-shrink: 0;';
-          img.onerror = function () { this.src = 'https://ssl.gstatic.com/classroom/favicon.png'; };
-
-          var textSpan = document.createElement('span');
-          textSpan.style.cssText = 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
-          textSpan.textContent = pObj.title.split(' - ')[0].split(' | ')[0].split(' – ')[0];
-
-          leftGroup.appendChild(img);
-          leftGroup.appendChild(textSpan);
-          chip.appendChild(leftGroup);
-
-          var checkBadge = document.createElement('span');
-          checkBadge.style.cssText = 'display: flex; align-items: center; justify-content: center; flex-shrink: 0;';
-          checkBadge.innerHTML = isInPool
-            ? '<svg style="width: 14px; height: 14px; fill: none; stroke: #38bdf8; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-            : '<svg style="width: 14px; height: 14px; fill: none; stroke: #64748b; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle></svg>';
-          chip.appendChild(checkBadge);
-
-          chip.onclick = function () {
-            var st = loadSettings();
-            var activePool = st.randomPool ? st.randomPool.slice() : DEFAULT_RANDOM_POOL.slice();
-
-            var idx = activePool.indexOf(key);
-            if (idx !== -1) {
-              activePool.splice(idx, 1);
-            } else {
-              activePool.push(key);
-            }
-
-            st.randomPool = activePool;
-            try { sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {}
-            saveSettings(st);
-            syncSettingsToUI();
-            syncCloak();
-          };
-
-          poolChipsContainer.appendChild(chip);
+        HeavenlyCloakPool.render(poolChipsContainer, allPoolPresets, currentPool, function (nextPool) {
+          var st = loadSettings(); st.randomPool = nextPool;
+          try { sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {}
+          saveSettings(st); syncSettingsToUI({ skipBookmarks: true }); syncCloak();
         });
       }
 
-      renderBookmarkManager();
+      if (!options || !options.skipBookmarks) renderBookmarkManager();
       updateLivePreview();
     }
 
     // --- Tab Cloaking ---
     var originalTitle = document.title;
+    var appliedCloakTitle = null;
 
     function resolveActivePreset(settings) {
       if (!settings) settings = loadSettings();
@@ -2441,10 +2407,11 @@
       var head = document.head || document.getElementsByTagName('head')[0];
 
       if (isCloaked) {
-        if (document.title && document.title !== preset.title) {
+        if (document.title && document.title !== appliedCloakTitle) {
           originalTitle = document.title;
         }
         document.title = preset.title;
+        appliedCloakTitle = preset.title;
 
         if (head) {
           var iconLinks = document.querySelectorAll("link[rel*='icon']");
@@ -2472,6 +2439,7 @@
         if (originalTitle) {
           document.title = originalTitle;
         }
+        appliedCloakTitle = null;
 
         var cloakLink2 = document.getElementById('heavenly-cloak-icon');
         if (cloakLink2 && cloakLink2.parentNode) {
@@ -2492,7 +2460,9 @@
 
     function syncCloak() {
       var settings = loadSettings();
-      if (settings.persistentCloak) {
+      if (settings.disableAllFeatures) {
+        applyCloak(false, settings);
+      } else if (settings.persistentCloak) {
         applyCloak(true, settings);
       } else if (settings.autoCloak && document.hidden) {
         applyCloak(true, settings);
@@ -2508,7 +2478,7 @@
       });
       window.addEventListener('storage', function (e) {
         if (e.key === 'heavenly_settings') {
-          syncSettingsToUI();
+          syncSettingsToUI({ skipBookmarks: true });
           syncCloak();
         }
       });
@@ -2587,11 +2557,12 @@
         settings.autoCloak = $('set-auto-cloak').checked;
         settings.persistentCloak = $('set-persistent-cloak').checked;
         if ($('set-randomize-preset-session')) settings.randomizePresetEachSession = $('set-randomize-preset-session').checked;
-        settings.skipBuiltinTestPrompt = !$('set-show-builtin-prompt').checked;
         settings.openSearchInNewTab = $('set-search-new-tab') ? $('set-search-new-tab').checked : false;
         settings.mergeGoNewTab = $('set-merge-go-newtab') ? $('set-merge-go-newtab').checked : false;
         settings.openBookmarksInNewTab = $('set-bookmarks-new-tab') ? $('set-bookmarks-new-tab').checked : true;
-        settings.openInAboutBlank = $('set-about-blank') ? $('set-about-blank').checked : false;
+        settings.openBookmarksInAboutBlank = $('set-bookmarks-about-blank').checked;
+        settings.openSearchInAboutBlank = $('set-search-about-blank').checked;
+        settings.showProxiedUrl = $('set-show-proxied-url').checked;
         settings.decoyAutoTimer = $('set-decoy-auto-timer') ? $('set-decoy-auto-timer').checked : false;
         settings.panicKeyEnable = $('set-panic-key-enable').checked;
         settings.panicKey = $('set-panic-key').value.trim();
@@ -2611,7 +2582,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-about-blank', 'set-decoy-auto-timer', 'set-randomize-preset-session', 'set-show-builtin-prompt', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
+      ['set-auto-cloak', 'set-persistent-cloak', 'set-bookmarks-about-blank', 'set-search-about-blank', 'set-show-proxied-url', 'set-decoy-auto-timer', 'set-randomize-preset-session', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
         var el = $(id);
         if (el) {
           el.onchange = function () {
@@ -2620,6 +2591,8 @@
           };
         }
       });
+
+      $('set-dock-position').onchange = function () { saveSettings({ dockPosition: this.value }); syncSettingsToUI({ skipBookmarks: true }); };
 
       ['set-panic-key', 'set-panic-url'].forEach(function (id) {
         $(id).oninput = updateHandler;
@@ -2687,8 +2660,7 @@
       if (poolSelectAllBtn) {
         poolSelectAllBtn.onclick = function () {
           var st = loadSettings();
-          var allKeys = Object.keys(Object.assign({}, DEFAULT_PRESETS, st.customPresets));
-          st.randomPool = allKeys;
+          st.randomPool = HeavenlyCloakPool.all(st.randomPool || DEFAULT_RANDOM_POOL, Object.assign({}, DEFAULT_PRESETS, st.customPresets));
           try { sessionStorage.removeItem('heavenly_session_preset'); } catch (e) {}
           saveSettings(st);
           syncSettingsToUI();
@@ -3148,11 +3120,23 @@
       }, { passive: false });
     })();
 
-    window.onload = function () {
+    function initSettingsPage() {
+      if (window.__heavenlySettingsInitialized) return;
+      window.__heavenlySettingsInitialized = true;
       bindSettingsEvents();
       initCloak();
       setTimeout(hideLoadingScreen, 300);
-    };
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSettingsPage, { once: true });
+    else initSettingsPage();
+    document.addEventListener('DOMContentLoaded', function () {
+      function revealMasterControls() { if (location.hash === '#master-controls') $('master-controls').open = true; }
+      revealMasterControls();
+      window.addEventListener('hashchange', revealMasterControls);
+      HeavenlyQuickSettings.init({ editorTrigger: $('customize-quick-settings-btn'), presets: DEFAULT_PRESETS, onChange: function () { syncSettingsToUI({ skipBookmarks: true }); syncCloak(); } });
+      var target = location.hash && $(location.hash.slice(1));
+      if (target && ['#panic-controls', '#widget-settings', '#tab-cloaking'].indexOf(location.hash) !== -1) target.focus({ preventScroll: true });
+    });
   </script>
 
 </body>

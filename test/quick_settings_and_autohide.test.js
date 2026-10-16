@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const quickSettings = require('../public/assets/quick-settings-model');
 
 describe('Quick Settings & Auto-Hide Broken Bookmarks Tests', function () {
   let indexHtml;
@@ -9,23 +10,24 @@ describe('Quick Settings & Auto-Hide Broken Bookmarks Tests', function () {
     indexHtml = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
   });
 
-  it('should contain Quick Settings section, toggle button, and pills in public/index.html', function () {
+  it('should mount the shared Quick Settings registry in the homepage', function () {
     assert.ok(indexHtml.includes('id="quick-settings-section"'), 'index.html should contain quick-settings-section ID');
     assert.ok(indexHtml.includes('id="quick-settings-toggle-btn"'), 'index.html should contain quick-settings-toggle-btn ID');
     assert.ok(indexHtml.includes('id="quick-settings-tray"'), 'index.html should contain quick-settings-tray ID');
 
-    assert.ok(indexHtml.includes('id="pill-bm-newtab"'), 'index.html should contain pill-bm-newtab ID');
-    assert.ok(indexHtml.includes('id="pill-search-newtab"'), 'index.html should contain pill-search-newtab ID');
-
-    assert.ok(indexHtml.includes('Bookmarks in New Tab'), 'index.html should contain Bookmarks in New Tab pill text');
-    assert.ok(indexHtml.includes('Search in New Tab'), 'index.html should contain Search in New Tab pill text');
+    assert.ok(indexHtml.includes('/assets/quick-settings-model.js'), 'Homepage should load the shared registry');
+    const bookmarks = quickSettings.items.find(item => item.id === 'pill-bm-newtab');
+    const search = quickSettings.items.find(item => item.id === 'pill-search-newtab');
+    assert.strictEqual(bookmarks.name, 'Bookmarks in New Tab');
+    assert.strictEqual(search.name, 'Search in New Tab');
   });
 
   it('should define initQuickSettingsTray with state persistence and pill click handlers', function () {
     assert.ok(indexHtml.includes('function initQuickSettingsTray()'), 'index.html should define initQuickSettingsTray function');
     assert.ok(indexHtml.includes('heavenly_quick_settings_expanded'), 'initQuickSettingsTray should use heavenly_quick_settings_expanded key');
-    assert.ok(indexHtml.includes('openBookmarksInNewTab'), 'pill-bm-newtab should update openBookmarksInNewTab setting');
-    assert.ok(indexHtml.includes('openSearchInNewTab'), 'pill-search-newtab should update openSearchInNewTab setting');
+    assert.strictEqual(quickSettings.items.find(item => item.id === 'pill-bm-newtab').key, 'openBookmarksInNewTab');
+    assert.strictEqual(quickSettings.items.find(item => item.id === 'pill-search-newtab').key, 'openSearchInNewTab');
+    assert.ok(indexHtml.includes('HeavenlyQuickSettings.init('), 'Homepage should use the shared shortcut component');
   });
 
   it('should contain Auto-Hide broken bookmark container and action button in builtin-test-modal', function () {

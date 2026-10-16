@@ -18,7 +18,7 @@ function context() {
   };
   vm.createContext(sandbox);
   vm.runInContext(html.slice(html.indexOf('    var DEFAULT_BOOKMARK_DATA ='), html.indexOf('    var expandedCategories =')), sandbox);
-  vm.runInContext(['loadBookmarkData', 'saveBookmarkData', 'reorderSectionDraft', 'moveSelectedBookmarks'].map(name => source(name)).join('\n'), sandbox);
+  vm.runInContext(['loadBookmarkData', 'saveBookmarkData', 'reorderSectionDraft'].map(name => source(name)).join('\n'), sandbox);
   return sandbox;
 }
 const plain = value => JSON.parse(JSON.stringify(value));
@@ -85,38 +85,6 @@ describe('Bookmark management and saved ordering', function () {
     c.storage = c.localStorage;
     vm.runInContext(client.slice(client.indexOf('      var data = JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));'), client.indexOf('      var path = window.location.pathname;')), c);
     verify(c.data);
-  });
-
-  it('moves only selected visible bookmarks together, preserving folders, URLs and relative order', function () {
-    const c = context();
-    const data = {
-      categories: [{ id: 'dest', subSections: [{ id: 'user' }, { id: 'classics' }] }],
-      bookmarks: [
-        { id: 'second', categoryId: 'src', subSectionId: 'user', order: 8, url: 'https://two.test' },
-        { id: 'first', categoryId: 'src', subSectionId: 'user', order: 2, type: 'folder', subBookmarks: [{ title: 'Child', url: 'https://child.test' }] },
-        { id: 'existing', categoryId: 'dest', subSectionId: 'classics', order: 10 },
-        { id: 'untouched', categoryId: 'src', subSectionId: 'user', order: 0 },
-        { id: 'hidden', categoryId: 'src', subSectionId: 'user', order: 1, hidden: true }
-      ]
-    };
-    const before = plain(data);
-    assert.strictEqual(c.moveSelectedBookmarks(data, new Set(['second', 'first', 'hidden', 'stale']), 'dest', 'classics'), true);
-    assert.deepStrictEqual(data.bookmarks[0], { ...before.bookmarks[0], categoryId: 'dest', subSectionId: 'classics', order: 12 });
-    assert.deepStrictEqual(data.bookmarks[1], { ...before.bookmarks[1], categoryId: 'dest', subSectionId: 'classics', order: 11 });
-    assert.deepStrictEqual(data.bookmarks.slice(2), before.bookmarks.slice(2));
-  });
-
-  it('does not mutate data for hidden categories, invalid sections or empty selections', function () {
-    const c = context();
-    const data = {
-      categories: [{ id: 'dest', subSections: [{ id: 'user' }] }, { id: 'hidden', hidden: true, subSections: [{ id: 'user' }] }],
-      bookmarks: [{ id: 'bm', categoryId: 'src', order: 3 }]
-    };
-    const before = plain(data);
-    assert.strictEqual(c.moveSelectedBookmarks(data, new Set(['bm']), 'dest', 'missing'), false);
-    assert.strictEqual(c.moveSelectedBookmarks(data, new Set(['bm']), 'hidden', 'user'), false);
-    assert.strictEqual(c.moveSelectedBookmarks(data, new Set(), 'dest', 'user'), false);
-    assert.deepStrictEqual(data, before);
   });
 
   it('shares exactly checked bookmarks and the category metadata needed to import them', function () {

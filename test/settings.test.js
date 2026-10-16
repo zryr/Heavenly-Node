@@ -31,7 +31,9 @@ describe('settings.html standalone page', function() {
     it('should contain all essential setting controls and inputs', function() {
         assert.ok(html.includes('id="set-auto-cloak"'), 'set-auto-cloak checkbox should exist');
         assert.ok(html.includes('id="set-persistent-cloak"'), 'set-persistent-cloak checkbox should exist');
-        assert.ok(html.includes('id="set-about-blank"'), 'set-about-blank checkbox should exist');
+        assert.ok(html.includes('id="set-bookmarks-about-blank"'), 'set-bookmarks-about-blank checkbox should exist');
+        assert.ok(html.includes('id="set-search-about-blank"'), 'set-search-about-blank checkbox should exist');
+        assert.ok(html.includes('id="set-show-proxied-url"'), 'set-show-proxied-url checkbox should exist');
         assert.ok(html.includes('id="set-decoy-auto-timer"'), 'set-decoy-auto-timer checkbox should exist');
         assert.ok(html.includes('id="preset-select"'), 'preset-select dropdown should exist');
         assert.ok(html.includes('id="save-custom-preset-btn"'), 'save-custom-preset-btn should exist');
@@ -47,7 +49,9 @@ describe('settings.html standalone page', function() {
     it('should associate labels with form inputs using for attributes in settings.html', function() {
         assert.ok(html.includes('for="set-panic-key"'), 'label for set-panic-key should exist');
         assert.ok(html.includes('for="set-use-widget-dock"'), 'label for set-use-widget-dock should exist');
-        assert.ok(html.includes('for="set-about-blank"'), 'label for set-about-blank should exist');
+        assert.ok(html.includes('for="set-bookmarks-about-blank"'), 'label for set-bookmarks-about-blank should exist');
+        assert.ok(html.includes('for="set-search-about-blank"'), 'label for set-search-about-blank should exist');
+        assert.ok(html.includes('for="set-show-proxied-url"'), 'label for set-show-proxied-url should exist');
         assert.ok(html.includes('for="set-decoy-auto-timer"'), 'label for set-decoy-auto-timer should exist');
     });
 
@@ -67,7 +71,9 @@ describe('settings.html standalone page', function() {
     it('should assign role="switch" to switch toggle checkboxes in settings.html', function() {
         assert.ok(html.includes('id="set-auto-cloak" role="switch"'), 'set-auto-cloak should have role="switch"');
         assert.ok(html.includes('id="set-persistent-cloak" role="switch"'), 'set-persistent-cloak should have role="switch"');
-        assert.ok(html.includes('id="set-about-blank" role="switch"'), 'set-about-blank should have role="switch"');
+        assert.ok(html.includes('id="set-bookmarks-about-blank" role="switch"'), 'set-bookmarks-about-blank should have role="switch"');
+        assert.ok(html.includes('id="set-search-about-blank" role="switch"'), 'set-search-about-blank should have role="switch"');
+        assert.ok(html.includes('id="set-show-proxied-url" role="switch"'), 'set-show-proxied-url should have role="switch"');
         assert.ok(html.includes('id="set-decoy-auto-timer" role="switch"'), 'set-decoy-auto-timer should have role="switch"');
         assert.ok(html.includes('id="set-use-widget-dock" role="switch"'), 'set-use-widget-dock should have role="switch"');
     });

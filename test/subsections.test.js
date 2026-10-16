@@ -46,8 +46,9 @@ describe("Sub-Sections Functionality & Data Model", function () {
 
   it("should default tab cloaking randomizer pool to 7 specific tools", function () {
     var expected = "['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva']";
-    assert.strictEqual(indexHtml.includes(expected), true, 'index.html missing DEFAULT_RANDOM_POOL');
-    assert.strictEqual(settingsHtml.includes(expected), true, 'settings.html missing DEFAULT_RANDOM_POOL');
+    assert.deepStrictEqual(require('../public/assets/cloak-pool').defaults, ['classroom', 'google', 'docs', 'drive', 'gmail', 'outlook', 'canva']);
+    assert.strictEqual(indexHtml.includes('var DEFAULT_RANDOM_POOL = HeavenlyCloakPool.defaults.slice();'), true, 'Homepage should reuse the shared default pool');
+    assert.strictEqual(settingsHtml.includes('var DEFAULT_RANDOM_POOL = HeavenlyCloakPool.defaults.slice();'), true, 'Settings should reuse the shared default pool');
     assert.strictEqual(clientJs.includes(expected), true, 'unblocker-client.js missing DEFAULT_RANDOM_POOL');
   });
 
