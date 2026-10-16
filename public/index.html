@@ -3155,9 +3155,9 @@
         <button id="close-share-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
 
-      <div style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
-        <button id="tab-share-create" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(129, 140, 248, 0.2); border: 1px solid rgba(129, 140, 248, 0.4); color: #818cf8; font-weight: 600; cursor: pointer;">1. Pick & Share</button>
-        <button id="tab-share-redeem" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">2. Enter Code / Link</button>
+      <div role="tablist" aria-label="Share options" style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
+        <button id="tab-share-create" type="button" role="tab" aria-selected="true" aria-controls="share-view-create" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(129, 140, 248, 0.2); border: 1px solid rgba(129, 140, 248, 0.4); color: #818cf8; font-weight: 600; cursor: pointer;">1. Pick & Share</button>
+        <button id="tab-share-redeem" type="button" role="tab" aria-selected="false" aria-controls="share-view-redeem" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">2. Enter Code / Link</button>
       </div>
 
       <!-- Create Share Code Tab -->
@@ -7638,15 +7638,19 @@
       if (tab === 'redeem') {
         tabCreate.style.background = 'rgba(30, 41, 59, 0.6)';
         tabCreate.style.color = '#94a3b8';
+        tabCreate.setAttribute('aria-selected', 'false');
         tabRedeem.style.background = 'rgba(129, 140, 248, 0.2)';
         tabRedeem.style.color = '#818cf8';
+        tabRedeem.setAttribute('aria-selected', 'true');
         viewCreate.style.display = 'none';
         viewRedeem.style.display = 'flex';
       } else {
         tabCreate.style.background = 'rgba(129, 140, 248, 0.2)';
         tabCreate.style.color = '#818cf8';
+        tabCreate.setAttribute('aria-selected', 'true');
         tabRedeem.style.background = 'rgba(30, 41, 59, 0.6)';
         tabRedeem.style.color = '#94a3b8';
+        tabRedeem.setAttribute('aria-selected', 'false');
         viewCreate.style.display = 'flex';
         viewRedeem.style.display = 'none';
       }
