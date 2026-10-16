@@ -58,3 +58,5 @@ Browser-engine checks and touch viewports do not establish physical iPad Safari,
 - Existing proxy-platform browser script: **4 checks** in Chromium, including relative modules, SRI enforcement and deployment-toolbar recursion.
 - Total: **76 browser checks**, plus syntax checks and `git diff --check`.
 - WebKit ran on Linux using temporary downloaded browser/runtime libraries. No physical Apple device or ChromeOS session was available.
+
+The initial preview smoke test exposed a Vercel file-tracing omission: the raw proxy-client source was absent from the function bundle. The legacy Node builder now explicitly includes the client source, local diagnostics helper and public assets; no routing normalization settings were changed.
