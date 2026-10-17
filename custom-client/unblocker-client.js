@@ -356,6 +356,12 @@
 
     if (typeof window.MutationObserver !== "undefined" && window.document && window.document.documentElement) {
       var observer = new window.MutationObserver(function (mutations) {
+        // A parser/SPA batch can include both an inserted parent and hundreds
+        // of its descendants. Walk each final subtree once, rather than once
+        // for every insertion record. Keep the sets local to this delivery so
+        // moving the same element in a later batch still gets processed.
+        var roots = new Set();
+        var attributes = new Map();
         var mLen = mutations.length;
         for (var i = 0; i < mLen; i++) {
           var mut = mutations[i];
@@ -365,16 +371,32 @@
               var aLen = added.length;
               for (var j = 0; j < aLen; j++) {
                 var node = added[j];
-                if (node.nodeType === 1) {
-                  processElementNode(node);
-                }
+                if (node.nodeType === 1 && node.isConnected !== false) roots.add(node);
               }
             }
           } else if (mut.type === "attributes") {
             var target = mut.target;
             if (!target || target.nodeType !== 1) continue;
-            var attrName = mut.attributeName;
-            if (!attrName) continue;
+            if (target.isConnected === false) continue;
+            var names = attributes.get(target);
+            if (!names) { names = new Set(); attributes.set(target, names); }
+            names.add(mut.attributeName);
+          }
+        }
+        function hasInsertedAncestor(node) {
+          for (var parent = node.parentNode; parent; parent = parent.parentNode) {
+            if (roots.has(parent)) return true;
+          }
+          return false;
+        }
+        roots.forEach(function (root) {
+          if (!hasInsertedAncestor(root)) processElementNode(root);
+        });
+        attributes.forEach(function (names, target) {
+          // Attribute records also cover custom lazy-resource containers that
+          // are not among processElementNode's resource element types.
+          names.forEach(function (attrName) {
+            if (!attrName) return;
 
             if (attrName === "src" || attrName === "href" || attrName === "data-src" || attrName === "data-href" || attrName === "data-url" ||
                 attrName === "SRC" || attrName === "HREF" || attrName === "DATA-SRC" || attrName === "DATA-HREF" || attrName === "DATA-URL") {
@@ -394,8 +416,8 @@
                 }
               }
             }
-          }
-        }
+          });
+        });
       });
 
       observer.observe(window.document.documentElement, {

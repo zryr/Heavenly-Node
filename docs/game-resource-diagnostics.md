@@ -1,5 +1,7 @@
 # Game resources, widget icons and public error diagnostics
 
+See the [games/search/performance follow-up](coolmath-search-performance.md) for Papa's Freezeria and Boba Simulator's identified hostname restrictions and the subsequent proxy-overhead investigation.
+
 Follow-up to PR #176. Evidence uses synthetic fixtures and bounded live checks; no raw HAR, cookies, credentials, full headers or third-party HTML are stored here.
 
 ## Reported game: boot failure fixed, playability unresolved
