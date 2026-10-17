@@ -1,5 +1,7 @@
 # Proxy compatibility investigation
 
+This records the initial PR #176 investigation. See the [game/resource and public-diagnostics follow-up](game-resource-diagnostics.md) for subsequent fixes, live game evidence and current verification results.
+
 This change starts from main at `903ae60` (PRs #167–169 included). Evidence is the supplied **redacted summary**, source inspection, deterministic local fixtures, and limited live response checks. No raw HAR, request headers, cookies, tokens or full third-party HTML belong in this repository.
 
 ## Findings and changes
@@ -48,9 +50,9 @@ The browser scripts require an independently installed Playwright and browser bi
 
 Upstream CSP, framing and MIME restrictions remain intact. A site can legitimately refuse framing or block injected initialization under CSP. Use the visible wrapper controls to return Home or open normally; this change does not override those restrictions. Site scripts that require an entirely virtual remote origin or directly assign unrewritable native Location properties can remain incompatible with a path proxy. A direct connection may also fail independently.
 
-Browser-engine checks and touch viewports do not establish physical iPad Safari, Chromebook/ChromeOS or desktop-device verification. Complete live Coolmath game rendering/hydration and the captured 308 emitter still require a browser/network environment that can inspect the individual live hops. Production diagnostics intentionally cannot be enabled for that purpose.
+Browser-engine checks and touch viewports do not establish physical iPad Safari, Chromebook/ChromeOS or desktop-device verification. The captured 308 emitter remains unestablished. The follow-up records live Coolmath resource checks and its remaining game-initiated redirect. Restricted developer diagnostics remain unavailable in production; the separate sanitized Advanced Details panel is now available there.
 
-### Recorded results
+### Initial recorded results (before the follow-up)
 
 - `npm test`: **333 passing** (baseline: 321 passing).
 - Existing navigation/history browser script: **15 checks each** in Chromium, Firefox and WebKit with emulated touch viewports.

@@ -27,19 +27,31 @@
       return srcsetStr;
     }
     srcsetStr = srcsetStr.toString();
-    var candidates = srcsetStr.split(",");
-    var fixedCandidates = [];
-    for (var i = 0; i < candidates.length; i++) {
-      var candidate = candidates[i];
-      // Fast-path string trimming using native String.prototype.trim() instead of regex replacement
-      var trimmed = candidate.trim();
-      if (!trimmed) {
-        fixedCandidates.push(candidate);
-        continue;
+    // A comma inside an image URL (especially data:) is not a candidate
+    // separator. Consume URL tokens before descriptors, as the HTML srcset
+    // parser does, rather than splitting base64 placeholders into fake URLs.
+    var fixedCandidates = [], index = 0;
+    while (index < srcsetStr.length) {
+      while (index < srcsetStr.length && /[\s,]/.test(srcsetStr[index])) index++;
+      var start = index;
+      while (index < srcsetStr.length && !/\s/.test(srcsetStr[index])) index++;
+      var url = srcsetStr.slice(start, index);
+      if (!url) break;
+      var descriptor = '';
+      if (/,$/.test(url)) url = url.replace(/,+$/, '');
+      else {
+        start = index;
+        var depth = 0;
+        while (index < srcsetStr.length) {
+          var char = srcsetStr[index];
+          if (char === ',' && !depth) break;
+          if (char === '(') depth++;
+          if (char === ')') depth = Math.max(0, depth - 1);
+          index++;
+        }
+        descriptor = srcsetStr.slice(start, index).trim();
       }
-      var parts = trimmed.split(/\s+/);
-      parts[0] = fixUrl(parts[0], config, location);
-      fixedCandidates.push(parts.join(" "));
+      if (url) fixedCandidates.push(fixUrl(url, config, location) + (descriptor ? ' ' + descriptor : ''));
     }
     return fixedCandidates.join(", ");
   }
@@ -108,6 +120,11 @@
     var currentRemoteHref;
     function getCurrentRemoteHref() {
       if (currentRemoteHref !== undefined) return currentRemoteHref;
+      if (config.documentBaseUrl) {
+        var base = config.documentBaseUrl();
+        var remoteBase = navigation.remoteUrl(base, location.origin, prefix);
+        if (remoteBase) { currentRemoteHref = remoteBase; return currentRemoteHref; }
+      }
       if (location.pathname.startsWith(prefix)) {
         currentRemoteHref =
           location.pathname.substr(prefixLen) +
@@ -161,7 +178,8 @@
     if (url.hostname === location.hostname) {
       var currentRemoteUrl = new URL(getCurrentRemoteHref());
       // set host (including port)
-      url.host = currentRemoteUrl.host;
+      url.hostname = currentRemoteUrl.hostname;
+      url.port = currentRemoteUrl.port;
       // also keep the remote site's current protocol
       url.protocol = currentRemoteUrl.protocol;
       // todo: handle websocket protocols
@@ -214,6 +232,10 @@
       wrapProperty(window.HTMLImageElement.prototype, "src", fixUrl);
       wrapProperty(window.HTMLImageElement.prototype, "srcset", fixSrcset);
     }
+    if (window.HTMLSourceElement && window.HTMLSourceElement.prototype) {
+      wrapProperty(window.HTMLSourceElement.prototype, "src", fixUrl);
+      wrapProperty(window.HTMLSourceElement.prototype, "srcset", fixSrcset);
+    }
     if (window.HTMLScriptElement && window.HTMLScriptElement.prototype) {
       wrapProperty(window.HTMLScriptElement.prototype, "src", fixUrl);
     }
@@ -265,7 +287,7 @@
       if (!el || el.nodeType !== 1) return;
 
       var tag = el.tagName || "";
-      if (tag === "IMG" || tag === "SCRIPT" || tag === "IFRAME" || tag === "VIDEO" || tag === "AUDIO") {
+      if (tag === "IMG" || tag === "SCRIPT" || tag === "IFRAME" || tag === "SOURCE" || tag === "VIDEO" || tag === "AUDIO") {
         var src = el.getAttribute("src");
         if (src) {
           var fixedSrc = fixUrl(src, config, window.location);
@@ -286,6 +308,11 @@
           if (fixedDataUrl !== dataUrl) {
             try { el.setAttribute("data-url", fixedDataUrl); } catch (e) {}
           }
+        }
+        var lazySrcset = el.getAttribute("data-srcset");
+        if (lazySrcset) {
+          var fixedLazy = fixSrcset(lazySrcset, config, window.location);
+          if (fixedLazy !== lazySrcset) el.setAttribute("data-srcset", fixedLazy);
         }
         var srcset = el.getAttribute("srcset");
         if (srcset) {
@@ -358,12 +385,12 @@
                   try { target.setAttribute(attrName, fixedVal); } catch (e) {}
                 }
               }
-            } else if (attrName === "srcset" || attrName === "SRCSET") {
+            } else if (attrName === "srcset" || attrName === "SRCSET" || attrName === "data-srcset" || attrName === "DATA-SRCSET") {
               var srcsetVal = target.getAttribute(attrName);
               if (srcsetVal) {
                 var fixedSrcsetVal = fixSrcset(srcsetVal, config, window.location);
                 if (fixedSrcsetVal !== srcsetVal) {
-                  try { target.setAttribute("srcset", fixedSrcsetVal); } catch (e) {}
+                  try { target.setAttribute(attrName, fixedSrcsetVal); } catch (e) {}
                 }
               }
             }
@@ -375,7 +402,7 @@
         childList: true,
         subtree: true,
         attributes: true,
-        attributeFilter: ["src", "href", "srcset", "data-src"]
+        attributeFilter: ["src", "href", "srcset", "data-src", "data-href", "data-url", "data-srcset"]
       });
     }
 
@@ -515,7 +542,7 @@
     var _createElement = window.document.createElement;
 
     window.document.createElement = function (tagName, options) {
-      if (tagName.toLowerCase() === "iframe") {
+      if (typeof tagName === "string" && tagName.toLowerCase() === "iframe") {
         initAppendBodyIframe(config, window);
       }
       return _createElement.call(window.document, tagName, options);
@@ -559,8 +586,9 @@
     var winLoc = window.location;
     var proxyHost = winLoc.host;
     var isSecure = winLoc.protocol === "https:";
-    var target = winLoc.pathname.substr(prefix.length);
-    var targetURL = new URL(target);
+    var target = navigation.currentRemoteUrl(window, config);
+    var targetURL;
+    try { targetURL = new URL(target); } catch (e) { return; }
 
     // ws:// or wss:// then at least one char for location,
     // then either the end or a path
@@ -1328,6 +1356,12 @@
   function scrollLockMarkup(enabled) {
     var shackle = enabled ? 'M7 11V7a5 5 0 0 1 10 0v4' : 'M7 11V7a5 5 0 0 1 9-3';
     return '<svg aria-hidden="true" class="title-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="' + shackle + '"/></svg><span>' + (enabled ? 'ON' : 'OFF') + '</span>';
+  }
+
+  function magnifierMarkup(enabled, lensTitle) {
+    // Reuse the magnifier glyph already used by the Dock in every state.
+    var svg = '<svg aria-hidden="true" class="title-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>';
+    return svg + '<span>' + (lensTitle || (enabled ? 'ON' : 'OFF')) + '</span>';
   }
 
   function openDirectSitePreview(window, directUrl) {
@@ -2351,6 +2385,7 @@
         '  display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;',
         '}',
         '.btn-toggle:hover, .btn-ctrl:hover { background: rgba(51, 65, 85, 0.9); color: #f8fafc; }',
+        '.btn-toggle .title-icon { stroke: currentColor; flex-shrink: 0; filter: none; }',
         '.btn-toggle.active {',
         '  background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 100%);',
         '  border: 1px solid transparent; color: #030712; box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);',
@@ -2682,7 +2717,7 @@
 
           lensFrame.innerHTML = [
             '<div class="lens-header" id="lens-header">',
-            '  <span>🔍 Lens (' + zoomLevel.toFixed(1) + 'x)</span>',
+            '  <span class="lens-title">' + magnifierMarkup(false, 'Lens (' + zoomLevel.toFixed(1) + 'x)') + '</span>',
             '  <button type="button" class="btn-close-lens" id="close-lens-btn">✕</button>',
             '</div>',
             '<div class="lens-view" id="lens-view"></div>',
@@ -2914,6 +2949,8 @@
               '  color: #e0f2fe;',
               '  cursor: grab;',
               '}',
+              '.lens-title { display: inline-flex; align-items: center; gap: 6px; }',
+              '.lens-title .title-icon { flex-shrink: 0; filter: none; }',
               '.lens-header:active { cursor: grabbing; }',
               '.lens-view {',
               '  flex: 1;',
@@ -2963,7 +3000,7 @@
           }
           if (lensFrame) {
             var headerSpan = lensFrame.querySelector('#lens-header span');
-            if (headerSpan) headerSpan.textContent = '🔍 Lens (' + zoomLevel.toFixed(1) + 'x)';
+            if (headerSpan) headerSpan.innerHTML = magnifierMarkup(false, 'Lens (' + zoomLevel.toFixed(1) + 'x)');
             updateMirrorPosition();
           }
         }
@@ -2974,24 +3011,26 @@
           var dockRoot = window.document.getElementById('heavenly-dock-root');
           var dockBtn = dockRoot && dockRoot.shadowRoot ? dockRoot.shadowRoot.querySelector('#dock-mag-btn') : null;
           if (dockBtn) {
+            dockBtn.setAttribute('aria-pressed', String(magEnabled));
             if (magEnabled) {
               dockBtn.classList.add('active');
-              dockBtn.innerHTML = '<span>🔍 Mag ON</span>';
+              dockBtn.innerHTML = magnifierMarkup(true);
             } else {
               dockBtn.classList.remove('active');
-              dockBtn.innerHTML = '<span>🔍 Mag OFF</span>';
+              dockBtn.innerHTML = magnifierMarkup(false);
             }
           }
 
           if (magShadow) {
             var widgetBtn = magShadow.querySelector('#mag-toggle-btn');
             if (widgetBtn) {
+              widgetBtn.setAttribute('aria-pressed', String(magEnabled));
               if (magEnabled) {
                 widgetBtn.classList.add('active');
-                widgetBtn.innerHTML = '<span>🔍 ON</span>';
+                widgetBtn.innerHTML = magnifierMarkup(true);
               } else {
                 widgetBtn.classList.remove('active');
-                widgetBtn.innerHTML = '<span>🔍 OFF</span>';
+                widgetBtn.innerHTML = magnifierMarkup(false);
               }
             }
           }
@@ -3079,7 +3118,7 @@
             '.dock-left .dock-divider, .dock-right .dock-divider { width: 32px; height: 1px; background: rgba(56, 189, 248, 0.25); margin: 2px 0; }',
             '@media (max-width: 640px) {',
             '  .dock-bar { padding: 8px 12px; gap: 8px; border-radius: 20px; }',
-            '  .dock-bar .btn-ctrl span, .dock-bar .btn-toggle span { display: none; }',
+            '  .dock-bar .btn-ctrl span { display: none; }',
             '  .dock-bar .nav-input { width: 110px; font-size: 11px; padding: 4px 8px; }',
             '}'
           ].join('\n');
@@ -3128,7 +3167,7 @@
           }
 
           if (showMagnifier) {
-            items.push('<div class="dock-item"><button type="button" class="btn-toggle" id="dock-mag-btn"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>OFF</span></button><button type="button" class="btn-ctrl" id="dock-zoom-out">-</button><span id="dock-zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span><button type="button" class="btn-ctrl" id="dock-zoom-in">+</button></div>');
+            items.push('<div class="dock-item"><button type="button" class="btn-toggle" id="dock-mag-btn" aria-label="Magnifier" aria-pressed="false">' + magnifierMarkup(false) + '</button><button type="button" class="btn-ctrl" id="dock-zoom-out">-</button><span id="dock-zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span><button type="button" class="btn-ctrl" id="dock-zoom-in">+</button></div>');
           }
 
           dockBar.innerHTML = items.join('<div class="dock-divider"></div>');
@@ -3414,24 +3453,13 @@
             if (magBtn) magBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               toggleMagnifier();
-              if (magEnabled) {
-                magBtn.classList.add('active');
-                magBtn.innerHTML = '<span>🔍 Mag ON</span>';
-              } else {
-                magBtn.classList.remove('active');
-                magBtn.innerHTML = '<span>🔍 Mag OFF</span>';
-              }
             });
 
             if (zoomInBtn) zoomInBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               if (zoomLevel < 4.0) {
                 zoomLevel = Math.round((zoomLevel + 0.5) * 10) / 10;
-                if (zoomLabel) zoomLabel.textContent = zoomLevel.toFixed(1) + 'x';
-                if (lensFrame) {
-                  lensFrame.querySelector('#lens-header span').textContent = '🔍 Lens (' + zoomLevel.toFixed(1) + 'x)';
-                  updateMirrorPosition();
-                }
+                updateZoomUI();
               }
             });
 
@@ -3439,11 +3467,7 @@
               e.stopPropagation();
               if (zoomLevel > 1.5) {
                 zoomLevel = Math.round((zoomLevel - 0.5) * 10) / 10;
-                if (zoomLabel) zoomLabel.textContent = zoomLevel.toFixed(1) + 'x';
-                if (lensFrame) {
-                  lensFrame.querySelector('#lens-header span').textContent = '🔍 Lens (' + zoomLevel.toFixed(1) + 'x)';
-                  updateMirrorPosition();
-                }
+                updateZoomUI();
               }
             });
           }
@@ -3511,7 +3535,7 @@
             '    <svg class="title-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
             '    <span>Magnifier</span>',
             '  </div>',
-            '  <button type="button" class="btn-toggle" id="mag-toggle-btn"><span>🔍 OFF</span></button>',
+            '  <button type="button" class="btn-toggle" id="mag-toggle-btn" aria-label="Magnifier" aria-pressed="false">' + magnifierMarkup(false) + '</button>',
             '  <button type="button" class="btn-ctrl" id="zoom-out-btn" title="Zoom Out">-</button>',
             '  <span id="zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">' + zoomLevel.toFixed(1) + 'x</span>',
             '  <button type="button" class="btn-ctrl" id="zoom-in-btn" title="Zoom In">+</button>',
@@ -4577,6 +4601,10 @@
     // Older/cached injected documents may contain a second initializer.
     if (window.__heavenlyClientInitialized) return;
     window.__heavenlyClientInitialized = true;
+    // An about:blank child can share its caller's config. Its <base> and history
+    // are window-specific and must not replace the parent's URL resolver.
+    config = Object.assign({}, config);
+    config.documentBaseUrl = function () { return window.document && window.document.baseURI; };
 
     if (!config.proxyOrigin) config.proxyOrigin = (window.location && window.location.origin) || '';
     repairDocumentProxyPath(config, window);

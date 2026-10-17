@@ -109,6 +109,7 @@ npm test
 # This script starts its own local app and fixture servers.
 node test/browser/navigation_history.cjs
 node test/browser/proxy_widgets_diagnostics.cjs
+node test/browser/game_resources_advanced_details.cjs
 node test/browser/quick_settings.cjs
 node test/browser/quick_settings_customization.cjs
 node test/browser/quick_settings_context.cjs
@@ -125,7 +126,7 @@ HEAVENLY_BROWSER=webkit node test/browser/quick_settings_context.cjs
 node test/browser/bookmark_management.cjs
 ```
 
-Proxy findings, development-only error diagnostics, and compatibility limitations are documented in [Proxy compatibility investigation](docs/proxy-compatibility.md).
+Proxy findings and compatibility limitations are documented in [Proxy compatibility investigation](docs/proxy-compatibility.md). The [game, image and Advanced Details follow-up](docs/game-resource-diagnostics.md) records the remaining live-game restriction and production-safe diagnostics. Error pages offer collapsed Advanced Details and a sanitized, selectable report with Copy Diagnostics; privileged development diagnostics remain local-only.
 
 Browser checks use isolated profiles and emulated touch viewports. They do not establish physical iPad or touchscreen verification.
 
