@@ -168,6 +168,9 @@
     frame.id = 'heavenly-wrapper-frame';
     frame.title = 'Proxied website';
     frame.setAttribute('allowfullscreen', '');
+    // Keep ordinary links, history and user-opened tabs inside their intended
+    // context, while preventing an embedded site's automatic top navigation.
+    frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-pointer-lock allow-presentation');
     var wrapper = { frame: frame, url: url, ready: false };
     win.__heavenlyWrapper = wrapper;
     function store() {
@@ -184,9 +187,15 @@
       store();
     };
     wrapper.fail = function () {
-      status.textContent = 'This website needs normal navigation. Opening…';
-      win.location.replace(wrapper.url);
+      status.textContent = 'This website could not load in a frame. Choose Open normally to continue.';
     };
+    wrapper.home = function () { win.location.href = origin + '/'; };
+    // Handle widget Home in the parent event loop. A sandboxed child cannot
+    // navigate its parent even by calling a function defined in that parent.
+    win.addEventListener('message', function (event) {
+      if (event.source === frame.contentWindow && event.origin === origin && event.data === 'heavenly:home') wrapper.home();
+    });
+    home.onclick = function (event) { event.preventDefault(); wrapper.home(); };
     recovery.onclick = function (event) { event.preventDefault(); win.location.href = wrapper.url; };
     function moveHistory(method) {
       try { frame.contentWindow.history[method](); }
@@ -197,7 +206,14 @@
     frame.onload = function () {
       try {
         var href = frame.contentWindow.location.href;
-        if (href === 'about:blank') { wrapper.fail(); return; }
+        // A newly appended iframe can emit its initial blank load before the
+        // requested document/redirect has committed. It is not a failed load.
+        if (href === 'about:blank') return;
+        var current = new URL(href);
+        if (current.origin === origin && current.pathname.indexOf(prefix) !== 0) {
+          if (current.pathname === '/' || current.pathname === '/index.html') { wrapper.home(); return; }
+          wrapper.fail(); return;
+        }
         var target = remoteUrl(href, origin);
         if (!target || new URL(href).origin !== origin) { wrapper.fail(); return; }
         wrapper.update(href, target);
@@ -227,10 +243,26 @@
       else if (win.alert && !win.confirm) win.alert('Popup blocked! Please allow popups for this site.');
       return null;
     }
-    try { mountWrapper(blank, url, options); }
-    catch (e) {
-      try { blank.location.href = url; } catch (err) { try { blank.close(); } catch (ignored) {} notice(win, 'The new tab could not open. Please allow popups and try again.'); return null; }
+    var mounted = false;
+    function initialize() {
+      if (mounted) return;
+      mounted = true;
+      try { mountWrapper(blank, url, options); }
+      catch (e) {
+        notice(win, 'Framed browsing is unavailable. Opening the new tab normally.');
+        try { blank.location.href = url; } catch (err) { try { blank.close(); } catch (ignored) {} notice(win, 'The new tab could not open. Please allow popups and try again.'); }
+      }
     }
+    // Chromium's newly opened initial empty document has no session-history
+    // entry. Navigating it once to a real about:blank document lets subsequent
+    // iframe navigations create Back/Forward entries, without document.write.
+    if (blank.history && blank.history.length === 0 && blank.addEventListener) {
+      blank.addEventListener('load', initialize, { once: true });
+      try { blank.location.replace('about:blank'); }
+      catch (e) { initialize(); }
+      // A single recovery for browsers that omit the blank document load event.
+      if (win.setTimeout) win.setTimeout(initialize, 1500);
+    } else initialize();
     return blank;
   }
 

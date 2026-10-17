@@ -222,117 +222,27 @@ describe('headersMiddleware request middleware', function() {
     });
 });
 
-describe('iframeSecurityHeadersResponseMiddleware', function() {
-    it('should strip x-frame-options header in lowercase', function() {
-        var data = {
-            headers: {
-                'x-frame-options': 'DENY',
-                'content-type': 'text/html'
-            }
+describe('upstream security restrictions', function() {
+    it('preserves framing, CSP and MIME restrictions verbatim', function() {
+        const original = {
+            'x-frame-options': 'DENY',
+            'content-security-policy': ["default-src 'self'", "frame-ancestors 'none'"],
+            'content-security-policy-report-only': "script-src 'self'",
+            'x-content-security-policy': "frame-ancestors https://trusted.test",
+            'x-webkit-csp': "frame-ancestors 'none'",
+            'x-content-type-options': 'nosniff'
         };
+        const data = { headers: { 'content-type': 'text/html' }, remoteResponse: { headers: original } };
         app.iframeSecurityHeadersResponseMiddleware(data);
-        assert.strictEqual(data.headers['x-frame-options'], undefined);
+        Object.keys(original).forEach(key => assert.deepStrictEqual(data.headers[key], original[key]));
         assert.strictEqual(data.headers['content-type'], 'text/html');
     });
-
-    it('should strip X-Frame-Options header in mixed and uppercase', function() {
-        var data1 = {
-            headers: {
-                'X-Frame-Options': 'SAMEORIGIN'
-            }
-        };
-        app.iframeSecurityHeadersResponseMiddleware(data1);
-        assert.strictEqual(data1.headers['X-Frame-Options'], undefined);
-
-        var data2 = {
-            headers: {
-                'X-FRAME-OPTIONS': 'ALLOW-FROM https://example.com'
-            }
-        };
-        app.iframeSecurityHeadersResponseMiddleware(data2);
-        assert.strictEqual(data2.headers['X-FRAME-OPTIONS'], undefined);
-    });
-
-    it('should clean frame-ancestors from content-security-policy string while preserving other directives', function() {
-        var data = {
-            headers: {
-                'content-security-policy': "default-src 'self'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline'"
-            }
-        };
+    it('leaves existing restrictions unchanged without a remoteResponse', function() {
+        const data = { headers: { 'X-Frame-Options': 'DENY', 'content-security-policy': "frame-ancestors 'none'" } };
+        const before = JSON.stringify(data);
         app.iframeSecurityHeadersResponseMiddleware(data);
-        assert.strictEqual(
-            data.headers['content-security-policy'],
-            "default-src 'self'; script-src 'self' 'unsafe-inline'"
-        );
-    });
-
-    it('should remove content-security-policy completely if frame-ancestors was the only directive', function() {
-        var data = {
-            headers: {
-                'content-security-policy': "frame-ancestors 'self' https://trusted.com"
-            }
-        };
-        app.iframeSecurityHeadersResponseMiddleware(data);
-        assert.strictEqual(data.headers['content-security-policy'], undefined);
-    });
-
-    it('should clean frame-ancestors from content-security-policy-report-only', function() {
-        var data = {
-            headers: {
-                'content-security-policy-report-only': "default-src 'self'; frame-ancestors https://example.com"
-            }
-        };
-        app.iframeSecurityHeadersResponseMiddleware(data);
-        assert.strictEqual(
-            data.headers['content-security-policy-report-only'],
-            "default-src 'self'"
-        );
-    });
-
-    it('should handle array format content-security-policy correctly', function() {
-        var data = {
-            headers: {
-                'content-security-policy': [
-                    "default-src 'self'",
-                    "frame-ancestors 'none'"
-                ]
-            }
-        };
-        app.iframeSecurityHeadersResponseMiddleware(data);
-        assert.deepStrictEqual(data.headers['content-security-policy'], ["default-src 'self'"]);
-    });
-
-    it('should clean frame-ancestors from legacy CSP headers (x-content-security-policy and x-webkit-csp)', function() {
-        var data = {
-            headers: {
-                'x-content-security-policy': "default-src 'self'; frame-ancestors 'none'",
-                'x-webkit-csp': "frame-ancestors https://test.edu"
-            }
-        };
-        app.iframeSecurityHeadersResponseMiddleware(data);
-        assert.strictEqual(data.headers['x-content-security-policy'], "default-src 'self'");
-        assert.strictEqual(data.headers['x-webkit-csp'], undefined);
-    });
-
-    it('should strip frame-ancestors with tabs, newlines, and mixed casing', function() {
-        var data = {
-            headers: {
-                'content-security-policy': "default-src 'self';\n\tFRAME-ANCESTORS\t'none';\t\nscript-src 'self'"
-            }
-        };
-        app.iframeSecurityHeadersResponseMiddleware(data);
-        assert.strictEqual(
-            data.headers['content-security-policy'],
-            "default-src 'self'; script-src 'self'"
-        );
-    });
-
-    it('should safely do nothing if data or data.headers is falsy', function() {
-        assert.doesNotThrow(function() {
-            app.iframeSecurityHeadersResponseMiddleware(null);
-            app.iframeSecurityHeadersResponseMiddleware({});
-            app.iframeSecurityHeadersResponseMiddleware({ headers: null });
-        });
+        assert.strictEqual(JSON.stringify(data), before);
+        [null, {}, { headers: null }].forEach(value => assert.doesNotThrow(() => app.iframeSecurityHeadersResponseMiddleware(value)));
     });
 });
 

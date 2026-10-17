@@ -202,9 +202,9 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                 send: function(body) {
                     assert.strictEqual(this.statusCode, 502);
                     assert.ok(body.includes('Heavenly - Error 502'));
-                    assert.ok(body.includes('Server Not Found'));
+                    assert.ok(body.includes('Temporary DNS Failure'));
                     assert.ok(body.includes('https://temp-dns-fail.com/'));
-                    assert.ok(body.includes('Heavenly could not connect or resolve the server address at https://temp-dns-fail.com/'));
+                    assert.ok(body.includes('temporarily failed'));
                     done();
                 }
             };
@@ -316,7 +316,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                     assert.strictEqual(this.statusCode, 403);
                     assert.ok(body.includes('Heavenly - Error 403'));
                     assert.ok(body.includes('Error 403'));
-                    assert.ok(body.includes('Forbidden resource access'));
+                    assert.ok(!body.includes('Forbidden resource access'));
                     done();
                 }
             };
@@ -350,7 +350,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
             app.heavenlyErrorMiddleware(err, req, res, function() {});
         });
 
-        it('should fallback to generic err.message details when error code is unknown', function(done) {
+        it('uses a generic category without exposing unknown exception messages', function(done) {
             var err = new Error('Custom SSL Handshake Failure');
 
             var req = { originalUrl: '/proxy/https://ssl-error.com/' };
@@ -367,8 +367,8 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                 },
                 send: function(body) {
                     assert.strictEqual(this.statusCode, 502);
-                    assert.ok(body.includes('Server Not Found'));
-                    assert.ok(body.includes('Custom SSL Handshake Failure'));
+                    assert.ok(body.includes('Proxy Connection Error'));
+                    assert.ok(!body.includes('Custom SSL Handshake Failure'));
                     done();
                 }
             };

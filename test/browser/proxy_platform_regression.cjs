@@ -32,8 +32,8 @@ const listen = server => new Promise(resolve => server.listen(0, '127.0.0.1', re
   browser = await playwright[engine].launch(engine === 'chromium' ? { executablePath: '/usr/bin/chromium', args: ['--no-sandbox'] } : {});
   const context = await browser.newContext();
   const page = await context.newPage(); page.setDefaultTimeout(8000);
-  const docs = [], errors = []; let inits = 0;
-  page.on('console', message => { if (message.text().includes('[Heavenly Debug] Initializing')) inits++; if (message.type() === 'error') errors.push(message.text()); });
+  const docs = [], errors = [];
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   await context.route('**/*', async route => {
     const req = route.request(), url = req.url();
     if (req.isNavigationRequest()) {
@@ -47,11 +47,12 @@ const listen = server => new Promise(resolve => server.listen(0, '127.0.0.1', re
   });
   await page.goto(origin + '/proxy/' + remote + '/redirect', { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(1000);
-  console.log('TRACE', JSON.stringify({ docs, feedback404, inits }));
+  console.log('TRACE', JSON.stringify({ docs, feedback404 }));
   assert.equal(feedback404, 0, 'preview feedback must not become a remote-site 404');
   assert(docs.some(url => url.startsWith('https://vercel.live/_next-live/feedback/feedback.html')));
   assert(docs.length <= 3, 'only redirect, final document and one feedback frame');
-  assert.equal(inits, 1, 'header tags must not cause repeated initialization');
+  assert.equal(await page.locator('script[src="/proxy/client/unblocker-client.js"]').count(), 1, 'head/header tags must not repeat client injection');
+  assert.equal(await page.evaluate(() => window.__heavenlyClientInitialized), true);
   assert.equal(await page.locator('h1').innerText(), 'Video');
   assert.equal((await page.locator('iframe').getAttribute('src')).startsWith('https://vercel.live/'), true);
   pass('preview feedback retains its own origin; redirect stabilizes without recursive upstream 404 frames or duplicate initialization');
