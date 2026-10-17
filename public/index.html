@@ -2980,10 +2980,10 @@
       </div>
 
       <!-- Tab selection between Add Bookmark, Add Category & Add Sub-Section -->
-      <div id="add-modal-tabs-container" style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
-        <button id="tab-add-bm" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600; cursor: pointer;">Add Bookmark</button>
-        <button id="tab-add-cat" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">Add Category</button>
-        <button id="tab-add-subsec" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">Add Sub-Section</button>
+      <div id="add-modal-tabs-container" role="tablist" aria-label="Add item options" style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
+        <button id="tab-add-bm" type="button" role="tab" aria-selected="true" aria-controls="form-add-bm" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600; cursor: pointer;">Add Bookmark</button>
+        <button id="tab-add-cat" type="button" role="tab" aria-selected="false" aria-controls="form-add-cat" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">Add Category</button>
+        <button id="tab-add-subsec" type="button" role="tab" aria-selected="false" aria-controls="form-add-subsec" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">Add Sub-Section</button>
       </div>
 
       <!-- Add Bookmark Form -->
@@ -6703,15 +6703,18 @@
       tabBm.style.background = type === 'bookmark' ? activeTabBg : inactiveTabBg;
       tabBm.style.border = type === 'bookmark' ? activeTabBorder : inactiveTabBorder;
       tabBm.style.color = type === 'bookmark' ? activeTabColor : inactiveTabColor;
+      tabBm.setAttribute('aria-selected', type === 'bookmark' ? 'true' : 'false');
 
       tabCat.style.background = type === 'category' ? activeTabBg : inactiveTabBg;
       tabCat.style.border = type === 'category' ? activeTabBorder : inactiveTabBorder;
       tabCat.style.color = type === 'category' ? activeTabColor : inactiveTabColor;
+      tabCat.setAttribute('aria-selected', type === 'category' ? 'true' : 'false');
 
       if (tabSubSec) {
         tabSubSec.style.background = type === 'subsection' ? activeTabBg : inactiveTabBg;
         tabSubSec.style.border = type === 'subsection' ? activeTabBorder : inactiveTabBorder;
         tabSubSec.style.color = type === 'subsection' ? activeTabColor : inactiveTabColor;
+        tabSubSec.setAttribute('aria-selected', type === 'subsection' ? 'true' : 'false');
       }
 
       formBm.style.display = type === 'bookmark' ? 'flex' : 'none';
