@@ -12,6 +12,7 @@
     text.value = text.value.replace('Browser: Unavailable', 'Browser: ' + family);
     button.hidden = false;
     function selectText() {
+      if (text.closest) text.closest('.diagnostic-report').open = true;
       text.focus();
       text.select();
       text.setSelectionRange(0, text.value.length);

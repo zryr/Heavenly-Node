@@ -26,7 +26,8 @@ describe('Production-safe Advanced Details', () => {
     Object.assign(process.env, { NODE_ENV: 'production', VERCEL: '1', HEAVENLY_DEV_DIAGNOSTICS: '1' });
     try {
       const result = renderError({ code: 'ENOTFOUND', message: 'private token' }, '/proxy/https://example.test/path');
-      assert(result.html.includes('<summary>Advanced Details</summary>'));
+      assert(result.html.includes('<span>Advanced Details</span>'));
+      assert(result.html.includes('class="diagnostic-report"'));
       assert(!result.html.includes('<details open'));
       assert(!result.html.includes('Developer Details'));
       assert(result.html.includes('/assets/heavenly-error-details.js'));

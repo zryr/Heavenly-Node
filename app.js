@@ -368,14 +368,14 @@ function renderHeavenlyErrorPage(opts) {
     var safeDetails = escapeHtml(details);
     var publicData = diagnostics.publicSnapshot(opts);
     var publicReport = diagnostics.report(publicData);
-    var advancedPanel = '<details id="heavenly-advanced-details" class="details-box advanced-details"><summary>Advanced Details</summary>' +
+    var advancedPanel = '<details id="heavenly-advanced-details" class="advanced-details"><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4h16v16H4zM8 8h8M8 12h5M8 16h8"/></svg><span>Advanced Details</span><span class="diagnostic-status">Technical report</span><span class="diagnostic-chevron" aria-hidden="true">⌄</span></summary><div class="advanced-content">' +
         '<dl class="diagnostic-grid"><dt>Status</dt><dd>' + publicData.status + '</dd><dt>Category</dt><dd>' + escapeHtml(publicData.category) + '</dd>' +
         '<dt>Failure stage</dt><dd>' + escapeHtml(publicData.phase) + '</dd><dt>Source</dt><dd>' + escapeHtml(publicData.source) + '</dd>' +
         '<dt>Error code</dt><dd><code>' + escapeHtml(publicData.code || 'Unavailable') + '</code></dd><dt>Request ID</dt><dd><code>' + publicData.requestId + '</code></dd></dl>' +
         '<p>' + escapeHtml(publicData.exactCause) + '</p>' +
-        '<label for="heavenly-advanced-report">Sanitized report</label><textarea readonly id="heavenly-advanced-report" rows="12" spellcheck="false">' + escapeHtml(publicReport) + '</textarea>' +
+        '<details class="diagnostic-report"><summary>Sanitized report</summary><label class="diagnostic-report-label" for="heavenly-advanced-report">Select text to copy</label><textarea readonly id="heavenly-advanced-report" rows="7" spellcheck="false">' + escapeHtml(publicReport) + '</textarea></details><div class="diagnostic-copy-row">' +
         '<button hidden type="button" id="heavenly-advanced-copy" class="btn-action btn-secondary">Copy Diagnostics</button>' +
-        '<span id="heavenly-advanced-copy-status" role="status">You can select and copy the report if clipboard access is unavailable.</span></details>' +
+        '<span id="heavenly-advanced-copy-status" role="status">You can select and copy the report if clipboard access is unavailable.</span></div></div></details>' +
         '<script src="/assets/heavenly-error-details.js" defer></script>';
     var diagnosticData = diagnostics.snapshot(Object.assign({}, opts, { requestId: publicData.requestId }));
     var developerPanel = diagnosticData ? '<details id="heavenly-dev-details" class="details-box"><summary>Developer Details</summary>' +
@@ -533,6 +533,7 @@ function renderHeavenlyErrorPage(opts) {
 '      font-size: 0.82rem; color: #64748b; margin-top: 4px;\n' +
 '    }\n' +
 '  </style>\n' +
+'<link rel="stylesheet" href="/assets/error-details.css">\n' +
 '</head>\n' +
 '<body>\n' +
 '  <div class="glow-orb glow-orb-1"></div>\n' +
