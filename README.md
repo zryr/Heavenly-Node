@@ -110,6 +110,7 @@ npm test
 node test/browser/navigation_history.cjs
 node test/browser/proxy_widgets_diagnostics.cjs
 node test/browser/game_resources_advanced_details.cjs
+node test/browser/game_launch_modes.cjs
 node test/browser/search_loading_performance.cjs
 node test/browser/quick_settings.cjs
 node test/browser/quick_settings_customization.cjs
@@ -132,6 +133,8 @@ Proxy findings and compatibility limitations are documented in [Proxy compatibil
 Browser checks use isolated profiles and emulated touch viewports. They do not establish physical iPad or touchscreen verification.
 
 The [Coolmath games/search/performance report](docs/coolmath-search-performance.md) distinguishes game hostname restrictions from measured proxy overhead and documents opt-in development loading diagnostics. For bounded cloud-only live checks, see `node test/browser/coolmath_live.cjs --help`; that script is disabled unless explicitly enabled.
+
+The [final Coolmath launch comparison](docs/coolmath-final-launch-comparison.md) records direct, normal proxy and existing about:blank results, verified limitations and the supported fallback. Run `node test/browser/game_launch_modes.cjs` for the owned launch-boundary fixtures.
 
 ---
 

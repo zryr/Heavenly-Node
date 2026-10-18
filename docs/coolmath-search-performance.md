@@ -1,5 +1,7 @@
 # Coolmath games, search and proxy overhead
 
+See the [final launch-mode comparison](coolmath-final-launch-comparison.md) for the current game classifications and stopping decision. Search was subsequently confirmed working by the user and is outside that final investigation.
+
 Follow-up to PR #176 from `a0922f8`. The [previous resource report](game-resource-diagnostics.md) remains the baseline. Document-base handling is fixed; the earlier Unity game's compiled redirect condition remains unestablished. This investigation treats Papa's Freezeria, Boba Simulator and search separately. No third-party engine code or access checks are changed, and no raw HAR, private headers or third-party resource bodies are committed.
 
 ## Papa's Freezeria: an explicit hostname restriction

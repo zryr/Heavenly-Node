@@ -1,5 +1,7 @@
 # Proxy compatibility investigation
 
+See the [final launch-mode comparison](coolmath-final-launch-comparison.md) for the current game classifications and stopping decision. Search was subsequently confirmed working by the user and is outside that final investigation.
+
 This records the initial PR #176 investigation. See the [game/resource and public-diagnostics follow-up](game-resource-diagnostics.md) for subsequent fixes, live game evidence and current verification results.
 
 This change starts from main at `903ae60` (PRs #167–169 included). Evidence is the supplied **redacted summary**, source inspection, deterministic local fixtures, and limited live response checks. No raw HAR, request headers, cookies, tokens or full third-party HTML belong in this repository.
