@@ -54,6 +54,67 @@
     return remoteUrl(config && String(config.url || ''), config && config.proxyOrigin, prefix);
   }
 
+  function isCoolmathUrl(value) {
+    try {
+      var url = new URL(value);
+      return (url.protocol === 'http:' || url.protocol === 'https:') &&
+        (url.hostname === 'coolmathgames.com' || url.hostname === 'www.coolmathgames.com');
+    } catch (e) { return false; }
+  }
+
+  function bookmarkKey(value) {
+    var input = value;
+    value = remoteUrl(value);
+    if (!value && typeof input === 'string' && /^[\w-]+(?:\.[\w-]+)+(?:[/:?#]|$)/.test(input.trim())) value = remoteUrl('https://' + input.trim());
+    if (!value) return '';
+    var url = new URL(value);
+    if (isCoolmathUrl(value)) { url.hostname = 'www.coolmathgames.com'; url.protocol = 'https:'; }
+    return url.href;
+  }
+
+  function findBookmarkByUrl(data, value) {
+    var key = bookmarkKey(value);
+    if (!key) return null;
+    var found = null;
+    (data.bookmarks || []).some(function (bookmark) {
+      if (bookmarkKey(bookmark.url) === key) { found = bookmark; return true; }
+      return (bookmark.subBookmarks || []).some(function (child) {
+        if (bookmarkKey(child.url) === key) { found = child; return true; }
+        return false;
+      });
+    });
+    return found;
+  }
+
+  function prepareMissingBookmark(data, definition) {
+    var bookmark = JSON.parse(JSON.stringify(definition));
+    if (bookmark.id === 'bm_coolmath') {
+      bookmark.order = (data.bookmarks || []).reduce(function (order, item) {
+        return item.categoryId === bookmark.categoryId ? Math.max(order, Number(item.order) || 0) : order;
+      }, bookmark.order - 1) + 1;
+      bookmark.subSectionId = 'builtin';
+    }
+    return bookmark;
+  }
+
+  // Only known shipped paths migrate. Custom icons and all other saved fields survive.
+  function migrateBookmarkIcons(data) {
+    var changed = false;
+    function migrate(bookmark) {
+      var icon = bookmark.icon;
+      if (typeof icon !== 'string') return;
+      var next = icon.replace(/^\/assets\/(artic|aether|doc-of-docs|nexus|opium)-logo\.png$/, '/assets/icons/$1-icon.png');
+      if ((bookmark.id === 'bm_fmhy_movies' || bookmark.id === 'bm_fmhy_anime') &&
+          (icon === '/proxy/https://fmhy.net/hall.png' || icon === 'https://fmhy.net/hall.png')) next = '/assets/icons/fmhy-halloween-icon.png';
+      if (next !== icon) { bookmark.icon = next; changed = true; }
+    }
+    (data.bookmarks || []).forEach(function (bookmark) {
+      migrate(bookmark);
+      (bookmark.subBookmarks || []).forEach(migrate);
+    });
+    return changed;
+  }
+
   function loadHistory(storage, origin) {
     try {
       var history = JSON.parse(storage.getItem('heavenly_history') || '[]');
@@ -276,6 +337,9 @@
     if (options.aboutBlank !== undefined) mode.aboutBlank = options.aboutBlank;
     var origin = options.origin || win.location.origin;
     var proxied = resolved.origin === origin && resolved.pathname.indexOf('/proxy/') === 0;
+    // Intentional launch boundary only: resource rewriting and in-site navigation never call this.
+    // Explicit aboutBlank:false remains the normal proxied recovery path.
+    if (proxied && options.aboutBlank === undefined && isCoolmathUrl(remoteUrl(url, origin))) mode.aboutBlank = true;
     if (mode.aboutBlank && proxied) return openBlank(win, url, options);
     if (!proxied && (mode.aboutBlank || !mode.showProxiedUrl)) notice(win, 'Direct websites open normally for compatibility.');
     var framed = proxied && !mode.showProxiedUrl;
@@ -315,6 +379,8 @@
   }
 
   return { readSettings: readSettings, navigationSettings: navigationSettings, updateSettings: updateSettings,
+    isCoolmathUrl: isCoolmathUrl, bookmarkKey: bookmarkKey, findBookmarkByUrl: findBookmarkByUrl,
+    prepareMissingBookmark: prepareMissingBookmark, migrateBookmarkIcons: migrateBookmarkIcons,
     remoteUrl: remoteUrl, currentRemoteUrl: currentRemoteUrl, loadHistory: loadHistory, recordHistory: recordHistory,
     launchMode: launchMode, mountWrapper: mountWrapper, openBlank: openBlank, launch: launch, restoreBrowse: restoreBrowse };
 });

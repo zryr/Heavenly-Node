@@ -150,3 +150,5 @@ This project is open-source and released under the terms of the **[GNU Affero Ge
 <div align="center">
   <sub>Made with 💙 by Syshi &bull; Powered by Heavenly Node</sub>
 </div>
+
+The [bookmark experience guide](docs/bookmark-experience.md) maps the Coolmath launch/save popup, Special Links, safe stored-data reconciliation, icon assets, and the verified FMHY router/SVG repairs.

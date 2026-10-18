@@ -282,6 +282,7 @@ var unblockerConfig = {
     ],
     responseMiddleware: [
         require('./lib/proxy-client-injector'),
+        require('./lib/vitepress-router'),
         responseRedirectMiddleware,
         responseLinkHeaderMiddleware,
         iframeSecurityHeadersResponseMiddleware,
@@ -594,6 +595,12 @@ unblockerConfig.responseMiddleware[prefixerIndex] = require('./lib/script-safe-u
 var heavenlyPages = { '/': 'index.html', '/index.html': 'index.html', '/settings.html': 'settings.html', '/browse.html': 'browse.html', '/html-viewer.html': 'html-viewer.html' };
 app.get(Object.keys(heavenlyPages), function(req, res) {
     res.sendFile(__dirname + '/public/' + heavenlyPages[req.path]);
+});
+// Saved bookmarks and older exports can still use the shipped icon names.
+app.get('/assets/:legacyIcon', function(req, res, next) {
+    var match = /^(artic|aether|doc-of-docs|nexus|opium)-logo\.png$/.exec(req.params.legacyIcon);
+    if (!match) return next();
+    res.redirect(308, '/assets/icons/' + match[1] + '-icon.png');
 });
 app.use('/assets', express.static(__dirname + '/public/assets', { fallthrough: false }));
 app.use('/vendor', express.static(__dirname + '/public/vendor', { fallthrough: false }));

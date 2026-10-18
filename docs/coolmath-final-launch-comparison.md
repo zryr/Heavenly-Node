@@ -2,6 +2,8 @@
 
 Final focused investigation for PR #176, 2026-10-18 UTC. Search is out of scope: the user reports it now works. Its current implementation and preferences are preserved. The earlier [resource report](game-resource-diagnostics.md) and [hostname/performance evidence](coolmath-search-performance.md) remain the baseline.
 
+> Update: the subsequent bookmark experience request explicitly opts intentional Coolmath proxy launches into the existing about:blank launcher. See [Bookmark experience](bookmark-experience.md); the compatibility findings below still apply.
+
 ## Decision and results
 
 **Stop and retain the best supported fallback.** No new production compatibility patch is justified by this comparison. Keep the existing optional about:blank launcher for individually verified games; use explicit direct navigation to the official site for the incompatible games below. Do not automatically route Coolmath through a wrapper. **Open normally** in the wrapper opens the current *proxied* URL; it is not a direct-site action.

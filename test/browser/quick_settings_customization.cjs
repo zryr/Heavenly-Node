@@ -200,7 +200,27 @@ const pass = message => { checks++; console.log('PASS ' + message); };
     const beforeScrollOrder = await draftIds(page);
     await touch('touchStart', s.x + 35, s.y + s.height - 35); await touch('touchMove', s.x + 35, s.y + 45); await touch('touchEnd');
     assert.deepEqual(await draftIds(page), beforeScrollOrder); await cancel(page);
-    await cdp.detach(); pass('native Chromium emulated touch handle drag works; row scrolling does not reorder');
+    pass('native Chromium emulated touch handle drag works; row scrolling does not reorder');
+    for (const held of [false, true]) {
+      await open(page); const beforeMultiTouch = await draftIds(page);
+      const handleBox = await source.boundingBox(), targetBox = await target.boundingBox();
+      const point = { x: handleBox.x + 20, y: handleBox.y + 20, id: 1, radiusX: 3, radiusY: 3, force: 1 };
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
+      if (held) {
+        await page.waitForTimeout(450);
+        point.x = targetBox.x + 20; point.y = targetBox.y + 5;
+        await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [point] });
+        assert(await source.evaluate(node => node.classList.contains('is-dragging')));
+      }
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point, { ...point, id: 2, x: point.x + 35 }] });
+      await page.waitForTimeout(450);
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      assert.deepEqual(await draftIds(page), beforeMultiTouch);
+      assert.equal(await page.locator('.is-dragging, .qs-drop-before, .qs-drop-after').count(), 0);
+      await cancel(page);
+      pass('second finger cancels ' + (held ? 'active shortcut dragging' : 'pending shortcut hold') + ' without reordering');
+    }
+    await cdp.detach();
   }
   await page.emulateMedia({ reducedMotion: 'reduce' }); await open(page);
   assert.equal(await page.locator('#qs-editor .qs-editor-card').evaluate(node => getComputedStyle(node).animationName), 'none'); await cancel(page);

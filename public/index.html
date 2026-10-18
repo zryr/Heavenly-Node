@@ -857,6 +857,8 @@
     .section-header-title {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
+      min-width: 0;
       gap: 8px;
       font-family: 'Space Grotesk', sans-serif;
       font-size: 1.05rem;
@@ -2566,6 +2568,28 @@
     .decoy-footer-bottom-links a:hover {
       color: #cbd5e1;
     }
+
+    .bookmark-launch-card { max-width: 460px; gap: 16px; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+    .modal-backdrop.active .bookmark-launch-card { animation: none; }
+    .bookmark-launch-card::before { display: none; }
+    .bookmark-launch-card .modal-close-btn { min-width: 44px; min-height: 44px; }
+    .bookmark-launch-card .modal-header { margin-bottom: 0; }
+    .bookmark-launch-summary { display: flex; align-items: center; gap: 12px; }
+    .bookmark-launch-summary > img { width: 40px; height: 40px; object-fit: contain; border-radius: 10px; }
+    .bookmark-launch-summary p { margin: 3px 0 0; color: #94a3b8; font-size: .85rem; line-height: 1.5; }
+    .bookmark-launch-url { color: #94a3b8; font-size: .78rem; overflow-wrap: anywhere; margin: 0; }
+    .bookmark-info { display: flex; align-items: flex-start; gap: 10px; padding: 13px 14px; border-radius: 12px; border: 1px solid rgba(192,132,252,.3); background: rgba(168,85,247,.1); color: #e9d5ff; font-size: .84rem; line-height: 1.5; }
+    .bookmark-info svg { flex: 0 0 18px; width: 18px; height: 18px; margin-top: 2px; }
+    .bookmark-info p { margin: 3px 0 0; color: #c4b5d6; font-size: .8rem; }
+    .bookmark-launch-actions { display: flex; flex-direction: column; gap: 10px; }
+    .bookmark-launch-actions button { min-height: 44px; margin: 0; }
+    .bookmark-launch-secondary { display: flex; gap: 10px; }
+    .bookmark-launch-secondary button { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid rgba(148,163,184,.25); background: rgba(30,41,59,.6); color: #cbd5e1; font: inherit; font-size: .84rem; cursor: pointer; }
+    .special-links-btn { width: 44px; min-height: 44px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; padding: 10px; border: 1px solid rgba(192,132,252,.3); border-radius: 10px; background: rgba(168,85,247,.1); color: #c084fc; cursor: pointer; }
+    .special-links-btn svg { width: 18px; height: 18px; }
+    .special-links-list { display: flex; flex-direction: column; gap: 10px; }
+    .special-links-list .bookmark-card { min-height: 56px; }
+    .bookmark-launch-card button:focus-visible, .special-links-btn:focus-visible { outline: 2px solid #c084fc; outline-offset: 3px; }
   </style>
 </head>
 
@@ -3118,6 +3142,37 @@
         <button type="submit" class="modal-submit-btn">Create Sub-Section</button>
       </form>
 
+    </div>
+  </div>
+
+  <!-- Reuses bookmark modal surfaces and the existing Add Bookmark form. -->
+  <div id="coolmath-launch-modal" class="modal-backdrop">
+    <div class="modal-card bookmark-launch-card" role="dialog" aria-modal="true" aria-labelledby="coolmath-launch-title" aria-describedby="coolmath-compatibility">
+      <div class="modal-header">
+        <div class="bookmark-launch-summary">
+          <img src="/assets/icons/coolmath-icon.ico" alt="" onerror="this.hidden=true" />
+          <div><span class="modal-title" id="coolmath-launch-title">Coolmath Games</span><p id="coolmath-launch-description">Puzzles, strategy, and skill games.</p></div>
+        </div>
+        <button id="coolmath-close-btn" class="modal-close-btn" type="button" aria-label="Close Coolmath Games dialog">✕</button>
+      </div>
+      <p class="bookmark-launch-url" id="coolmath-launch-url"></p>
+      <div class="bookmark-info" id="coolmath-compatibility" role="note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg>
+        <div><strong>Not all Coolmath Games work through Heavenly.</strong><p>Some games may not load or may require opening the original website.</p></div>
+      </div>
+      <div class="bookmark-launch-actions">
+        <button id="coolmath-proxy-btn" type="button" class="modal-submit-btn">Open with Proxy</button>
+        <div class="bookmark-launch-secondary">
+          <button id="coolmath-direct-btn" type="button">Open Directly</button>
+          <button id="coolmath-save-btn" type="button">Save to Bookmarks</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="special-links-modal" class="modal-backdrop">
+    <div class="modal-card bookmark-launch-card" role="dialog" aria-modal="true" aria-labelledby="special-links-title">
+      <div class="modal-header"><span class="modal-title" id="special-links-title">Special Links</span><button id="special-links-close-btn" type="button" class="modal-close-btn" aria-label="Close Special Links">✕</button></div>
+      <div class="special-links-list" id="special-links-list"></div>
     </div>
   </div>
 
@@ -4215,7 +4270,11 @@
           var emoeModal = $('everythingmoe-modal');
           var reorderBar = $('reorder-bar');
           var bmSearch = $('bm-universal-search');
-          if ($('share-modal').classList.contains('active')) {
+          if ($('coolmath-launch-modal').classList.contains('active')) {
+            closeBookmarkPopup('coolmath-launch-modal');
+          } else if ($('special-links-modal').classList.contains('active')) {
+            closeBookmarkPopup('special-links-modal');
+          } else if ($('share-modal').classList.contains('active')) {
             closeShareModal();
           } else if (julesDevModal && julesDevModal.classList.contains('active')) {
             closeJulesDevModal();
@@ -4264,7 +4323,7 @@
       ],
       bookmarks: [
         { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "/proxy/https://everythingmoe.com/favicon.ico", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-        { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "/proxy/https://fmhy.net/hall.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+        { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "/assets/icons/fmhy-halloween-icon.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anisnatch.top&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
@@ -4272,7 +4331,7 @@
         { id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [
           { id: "sub_movish_latestmovies_anime", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }
         ] },
-        { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "/proxy/https://fmhy.net/hall.png", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+        { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "/assets/icons/fmhy-halloween-icon.png", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
         { id: "bm_streamopro", categoryId: "cat_movies", title: "Streamo", url: "https://streamo.pro/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=streamo.pro&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
         { id: "bm_movish_movies", categoryId: "cat_movies", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [
           { id: "sub_movish_latestmovies_movies", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }
@@ -4335,6 +4394,7 @@
             { id: "sub_bloxcraft_fastly", title: "Bloxcraft (Fastly)", url: "https://bloxcraftubg.freetls.fastly.net/games/", icon: "https://www.google.com/s2/favicons?domain=bloxcraftubg.freetls.fastly.net&sz=64" }
           ]
         },
+        { id: "bm_coolmath", categoryId: "cat_games", title: "Coolmath Games", url: "https://www.coolmathgames.com/", type: "bookmark", icon: "/assets/icons/coolmath-icon.ico", builtIn: true, hidden: false, order: 22, subBookmarks: [] },
         {
           id: "bm_aether",
           categoryId: "cat_op_websites",
@@ -4342,7 +4402,7 @@
           title: "Aether",
           url: "https://actstudy.s3.us-east-1.amazonaws.com/index.html",
           type: "folder_bookmark",
-          icon: "/assets/aether-logo.png",
+          icon: "/assets/icons/aether-icon.png",
           builtIn: true,
           hidden: false,
           order: 0,
@@ -4366,7 +4426,7 @@
           ]
         },
         { id: "bm_korona", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Korona", url: "https://korona.lat/dashboard", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=korona.lat&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-        { id: "bm_nexus", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Nexus", url: "https://car-meow.github.io/toothbrush/", type: "bookmark", icon: "/assets/nexus-logo.png", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+        { id: "bm_nexus", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Nexus", url: "https://car-meow.github.io/toothbrush/", type: "bookmark", icon: "/assets/icons/nexus-icon.png", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
         { id: "bm_flux", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Flux", url: "https://web.flux.focuznow.com/", type: "folder_bookmark", icon: "/proxy/https://web.flux.focuznow.com/assets/flux-mark.webp", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
         {
           id: "bm_opium",
@@ -4375,7 +4435,7 @@
           title: "Opium",
           url: "https://opium.best/",
           type: "folder_bookmark",
-          icon: "/assets/opium-logo.png",
+          icon: "/assets/icons/opium-icon.png",
           builtIn: true,
           hidden: false,
           order: 4,
@@ -4433,7 +4493,7 @@
           title: "Arctic",
           url: "https://storage.googleapis.com/math-homework/index.html",
           type: "folder_bookmark",
-          icon: "/assets/artic-logo.png",
+          icon: "/assets/icons/artic-icon.png",
           builtIn: true,
           hidden: false,
           order: 6,
@@ -4461,7 +4521,7 @@
           title: "Ultimate Doc Of Docs",
           url: "https://0800webdev.github.io/The-Ultimate-Doc-Of-Docs/",
           type: "folder_bookmark",
-          icon: "/assets/doc-of-docs-logo.png",
+          icon: "/assets/icons/doc-of-docs-icon.png",
           builtIn: true,
           hidden: false,
           order: 2,
@@ -4495,7 +4555,7 @@
           return JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));
         }
 
-        var updated = false;
+        var updated = HeavenlyNavigation.migrateBookmarkIcons(data);
 
         // Prune removed built-in categories and bookmarks
         var initialCatCount = data.categories.length;
@@ -4542,7 +4602,7 @@
                     userSub.title = defSub.title;
                     updated = true;
                   }
-                  if (userSub.icon !== defSub.icon && defSub.icon) {
+                  if ((!userSub.icon || userSub.icon.trim() === '') && defSub.icon) {
                     userSub.icon = defSub.icon;
                     updated = true;
                   }
@@ -4599,7 +4659,8 @@
         DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
           var userBm = data.bookmarks.find(function (b) { return b.id === defBm.id; });
           if (!userBm) {
-            data.bookmarks.push(JSON.parse(JSON.stringify(defBm)));
+            if (defBm.id === 'bm_coolmath' && HeavenlyNavigation.findBookmarkByUrl(data, defBm.url)) return;
+            data.bookmarks.push(HeavenlyNavigation.prepareMissingBookmark(data, defBm));
             updated = true;
           } else {
             if (defBm.builtIn) {
@@ -4615,7 +4676,7 @@
                 userBm.url = defBm.url;
                 updated = true;
               }
-              if (userBm.icon !== defBm.icon && defBm.icon) {
+              if ((!userBm.icon || userBm.icon.trim() === '') && defBm.icon) {
                 userBm.icon = defBm.icon;
                 updated = true;
               }
@@ -4634,13 +4695,6 @@
                 userBm.subBookmarks = [];
                 updated = true;
               }
-              if (defBm.builtIn) {
-                var initSubLen = userBm.subBookmarks.length;
-                userBm.subBookmarks = userBm.subBookmarks.filter(function (userSub) {
-                  return defBm.subBookmarks.some(function (defSub) { return defSub.id === userSub.id; });
-                });
-                if (userBm.subBookmarks.length !== initSubLen) updated = true;
-              }
               defBm.subBookmarks.forEach(function (defSub) {
                 var userSub = userBm.subBookmarks.find(function (s) { return s.id === defSub.id; });
                 if (!userSub) {
@@ -4656,7 +4710,7 @@
                       userSub.url = defSub.url;
                       updated = true;
                     }
-                    if (userSub.icon !== defSub.icon && defSub.icon) {
+                    if ((!userSub.icon || userSub.icon.trim() === '') && defSub.icon) {
                       userSub.icon = defSub.icon;
                       updated = true;
                     }
@@ -5236,6 +5290,9 @@
         var bms = data.bookmarks.filter(function (b) { return b.categoryId === cat.id && !b.hidden; });
         bms.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
 
+        var specialBms = bms.filter(isSpecialBookmark);
+        if (!searchQuery) bms = bms.filter(function (bm) { return !isSpecialBookmark(bm); });
+
         // Filter bookmarks by search query if active
         if (searchQuery) {
           var catMatches = cat.title.toLowerCase().includes(searchQuery);
@@ -5445,6 +5502,16 @@
 
         titleGroup.appendChild(handle);
         titleGroup.appendChild(titleText);
+        if (specialBms.length) {
+          var specialBtn = document.createElement('button');
+          specialBtn.type = 'button';
+          specialBtn.className = 'special-links-btn';
+          specialBtn.title = 'Special Links';
+          specialBtn.setAttribute('aria-label', 'Open Special Links for ' + cat.title);
+          specialBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2"/></svg>';
+          specialBtn.onclick = function (e) { e.stopPropagation(); openSpecialLinksModal(cat.id); };
+          titleGroup.appendChild(specialBtn);
+        }
 
         if (cat.id === 'cat_anime') {
           var syshiBtn = document.createElement('button');
@@ -5775,17 +5842,17 @@
                 }
 
                 var settings = loadSettings();
-                if (settings.skipBuiltinTestPrompt) {
-                  e.preventDefault();
-                  openTargetUrlWithSetting(proxiedUrl);
-                  return;
-                }
-
                 if (bm.launchPreference === 'direct') {
                   e.preventDefault();
                   openTargetUrlWithSetting(rawTargetUrl);
                   return;
                 } else if (bm.launchPreference === 'proxy') {
+                  e.preventDefault();
+                  openTargetUrlWithSetting(proxiedUrl);
+                  return;
+                }
+
+                if (settings.skipBuiltinTestPrompt) {
                   e.preventDefault();
                   openTargetUrlWithSetting(proxiedUrl);
                   return;
@@ -6553,6 +6620,7 @@
     }
 
     function openAddModal(type, targetCatId, editBmId, targetSubSecId) {
+      bookmarkSaveFromLaunch = false;
       cancelActiveBookmarkTouch();
       clearCategorySectionDrag();
       categorySectionDraft = [];
@@ -6910,6 +6978,102 @@
       }
     }
 
+    var pendingCoolmathLaunch = null;
+    var bookmarkPopupOpener = null;
+    var bookmarkSaveFromLaunch = false;
+
+    function isSpecialBookmark(bookmark) {
+      return bookmark.builtIn && ['bm_fmhy_movies', 'bm_fmhy_anime', 'bm_everythingmoe'].indexOf(bookmark.id) !== -1;
+    }
+
+    function closeBookmarkPopup(id) {
+      $(id).classList.remove('active');
+      if (id === 'coolmath-launch-modal') pendingCoolmathLaunch = null;
+      if (bookmarkPopupOpener && bookmarkPopupOpener.isConnected) bookmarkPopupOpener.focus();
+    }
+
+    function showBookmarkPopup(id, focusId) {
+      bookmarkPopupOpener = document.activeElement;
+      $(id).classList.add('active');
+      $(focusId).focus();
+    }
+
+    function openCoolmathLaunchModal(title, url) {
+      url = HeavenlyNavigation.remoteUrl(url);
+      if (!HeavenlyNavigation.isCoolmathUrl(url)) return;
+      pendingCoolmathLaunch = { url: url, title: title || 'Coolmath Games' };
+      $('coolmath-launch-description').textContent = title && title !== 'Coolmath Games' ? title : 'Puzzles, strategy, and skill games.';
+      $('coolmath-launch-url').textContent = url.replace(/^https?:\/\//, '');
+      showBookmarkPopup('coolmath-launch-modal', 'coolmath-proxy-btn');
+    }
+
+    function openSpecialLinksModal(categoryId) {
+      var data = loadBookmarkData();
+      var list = $('special-links-list');
+      list.textContent = '';
+      data.bookmarks.filter(function (b) { return b.categoryId === categoryId && !b.hidden && isSpecialBookmark(b); }).sort(function (a, b) { return a.order - b.order; }).forEach(function (bookmark) {
+        var link = document.createElement('a');
+        link.className = 'bookmark-card';
+        link.href = location.origin + '/proxy/' + bookmark.url;
+        link.appendChild(renderIconElement(bookmark.icon, bookmark.url, ''));
+        var label = document.createElement('span');
+        label.textContent = bookmark.title;
+        link.appendChild(label);
+        link.onclick = function (e) {
+          e.preventDefault();
+          closeBookmarkPopup('special-links-modal');
+          if (bookmark.launchPreference === 'direct') openTargetUrlWithSetting(bookmark.url);
+          else if (bookmark.launchPreference === 'proxy' || loadSettings().skipBuiltinTestPrompt) openTargetUrlWithSetting(link.href);
+          else openEverythingMoeNoticeModal(bookmark.title, bookmark.url, link.href);
+        };
+        list.appendChild(link);
+      });
+      showBookmarkPopup('special-links-modal', 'special-links-close-btn');
+    }
+
+    function initBookmarkLaunchPopups() {
+      ['coolmath-launch-modal', 'special-links-modal'].forEach(function (id) {
+        var modal = $(id);
+        modal.onclick = function (e) { if (e.target === modal) closeBookmarkPopup(id); };
+        modal.addEventListener('keydown', function (e) {
+          if (e.key !== 'Tab') return;
+          var controls = Array.from(modal.querySelectorAll('button, a[href]')).filter(function (el) { return !el.disabled && el.offsetParent !== null; });
+          var first = controls[0], last = controls[controls.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        });
+      });
+      $('coolmath-close-btn').onclick = function () { closeBookmarkPopup('coolmath-launch-modal'); };
+      $('special-links-close-btn').onclick = function () { closeBookmarkPopup('special-links-modal'); };
+      function launch(direct) {
+        var pending = pendingCoolmathLaunch;
+        if (!pending) return;
+        closeBookmarkPopup('coolmath-launch-modal');
+        openTargetUrlWithSetting(direct ? pending.url : location.origin + '/proxy/' + pending.url);
+      }
+      $('coolmath-proxy-btn').onclick = function () { launch(false); };
+      $('coolmath-direct-btn').onclick = function () { launch(true); };
+      $('coolmath-save-btn').onclick = function () {
+        var pending = pendingCoolmathLaunch;
+        if (!pending) return;
+        closeBookmarkPopup('coolmath-launch-modal');
+        var data = loadBookmarkData();
+        var existing = HeavenlyNavigation.findBookmarkByUrl(data, pending.url);
+        // Edit an existing top-level entry, preserving its identity, options and children.
+        if (existing && data.bookmarks.indexOf(existing) !== -1) openAddModal('bookmark', existing.categoryId, existing.id);
+        else {
+          if (existing) { alert('This page is already saved in your bookmarks.'); return; }
+          openAddModal('bookmark', 'cat_games');
+          $('bm-title').value = pending.title;
+          $('bm-url').value = pending.url;
+          $('bm-custom-icon-url').value = '/assets/icons/coolmath-icon.ico';
+          switchIconMode('manual');
+        }
+        bookmarkSaveFromLaunch = true;
+        $('modal-title').textContent = existing ? 'Edit Saved Bookmark' : 'Save to Bookmarks';
+      };
+    }
+
     function openTargetUrlWithSetting(targetUrl) {
       if (!targetUrl) return;
       var settings = loadSettings();
@@ -6935,6 +7099,10 @@
     }
 
     function openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId, expandUserMirrorsOnLoad) {
+      if (HeavenlyNavigation.isCoolmathUrl(HeavenlyNavigation.remoteUrl(rawUrl))) {
+        openCoolmathLaunchModal(title, rawUrl);
+        return;
+      }
       if (document.activeElement) lastFocusedElement = document.activeElement;
       rawUrl = rawUrl || '';
       pendingBuiltinUrls.rawUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) ? rawUrl : (rawUrl ? 'https://' + rawUrl : '');
@@ -7939,6 +8107,7 @@
     }
 
     function initBookmarksManager() {
+      initBookmarkLaunchPopups();
       $('cat-edit-cancel').onclick = closeAddModal;
       renderBookmarksUI();
 
@@ -8271,6 +8440,10 @@
 
         var isQuickSaveEnabled = $('bm-quick-save-toggle') ? $('bm-quick-save-toggle').checked : true;
         var data = loadBookmarkData();
+        if (bookmarkSaveFromLaunch && !bmId && HeavenlyNavigation.findBookmarkByUrl(data, url)) {
+          alert('This page is already saved in your bookmarks.');
+          return null;
+        }
         var targetBmId = bmId;
         if (targetBmId) {
           var bm = data.bookmarks.find(function (b) { return b.id === targetBmId; });

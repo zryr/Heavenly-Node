@@ -31,6 +31,11 @@ describe('Script-safe streaming HTML URL prefixing', () => {
     const css='body{background:url("https://cdn.test/bg.png")}';
     assert.equal(await transform([css],'text/css'),css.replace('https://cdn.test','/proxy/https://cdn.test'));
   });
+  it('preserves SVG namespaces in CSS icons across every stream boundary', async () => {
+    const css = `i{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cpath/%3E%3C/svg%3E")}b{background:url('/image.png')}`;
+    const expected = css.replace("url('/image.png')", "url('/proxy/https://example.test/image.png')");
+    for (let i = 1; i < css.length; i++) assert.equal(await transform([css.slice(0, i), css.slice(i)], 'text/css'), expected);
+  });
   it('still serves the bundled client as JavaScript', async () => {
     const result=await request(app).get('/proxy/client/unblocker-client.js').expect(200);
     assert.match(result.headers['content-type'],/javascript/);

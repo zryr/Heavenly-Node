@@ -1190,6 +1190,14 @@
     }
   }
 
+  function openIntentionalProxyLink(window, config, proxiedUrl) {
+    if (navigation.isCoolmathUrl(navigation.remoteUrl(proxiedUrl, config.proxyOrigin))) {
+      return navigation.launch(window, proxiedUrl, { origin: config.proxyOrigin, newTab: true });
+    }
+    var openFn = window.__nativeWinOpen || window.open;
+    return openFn.call(window, proxiedUrl, '_blank', 'noopener');
+  }
+
   function openFmhyLinkModal(window, config, rawUrl, proxiedUrl) {
     try {
       var existingModal = window.document.getElementById('heavenly-fmhy-link-modal');
@@ -1234,8 +1242,7 @@
       openProxyBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;';
       openProxyBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span>';
       openProxyBtn.onclick = function () {
-        var openFn = window.__nativeWinOpen || window.open;
-        openFn.call(window, targetProxiedUrl, '_blank', 'noopener');
+        openIntentionalProxyLink(window, config, targetProxiedUrl);
         backdrop.remove();
       };
 
@@ -1265,7 +1272,7 @@
       if (targetParent) targetParent.appendChild(backdrop);
     } catch (e) {
       console.error('Error in FMHY link modal:', e);
-      window.open(proxiedUrl, '_blank', 'noopener');
+      openIntentionalProxyLink(window, config, proxiedUrl);
     }
   }
 
@@ -1313,8 +1320,7 @@
       openProxyBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;';
       openProxyBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span>';
       openProxyBtn.onclick = function () {
-        var openFn = window.__nativeWinOpen || window.open;
-        openFn.call(window, targetProxiedUrl, '_blank', 'noopener');
+        openIntentionalProxyLink(window, config, targetProxiedUrl);
         backdrop.remove();
       };
 
@@ -1344,7 +1350,7 @@
       if (targetParent) targetParent.appendChild(backdrop);
     } catch (e) {
       console.error('Error in EverythingMoe link modal:', e);
-      window.open(proxiedUrl, '_blank', 'noopener');
+      openIntentionalProxyLink(window, config, proxiedUrl);
     }
   }
 
@@ -1504,7 +1510,7 @@
         ],
         bookmarks: [
           { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "/proxy/https://everythingmoe.com/favicon.ico", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-          { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "/proxy/https://fmhy.net/hall.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "/assets/icons/fmhy-halloween-icon.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
           { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anisnatch.top&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
           { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
           { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
@@ -1512,7 +1518,7 @@
           { id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [
             { id: "sub_movish_latestmovies_anime", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }
           ] },
-          { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "/proxy/https://fmhy.net/hall.png", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+          { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "/assets/icons/fmhy-halloween-icon.png", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
           { id: "bm_streamopro", categoryId: "cat_movies", title: "Streamo", url: "https://streamo.pro/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=streamo.pro&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
           { id: "bm_movish_movies", categoryId: "cat_movies", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [
             { id: "sub_movish_latestmovies_movies", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }
@@ -1575,6 +1581,7 @@
               { id: "sub_bloxcraft_fastly", title: "Bloxcraft (Fastly)", url: "https://bloxcraftubg.freetls.fastly.net/games/", icon: "https://www.google.com/s2/favicons?domain=bloxcraftubg.freetls.fastly.net&sz=64" }
             ]
           },
+          { id: "bm_coolmath", categoryId: "cat_games", title: "Coolmath Games", url: "https://www.coolmathgames.com/", type: "bookmark", icon: "/assets/icons/coolmath-icon.ico", builtIn: true, hidden: false, order: 22, subBookmarks: [] },
           {
             id: "bm_aether",
             categoryId: "cat_op_websites",
@@ -1582,7 +1589,7 @@
             title: "Aether",
             url: "https://actstudy.s3.us-east-1.amazonaws.com/index.html",
             type: "folder_bookmark",
-            icon: "/assets/aether-logo.png",
+            icon: "/assets/icons/aether-icon.png",
             builtIn: true,
             hidden: false,
             order: 0,
@@ -1606,7 +1613,7 @@
             ]
           },
           { id: "bm_korona", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Korona", url: "https://korona.lat/dashboard", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=korona.lat&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-          { id: "bm_nexus", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Nexus", url: "https://car-meow.github.io/toothbrush/", type: "bookmark", icon: "/assets/nexus-logo.png", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_nexus", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Nexus", url: "https://car-meow.github.io/toothbrush/", type: "bookmark", icon: "/assets/icons/nexus-icon.png", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
           { id: "bm_flux", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Flux", url: "https://web.flux.focuznow.com/", type: "folder_bookmark", icon: "/proxy/https://web.flux.focuznow.com/assets/flux-mark.webp", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
           {
             id: "bm_opium",
@@ -1615,7 +1622,7 @@
             title: "Opium",
             url: "https://opium.best/",
             type: "folder_bookmark",
-            icon: "/assets/opium-logo.png",
+            icon: "/assets/icons/opium-icon.png",
             builtIn: true,
             hidden: false,
             order: 4,
@@ -1673,7 +1680,7 @@
             title: "Arctic",
             url: "https://storage.googleapis.com/math-homework/index.html",
             type: "folder_bookmark",
-            icon: "/assets/artic-logo.png",
+            icon: "/assets/icons/artic-icon.png",
             builtIn: true,
             hidden: false,
             order: 6,
@@ -1701,7 +1708,7 @@
             title: "Ultimate Doc Of Docs",
             url: "https://0800webdev.github.io/The-Ultimate-Doc-Of-Docs/",
             type: "folder_bookmark",
-            icon: "/assets/doc-of-docs-logo.png",
+            icon: "/assets/icons/doc-of-docs-icon.png",
             builtIn: true,
             hidden: false,
             order: 2,
@@ -1721,7 +1728,7 @@
           var parsed = JSON.parse(raw);
           if (parsed && parsed.categories && parsed.bookmarks) {
             data = parsed;
-            var updated = false;
+            var updated = navigation.migrateBookmarkIcons(data);
 
             // Build lookup maps for DEFAULT_BOOKMARK_DATA categories and bookmarks
             var defaultCatMap = Object.create(null);
@@ -1788,7 +1795,7 @@
                         userSub.title = defSub.title;
                         updated = true;
                       }
-                      if (userSub.icon !== defSub.icon && defSub.icon) {
+                      if ((!userSub.icon || userSub.icon.trim() === '') && defSub.icon) {
                         userSub.icon = defSub.icon;
                         updated = true;
                       }
@@ -1850,7 +1857,8 @@
             DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
               var userBm = userBmMap[defBm.id];
               if (!userBm) {
-                var newBm = JSON.parse(JSON.stringify(defBm));
+                if (defBm.id === 'bm_coolmath' && navigation.findBookmarkByUrl(data, defBm.url)) return;
+                var newBm = navigation.prepareMissingBookmark(data, defBm);
                 data.bookmarks.push(newBm);
                 userBmMap[defBm.id] = newBm;
                 updated = true;
@@ -1868,7 +1876,7 @@
                     userBm.url = defBm.url;
                     updated = true;
                   }
-                  if (userBm.icon !== defBm.icon && defBm.icon) {
+                  if ((!userBm.icon || userBm.icon.trim() === '') && defBm.icon) {
                     userBm.icon = defBm.icon;
                     updated = true;
                   }
@@ -1887,19 +1895,7 @@
                     userBm.subBookmarks = [];
                     updated = true;
                   }
-                  var defSubMap = Object.create(null);
-                  for (var dSi = 0; dSi < defBm.subBookmarks.length; dSi++) {
-                    defSubMap[defBm.subBookmarks[dSi].id] = defBm.subBookmarks[dSi];
-                  }
-
-                  if (defBm.builtIn) {
-                    var initSubLen = userBm.subBookmarks.length;
-                    userBm.subBookmarks = userBm.subBookmarks.filter(function (userSub) {
-                      return Boolean(defSubMap[userSub.id]);
-                    });
-                    if (userBm.subBookmarks.length !== initSubLen) updated = true;
-                  }
-
+                  // Merge defaults without deleting user-saved children.
                   var userSubBmMap = Object.create(null);
                   for (var uSbi = 0; uSbi < userBm.subBookmarks.length; uSbi++) {
                     userSubBmMap[userBm.subBookmarks[uSbi].id] = userBm.subBookmarks[uSbi];
@@ -1922,7 +1918,7 @@
                           userSub.url = defSub.url;
                           updated = true;
                         }
-                        if (userSub.icon !== defSub.icon && defSub.icon) {
+                        if ((!userSub.icon || userSub.icon.trim() === '') && defSub.icon) {
                           userSub.icon = defSub.icon;
                           updated = true;
                         }
@@ -2176,6 +2172,18 @@
         var finalUrl = navigation.remoteUrl(urlInput.value.trim() || unproxiedUrl, config.proxyOrigin, prefix);
         if (!finalUrl) { window.alert('Enter a valid HTTP or HTTPS bookmark address.'); return; }
         var finalIcon = iconInput.value.trim() || defaultFavicon;
+
+        // Another tab may have saved this page while the form was open.
+        var latest = storage.getItem('heavenly_bookmarks');
+        if (latest) {
+          var parsed = JSON.parse(latest);
+          if (parsed && Array.isArray(parsed.bookmarks) && Array.isArray(parsed.categories)) data = parsed;
+        }
+        if (navigation.findBookmarkByUrl(data, finalUrl)) {
+          backdrop.remove();
+          window.alert('This page is already saved in your bookmarks.');
+          return;
+        }
 
         data.bookmarks.push({
           id: 'bm_' + Date.now(),
@@ -4708,6 +4716,7 @@
       fixSrcset: fixSrcset,
       isTopOrAboutBlankIframe: isTopOrAboutBlankIframe,
       openAboutBlankLauncher: openAboutBlankLauncher,
+      openIntentionalProxyLink: openIntentionalProxyLink,
       getActiveProxiedUrl: getActiveProxiedUrl,
     };
   }
