@@ -50,9 +50,9 @@ Live local Chromium checks now retain the hydrated Movies/Anime heading and navi
 
 ## Touch audit and verification
 
-The existing handle-only bookmark/category/section dragging, passive scrolling, cancellation and Quick Settings keyboard alternatives remain in place.
+The existing 500ms handle-only bookmark/category/section dragging, 8px pre-hold movement cancellation, passive card scrolling and drop indicators remain. Body reset holds now have a separate cancellation reference and a shared gesture owner (`body`, `handle`, `drag`). Handle starts, native mouse drag starts, rerenders and interrupted touch sequences cancel pending body timers. A confirmed drag suppresses body reset, and interruption suppresses the following compatibility click. Confirmed dragging continues vertically; scrolling before confirmation remains native. Nested bookmark bodies follow the same cancellation rules. Quick Settings retains its existing pointer-handle hold, multitouch cancellation and keyboard movement controls.
 
-Run `npm test`, `node test/browser/bookmark_experience.cjs`, `node test/browser/bookmark_notes.cjs`, `node test/browser/bookmark_management.cjs`, `node test/browser/proxy_widgets_diagnostics.cjs`, `node test/browser/navigation_history.cjs`, `node test/browser/game_launch_modes.cjs`, and `node test/browser/quick_settings_customization.cjs` with the existing optional Playwright tooling. Browser binaries and any local test libraries are development tooling only; no production dependency was added.
+Run `npm test`, `node test/browser/bookmark_experience.cjs`, `node test/browser/bookmark_notes.cjs`, `node test/browser/bookmark_gesture_conflicts.cjs`, `node test/browser/bookmark_management.cjs`, `node test/browser/proxy_widgets_diagnostics.cjs`, `node test/browser/navigation_history.cjs`, `node test/browser/game_launch_modes.cjs`, and `node test/browser/quick_settings_customization.cjs` with the existing optional Playwright tooling. Browser binaries and any local test libraries are development tooling only; no production dependency was added.
 
 Browser automation and emulated touch do not establish physical iPad Safari or Chromebook behavior. The new browser test supports `HEAVENLY_BROWSER=firefox|webkit` when those engines and their host libraries are available.
 

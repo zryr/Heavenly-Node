@@ -5084,6 +5084,8 @@
     }
 
     var cancelBookmarkTouchGesture = null;
+    var cancelBookmarkBodyPress = null;
+    var bookmarkGestureSource = ''; // body, handle, drag; only one owner per gesture.
     var bookmarkTouchInProgress = false;
     var bookmarkIgnoreMouseUntil = 0;
     var suppressBookmarkClickUntil = 0;
@@ -5092,8 +5094,16 @@
       return e.sourceCapabilities ? e.sourceCapabilities.firesTouchEvents : bookmarkTouchInProgress || Date.now() < bookmarkIgnoreMouseUntil;
     }
 
+    function cancelActiveBookmarkBodyPress() {
+      var cancel = cancelBookmarkBodyPress;
+      cancelBookmarkBodyPress = null;
+      if (cancel) cancel();
+      if (bookmarkGestureSource === 'body') bookmarkGestureSource = '';
+    }
+
     function cancelActiveBookmarkTouch() {
       if (cancelBookmarkTouchGesture) cancelBookmarkTouchGesture();
+      cancelActiveBookmarkBodyPress();
     }
 
     document.addEventListener('touchstart', function (e) {
@@ -5112,6 +5122,7 @@
       }, { passive: true, capture: true });
     });
     document.addEventListener('mousedown', function (e) {
+      if (e.target.closest('.drag-dots-handle')) cancelActiveBookmarkBodyPress();
       if (!isBookmarkCompatibilityMouse(e)) {
         cancelActiveBookmarkTouch();
         bookmarkTouchInProgress = false;
@@ -5127,15 +5138,20 @@
       }
     }, true);
     document.addEventListener('dragstart', function (e) {
+      cancelActiveBookmarkBodyPress();
       // Keep native HTML5 mouse dragging, but never let a card body start a touch drag.
       if ((bookmarkTouchInProgress || Date.now() < bookmarkIgnoreMouseUntil) && (e.target.closest('.section-card') || e.target.closest('.section-order-row'))) {
         e.preventDefault();
         e.stopImmediatePropagation();
+        return;
       }
+      bookmarkGestureSource = 'drag';
     }, true);
+    document.addEventListener('dragend', function () { bookmarkGestureSource = ''; }, true);
     function interruptBookmarkTouch() {
       cancelActiveBookmarkTouch();
       bookmarkTouchInProgress = false;
+      bookmarkGestureSource = '';
     }
     window.addEventListener('blur', interruptBookmarkTouch);
     document.addEventListener('visibilitychange', function () {
@@ -5186,6 +5202,7 @@
         var held = false, dragging = false;
         // Cancel any previous gesture before installing this hold timer.
         cancelActiveBookmarkTouch();
+        bookmarkGestureSource = 'handle';
         var timer = setTimeout(function () { held = true; hold(start); }, 500);
         trackBookmarkTouch(e, {
           passive: false,
@@ -5199,11 +5216,13 @@
             if (!held || (!dragging && !moved)) return;
             if (!dragging) closeReorderBar();
             dragging = true;
+            bookmarkGestureSource = 'drag';
             suppressBookmarkClickUntil = Date.now() + 800;
             if (event.cancelable) event.preventDefault();
             move(event);
           },
           end: function (event) {
+            bookmarkGestureSource = '';
             clearTimeout(timer);
             if (dragging) {
               suppressBookmarkClickUntil = Date.now() + 800;
@@ -5214,6 +5233,7 @@
             }
           },
           cancel: function () {
+            bookmarkGestureSource = '';
             clearTimeout(timer);
             if (dragging) suppressBookmarkClickUntil = Date.now() + 800;
             if (held) closeReorderBar();
@@ -5234,7 +5254,10 @@
           }
         },
         end: cancelPress,
-        cancel: cancelPress
+        cancel: function () {
+          suppressBookmarkClickUntil = Infinity;
+          cancelPress();
+        }
       });
     }
 
@@ -5756,15 +5779,19 @@
 
               function startCardPress(e) {
                 if (e.type === 'mousedown' && (e.button !== 0 || isBookmarkCompatibilityMouse(e))) return;
-                if (e.target.closest('.drag-dots-handle') || e.target.closest('.folder-expand-btn')) return;
+                if (e.target.closest('button, .drag-dots-handle') || bookmarkGestureSource === 'drag') return;
                 if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
+                cancelActiveBookmarkBodyPress();
                 if (e.type === 'touchstart') watchBookmarkCardPress(e, cancelCardPress);
+                cancelBookmarkBodyPress = cancelCardPress;
+                bookmarkGestureSource = 'body';
                 isCardLongPress = false;
                 if (cardAnimTimer) clearTimeout(cardAnimTimer);
                 cardAnimTimer = setTimeout(function () {
                   bmCard.classList.add('pressing');
                 }, 100);
                 cardLongPressTimer = setTimeout(function () {
+                  if (cancelBookmarkBodyPress !== cancelCardPress || bookmarkGestureSource !== 'body' || !bmCard.isConnected) return;
                   isCardLongPress = true;
                   bmCard.classList.remove('pressing');
                   // Reset launch preference to "ask" on long press
@@ -5782,6 +5809,8 @@
               }
 
               function cancelCardPress() {
+                if (cancelBookmarkBodyPress === cancelCardPress) cancelBookmarkBodyPress = null;
+                if (bookmarkGestureSource === 'body') bookmarkGestureSource = '';
                 if (cardAnimTimer) {
                   clearTimeout(cardAnimTimer);
                   cardAnimTimer = null;
@@ -6098,6 +6127,7 @@
 
                 var sbEditBtn = document.createElement('button');
                 sbEditBtn.type = 'button';
+                sbEditBtn.className = 'bookmark-card-edit-btn';
                 sbEditBtn.title = 'Edit sub-bookmark';
                 sbEditBtn.style.background = 'none';
                 sbEditBtn.style.border = 'none';
@@ -6124,15 +6154,19 @@
 
                 function startSbPress(e) {
                   if (e.type === 'mousedown' && (e.button !== 0 || isBookmarkCompatibilityMouse(e))) return;
-                  if (e.target.closest('.bookmark-card-edit-btn')) return;
+                  if (e.target.closest('button, .drag-dots-handle') || bookmarkGestureSource === 'drag') return;
                   if (e.type === 'touchstart' && e.touches && e.touches.length > 1) return;
+                  cancelActiveBookmarkBodyPress();
                   if (e.type === 'touchstart') watchBookmarkCardPress(e, cancelSbPress);
+                  cancelBookmarkBodyPress = cancelSbPress;
+                  bookmarkGestureSource = 'body';
                   isSbLongPress = false;
                   if (sbAnimTimer) clearTimeout(sbAnimTimer);
                   sbAnimTimer = setTimeout(function () {
                     sbCard.classList.add('pressing');
                   }, 100);
                   sbLongPressTimer = setTimeout(function () {
+                    if (cancelBookmarkBodyPress !== cancelSbPress || bookmarkGestureSource !== 'body' || !sbCard.isConnected) return;
                     isSbLongPress = true;
                     sbCard.classList.remove('pressing');
                     try {
@@ -6149,6 +6183,8 @@
                 }
 
                 function cancelSbPress() {
+                  if (cancelBookmarkBodyPress === cancelSbPress) cancelBookmarkBodyPress = null;
+                  if (bookmarkGestureSource === 'body') bookmarkGestureSource = '';
                   if (sbAnimTimer) {
                     clearTimeout(sbAnimTimer);
                     sbAnimTimer = null;
