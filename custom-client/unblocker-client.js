@@ -3,6 +3,8 @@
 
   var navigation = typeof module !== "undefined" && module.exports ? require("../public/assets/heavenly-navigation.js") : global.HeavenlyNavigation;
 
+  var icons = typeof module !== "undefined" && module.exports ? require("../public/assets/heavenly-icons.js") : global.HeavenlyIcons;
+
   // todo:
   // - postMessage
   // - open
@@ -25,19 +27,31 @@
       return srcsetStr;
     }
     srcsetStr = srcsetStr.toString();
-    var candidates = srcsetStr.split(",");
-    var fixedCandidates = [];
-    for (var i = 0; i < candidates.length; i++) {
-      var candidate = candidates[i];
-      // Fast-path string trimming using native String.prototype.trim() instead of regex replacement
-      var trimmed = candidate.trim();
-      if (!trimmed) {
-        fixedCandidates.push(candidate);
-        continue;
+    // A comma inside an image URL (especially data:) is not a candidate
+    // separator. Consume URL tokens before descriptors, as the HTML srcset
+    // parser does, rather than splitting base64 placeholders into fake URLs.
+    var fixedCandidates = [], index = 0;
+    while (index < srcsetStr.length) {
+      while (index < srcsetStr.length && /[\s,]/.test(srcsetStr[index])) index++;
+      var start = index;
+      while (index < srcsetStr.length && !/\s/.test(srcsetStr[index])) index++;
+      var url = srcsetStr.slice(start, index);
+      if (!url) break;
+      var descriptor = '';
+      if (/,$/.test(url)) url = url.replace(/,+$/, '');
+      else {
+        start = index;
+        var depth = 0;
+        while (index < srcsetStr.length) {
+          var char = srcsetStr[index];
+          if (char === ',' && !depth) break;
+          if (char === '(') depth++;
+          if (char === ')') depth = Math.max(0, depth - 1);
+          index++;
+        }
+        descriptor = srcsetStr.slice(start, index).trim();
       }
-      var parts = trimmed.split(/\s+/);
-      parts[0] = fixUrl(parts[0], config, location);
-      fixedCandidates.push(parts.join(" "));
+      if (url) fixedCandidates.push(fixUrl(url, config, location) + (descriptor ? ' ' + descriptor : ''));
     }
     return fixedCandidates.join(", ");
   }
@@ -78,7 +92,7 @@
     // Performance optimization: Use String.prototype.startsWith instead of substr() slicing
     // to avoid creating temporary string slice allocations on hot URL rewriter paths (~60% speedup)
     if (urlStr.startsWith(prefix)) {
-      return urlStr;
+      return urlStr.replace(/^(\/proxy\/https?:\/)([^/])/i, "$1/$2");
     }
 
     // Early fast-path: non-HTTP/HTTPS schemes that should not be proxied
@@ -106,6 +120,11 @@
     var currentRemoteHref;
     function getCurrentRemoteHref() {
       if (currentRemoteHref !== undefined) return currentRemoteHref;
+      if (config.documentBaseUrl) {
+        var base = config.documentBaseUrl();
+        var remoteBase = navigation.remoteUrl(base, location.origin, prefix);
+        if (remoteBase) { currentRemoteHref = remoteBase; return currentRemoteHref; }
+      }
       if (location.pathname.startsWith(prefix)) {
         currentRemoteHref =
           location.pathname.substr(prefixLen) +
@@ -145,7 +164,7 @@
       url.origin === location.origin &&
       url.pathname.substr(0, prefixLen) === prefix
     ) {
-      return urlStr;
+      return urlStr.replace(/(\/proxy\/https?:\/)([^/])/i, "$1/$2");
     }
 
     // don't break data: urls, about:blank, etc
@@ -159,7 +178,8 @@
     if (url.hostname === location.hostname) {
       var currentRemoteUrl = new URL(getCurrentRemoteHref());
       // set host (including port)
-      url.host = currentRemoteUrl.host;
+      url.hostname = currentRemoteUrl.hostname;
+      url.port = currentRemoteUrl.port;
       // also keep the remote site's current protocol
       url.protocol = currentRemoteUrl.protocol;
       // todo: handle websocket protocols
@@ -167,174 +187,18 @@
     return prefix + url.href;
   }
 
-  function initLocationPrototype(config, window) {
-    if (!window.Location || !window.Location.prototype) return;
-    var proto = window.Location.prototype;
-    if (proto.__heavenlyLocUnproxied) return;
-    proto.__heavenlyLocUnproxied = true;
-
-    var prefix = config.prefix || '/proxy/';
-    var prefixLen = prefix.length;
-
-    var nativeGetters = {};
-    ['pathname', 'href', 'search', 'hash', 'origin'].forEach(function (prop) {
-      var desc;
-      var p = proto;
-      while (p && !(desc = Object.getOwnPropertyDescriptor(p, prop))) {
-        p = Object.getPrototypeOf(p);
-      }
-      if (desc && desc.get) {
-        nativeGetters[prop] = desc.get;
-      }
-    });
-
-    function getNativeLocProp(loc, prop) {
-      if (loc && loc['_raw' + prop] !== undefined) {
-        return loc['_raw' + prop];
-      }
-      if (nativeGetters[prop]) {
-        try {
-          var val = nativeGetters[prop].call(loc);
-          if (val !== undefined && val !== null) return val;
-        } catch (e) {}
-      }
-      return loc && loc['_' + prop] !== undefined ? loc['_' + prop] : '';
-    }
-
-    function getTargetRemoteObj(loc) {
-      if (!loc) return null;
-      var path = getNativeLocProp(loc, 'pathname');
-      if (typeof path !== 'string' || path.substr(0, prefixLen) !== prefix) return null;
-
-      var currentRemoteHref = path.substr(prefixLen) + getNativeLocProp(loc, 'search') + getNativeLocProp(loc, 'hash');
-      while (currentRemoteHref && currentRemoteHref.indexOf(prefix) !== -1) {
-        var idx = currentRemoteHref.indexOf(prefix);
-        currentRemoteHref = currentRemoteHref.substring(idx + prefixLen);
-      }
-      if (currentRemoteHref && currentRemoteHref.indexOf(":/") !== -1 && currentRemoteHref.indexOf("://") === -1) {
-        currentRemoteHref = currentRemoteHref.replace(/^(https?:\/)([^\/])/i, "$1/$2");
-      }
-      if (currentRemoteHref && !currentRemoteHref.startsWith("http://") && !currentRemoteHref.startsWith("https://")) {
-        currentRemoteHref = "https://" + currentRemoteHref;
-      }
-
-      var cacheKey = path + getNativeLocProp(loc, 'search') + getNativeLocProp(loc, 'hash');
-      if (loc._heavenlyTargetCacheKey === cacheKey && loc._heavenlyTargetObj) {
-        return loc._heavenlyTargetObj;
-      }
-
-      try {
-        var targetObj = new URL(currentRemoteHref);
-        loc._heavenlyTargetCacheKey = cacheKey;
-        loc._heavenlyTargetObj = targetObj;
-        return targetObj;
-      } catch (e) {
-        return null;
-      }
-    }
-
-    function overrideLocProp(prop, getterFn) {
-      var desc;
-      var p = proto;
-      while (p && !(desc = Object.getOwnPropertyDescriptor(p, prop))) {
-        p = Object.getPrototypeOf(p);
-      }
-      var initialVal = (desc && 'value' in desc) ? desc.value : undefined;
-      var nativeGet = nativeGetters[prop] || (desc && desc.get ? desc.get : null);
-      var nativeSet = desc && desc.set ? desc.set : null;
-      Object.defineProperty(proto, prop, {
-        get: function () {
-          if (this['_raw' + prop] === undefined && initialVal !== undefined) {
-            this['_raw' + prop] = initialVal;
-          }
-          if (Object.prototype.hasOwnProperty.call(this, prop)) {
-            var ownVal = this[prop];
-            if (typeof ownVal === 'string' && ownVal.startsWith(prefix)) {
-              this['_raw' + prop] = ownVal;
-              delete this[prop];
-            }
-          }
-          var targetObj = getTargetRemoteObj(this);
-          if (targetObj) {
-            return getterFn(targetObj);
-          }
-          if (nativeGet) return nativeGet.call(this);
-          return this['_' + prop] !== undefined ? this['_' + prop] : (this['_raw' + prop] !== undefined ? this['_raw' + prop] : '');
-        },
-        set: function (val) {
-          if (nativeSet) {
-            return nativeSet.call(this, val);
-          }
-          this['_' + prop] = val;
-        },
-        configurable: true,
-        enumerable: desc ? desc.enumerable : true
-      });
-    }
-
-    overrideLocProp('pathname', function (targetObj) { return targetObj.pathname; });
-    overrideLocProp('href', function (targetObj) { return targetObj.href; });
-    overrideLocProp('search', function (targetObj) { return targetObj.search; });
-    overrideLocProp('hash', function (targetObj) { return targetObj.hash; });
-    overrideLocProp('origin', function (targetObj) { return targetObj.origin; });
-
-    if (window.Document && window.Document.prototype) {
-      var docProto = window.Document.prototype;
-      var docDesc = Object.getOwnPropertyDescriptor(docProto, 'location');
-      if (docDesc && docDesc.get) {
-        var nativeDocLocGet = docDesc.get;
-        Object.defineProperty(docProto, 'location', {
-          get: function () {
-            return nativeDocLocGet.call(this);
-          },
-          set: function (val) {
-            if (typeof val === 'string') {
-              val = fixUrl(val, config, window.location);
-            }
-            if (docDesc.set) {
-              return docDesc.set.call(this, val);
-            }
-            window.location.href = val;
-          },
-          configurable: true,
-          enumerable: docDesc.enumerable
-        });
-      }
-    }
-
-    if (window.URL) {
-      var NativeURL = window.URL;
-      function HeavenlyURL(urlArg, baseArg) {
-        if (typeof urlArg === 'string' && urlArg.startsWith(prefix)) {
-          var unproxied = urlArg.substr(prefixLen);
-          if (unproxied.indexOf(":/") !== -1 && unproxied.indexOf("://") === -1) {
-            unproxied = unproxied.replace(/^(https?:\/)([^\/])/i, "$1/$2");
-          }
-          if (!unproxied.startsWith("http://") && !unproxied.startsWith("https://")) {
-            unproxied = "https://" + unproxied;
-          }
-          urlArg = unproxied;
-        }
-        if (baseArg && typeof baseArg === 'string' && baseArg.startsWith(prefix)) {
-          var baseUnproxied = baseArg.substr(prefixLen);
-          if (baseUnproxied.indexOf(":/") !== -1 && baseUnproxied.indexOf("://") === -1) {
-            baseUnproxied = baseUnproxied.replace(/^(https?:\/)([^\/])/i, "$1/$2");
-          }
-          if (!baseUnproxied.startsWith("http://") && !baseUnproxied.startsWith("https://")) {
-            baseUnproxied = "https://" + baseUnproxied;
-          }
-          baseArg = baseUnproxied;
-        }
-        if (baseArg !== undefined) {
-          return new NativeURL(urlArg, baseArg);
-        }
-        return new NativeURL(urlArg);
-      }
-      HeavenlyURL.prototype = NativeURL.prototype;
-      if (NativeURL.createObjectURL) HeavenlyURL.createObjectURL = NativeURL.createObjectURL;
-      if (NativeURL.revokeObjectURL) HeavenlyURL.revokeObjectURL = NativeURL.revokeObjectURL;
-      window.URL = HeavenlyURL;
-    }
+  // URL and Location must retain their native origin/path semantics. Framework
+  // routers validate relative URLs against the real document origin; pretending
+  // /proxy/https://host/path has the remote origin breaks those checks. Browsers
+  // also expose non-configurable Location own properties, so prototype spoofing
+  // cannot reliably virtualize location. Rewrite requests/history explicitly.
+  function repairDocumentProxyPath(config, window) {
+    if (!window.history || !window.history.replaceState || !window.location) return;
+    var loc = window.location;
+    var path = loc.pathname || '';
+    var repaired = path.replace(/^(\/proxy\/https?:\/)([^/])/i, '$1/$2');
+    if (repaired === path) return;
+    window.history.replaceState(window.history.state, '', repaired + (loc.search || '') + (loc.hash || ''));
   }
 
   function initElementPrototypes(config, window) {
@@ -367,6 +231,10 @@
     if (window.HTMLImageElement && window.HTMLImageElement.prototype) {
       wrapProperty(window.HTMLImageElement.prototype, "src", fixUrl);
       wrapProperty(window.HTMLImageElement.prototype, "srcset", fixSrcset);
+    }
+    if (window.HTMLSourceElement && window.HTMLSourceElement.prototype) {
+      wrapProperty(window.HTMLSourceElement.prototype, "src", fixUrl);
+      wrapProperty(window.HTMLSourceElement.prototype, "srcset", fixSrcset);
     }
     if (window.HTMLScriptElement && window.HTMLScriptElement.prototype) {
       wrapProperty(window.HTMLScriptElement.prototype, "src", fixUrl);
@@ -419,7 +287,7 @@
       if (!el || el.nodeType !== 1) return;
 
       var tag = el.tagName || "";
-      if (tag === "IMG" || tag === "SCRIPT" || tag === "IFRAME" || tag === "VIDEO" || tag === "AUDIO") {
+      if (tag === "IMG" || tag === "SCRIPT" || tag === "IFRAME" || tag === "SOURCE" || tag === "VIDEO" || tag === "AUDIO") {
         var src = el.getAttribute("src");
         if (src) {
           var fixedSrc = fixUrl(src, config, window.location);
@@ -440,6 +308,11 @@
           if (fixedDataUrl !== dataUrl) {
             try { el.setAttribute("data-url", fixedDataUrl); } catch (e) {}
           }
+        }
+        var lazySrcset = el.getAttribute("data-srcset");
+        if (lazySrcset) {
+          var fixedLazy = fixSrcset(lazySrcset, config, window.location);
+          if (fixedLazy !== lazySrcset) el.setAttribute("data-srcset", fixedLazy);
         }
         var srcset = el.getAttribute("srcset");
         if (srcset) {
@@ -483,6 +356,12 @@
 
     if (typeof window.MutationObserver !== "undefined" && window.document && window.document.documentElement) {
       var observer = new window.MutationObserver(function (mutations) {
+        // A parser/SPA batch can include both an inserted parent and hundreds
+        // of its descendants. Walk each final subtree once, rather than once
+        // for every insertion record. Keep the sets local to this delivery so
+        // moving the same element in a later batch still gets processed.
+        var roots = new Set();
+        var attributes = new Map();
         var mLen = mutations.length;
         for (var i = 0; i < mLen; i++) {
           var mut = mutations[i];
@@ -492,16 +371,32 @@
               var aLen = added.length;
               for (var j = 0; j < aLen; j++) {
                 var node = added[j];
-                if (node.nodeType === 1) {
-                  processElementNode(node);
-                }
+                if (node.nodeType === 1 && node.isConnected !== false) roots.add(node);
               }
             }
           } else if (mut.type === "attributes") {
             var target = mut.target;
             if (!target || target.nodeType !== 1) continue;
-            var attrName = mut.attributeName;
-            if (!attrName) continue;
+            if (target.isConnected === false) continue;
+            var names = attributes.get(target);
+            if (!names) { names = new Set(); attributes.set(target, names); }
+            names.add(mut.attributeName);
+          }
+        }
+        function hasInsertedAncestor(node) {
+          for (var parent = node.parentNode; parent; parent = parent.parentNode) {
+            if (roots.has(parent)) return true;
+          }
+          return false;
+        }
+        roots.forEach(function (root) {
+          if (!hasInsertedAncestor(root)) processElementNode(root);
+        });
+        attributes.forEach(function (names, target) {
+          // Attribute records also cover custom lazy-resource containers that
+          // are not among processElementNode's resource element types.
+          names.forEach(function (attrName) {
+            if (!attrName) return;
 
             if (attrName === "src" || attrName === "href" || attrName === "data-src" || attrName === "data-href" || attrName === "data-url" ||
                 attrName === "SRC" || attrName === "HREF" || attrName === "DATA-SRC" || attrName === "DATA-HREF" || attrName === "DATA-URL") {
@@ -512,24 +407,24 @@
                   try { target.setAttribute(attrName, fixedVal); } catch (e) {}
                 }
               }
-            } else if (attrName === "srcset" || attrName === "SRCSET") {
+            } else if (attrName === "srcset" || attrName === "SRCSET" || attrName === "data-srcset" || attrName === "DATA-SRCSET") {
               var srcsetVal = target.getAttribute(attrName);
               if (srcsetVal) {
                 var fixedSrcsetVal = fixSrcset(srcsetVal, config, window.location);
                 if (fixedSrcsetVal !== srcsetVal) {
-                  try { target.setAttribute("srcset", fixedSrcsetVal); } catch (e) {}
+                  try { target.setAttribute(attrName, fixedSrcsetVal); } catch (e) {}
                 }
               }
             }
-          }
-        }
+          });
+        });
       });
 
       observer.observe(window.document.documentElement, {
         childList: true,
         subtree: true,
         attributes: true,
-        attributeFilter: ["src", "href", "srcset", "data-src"]
+        attributeFilter: ["src", "href", "srcset", "data-src", "data-href", "data-url", "data-srcset"]
       });
     }
 
@@ -669,7 +564,7 @@
     var _createElement = window.document.createElement;
 
     window.document.createElement = function (tagName, options) {
-      if (tagName.toLowerCase() === "iframe") {
+      if (typeof tagName === "string" && tagName.toLowerCase() === "iframe") {
         initAppendBodyIframe(config, window);
       }
       return _createElement.call(window.document, tagName, options);
@@ -713,8 +608,9 @@
     var winLoc = window.location;
     var proxyHost = winLoc.host;
     var isSecure = winLoc.protocol === "https:";
-    var target = winLoc.pathname.substr(prefix.length);
-    var targetURL = new URL(target);
+    var target = navigation.currentRemoteUrl(window, config);
+    var targetURL;
+    try { targetURL = new URL(target); } catch (e) { return; }
 
     // ws:// or wss:// then at least one char for location,
     // then either the end or a path
@@ -1458,10 +1354,36 @@
 
 
   function getPresetSvg(key, size) {
-    var path = PRESET_SVG_PATHS[key];
-    if (!path) return null;
-    var sz = size || '18px';
-    return '<svg style="width:' + sz + ';height:' + sz + ';fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24">' + path + '</svg>';
+    if (icons && icons.svg) return icons.svg(key, size);
+    if (typeof key !== 'string' || key.indexOf('preset:') !== 0) return null;
+    return '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a20 20 0 0 1 0 18M12 3a20 20 0 0 0 0 18"/></svg>';
+  }
+
+  function goHeavenlyHome(win, config) {
+    var origin = config.proxyOrigin || win.location.origin;
+    try {
+      var wrapper = win.parent && win.parent.__heavenlyWrapper;
+      if (wrapper && wrapper.frame.contentWindow === win && wrapper.home) {
+        if (win.parent.postMessage) win.parent.postMessage('heavenly:home', origin);
+        else wrapper.home();
+        return;
+      }
+      (win.top || win).location.href = origin + '/';
+    } catch (e) {
+      // The wrapper also recognizes a Heavenly root loaded in its own frame.
+      win.location.href = origin + '/';
+    }
+  }
+
+  function scrollLockMarkup(enabled) {
+    var shackle = enabled ? 'M7 11V7a5 5 0 0 1 10 0v4' : 'M7 11V7a5 5 0 0 1 9-3';
+    return '<svg aria-hidden="true" class="title-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="' + shackle + '"/></svg><span>' + (enabled ? 'ON' : 'OFF') + '</span>';
+  }
+
+  function magnifierMarkup(enabled, lensTitle) {
+    // Reuse the magnifier glyph already used by the Dock in every state.
+    var svg = '<svg aria-hidden="true" class="title-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>';
+    return svg + '<span>' + (lensTitle || (enabled ? 'ON' : 'OFF')) + '</span>';
   }
 
   function openDirectSitePreview(window, directUrl) {
@@ -2021,9 +1943,8 @@
         }
       } catch (e) {}
 
-      var path = window.location.pathname;
       var prefix = (config && config.prefix) ? config.prefix : '/proxy/';
-      var unproxiedUrl = path.startsWith(prefix) ? path.substr(prefix.length) + window.location.search + window.location.hash : window.location.href;
+      var unproxiedUrl = getDirectRemoteUrl(window, config);
       var title = window.__heavenlyOriginalTitle || window.document.title || unproxiedUrl;
       var domain = '';
       try {
@@ -2252,7 +2173,8 @@
       saveBtn.onclick = function () {
         var finalCat = catSelect.value || data.categories[0].id;
         var finalTitle = titleInput.value.trim() || unproxiedUrl;
-        var finalUrl = urlInput.value.trim() || unproxiedUrl;
+        var finalUrl = navigation.remoteUrl(urlInput.value.trim() || unproxiedUrl, config.proxyOrigin, prefix);
+        if (!finalUrl) { window.alert('Enter a valid HTTP or HTTPS bookmark address.'); return; }
         var finalIcon = iconInput.value.trim() || defaultFavicon;
 
         data.bookmarks.push({
@@ -2390,12 +2312,14 @@
 
       function updateLockUI(btn, isEnabled) {
         if (!btn) return;
+        btn.setAttribute('aria-pressed', String(isEnabled));
+        btn.setAttribute('aria-label', 'Scroll Lock ' + (isEnabled ? 'on' : 'off'));
         if (isEnabled) {
           btn.classList.add('active');
-          btn.innerHTML = '<span>🔒 ON</span>';
+          btn.innerHTML = scrollLockMarkup(true);
         } else {
           btn.classList.remove('active');
-          btn.innerHTML = '<span>🔓 OFF</span>';
+          btn.innerHTML = scrollLockMarkup(false);
         }
       }
 
@@ -2483,6 +2407,7 @@
         '  display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;',
         '}',
         '.btn-toggle:hover, .btn-ctrl:hover { background: rgba(51, 65, 85, 0.9); color: #f8fafc; }',
+        '.btn-toggle .title-icon { stroke: currentColor; flex-shrink: 0; filter: none; }',
         '.btn-toggle.active {',
         '  background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 100%);',
         '  border: 1px solid transparent; color: #030712; box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);',
@@ -2814,7 +2739,7 @@
 
           lensFrame.innerHTML = [
             '<div class="lens-header" id="lens-header">',
-            '  <span>🔍 Lens (' + zoomLevel.toFixed(1) + 'x)</span>',
+            '  <span class="lens-title">' + magnifierMarkup(false, 'Lens (' + zoomLevel.toFixed(1) + 'x)') + '</span>',
             '  <button type="button" class="btn-close-lens" id="close-lens-btn">✕</button>',
             '</div>',
             '<div class="lens-view" id="lens-view"></div>',
@@ -3046,6 +2971,8 @@
               '  color: #e0f2fe;',
               '  cursor: grab;',
               '}',
+              '.lens-title { display: inline-flex; align-items: center; gap: 6px; }',
+              '.lens-title .title-icon { flex-shrink: 0; filter: none; }',
               '.lens-header:active { cursor: grabbing; }',
               '.lens-view {',
               '  flex: 1;',
@@ -3095,7 +3022,7 @@
           }
           if (lensFrame) {
             var headerSpan = lensFrame.querySelector('#lens-header span');
-            if (headerSpan) headerSpan.textContent = '🔍 Lens (' + zoomLevel.toFixed(1) + 'x)';
+            if (headerSpan) headerSpan.innerHTML = magnifierMarkup(false, 'Lens (' + zoomLevel.toFixed(1) + 'x)');
             updateMirrorPosition();
           }
         }
@@ -3106,24 +3033,26 @@
           var dockRoot = window.document.getElementById('heavenly-dock-root');
           var dockBtn = dockRoot && dockRoot.shadowRoot ? dockRoot.shadowRoot.querySelector('#dock-mag-btn') : null;
           if (dockBtn) {
+            dockBtn.setAttribute('aria-pressed', String(magEnabled));
             if (magEnabled) {
               dockBtn.classList.add('active');
-              dockBtn.innerHTML = '<span>🔍 Mag ON</span>';
+              dockBtn.innerHTML = magnifierMarkup(true);
             } else {
               dockBtn.classList.remove('active');
-              dockBtn.innerHTML = '<span>🔍 Mag OFF</span>';
+              dockBtn.innerHTML = magnifierMarkup(false);
             }
           }
 
           if (magShadow) {
             var widgetBtn = magShadow.querySelector('#mag-toggle-btn');
             if (widgetBtn) {
+              widgetBtn.setAttribute('aria-pressed', String(magEnabled));
               if (magEnabled) {
                 widgetBtn.classList.add('active');
-                widgetBtn.innerHTML = '<span>🔍 ON</span>';
+                widgetBtn.innerHTML = magnifierMarkup(true);
               } else {
                 widgetBtn.classList.remove('active');
-                widgetBtn.innerHTML = '<span>🔍 OFF</span>';
+                widgetBtn.innerHTML = magnifierMarkup(false);
               }
             }
           }
@@ -3211,7 +3140,7 @@
             '.dock-left .dock-divider, .dock-right .dock-divider { width: 32px; height: 1px; background: rgba(56, 189, 248, 0.25); margin: 2px 0; }',
             '@media (max-width: 640px) {',
             '  .dock-bar { padding: 8px 12px; gap: 8px; border-radius: 20px; }',
-            '  .dock-bar .btn-ctrl span, .dock-bar .btn-toggle span { display: none; }',
+            '  .dock-bar .btn-ctrl span { display: none; }',
             '  .dock-bar .nav-input { width: 110px; font-size: 11px; padding: 4px 8px; }',
             '}'
           ].join('\n');
@@ -3240,7 +3169,7 @@
           var items = [];
 
           if (showNavHome) {
-            items.push('<button type="button" class="btn-ctrl" id="dock-home-btn" title="Go Home"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
+            items.push('<button type="button" class="btn-ctrl" id="dock-home-btn" title="Return to Heavenly Home"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
           items.push('<button type="button" class="btn-ctrl" id="dock-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
@@ -3256,11 +3185,11 @@
           }
 
           if (showScrollLock) {
-            items.push('<div class="dock-item"><span style="font-size:12px;font-weight:600;color:#e0f2fe;">Scroll Lock</span><button type="button" class="btn-toggle" id="dock-scroll-btn"><svg class="title-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg><span>OFF</span></button></div>');
+            items.push('<div class="dock-item"><span style="font-size:12px;font-weight:600;color:#e0f2fe;">Scroll Lock</span><button type="button" class="btn-toggle" id="dock-scroll-btn" aria-label="Scroll Lock off" aria-pressed="false">' + scrollLockMarkup(false) + '</button></div>');
           }
 
           if (showMagnifier) {
-            items.push('<div class="dock-item"><button type="button" class="btn-toggle" id="dock-mag-btn"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>OFF</span></button><button type="button" class="btn-ctrl" id="dock-zoom-out">-</button><span id="dock-zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span><button type="button" class="btn-ctrl" id="dock-zoom-in">+</button></div>');
+            items.push('<div class="dock-item"><button type="button" class="btn-toggle" id="dock-mag-btn" aria-label="Magnifier" aria-pressed="false">' + magnifierMarkup(false) + '</button><button type="button" class="btn-ctrl" id="dock-zoom-out">-</button><span id="dock-zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span><button type="button" class="btn-ctrl" id="dock-zoom-in">+</button></div>');
           }
 
           dockBar.innerHTML = items.join('<div class="dock-divider"></div>');
@@ -3488,7 +3417,7 @@
             var homeBtn = dockBar.querySelector('#dock-home-btn');
             if (homeBtn) homeBtn.addEventListener('click', function (e) {
               e.stopPropagation();
-              (window.top || window).location.href = config.proxyOrigin + '/';
+              goHeavenlyHome(window, config);
             });
           }
 
@@ -3546,24 +3475,13 @@
             if (magBtn) magBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               toggleMagnifier();
-              if (magEnabled) {
-                magBtn.classList.add('active');
-                magBtn.innerHTML = '<span>🔍 Mag ON</span>';
-              } else {
-                magBtn.classList.remove('active');
-                magBtn.innerHTML = '<span>🔍 Mag OFF</span>';
-              }
             });
 
             if (zoomInBtn) zoomInBtn.addEventListener('click', function (e) {
               e.stopPropagation();
               if (zoomLevel < 4.0) {
                 zoomLevel = Math.round((zoomLevel + 0.5) * 10) / 10;
-                if (zoomLabel) zoomLabel.textContent = zoomLevel.toFixed(1) + 'x';
-                if (lensFrame) {
-                  lensFrame.querySelector('#lens-header span').textContent = '🔍 Lens (' + zoomLevel.toFixed(1) + 'x)';
-                  updateMirrorPosition();
-                }
+                updateZoomUI();
               }
             });
 
@@ -3571,11 +3489,7 @@
               e.stopPropagation();
               if (zoomLevel > 1.5) {
                 zoomLevel = Math.round((zoomLevel - 0.5) * 10) / 10;
-                if (zoomLabel) zoomLabel.textContent = zoomLevel.toFixed(1) + 'x';
-                if (lensFrame) {
-                  lensFrame.querySelector('#lens-header span').textContent = '🔍 Lens (' + zoomLevel.toFixed(1) + 'x)';
-                  updateMirrorPosition();
-                }
+                updateZoomUI();
               }
             });
           }
@@ -3611,7 +3525,7 @@
             '    <svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 0 0 18"></path><path d="M3 12h18"></path></svg>',
             '    <span>Scroll Lock</span>',
             '  </div>',
-            '  <button type="button" class="btn-toggle" id="toggle-btn"><span>🔓 OFF</span></button>',
+            '  <button type="button" class="btn-toggle" id="toggle-btn" aria-label="Scroll Lock off" aria-pressed="false">' + scrollLockMarkup(false) + '</button>',
             '  <button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>',
             '</div>'
           ].join('\n');
@@ -3643,7 +3557,7 @@
             '    <svg class="title-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
             '    <span>Magnifier</span>',
             '  </div>',
-            '  <button type="button" class="btn-toggle" id="mag-toggle-btn"><span>🔍 OFF</span></button>',
+            '  <button type="button" class="btn-toggle" id="mag-toggle-btn" aria-label="Magnifier" aria-pressed="false">' + magnifierMarkup(false) + '</button>',
             '  <button type="button" class="btn-ctrl" id="zoom-out-btn" title="Zoom Out">-</button>',
             '  <span id="zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">' + zoomLevel.toFixed(1) + 'x</span>',
             '  <button type="button" class="btn-ctrl" id="zoom-in-btn" title="Zoom In">+</button>',
@@ -3732,7 +3646,7 @@
           }
 
           if (showNavHome) {
-            navHtml.push('<button type="button" class="btn-ctrl" id="nav-home-btn" title="Go to Homepage"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
+            navHtml.push('<button type="button" class="btn-ctrl" id="nav-home-btn" title="Return to Heavenly Home"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
           navHtml.push('<button type="button" class="btn-ctrl" id="nav-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
@@ -3804,7 +3718,7 @@
             var homeBtn = navWidget.querySelector('#nav-home-btn') || (navShadow.querySelector ? navShadow.querySelector('#nav-home-btn') : null);
             if (homeBtn) homeBtn.addEventListener('click', function (e) {
               e.stopPropagation();
-              (window.top || window).location.href = config.proxyOrigin + '/';
+              goHeavenlyHome(window, config);
             });
           }
 
@@ -4709,9 +4623,13 @@
     // Older/cached injected documents may contain a second initializer.
     if (window.__heavenlyClientInitialized) return;
     window.__heavenlyClientInitialized = true;
-    console.log("[Heavenly Debug] Initializing unblocker client scripts for window", config, window);
+    // An about:blank child can share its caller's config. Its <base> and history
+    // are window-specific and must not replace the parent's URL resolver.
+    config = Object.assign({}, config);
+    config.documentBaseUrl = function () { return window.document && window.document.baseURI; };
+
     if (!config.proxyOrigin) config.proxyOrigin = (window.location && window.location.origin) || '';
-    initLocationPrototype(config, window);
+    repairDocumentProxyPath(config, window);
     initElementPrototypes(config, window);
     initMutationObserverAndClicks(config, window);
     initXMLHttpRequest(config, window);
@@ -4773,7 +4691,7 @@
       // leave no trace
       delete global.unblockerInit;
     }
-    console.log("unblocker client scripts initialized");
+
   }
 
   // either export things for testing or put the init method into the global scope to be called
@@ -4785,6 +4703,8 @@
     module.exports = {
       initForWindow: initForWindow,
       fixUrl: fixUrl,
+      getPresetSvg: getPresetSvg,
+      goHeavenlyHome: goHeavenlyHome,
       fixSrcset: fixSrcset,
       isTopOrAboutBlankIframe: isTopOrAboutBlankIframe,
       openAboutBlankLauncher: openAboutBlankLauncher,

@@ -175,6 +175,7 @@ describe('unblocker-client.js Heavenly Widgets', function () {
                 addEventListener: function (evt, fn) {
                     elListeners[evt] = fn;
                 },
+                setAttribute: function (name, value) { this[name] = value; },
                 dispatchEvent: function (evtName, e) {
                     if (elListeners[evtName]) elListeners[evtName](e || { stopPropagation: function () {} });
                 },
@@ -264,11 +265,15 @@ describe('unblocker-client.js Heavenly Widgets', function () {
         // First click: turn ON
         toggleBtn.dispatchEvent('click', { stopPropagation: function () {} });
         assert.strictEqual(toggleBtn.classList.contains('active'), true);
-        assert.strictEqual(toggleBtn.innerHTML, '<span>🔒 ON</span>');
+        assert.ok(toggleBtn.innerHTML.includes('<svg'));
+        assert.ok(toggleBtn.innerHTML.includes('ON</span>'));
+        assert.strictEqual(toggleBtn['aria-pressed'], 'true');
 
         // Second click: turn OFF
         toggleBtn.dispatchEvent('click', { stopPropagation: function () {} });
         assert.strictEqual(toggleBtn.classList.contains('active'), false);
-        assert.strictEqual(toggleBtn.innerHTML, '<span>🔓 OFF</span>');
+        assert.ok(toggleBtn.innerHTML.includes('<svg'));
+        assert.ok(toggleBtn.innerHTML.includes('OFF</span>'));
+        assert.strictEqual(toggleBtn['aria-pressed'], 'false');
     });
 });
