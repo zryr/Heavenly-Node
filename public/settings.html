@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <script src="/assets/heavenly-navigation.js"></script>
+  <script src="/assets/heavenly-bookmarks.js"></script>
   <link rel="stylesheet" href="/assets/quick-settings.css">
   <script src="/assets/cloak-pool.js"></script>
   <script src="/assets/quick-settings-model.js"></script>
@@ -1405,6 +1406,7 @@
                 <span>Import from File</span>
               </button>
             </div>
+            <p style="font-size:.78rem;color:#94a3b8;line-height:1.5">Personal notes stay on this device. Private bookmark backups include them; public share links do not. Notes do not sync automatically.</p>
             <div id="backup-status-msg" aria-live="polite" role="status" style="margin-top: 8px; font-size: 0.82rem; text-align: center; min-height: 1.2em; color: #38bdf8;"></div>
           </div>
         </div>
@@ -1927,7 +1929,7 @@
                 userBm.icon = defBm.icon;
                 updated = true;
               }
-              if (defBm.disableQuickSaveWidget !== undefined && userBm.disableQuickSaveWidget !== defBm.disableQuickSaveWidget) {
+              if (defBm.disableQuickSaveWidget !== undefined && userBm.disableQuickSaveWidget === undefined) {
                 userBm.disableQuickSaveWidget = defBm.disableQuickSaveWidget;
                 updated = true;
               }
@@ -1980,8 +1982,10 @@
       }
     }
 
-    function saveBookmarkData(data) {
+    function saveBookmarkData(data, importNotes) {
       try {
+        var stored = localStorage.getItem('heavenly_bookmarks');
+        if (stored && !importNotes) HeavenlyBookmarks.preserveStoredNotes(data, JSON.parse(stored));
         localStorage.setItem('heavenly_bookmarks', JSON.stringify(data));
       } catch (e) {}
     }
@@ -2715,6 +2719,9 @@
           var customBms = (current.bookmarks || []).filter(function (b) { return !b.builtIn; });
 
           var freshData = JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));
+          freshData.bookmarks = freshData.bookmarks.map(function (bookmark) {
+            return HeavenlyBookmarks.importBookmark(bookmark, HeavenlyBookmarks.findEntry(current, bookmark.id));
+          });
 
           customCats.forEach(function (c) {
             if (!freshData.categories.some(function (fc) { return fc.id === c.id; })) {
@@ -2779,12 +2786,12 @@
         setCard.innerHTML = '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;width:100%;font-weight:600;font-size:0.9rem;color:#f8fafc;"><input type="checkbox" class="export-cb" data-type="settings" checked style="width:16px;height:16px;accent-color:#38bdf8;" /><span style="display:inline-flex;align-items:center;gap:6px;"><svg style="width:15px;height:15px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Heavenly App Settings & Cloaking Preferences</span></span></label>';
         container.appendChild(setCard);
 
-        // Categories & Bookmarks tree - Filter out built-in presets
+        // Export custom bookmarks and built-ins that carry user-owned notes.
         bmsData.categories.forEach(function (cat) {
-          // Find custom bookmarks in this category (non built-in)
-          var customCatBms = bmsData.bookmarks.filter(function (b) { return b.categoryId === cat.id && !b.builtIn; });
+          // Official presets need no backup unless they contain personal notes.
+          var customCatBms = bmsData.bookmarks.filter(function (b) { return b.categoryId === cat.id && (!b.builtIn || HeavenlyBookmarks.noteFor(b) || (b.subBookmarks || []).some(function (child) { return HeavenlyBookmarks.noteFor(child); })); });
 
-          // Show category if it is a custom category OR if it has custom bookmarks
+          // Show custom categories and categories with exportable user data.
           if (!cat.builtIn || customCatBms.length > 0) {
             var catCard = document.createElement('div');
             catCard.className = 'bookmark-mgr-item';
@@ -2869,6 +2876,7 @@
         var bmsData = loadBookmarkData();
         var settingsData = loadSettings();
 
+        // Private backup files intentionally include personalNote metadata.
         var exportPayload = {
           version: "1.0",
           timestamp: new Date().toISOString(),
@@ -3068,7 +3076,9 @@
 
         if (mode === 'overwrite') {
           if (fileCats.length > 0) currentBms.categories = fileCats;
-          if (fileBms.length > 0) currentBms.bookmarks = fileBms;
+          if (fileBms.length > 0) currentBms.bookmarks = fileBms.map(function (bookmark) {
+            return HeavenlyBookmarks.importBookmark(bookmark, HeavenlyBookmarks.findEntry(currentBms, bookmark.id));
+          });
         } else {
           // Merge mode: Add missing categories and bookmarks or update matching IDs
           fileCats.forEach(function (fCat) {
@@ -3083,14 +3093,14 @@
           fileBms.forEach(function (fBm) {
             var existIdx = currentBms.bookmarks.findIndex(function (b) { return b.id === fBm.id; });
             if (existIdx !== -1) {
-              currentBms.bookmarks[existIdx] = fBm;
+              currentBms.bookmarks[existIdx] = HeavenlyBookmarks.importBookmark(fBm, currentBms.bookmarks[existIdx]);
             } else {
-              currentBms.bookmarks.push(fBm);
+              currentBms.bookmarks.push(HeavenlyBookmarks.importBookmark(fBm));
             }
           });
         }
 
-        saveBookmarkData(currentBms);
+        saveBookmarkData(currentBms, true);
         renderBookmarkManager();
         closeImportModal();
 

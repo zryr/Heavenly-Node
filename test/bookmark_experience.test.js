@@ -10,7 +10,7 @@ const plain = value => JSON.parse(JSON.stringify(value));
 function context(page = 'index.html') {
   const content = fs.readFileSync(require.resolve('../public/' + page), 'utf8');
   const store = new Map();
-  const c = { URL, HeavenlyNavigation: navigation, localStorage: { getItem: k => store.get(k) || null, setItem: (k, v) => store.set(k, v) } };
+  const c = { HeavenlyBookmarks: require('../public/assets/heavenly-bookmarks'), URL, HeavenlyNavigation: navigation, localStorage: { getItem: k => store.get(k) || null, setItem: (k, v) => store.set(k, v) } };
   vm.createContext(c);
   const start = content.indexOf('    var DEFAULT_BOOKMARK_DATA =');
   vm.runInContext(content.slice(start, content.indexOf('\n    };', start) + 7), c);

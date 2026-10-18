@@ -13,7 +13,7 @@ function source(name, content = html) {
 function context() {
   const store = new Map();
   const sandbox = {
-    Set, URL, HeavenlyNavigation: require('../public/assets/heavenly-navigation'), navigation: require('../public/assets/heavenly-navigation'),
+    HeavenlyBookmarks: require('../public/assets/heavenly-bookmarks'), Set, URL, HeavenlyNavigation: require('../public/assets/heavenly-navigation'), navigation: require('../public/assets/heavenly-navigation'),
     localStorage: { getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value) }
   };
   vm.createContext(sandbox);

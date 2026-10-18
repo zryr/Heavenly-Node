@@ -5,6 +5,8 @@
 
   var icons = typeof module !== "undefined" && module.exports ? require("../public/assets/heavenly-icons.js") : global.HeavenlyIcons;
 
+  var bookmarks = typeof module !== "undefined" && module.exports ? require("../public/assets/heavenly-bookmarks.js") : global.HeavenlyBookmarks;
+
   // todo:
   // - postMessage
   // - open
@@ -1880,7 +1882,7 @@
                     userBm.icon = defBm.icon;
                     updated = true;
                   }
-                  if (defBm.disableQuickSaveWidget !== undefined && userBm.disableQuickSaveWidget !== defBm.disableQuickSaveWidget) {
+                  if (defBm.disableQuickSaveWidget !== undefined && userBm.disableQuickSaveWidget === undefined) {
                     userBm.disableQuickSaveWidget = defBm.disableQuickSaveWidget;
                     updated = true;
                   }
@@ -4194,6 +4196,7 @@
       if (url && url !== lastUrl) {
         lastUrl = url;
         saveToHeavenlyHistory(window, config);
+        if (window.__heavenlyRefreshQuickSave) window.__heavenlyRefreshQuickSave();
       }
       syncPresentation();
     }
@@ -4227,32 +4230,25 @@
   function initFolderQuickSaveWidget(config, window, settings) {
     try {
       if (!isTopOrAboutBlankIframe(window)) return;
+      if (!window.__heavenlyRefreshQuickSave) {
+        window.__heavenlyRefreshQuickSave = function () { initFolderQuickSaveWidget(config, window); };
+        window.addEventListener('storage', function (event) {
+          if (event.key === 'heavenly_bookmarks' || event.key === 'heavenly_settings' || event.key === null) window.__heavenlyRefreshQuickSave();
+        });
+      }
+      function removeWidget() {
+        var existing = window.document && window.document.getElementById('heavenly-folder-save-root');
+        if (existing) { if (existing.__heavenlyCleanup) existing.__heavenlyCleanup(); existing.remove(); }
+      }
       if (!settings) {
         settings = loadHeavenlySettings(window);
       }
       if (settings.disableAllWidgets || settings.disableAllFeatures) {
-        var existingSave = window.document ? window.document.getElementById('heavenly-folder-save-root') : null;
-        if (existingSave) existingSave.remove();
+        removeWidget();
         return;
       }
-      var targetUrl = (config && config.url) ? config.url : '';
-      if (!targetUrl && window.location) {
-        var path = window.location.pathname;
-        var prefix = (config && config.prefix) ? config.prefix : '/proxy/';
-        if (path.startsWith(prefix)) {
-          targetUrl = path.substr(prefix.length) + window.location.search + window.location.hash;
-        }
-      }
-
-      if (!targetUrl || targetUrl.startsWith('about:') || targetUrl.startsWith('data:')) return;
-
-      var currentHost = '';
-      try {
-        var u = new URL(targetUrl.startsWith('http') ? targetUrl : 'https://' + targetUrl);
-        currentHost = u.hostname.toLowerCase();
-      } catch (e) {
-        return;
-      }
+      var targetUrl = navigation.currentRemoteUrl(window, config);
+      if (!targetUrl) { removeWidget(); return; }
 
       var storage = window.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
       if (!storage) return;
@@ -4263,21 +4259,10 @@
       var data = JSON.parse(raw);
       if (!data || !data.bookmarks) return;
 
-      // Find matching Folder or Folder-Bookmark
-      var matchedFolder = data.bookmarks.find(function (bm) {
-        if (bm.hidden) return false;
-        if (bm.disableQuickSaveWidget === true || bm.id === 'bm_ng') return false;
-        if (bm.type !== 'folder' && bm.type !== 'folder_bookmark') return false;
-        if (!bm.url) return false;
-        try {
-          var folderHost = new URL(bm.url.startsWith('http') ? bm.url : 'https://' + bm.url).hostname.toLowerCase();
-          return currentHost === folderHost || currentHost.endsWith('.' + folderHost);
-        } catch (e) {
-          return false;
-        }
-      });
-
-      if (!matchedFolder) return;
+      var matchedFolder = bookmarks.findQuickSaveBookmark(data, targetUrl);
+      if (!matchedFolder || matchedFolder.disableQuickSaveWidget === true) { removeWidget(); return; }
+      var existing = window.document.getElementById('heavenly-folder-save-root');
+      if (existing && existing.dataset.bookmarkId !== matchedFolder.id) removeWidget();
 
       function setupWidget() {
         if (!window.document || !window.document.body) return;
@@ -4285,6 +4270,7 @@
 
         var saveContainer = window.document.createElement('div');
         saveContainer.id = 'heavenly-folder-save-root';
+        saveContainer.dataset.bookmarkId = matchedFolder.id;
         saveContainer.style.cssText = 'position:fixed;bottom:70px;right:20px;z-index:2147483646;user-select:none;-webkit-user-select:none;font-family:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
 
         // Restore position from localStorage
@@ -4415,17 +4401,22 @@
           window.removeEventListener('touchend', onSaveEnd, { capture: true });
         };
 
+        saveContainer.__heavenlyCleanup = onSaveEnd;
         bar.addEventListener('mousedown', onSaveStart);
         bar.addEventListener('touchstart', onSaveStart, { passive: false });
 
         var btn = window.document.createElement('button');
         btn.type = 'button';
         btn.className = 'save-btn';
-        btn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg><span>Save to ' + matchedFolder.title + '</span>';
+        btn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg><span></span>';
 
+        btn.querySelector('span').textContent = 'Save to ' + matchedFolder.title;
         btn.onclick = function (e) {
           e.stopPropagation();
           if (hasMovedSave) return;
+          targetUrl = navigation.currentRemoteUrl(window, config);
+          var activeSettings = loadHeavenlySettings(window);
+          if (activeSettings.disableAllWidgets || activeSettings.disableAllFeatures) { removeWidget(); return; }
           var title = window.__heavenlyOriginalTitle || window.document.title || targetUrl;
           var customTitle = prompt("Save page to folder '" + matchedFolder.title + "':", title);
           if (customTitle === null) return;
@@ -4433,7 +4424,8 @@
           var freshRaw = storage.getItem('heavenly_bookmarks');
           var freshData = freshRaw ? JSON.parse(freshRaw) : data;
           var targetBm = freshData.bookmarks.find(function (b) { return b.id === matchedFolder.id; });
-          if (targetBm) {
+          if (targetBm && targetBm.disableQuickSaveWidget !== true) {
+            if (navigation.findBookmarkByUrl(freshData, targetUrl)) { window.alert('This page is already saved in your bookmarks.'); return; }
             if (!targetBm.subBookmarks) targetBm.subBookmarks = [];
             targetBm.subBookmarks.push({
               id: 'sub_' + Date.now(),
@@ -4442,7 +4434,7 @@
               icon: ''
             });
             storage.setItem('heavenly_bookmarks', JSON.stringify(freshData));
-            (window.top || window).location.href = window.location.origin + '/';
+            goHeavenlyHome(window, config);
           }
         };
 
@@ -4452,7 +4444,7 @@
         closeBtn.textContent = '✕';
         closeBtn.onclick = function (e) {
           e.stopPropagation();
-          saveContainer.remove();
+          removeWidget();
         };
 
         bar.appendChild(btn);
@@ -4655,10 +4647,10 @@
     if (!settings.disableAllWidgets && !settings.disableAllFeatures) {
       initHeavenlyWidgets(window, settings, config);
       initManualIconPickerWidget(config, window, settings);
-      initFolderQuickSaveWidget(config, window, settings);
       initNewgroundsPagination(config, window, settings);
     }
 
+    initFolderQuickSaveWidget(config, window, settings);
     initHeavenlyNavigationHistory(window, config);
 
     // Touch event guard for injected client modal dialogues to prevent top overscroll / elastic bounce
