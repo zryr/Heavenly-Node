@@ -16,6 +16,7 @@
   <script src="/assets/heavenly-icons.js"></script>
   <script src="/assets/heavenly-navigation.js"></script>
   <script src="/assets/heavenly-bookmarks.js"></script>
+  <script src="/assets/heavenly-drag.js"></script>
   <link rel="stylesheet" href="/assets/quick-settings.css">
   <script src="/assets/cloak-pool.js"></script>
   <script src="/assets/quick-settings-model.js"></script>
@@ -944,39 +945,7 @@
       opacity: 0.3 !important;
     }
 
-    .drag-popout-avatar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 9999;
-      pointer-events: none;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.7) !important;
-      border: 2px solid #38bdf8 !important;
-      border-radius: 16px;
-      background: rgba(15, 23, 42, 0.95) !important;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      will-change: transform;
-      margin: 0 !important;
-      transition: none !important;
-      animation: none !important;
-      opacity: 1 !important;
-    }
-
-    .compact-purple-avatar {
-      width: 36px !important;
-      height: 36px !important;
-      border-radius: 50% !important;
-      background: rgba(15, 23, 42, 0.95) !important;
-      border: 2px solid #c084fc !important;
-      box-shadow: 0 0 20px rgba(192, 132, 252, 0.85), 0 0 10px #c084fc !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      padding: 0 !important;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
+    .heavenly-drag-preview { will-change: transform; margin: 0; transition: none; animation: none; }
 
     .drop-indicator-dot {
       width: 10px;
@@ -4754,9 +4723,6 @@
 
     // --- Pop-Out Floating Drag Avatar Manager & Ghost Helpers ---
     var activePopoutAvatar = null;
-    var avatarX = 0, avatarY = 0;
-    var avatarWidth = 200;
-    var avatarRafPending = false;
 
     var emptyDragImage = new Image();
     emptyDragImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -4787,82 +4753,22 @@
       });
     }
 
+    var activeDragPreview = null;
+    var bookmarkInputType = 'mouse';
+    document.addEventListener('pointerdown', function (event) { bookmarkInputType = event.pointerType || 'mouse'; }, true);
     function createPopoutAvatar(sourceEl, mouseX, mouseY) {
       removePopoutAvatar();
       if (!sourceEl) return;
-
-      var rect = sourceEl.getBoundingClientRect();
-      var isCategory = sourceEl.classList.contains('section-card');
-      var isSmallScreenOrTouch = window.innerWidth <= 1024 || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-      var useCompactAvatar = isCategory && isSmallScreenOrTouch;
-
-      if (useCompactAvatar) {
-        avatarWidth = 36;
-      } else {
-        avatarWidth = rect.width;
-      }
-
-      // Fallback if initial coordinates are (0,0) or missing (common in HTML5 dragstart events)
-      if ((!mouseX && !mouseY) || (mouseX === 0 && mouseY === 0)) {
-        mouseX = rect.left + rect.width / 2;
-        mouseY = rect.top + rect.height / 2;
-      }
-
-      avatarX = mouseX - avatarWidth / 2;
-      avatarY = mouseY - (useCompactAvatar ? 18 : 20);
-
-      var clone;
-      if (useCompactAvatar) {
-        clone = document.createElement('div');
-        clone.id = 'heavenly-drag-avatar';
-        clone.className = 'drag-popout-avatar compact-purple-avatar';
-        clone.innerHTML = '<span class="drop-indicator-dot drop-indicator-purple" style="margin:0;"></span>';
-        clone.setAttribute('data-compact', 'true');
-      } else {
-        clone = sourceEl.cloneNode(true);
-        clone.id = 'heavenly-drag-avatar';
-        clone.className = (clone.className || '').replace(/\bentrance-animate\b/g, '') + ' drag-popout-avatar';
-        clone.style.width = avatarWidth + 'px';
-      }
-
-      clone.style.transition = 'none';
-      clone.style.animation = 'none';
-      clone.style.opacity = '1';
-      clone.style.transform = 'translate3d(' + avatarX + 'px, ' + avatarY + 'px, 0px) scale(1.05) rotate(1.5deg)';
-
-      document.body.appendChild(clone);
-      activePopoutAvatar = clone;
+      var name = sourceEl.querySelector('.bookmark-title,.category-title,.section-order-name');
+      activeDragPreview = HeavenlyDrag.create({ source: sourceEl, label: name ? name.textContent : 'Move section',
+        kind: sourceEl.classList.contains('bookmark-card') ? 'bookmark' : 'section', input: bookmarkInputType, x: mouseX, y: mouseY });
+      activePopoutAvatar = activeDragPreview.element;
     }
-
-    function updatePopoutAvatar(mouseX, mouseY) {
-      if (!activePopoutAvatar) return;
-      // Ignore invalid (0,0) coordinates sent by native dragover/drag events
-      if (mouseX === 0 && mouseY === 0) return;
-
-      var isCompact = activePopoutAvatar.getAttribute('data-compact') === 'true';
-      avatarX = mouseX - avatarWidth / 2;
-      avatarY = mouseY - (isCompact ? 18 : 20);
-
-      if (!avatarRafPending) {
-        avatarRafPending = true;
-        requestAnimationFrame(function () {
-          if (activePopoutAvatar) {
-            activePopoutAvatar.style.transform = 'translate3d(' + avatarX + 'px, ' + avatarY + 'px, 0px) scale(1.05) rotate(1.5deg)';
-          }
-          avatarRafPending = false;
-        });
-      }
-    }
-
+    function updatePopoutAvatar(x, y) { if (activeDragPreview && (x || y)) activeDragPreview.move(x, y); }
     function removePopoutAvatar() {
-      if (activePopoutAvatar && activePopoutAvatar.parentNode) {
-        activePopoutAvatar.parentNode.removeChild(activePopoutAvatar);
-      }
-      activePopoutAvatar = null;
-      avatarRafPending = false;
-      document.querySelectorAll('#heavenly-drag-avatar, .drag-popout-avatar').forEach(function (el) {
-        if (el.parentNode) el.parentNode.removeChild(el);
-      });
+      if (typeof stopBookmarkEdgeScroll === 'function') stopBookmarkEdgeScroll();
+      if (activeDragPreview) activeDragPreview.destroy();
+      activeDragPreview = null; activePopoutAvatar = null;
     }
 
     document.addEventListener('drag', function (e) {
@@ -5197,7 +5103,62 @@
       return cancel;
     }
 
+    var bookmarkEdgeFrame = 0;
+    function stopBookmarkEdgeScroll() { cancelAnimationFrame(bookmarkEdgeFrame); bookmarkEdgeFrame = 0; }
+    function scrollBookmarkEdge(handle, x, y, move) {
+      stopBookmarkEdgeScroll();
+      if (handle.closest('.section-order-row')) return; // The section editor owns its nested scrolling.
+      var speed = y < 40 ? -10 : y > innerHeight - 40 ? 10 : 0;
+      if (!speed) return;
+      function step() {
+        bookmarkEdgeFrame = 0;
+        if (bookmarkGestureSource !== 'drag' || !handle.isConnected) return;
+        var before = scrollY; window.scrollBy(0, speed);
+        move({ touches: [{ clientX: x, clientY: y }], preventDefault: function () {} });
+        if (scrollY !== before) bookmarkEdgeFrame = requestAnimationFrame(step);
+      }
+      bookmarkEdgeFrame = requestAnimationFrame(step);
+    }
+
+    function bindPenHandle(handle, hold, move, end, cancelDrag) {
+      handle.addEventListener('pointerdown', function (event) {
+        if (event.pointerType !== 'pen' || event.button !== 0 || !event.isPrimary) return;
+        event.stopPropagation(); event.preventDefault(); cancelActiveBookmarkTouch();
+        var pointer = event.pointerId, start = { clientX: event.clientX, clientY: event.clientY }, dragging = false;
+        bookmarkGestureSource = 'handle';
+        try { handle.setPointerCapture(pointer); } catch (e) {}
+        function cancel() {
+          handle.removeEventListener('pointermove', moved); handle.removeEventListener('pointerup', ended);
+          handle.removeEventListener('pointercancel', cancel); handle.removeEventListener('lostpointercapture', cancel);
+          if (cancelBookmarkTouchGesture === cancel) cancelBookmarkTouchGesture = null;
+          if (dragging) suppressBookmarkClickUntil = Date.now() + 800;
+          bookmarkGestureSource = ''; cancelDrag(); removePopoutAvatar();
+          try { if (handle.hasPointerCapture(pointer)) handle.releasePointerCapture(pointer); } catch (e) {}
+        }
+        function moved(e) {
+          if (e.pointerId !== pointer) return;
+          if (!dragging && Math.hypot(e.clientX - start.clientX, e.clientY - start.clientY) < 6) return;
+          if (!dragging) { hold(start); closeReorderBar(); dragging = true; }
+          bookmarkGestureSource = 'drag'; suppressBookmarkClickUntil = Date.now() + 800;
+          e.preventDefault();
+          move({ touches: [{ clientX: e.clientX, clientY: e.clientY }], changedTouches: [], preventDefault: function () {} });
+          if (!activePopoutAvatar) createPopoutAvatar(handle.closest('.section-order-row,.bookmark-card,.section-card'), e.clientX, e.clientY);
+          updatePopoutAvatar(e.clientX, e.clientY);
+          scrollBookmarkEdge(handle, e.clientX, e.clientY, move);
+        }
+        function ended(e) {
+          if (e.pointerId !== pointer) return;
+          if (dragging) { e.preventDefault(); end({ changedTouches: [{ clientX: e.clientX, clientY: e.clientY }] }); }
+          cancel();
+        }
+        cancelBookmarkTouchGesture = cancel;
+        handle.addEventListener('pointermove', moved); handle.addEventListener('pointerup', ended);
+        handle.addEventListener('pointercancel', cancel); handle.addEventListener('lostpointercapture', cancel);
+      });
+    }
+
     function bindBookmarkTouchHandle(handle, hold, move, end, cancelDrag) {
+      bindPenHandle(handle, hold, move, end, cancelDrag);
       handle.addEventListener('touchstart', function (e) {
         e.stopPropagation();
         if (e.touches.length !== 1) return;
@@ -5223,6 +5184,9 @@
             suppressBookmarkClickUntil = Date.now() + 800;
             if (event.cancelable) event.preventDefault();
             move(event);
+            if (!activePopoutAvatar) createPopoutAvatar(handle.closest('.section-order-row,.bookmark-card,.section-card'), touch.clientX, touch.clientY);
+            updatePopoutAvatar(touch.clientX, touch.clientY);
+            scrollBookmarkEdge(handle, touch.clientX, touch.clientY, move);
           },
           end: function (event) {
             bookmarkGestureSource = '';
@@ -5231,6 +5195,7 @@
               suppressBookmarkClickUntil = Date.now() + 800;
               if (event.cancelable) event.preventDefault();
               end(event);
+              removePopoutAvatar();
             } else {
               cancelDrag();
             }
@@ -5241,6 +5206,7 @@
             if (dragging) suppressBookmarkClickUntil = Date.now() + 800;
             if (held) closeReorderBar();
             cancelDrag();
+            removePopoutAvatar();
           }
         });
       }, { passive: true });

@@ -200,7 +200,7 @@
       if (event.pointerType === 'touch' && touchPointers.size !== 1) return;
       if (event.button !== 0 || drag) return;
       var handle = event.currentTarget;
-      drag = { id: handle.dataset.handle, pointer: event.pointerId, x: event.clientX, y: event.clientY, active: event.pointerType === 'mouse', target: null, after: false };
+      drag = { id: handle.dataset.handle, pointer: event.pointerId, x: event.clientX, y: event.clientY, input: event.pointerType, active: event.pointerType !== 'touch', target: null, after: false };
       handle.setPointerCapture(event.pointerId);
       if (!drag.active) drag.timer = root.setTimeout(function () { if (drag) { drag.active = true; handle.classList.add('is-dragging'); } }, 400);
       handle.addEventListener('pointermove', dragMove);
@@ -213,6 +213,8 @@
       if (!drag || event.pointerId !== drag.pointer) return;
       if (!drag.active) { if (Math.abs(event.clientX - drag.x) > 8 || Math.abs(event.clientY - drag.y) > 8) cancelDrag(); return; }
       event.preventDefault(); drag.handle.classList.add('is-dragging');
+      if (!drag.preview && root.HeavenlyDrag) drag.preview = root.HeavenlyDrag.create({ id:'heavenly-shortcut-drag-avatar', source:drag.handle.closest('.qs-editor-row'), label:drag.handle.getAttribute('aria-label').replace(/^Reorder /,''), kind:'section', input:drag.input, x:event.clientX, y:event.clientY });
+      if (drag.preview) drag.preview.move(event.clientX,event.clientY);
       drag.clientX = event.clientX; drag.clientY = event.clientY;
       previewDrop(event.clientX, event.clientY);
       var body = modal.querySelector('.qs-editor-body'), rect = body.getBoundingClientRect();
@@ -237,6 +239,7 @@
     function cancelDrag() {
       if (!drag) return;
       root.clearTimeout(drag.timer); root.cancelAnimationFrame(dragFrame);
+      if (drag.preview) drag.preview.destroy();
       var handle = drag.handle, pointer = drag.pointer; drag = null;
       handle.removeEventListener('pointermove', dragMove); handle.removeEventListener('pointerup', finishDrag); handle.removeEventListener('pointercancel', cancelDrag); handle.removeEventListener('lostpointercapture', cancelDrag);
       handle.classList.remove('is-dragging'); if (handle.hasPointerCapture(pointer)) handle.releasePointerCapture(pointer);

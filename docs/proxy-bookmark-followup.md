@@ -27,3 +27,17 @@ Previously, accordion, Show More and folder controls called `renderBookmarksUI()
 The existing Share Bookmarks dialog has **Include personal notes**, OFF on every new session, with an explicit visibility explanation. Only selected bookmark records and their children enter the payload. Explicit opt-in retains the `HBM1_` format and adds `notesIncluded: true`; default and legacy/unmarked payloads omit notes recursively. Shared-note imports keep conflicting local notes by default; a separate unchecked recipient choice permits replacement for matching stable IDs. Unrelated notes stay untouched. Notes remain bounded plain text, and private backups keep their existing behavior. Encoded URL size over 8,000 characters produces a warning to copy the code or select fewer bookmarks; valid saved note content is not silently truncated.
 
 Built-in bookmarks are selectable for sharing, but stay unselected by default. Category controls select their visible child checkboxes; payloads derive from those checked records, so unlisted hidden notes are not pulled in by category membership.
+
+## Adaptive dragging
+
+The existing handle/drop architecture remains. Touch holds use the existing deliberate activation threshold, cancel on pre-hold scrolling/multitouch, and retain the separate body-reset gesture. Precise mouse/trackpad input uses native immediate dragging. Pen handles use a 6px movement threshold and pointer capture with the same move/drop callbacks, shared cancellation and click suppression. Confirmed bookmark/category drags scroll at viewport edges; section and shortcut editors retain their nested auto-scroll logic.
+
+`heavenly-drag.js` renders one lightweight preview for bookmark, category/section and Quick Settings ordering. Actual pointer input determines touch behavior even on a wide hybrid device. Touch or narrow viewports use a compact icon circle; wider precise input uses an icon/title strip. Bookmark previews are purple; section/shortcut previews are blue. Position updates use one pending animation frame and transforms; previews contain no interactive card clone, ignore pointer events and disappear on completion/cancellation. There is no separate browser-tab reorder UI in this repository; existing tab-like sections and shortcut ordering use the shared presentation. Keyboard alternatives remain available. No drag library or production dependency was added.
+
+## Verification
+
+Focused tests cover DOM identity across expansion, active/copied/launched mirror URLs, restoration and draft preservation, opt-in sharing and conflict handling, full share-link decoding, nested/legacy notes, size warnings, genuine upstream 526/redirect classification, no-JavaScript diagnostics, input-specific ghosts, emulated pen drop persistence and edge-scroll cancellation. Existing Coolmath, FMHY-shaped proxy navigation, storage/privacy, bookmark management, widgets, game modes and Quick Settings suites are retained.
+
+Browser checks use automation and emulated input; no physical iPad, Chromebook or pen was available. Firefox remains unavailable: a bounded launch check fails with read-only user-namespace mapping and compositor errors. WebKit host libraries are supplied only in scratch tooling. Final check counts and the latest authenticated preview are recorded on PR #179.
+
+Verified locally: **403 unit tests**, **103 Chromium browser checks** and **30 WebKit browser checks**. Inline JavaScript syntax and `git diff --check` passed. Screenshot review covered active-mirror, Broken manager, sharing and collapsed/expanded error layouts.

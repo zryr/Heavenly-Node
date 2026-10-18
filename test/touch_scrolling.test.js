@@ -39,7 +39,9 @@ function harness() {
     document, window, Date: { now: () => now },
     setTimeout(fn, delay) { const id = ++nextTimer; timers.set(id, { fn, due: now + delay }); return id; },
     clearTimeout(id) { timers.delete(id); },
-    closeReorderBar() { calls.close++; }
+    closeReorderBar() { calls.close++; },
+    activePopoutAvatar: null, createPopoutAvatar() {}, updatePopoutAvatar() {}, removePopoutAvatar() {},
+    requestAnimationFrame() { return 0; }, cancelAnimationFrame() {}, innerHeight: 800, scrollY: 0
   };
   vm.createContext(context);
   vm.runInContext(gestures, context);
