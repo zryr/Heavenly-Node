@@ -3209,6 +3209,8 @@
 
         <div id="share-tree-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px;"></div>
 
+        <label class="share-note-option"><input type="checkbox" id="share-include-notes" /><span>Include personal notes<small>Your notes will be visible to anyone who receives this share code or link.</small></span></label>
+        <p id="share-size-warning" class="bookmark-note-hint" role="status"></p>
         <!-- Generated Code / Link Section -->
         <div id="share-output-container" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid rgba(148,163,184,0.15); padding-top: 10px;">
           <label for="share-code-output" style="font-size: 0.82rem; font-weight: 600; color: #cbd5e1;">Your Share Code / Link:</label>
@@ -3231,6 +3233,7 @@
           <div id="share-preview-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; padding: 10px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2);"></div>
         </div>
 
+        <div id="share-notes-import-info" hidden><p class="bookmark-note-hint">This share includes personal notes. Existing local notes are kept by default.</p><label class="share-note-option"><input type="checkbox" id="share-replace-notes" /><span>Replace existing notes for matching bookmarks</span></label></div>
         <button id="apply-share-code-btn" type="button" style="padding: 12px; background: linear-gradient(135deg, #818cf8 0%, #a855f7 100%); border: none; border-radius: 12px; color: #ffffff; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 4px;">Import Shared Bookmarks</button>
       </div>
     </div>
@@ -5868,8 +5871,7 @@
               bmCard.style.cursor = 'pointer';
               bmCard.onclick = function (e) {
                 if (!e.target.closest('.drag-dots-handle') && !e.target.closest('.folder-expand-btn')) {
-                  expandedFolders[bm.id] = !expandedFolders[bm.id];
-                  renderBookmarksUI();
+                  toggleFolder();
                 }
               };
             }
@@ -5896,8 +5898,7 @@
               expandBtn.onclick = function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-                expandedFolders[bm.id] = !expandedFolders[bm.id];
-                renderBookmarksUI();
+                toggleFolder();
               };
               bmLeft.appendChild(expandBtn);
             }
@@ -5971,7 +5972,7 @@
                       var p = targetWrapper.parentNode;
                       if (p) {
                         var rect = targetBm.getBoundingClientRect();
-                        var isHorizontal = getComputedStyle(p).display === 'grid';
+                        var isHorizontal = getComputedStyle(p.closest('.bookmarks-list') || p).display === 'grid';
                         var isAfter = isHorizontal ? ((touch.clientX - rect.left) > (rect.width / 2)) : ((touch.clientY - rect.top) > (rect.height / 2));
                         var targetPos = isAfter ? targetWrapper.nextSibling : targetWrapper;
                         if (ghostBm.parentNode !== p || ghostBm.nextSibling !== targetPos) {
@@ -6067,7 +6068,7 @@
             bmCard.appendChild(bmHandle);
             bmWrapper.appendChild(bmCard);
 
-            if (isFolderType && isFolderExpanded) {
+            function buildFolderChildren() {
               var subContainer = document.createElement('div');
               subContainer.style.display = 'flex';
               subContainer.style.flexDirection = 'column';
@@ -6258,21 +6259,47 @@
                   var subUrl = prompt('Sub-Bookmark URL:');
                   if (!subUrl) return;
 
-                  if (!bm.subBookmarks) bm.subBookmarks = [];
-                  bm.subBookmarks.push({
+                  var latestData = loadBookmarkData();
+                  var latestFolder = latestData.bookmarks.find(function (entry) { return entry.id === bm.id; });
+                  if (!latestFolder) return;
+                  if (!latestFolder.subBookmarks) latestFolder.subBookmarks = [];
+                  latestFolder.subBookmarks.push({
                     id: 'sub_' + Date.now(),
                     title: subTitle,
                     url: subUrl,
                     icon: ''
                   });
-                  saveBookmarkData(data);
+                  saveBookmarkData(latestData);
                   renderBookmarksUI();
                 };
 
                 subContainer.appendChild(addSubBtn);
               }
-              bmWrapper.appendChild(subContainer);
+              return subContainer;
             }
+
+            var folderChildren = null;
+            function toggleFolder() {
+              isFolderExpanded = !isFolderExpanded;
+              expandedFolders[bm.id] = isFolderExpanded;
+              if (isFolderExpanded) {
+                var freshFolder = loadBookmarkData().bookmarks.find(function (entry) { return entry.id === bm.id; });
+                if (freshFolder && JSON.stringify(freshFolder.subBookmarks || []) !== JSON.stringify(bm.subBookmarks || [])) {
+                  bm.subBookmarks = freshFolder.subBookmarks || [];
+                  if (folderChildren) folderChildren.remove();
+                  folderChildren = null;
+                }
+              }
+              if (!folderChildren && isFolderExpanded) { folderChildren = buildFolderChildren(); bmWrapper.appendChild(folderChildren); }
+              if (folderChildren) folderChildren.hidden = !isFolderExpanded;
+              if (expandBtn) {
+                expandBtn.textContent = '>';
+                expandBtn.style.transform = isFolderExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
+                expandBtn.setAttribute('aria-expanded', String(isFolderExpanded));
+                expandBtn.setAttribute('aria-label', (isFolderExpanded ? 'Collapse folder ' : 'Expand folder ') + bm.title);
+              }
+            }
+            if (isFolderType && isFolderExpanded) { folderChildren = buildFolderChildren(); bmWrapper.appendChild(folderChildren); }
 
             targetContainer.appendChild(bmWrapper);
           });
@@ -6353,8 +6380,13 @@
 
           var toggleSubSection = function (e) {
             e.stopPropagation();
-            collapsedSubSections[subSecKey] = !isSubCollapsed;
-            renderBookmarksUI();
+            isSubCollapsed = !isSubCollapsed;
+            collapsedSubSections[subSecKey] = isSubCollapsed;
+            subDiv.classList.toggle('is-collapsed', isSubCollapsed);
+            subDiv.setAttribute('aria-expanded', String(!isSubCollapsed));
+            subArrow.style.transform = isSubCollapsed ? 'rotate(0deg)' : 'rotate(90deg)';
+            if (!isSubCollapsed) ensureSectionContent();
+            sectionContent.hidden = isSubCollapsed;
           };
 
           subDiv.onclick = toggleSubSection;
@@ -6367,11 +6399,19 @@
 
           listContainer.appendChild(subDiv);
 
-          if (!isSubCollapsed) {
+          var sectionContent = document.createElement('div');
+          sectionContent.className = 'subsection-content';
+          sectionContent.hidden = isSubCollapsed;
+          listContainer.appendChild(sectionContent);
+          var contentBuilt = false;
+          function ensureSectionContent() {
+            if (contentBuilt) return;
+            contentBuilt = true;
             if (subBms.length > 0) {
               var isSubExpanded = !!expandedSubSections[cat.id + '_' + subSec.id] || !!searchQuery;
               var visibleSubBms = isSubExpanded ? subBms : subBms.slice(0, limit);
-              renderBookmarkListSection(visibleSubBms, listContainer);
+              renderBookmarkListSection(visibleSubBms, sectionContent);
+              var renderedCount = visibleSubBms.length;
 
               if (subBms.length > limit && !searchQuery) {
                 var showMoreBtn = document.createElement('button');
@@ -6380,10 +6420,18 @@
                 showMoreBtn.innerHTML = '<span>' + (isSubExpanded ? 'Show Less' : 'Show More (' + (subBms.length - limit) + ' more)') + '</span> <span style="margin-left:4px; display:inline-block; transition:transform 0.2s ease; transform:' + (isSubExpanded ? 'rotate(-90deg)' : 'rotate(0deg)') + ';">&gt;</span>';
                 showMoreBtn.onclick = function (e) {
                   e.stopPropagation();
-                  expandedSubSections[cat.id + '_' + subSec.id] = !isSubExpanded;
-                  renderBookmarksUI();
+                  isSubExpanded = !isSubExpanded;
+                  expandedSubSections[subSecKey] = isSubExpanded;
+                  if (isSubExpanded && renderedCount < subBms.length) {
+                    renderBookmarkListSection(subBms.slice(renderedCount), sectionContent);
+                    renderedCount = subBms.length;
+                    sectionContent.appendChild(showMoreBtn);
+                  }
+                  Array.from(sectionContent.children).filter(function (node) { return node !== showMoreBtn; }).forEach(function (node, index) { node.hidden = !isSubExpanded && index >= limit; });
+                  showMoreBtn.querySelector('span').textContent = isSubExpanded ? 'Show Less' : 'Show More (' + (subBms.length - limit) + ' more)';
+                  showMoreBtn.setAttribute('aria-expanded', String(isSubExpanded));
                 };
-                listContainer.appendChild(showMoreBtn);
+                sectionContent.appendChild(showMoreBtn);
               }
             } else {
               // Add Bookmark button when sub-section has no bookmarks
@@ -6395,9 +6443,10 @@
                 e.stopPropagation();
                 openAddModal('bookmark', cat.id, null, subSec.id);
               };
-              listContainer.appendChild(addBmInEmptySubSecBtn);
+              sectionContent.appendChild(addBmInEmptySubSecBtn);
             }
           }
+          if (!isSubCollapsed) ensureSectionContent();
         });
         card.appendChild(listContainer);
 
@@ -7122,7 +7171,7 @@
       input.id = modalId + '-note-text'; input.maxLength = 4000; input.rows = 4;
       input.setAttribute('aria-label', 'My Note'); input.placeholder = 'Add a note about this website...'; input.value = saved;
       var hint = document.createElement('p'); hint.className = 'bookmark-note-hint';
-      hint.textContent = 'Saved on this device. Private backups can transfer notes; public share links omit them. Notes do not sync automatically.';
+      hint.textContent = 'Saved on this device. Private backups can transfer notes; public sharing includes them only if you choose. Notes do not sync automatically.';
       var actions = document.createElement('div'); actions.className = 'bookmark-note-actions';
       var status = document.createElement('p'); status.className = 'bookmark-setting-status'; status.setAttribute('role', 'status');
       function refresh() { preview.textContent = saved ? saved.replace(/\s+/g, ' ').slice(0, 100) : 'Optional'; }
@@ -7203,8 +7252,16 @@
         openCoolmathLaunchModal(title, rawUrl, targetBmId);
         return;
       }
-      if (document.activeElement) lastFocusedElement = document.activeElement;
+      var currentModal = $('builtin-test-modal');
+      var refreshing = currentModal.classList.contains('active') && (targetBmId ? pendingBuiltinUrls.targetBmId === targetBmId : HeavenlyNavigation.bookmarkKey(rawUrl) === HeavenlyNavigation.bookmarkKey(pendingBuiltinUrls.requestedUrl));
+      var savedScroll = currentModal.querySelector('.modal-card').scrollTop;
+      var noteSection = refreshing && currentModal.querySelector('.bookmark-personal-note');
+      var noteDraft = noteSection && { value: noteSection.querySelector('textarea').value, open: noteSection.open };
+      var expandedMirrors = refreshing ? Array.from(currentModal.querySelectorAll('[data-mirror-section]')).filter(function (node) { return node.open; }).map(function (node) { return node.dataset.mirrorSection; }) : [];
+      var collapsedMirrors = refreshing ? Array.from(currentModal.querySelectorAll('[data-mirror-section]')).filter(function (node) { return !node.open; }).map(function (node) { return node.dataset.mirrorSection; }) : [];
+      if (!refreshing && document.activeElement) lastFocusedElement = document.activeElement;
       rawUrl = rawUrl || '';
+      pendingBuiltinUrls.requestedUrl = rawUrl;
       pendingBuiltinUrls.rawUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) ? rawUrl : (rawUrl ? 'https://' + rawUrl : '');
       pendingBuiltinUrls.proxiedUrl = proxiedUrl || '';
       pendingBuiltinUrls.targetBmId = targetBmId || null;
@@ -7241,6 +7298,7 @@
       setBookmarkLaunchHeader('builtin-test-modal', title || rawUrl, rawUrl, targetBm);
       var noteBookmark = HeavenlyNavigation.findBookmarkByUrl(data, rawUrl) || targetBm;
       mountBookmarkNoteEditor('builtin-test-modal', noteBookmark);
+      if (noteDraft) { var editor = currentModal.querySelector('.bookmark-personal-note'); if (editor) { editor.open = noteDraft.open; editor.querySelector('textarea').value = noteDraft.value; } }
 
       var brokenMap = getBrokenLinksMap();
       var rawPrimaryUrl = (targetBm && targetBm.url) ? targetBm.url : rawUrl;
@@ -7266,28 +7324,18 @@
         });
       }
 
-      // Identify active/working primary site link (Auto-Failover / Promotion)
-      var primaryCandidate = {
-        title: (targetBm ? targetBm.title : title) || 'Main Link',
-        url: rawPrimaryUrl,
-        isBroken: !!brokenMap[rawPrimaryUrl],
-        isPromoted: false,
-        source: 'main'
-      };
-
-      if (primaryCandidate.isBroken) {
-        // Find next working mirror starting with User Mirrors then Built-in Mirrors
-        var nextWorking = userMirrors.find(function (m) { return !m.isBroken; }) ||
-                           builtinMirrors.find(function (m) { return !m.isBroken; });
-        if (nextWorking) {
-          primaryCandidate = {
-            title: nextWorking.title,
-            url: nextWorking.url,
-            isBroken: false,
-            isPromoted: true,
-            source: nextWorking.isUser ? 'user' : 'builtin'
-          };
-        }
+      var mirrorState = HeavenlyBookmarks.mirrorState(targetBm, rawUrl, title, brokenMap);
+      userMirrors = mirrorState.entries.slice(1).filter(function (entry) { return entry.isUser; });
+      builtinMirrors = mirrorState.entries.slice(1).filter(function (entry) { return !entry.isUser; });
+      var primaryCandidate = mirrorState.primary;
+      if (primaryCandidate) {
+        var activeUrl = HeavenlyNavigation.remoteUrl(primaryCandidate.url);
+        if (!/^https?:\/\//.test(activeUrl)) activeUrl = 'https://' + activeUrl;
+        pendingBuiltinUrls.rawUrl = activeUrl;
+        pendingBuiltinUrls.proxiedUrl = location.origin + '/proxy/' + activeUrl;
+        var headerCopy = $('builtin-test-modal-summary').querySelector('p');
+        headerCopy.textContent = (primaryCandidate.isPromoted ? 'Active mirror · ' : '') + activeUrl;
+        headerCopy.classList.add('bookmark-active-url');
       }
 
       // Check if ALL links (Primary site + all mirrors) are broken
@@ -7330,6 +7378,7 @@
       function renderMirrorItemCard(item, isPrimaryCard) {
         var card = document.createElement('div');
         card.className = 'bookmark-mirror-card';
+        card.dataset.mirrorUrl = item.url;
         var isBroken = item.isBroken;
 
         card.style.cssText = isBroken
@@ -7372,11 +7421,10 @@
         toggleBrokenBtn.onclick = function (e) {
           e.stopPropagation();
           toggleBrokenBtn.disabled = true;
-          card.classList.add(isBroken ? 'mark-working-animate' : 'mark-broken-animate');
-          setTimeout(function () {
-            toggleBrokenLinkState(item.url);
-            openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
-          }, 280);
+          toggleBrokenLinkState(item.url);
+          openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+          var replacement = Array.from(currentModal.querySelectorAll('[data-mirror-url]')).find(function (node) { return node.dataset.mirrorUrl === item.url; });
+          (replacement && replacement.querySelector('button[title^="Mark"]') || currentModal.querySelector('.broken-mirrors-toggle') || $('close-builtin-modal-btn')).focus({ preventScroll: true });
         };
 
         rightBox.appendChild(copyPill);
@@ -7391,9 +7439,11 @@
           deleteMirrorBtn.innerHTML = '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
           deleteMirrorBtn.onclick = function (e) {
             e.stopPropagation();
-            if (targetBm && targetBm.subBookmarks) {
-              targetBm.subBookmarks = targetBm.subBookmarks.filter(function (s) { return s.id !== item.id; });
-              saveBookmarkData(data);
+            var latestData = loadBookmarkData();
+            var latestBookmark = targetBm && latestData.bookmarks.find(function (entry) { return entry.id === targetBm.id; });
+            if (latestBookmark && latestBookmark.subBookmarks) {
+              latestBookmark.subBookmarks = latestBookmark.subBookmarks.filter(function (s) { return s.id !== item.id; });
+              saveBookmarkData(latestData);
               openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
             }
           };
@@ -7478,6 +7528,17 @@
 
         var primaryCard = renderMirrorItemCard(primaryCandidate, true);
         altContainer.appendChild(primaryCard);
+        if (mirrorState.broken.length) {
+          var brokenSection = document.createElement('details');
+          brokenSection.className = 'broken-mirrors'; brokenSection.dataset.mirrorSection = 'Broken';
+          brokenSection.open = expandedMirrors.indexOf('Broken') !== -1;
+          var brokenToggle = document.createElement('summary');
+          brokenToggle.className = 'broken-mirrors-toggle'; brokenToggle.textContent = 'Broken (' + mirrorState.broken.length + ')';
+          brokenSection.appendChild(brokenToggle);
+          mirrorState.broken.forEach(function (entry) { brokenSection.appendChild(renderMirrorItemCard(entry, false)); });
+          altContainer.appendChild(brokenSection);
+        }
+
 
         // Sort mirrors: Working mirrors first, broken mirrors bottom
         userMirrors.sort(function (a, b) {
@@ -7495,10 +7556,12 @@
         var userMirrorsTop = hasUserMirrors; // Your mirrors on top when present
 
         function createMirrorSection(titleText, iconSvg, mirrorItems, isUserSection, isDefaultCollapsed) {
-          var secWrapper = document.createElement('div');
+          var secWrapper = document.createElement('details');
+          secWrapper.dataset.mirrorSection = titleText;
+          secWrapper.open = (isUserSection && !!expandUserMirrorsOnLoad) || expandedMirrors.indexOf(titleText) !== -1 || (collapsedMirrors.indexOf(titleText) === -1 && !isDefaultCollapsed);
           secWrapper.style.cssText = 'display: flex; flex-direction: column; gap: 8px;';
 
-          var secHeader = document.createElement('div');
+          var secHeader = document.createElement('summary');
           secHeader.className = 'mirror-section-header';
 
           var isCollapsed = isDefaultCollapsed;
@@ -7515,13 +7578,9 @@
           secHeader.appendChild(arrow);
 
           var itemsList = document.createElement('div');
-          itemsList.style.cssText = 'display: ' + (isCollapsed ? 'none' : 'flex') + '; flex-direction: column; gap: 8px;';
+          itemsList.style.cssText = 'display:flex; flex-direction:column; gap:8px;';
 
-          secHeader.onclick = function () {
-            isCollapsed = !isCollapsed;
-            itemsList.style.display = isCollapsed ? 'none' : 'flex';
-            arrow.style.transform = isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)';
-          };
+          secWrapper.addEventListener('toggle', function () { arrow.style.transform = secWrapper.open ? 'rotate(90deg)' : 'rotate(0deg)'; });
 
           if (mirrorItems.length > 0) {
             mirrorItems.forEach(function (mItem) {
@@ -7530,7 +7589,7 @@
           } else {
             var emptyNotice = document.createElement('div');
             emptyNotice.style.cssText = 'font-size: 0.78rem; color: #94a3b8; font-style: italic; padding: 6px 10px; background: rgba(15,23,42,0.4); border-radius: 8px; border: 1px dashed rgba(148,163,184,0.2);';
-            emptyNotice.textContent = 'No custom mirrors added yet.';
+            emptyNotice.textContent = isUserSection ? 'No other custom mirrors available.' : 'No other working mirrors available.';
             itemsList.appendChild(emptyNotice);
           }
 
@@ -7568,15 +7627,19 @@
                 alert('Please enter a mirror URL.');
                 return;
               }
-              if (!targetBm.subBookmarks) targetBm.subBookmarks = [];
-              targetBm.subBookmarks.push({
+              var latestData = loadBookmarkData();
+              var latestBookmark = latestData.bookmarks.find(function (entry) { return entry.id === targetBm.id; });
+              if (!latestBookmark) return;
+              if (HeavenlyNavigation.findBookmarkByUrl({ bookmarks: [latestBookmark] }, mUrl)) { alert('This URL is already listed for this bookmark.'); return; }
+              if (!latestBookmark.subBookmarks) latestBookmark.subBookmarks = [];
+              latestBookmark.subBookmarks.push({
                 id: 'sub_user_' + Date.now(),
                 title: mTitle || mUrl,
                 url: mUrl,
                 icon: '',
                 isUser: true
               });
-              saveBookmarkData(data);
+              saveBookmarkData(latestData);
               openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId, true);
             };
 
@@ -7595,16 +7658,16 @@
         var userSvg = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
         var builtinSvg = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>';
 
-        var userSectionEl = createMirrorSection('Your Mirrors', userSvg, userMirrors, true, expandUserMirrorsOnLoad ? false : true);
-        var builtinSectionEl = createMirrorSection('Built-in Mirrors', builtinSvg, builtinMirrors, false, false);
+        var userSectionEl = createMirrorSection('Your Mirrors', userSvg, userMirrors.filter(function (m) { return !m.isBroken && m.url !== primaryCandidate.url; }), true, expandUserMirrorsOnLoad ? false : true);
+        var builtinSectionEl = createMirrorSection('Built-in Mirrors', builtinSvg, builtinMirrors.filter(function (m) { return !m.isBroken && m.url !== primaryCandidate.url; }), false, false);
 
         if (userMirrorsTop) {
           altContainer.appendChild(userSectionEl);
-          if (builtinMirrors.length > 0) {
+          if (builtinMirrors.some(function (m) { return !m.isBroken && m.url !== primaryCandidate.url; })) {
             altContainer.appendChild(builtinSectionEl);
           }
         } else {
-          if (builtinMirrors.length > 0) {
+          if (builtinMirrors.some(function (m) { return !m.isBroken && m.url !== primaryCandidate.url; })) {
             altContainer.appendChild(builtinSectionEl);
           }
           altContainer.appendChild(userSectionEl);
@@ -7647,8 +7710,8 @@
       var modal = $('builtin-test-modal');
       if (modal) modal.classList.add('active');
       setTimeout(function () {
-        var btn = $('close-builtin-modal-btn');
-        if (btn) btn.focus();
+        if (refreshing) currentModal.querySelector('.modal-card').scrollTop = savedScroll;
+        else { var btn = $('close-builtin-modal-btn'); if (btn) btn.focus(); }
       }, 50);
     }
 
@@ -7678,9 +7741,12 @@
     // --- Granular Share Bookmarks Manager ---
     var parsedSharePayload = null;
 
-    function encodeSharePayload(payload) {
+    function encodeSharePayload(payload, includeNotes) {
       try {
-        var str = JSON.stringify(HeavenlyBookmarks.publicSharePayload(payload));
+        var shared = HeavenlyBookmarks.publicSharePayload(payload, includeNotes);
+        if (includeNotes === true) shared.notesIncluded = true;
+        else delete shared.notesIncluded;
+        var str = JSON.stringify(shared);
         return 'HBM1_' + btoa(encodeURIComponent(str));
       } catch (e) {
         return '';
@@ -7693,13 +7759,17 @@
         var clean = codeStr.trim();
         if (clean.includes('share_code=')) {
           var idx = clean.indexOf('share_code=');
-          clean = clean.substring(idx + 11).split('&')[0];
+          clean = decodeURIComponent(clean.substring(idx + 11).split(/[&#]/)[0]);
         }
         if (clean.startsWith('HBM1_')) {
           clean = clean.substring(5);
         }
         var decoded = decodeURIComponent(atob(clean));
-        return HeavenlyBookmarks.publicSharePayload(JSON.parse(decoded));
+        var parsed = JSON.parse(decoded);
+        if (!parsed || typeof parsed !== 'object' || (!Array.isArray(parsed.bookmarks) && !Array.isArray(parsed.categories))) return null;
+        parsed.bookmarks = Array.isArray(parsed.bookmarks) ? parsed.bookmarks.filter(function (entry) { return entry && typeof entry.id === 'string'; }) : [];
+        parsed.categories = Array.isArray(parsed.categories) ? parsed.categories.filter(function (entry) { return entry && typeof entry.id === 'string'; }) : [];
+        return HeavenlyBookmarks.publicSharePayload(parsed, parsed.notesIncluded === true);
       } catch (e) {
         return null;
       }
@@ -7713,7 +7783,7 @@
       var selectedCatIds = Array.from(selectedCatCbs).map(function (cb) { return cb.getAttribute('data-cat-id'); });
       var selectedBmIds = Array.from(selectedBmCbs).map(function (cb) { return cb.getAttribute('data-bm-id'); });
 
-      var fileBms = (bmsData.bookmarks || []).filter(function (b) { return selectedBmIds.includes(b.id) || selectedCatIds.includes(b.categoryId); });
+      var fileBms = (bmsData.bookmarks || []).filter(function (b) { return selectedBmIds.includes(b.id); });
       var fileCats = (bmsData.categories || []).filter(function (c) {
         return selectedCatIds.includes(c.id) || fileBms.some(function (b) { return b.categoryId === c.id; });
       });
@@ -7723,7 +7793,8 @@
         bookmarks: fileBms
       };
 
-      var code = encodeSharePayload(payload);
+      var code = encodeSharePayload(payload, $('share-include-notes').checked);
+      $('share-size-warning').textContent = (location.origin + location.pathname + '?share_code=' + encodeURIComponent(code)).length > 8000 ? 'This share is large. Copy the code instead of a link, or share fewer bookmarks. Notes have not been truncated.' : '';
       var outInput = $('share-code-output');
       if (outInput) outInput.value = code;
     }
@@ -7733,6 +7804,8 @@
       var modal = $('share-modal');
       if (!modal) return;
 
+      $('share-include-notes').checked = false;
+      $('share-replace-notes').checked = false;
       var bmsData = loadBookmarkData();
       var container = $('share-tree-container');
       if (container) {
@@ -7740,7 +7813,7 @@
         bmsData.categories.forEach(function (cat) {
           // Find custom non-builtIn bookmarks in this category
           var customCatBms = bmsData.bookmarks.filter(function (b) {
-            return b.categoryId === cat.id && (selectedIds ? !b.hidden : !b.builtIn);
+            return b.categoryId === cat.id && !b.hidden;
           });
 
           // Render category if custom section OR contains custom bookmarks
@@ -7757,12 +7830,12 @@
             catCb.type = 'checkbox';
             catCb.className = 'share-cb share-cat-cb';
             catCb.setAttribute('data-cat-id', cat.id);
-            catCb.checked = !selectedIds;
+            catCb.checked = !selectedIds && customCatBms.every(function (b) { return !b.builtIn; });
             catCb.style.cssText = 'width:15px;height:15px;accent-color:#818cf8;';
             catHeader.appendChild(catCb);
             var folderIcon = document.createElement('span');
             folderIcon.style.cssText = 'display:inline-flex;align-items:center;gap:6px;';
-            folderIcon.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>' + cat.title;
+            folderIcon.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>' + escapeHtml(cat.title);
             catHeader.appendChild(folderIcon);
 
             catCard.appendChild(catHeader);
@@ -7779,12 +7852,12 @@
                 bmCb.className = 'share-cb share-bm-cb';
                 bmCb.setAttribute('data-cat-id', cat.id);
                 bmCb.setAttribute('data-bm-id', bm.id);
-                bmCb.checked = selectedIds ? selectedIds.has(bm.id) : true;
+                bmCb.checked = selectedIds ? selectedIds.has(bm.id) : !bm.builtIn;
                 bmCb.style.cssText = 'width:14px;height:14px;accent-color:#818cf8;';
                 bmItem.appendChild(bmCb);
                 var bmIcon = document.createElement('span');
                 bmIcon.style.cssText = 'display:inline-flex;align-items:center;gap:6px;';
-                bmIcon.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#a5b4fc;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>' + bm.title;
+                bmIcon.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#a5b4fc;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>' + escapeHtml(bm.title);
                 bmItem.appendChild(bmIcon);
                 bmsList.appendChild(bmItem);
               });
@@ -7798,7 +7871,7 @@
 
         // Toggle category child bookmarks
         container.querySelectorAll('.share-cat-cb').forEach(function (catCb) {
-          if (selectedIds) {
+          if (!catCb.checked) {
             catCb.indeterminate = Array.from(catCb.closest('.bookmark-mgr-item').querySelectorAll('.share-bm-cb')).some(function (child) { return child.checked; });
           }
           catCb.onchange = function () {
@@ -7861,6 +7934,7 @@
     }
 
     function initShareBookmarkHandlers() {
+      $('share-include-notes').onchange = updateShareOutputCode;
       var tabCreate = $('tab-share-create');
       var tabRedeem = $('tab-share-redeem');
       if (tabCreate) tabCreate.onclick = function () { switchShareTab('create'); };
@@ -7937,9 +8011,10 @@
             bms.forEach(function (b) {
               var item = document.createElement('div');
               item.style.cssText = 'font-size:0.82rem;color:#f1f5f9;display:flex;align-items:center;gap:6px;';
-              item.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#a5b4fc;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>' + b.title + ' (' + (b.url || 'Folder') + ')</span>';
+              item.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#a5b4fc;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>' + escapeHtml(b.title) + ' (' + escapeHtml(b.url || 'Folder') + ')</span>';
               previewList.appendChild(item);
             });
+            $('share-notes-import-info').hidden = parsedSharePayload.notesIncluded !== true;
             previewContainer.style.display = 'flex';
           } else {
             previewContainer.style.display = 'none';
@@ -7969,7 +8044,8 @@
             if (!exists) data.bookmarks.push(bm);
           });
 
-          saveBookmarkData(data);
+          if (parsedSharePayload.notesIncluded === true) HeavenlyBookmarks.mergeSharedNotes(data, { bookmarks: shareBms }, $('share-replace-notes').checked);
+          saveBookmarkData(data, true);
           closeShareModal();
           renderBookmarksUI();
           alert('Shared bookmarks imported successfully!');

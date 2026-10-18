@@ -79,3 +79,18 @@
 
 .bookmark-personal-note summary::-webkit-details-marker { display: none; }
 .bookmark-personal-note summary:focus-visible,.bookmark-note-body textarea:focus-visible { outline: 2px solid #7dd3fc; outline-offset: 3px; }
+.bookmark-launch-card [hidden], .bookmarks-list [hidden], #share-modal [hidden] { display:none !important; }
+.subsection-content { display:contents; }
+.subsection-content[hidden] { display:none !important; }
+.bookmark-active-url { overflow-wrap:anywhere; }
+.broken-mirrors { border:1px solid rgba(148,163,184,.22); border-radius:10px; padding:0 10px 8px; }
+.broken-mirrors:not([open]) { padding-bottom:0; }
+.broken-mirrors-toggle { cursor:pointer; min-height:44px; padding:12px 0; color:#c4b5fd; font-size:.8rem; }
+.broken-mirrors .bookmark-mirror-card { margin-bottom:8px; opacity:1 !important; filter:none !important; }
+.mirror-section-header { min-height:44px; list-style:none; }
+.mirror-section-header::-webkit-details-marker { display:none; }
+.share-note-option { display:flex; align-items:center; gap:10px; min-height:44px; color:#c4b5fd; font-size:.83rem; cursor:pointer; }
+.share-note-option input { accent-color:#a78bfa; width:18px; height:18px; flex-shrink:0; }
+.share-note-option small { display:block; font-size:.74rem; color:#94a3b8; line-height:1.5; margin-top:4px; }
+
+.broken-mirrors .bookmark-mirror-top > div:first-child > div { color:#cbd5e1 !important; }

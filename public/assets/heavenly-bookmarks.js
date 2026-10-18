@@ -35,7 +35,11 @@
     return bookmark;
   }
   function visit(data, callback) {
-    (data.bookmarks || []).forEach(function (bookmark) { callback(bookmark); (bookmark.subBookmarks || []).forEach(callback); });
+    function walk(entries) {
+      if (!Array.isArray(entries)) return;
+      entries.forEach(function (entry) { if (!entry || typeof entry !== 'object') return; callback(entry); walk(entry.subBookmarks); });
+    }
+    walk(data && data.bookmarks);
   }
   function findEntry(data, id) {
     var found = null;
@@ -76,10 +80,39 @@
     });
     return incoming;
   }
-  function publicSharePayload(payload) {
-    // Private backups retain metadata. Every public code/link omits notes, including nested entries.
-    return JSON.parse(JSON.stringify(payload, function (key, value) { return key === 'personalNote' ? undefined : value; }));
+  function mirrorState(bookmark, url, title, brokenMap) {
+    var original = { title: bookmark ? bookmark.title : title, url: bookmark && bookmark.url || url, source: 'main' };
+    var seen = Object.create(null);
+    var entries = [original].concat(bookmark && bookmark.subBookmarks || []).filter(function (entry) {
+      var key = navigation.bookmarkKey(entry.url);
+      if (!key || seen[key]) return false;
+      seen[key] = true; return true;
+    }).map(function (entry) {
+      var copy = Object.assign({}, entry);
+      copy.isBroken = !!brokenMap[entry.url];
+      return copy;
+    });
+    var primary = entries[0];
+    if (primary && primary.isBroken) primary = entries.slice(1).find(function (entry) { return entry.isUser && !entry.isBroken; }) || entries.slice(1).find(function (entry) { return !entry.isBroken; }) || primary;
+    if (primary) primary = Object.assign({}, primary, { isPromoted: primary !== entries[0] });
+    return { primary: primary, entries: entries, broken: entries.filter(function (entry) { return entry.isBroken; }) };
   }
-  return { supportsQuickSave: supportsQuickSave, findQuickSaveBookmark: findQuickSaveBookmark, setQuickSavePreference: setQuickSavePreference,
+  function publicSharePayload(payload, includeNotes) {
+    var selected = new WeakSet();
+    if (includeNotes === true) visit(payload, function (entry) { selected.add(entry); });
+    return JSON.parse(JSON.stringify(payload, function (key, value) {
+      if (key === 'personalNote') return includeNotes === true && selected.has(this) && typeof value === 'string' ? value.slice(0, 4000) : undefined;
+      return value;
+    }));
+  }
+  function mergeSharedNotes(data, incoming, replace) {
+    visit(incoming, function (entry) {
+      if (typeof entry.id !== 'string' || !entry.id) return;
+      var existing = findEntry(data, entry.id), note = noteFor(entry);
+      if (existing && note && (replace || !noteFor(existing))) existing.personalNote = note;
+    });
+    return data;
+  }
+  return { mirrorState: mirrorState, mergeSharedNotes: mergeSharedNotes, supportsQuickSave: supportsQuickSave, findQuickSaveBookmark: findQuickSaveBookmark, setQuickSavePreference: setQuickSavePreference,
     preserveStoredNotes: preserveStoredNotes, findEntry: findEntry, noteFor: noteFor, saveNote: saveNote, importBookmark: importBookmark, publicSharePayload: publicSharePayload };
 });

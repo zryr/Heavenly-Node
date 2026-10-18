@@ -14,3 +14,16 @@ The evidence supports an upstream Cloudflare/origin problem, rather than a Heave
 
 Advanced Details is a native, compact expandable row with a diagnostic icon and chevron. Expanded fields use aligned label/value rows and thin separators. The sanitized report has its own disclosure and bounded, selectable monospace textarea; Copy Diagnostics and status feedback sit together. Clipboard fallback opens/selects only the report. Native disclosures and selection remain usable without JavaScript. Public allowlists, correlation IDs, classification and the separate development-only diagnostics boundary remain intact.
 
+## Local bookmark expansion
+
+Previously, accordion, Show More and folder controls called `renderBookmarksUI()`, which cleared all three columns and recreated cards and images. Each subsection now owns lazy contents: collapse hides those nodes, expansion reuses them, and Show More appends only previously unseen cards. Folders likewise create children once and reuse them. Existing unrelated nodes, icons, focus and ordering stay in place; search and structural/data changes still use the full renderer. No observer or framework was added.
+
+## Active mirrors and restoration
+
+`HeavenlyBookmarks.mirrorState()` chooses the canonical site when working, then a working user mirror, then a working built-in mirror. It deduplicates by the existing URL key. The launch dialog uses that result for the active URL, primary card, copying, Direct and Proxy; promotion never changes the stored canonical address. Broken entries are available in a compact **Broken (n)** disclosure next to the mirror interface, including the original address. Explicit restoration updates the existing broken-link map and recalculates the primary. Dialog refresh retains note drafts, expanded mirror sections, focus and scroll. User mirrors are preserved, and adding the same URL is rejected.
+
+## Optional public note sharing
+
+The existing Share Bookmarks dialog has **Include personal notes**, OFF on every new session, with an explicit visibility explanation. Only selected bookmark records and their children enter the payload. Explicit opt-in retains the `HBM1_` format and adds `notesIncluded: true`; default and legacy/unmarked payloads omit notes recursively. Shared-note imports keep conflicting local notes by default; a separate unchecked recipient choice permits replacement for matching stable IDs. Unrelated notes stay untouched. Notes remain bounded plain text, and private backups keep their existing behavior. Encoded URL size over 8,000 characters produces a warning to copy the code or select fewer bookmarks; valid saved note content is not silently truncated.
+
+Built-in bookmarks are selectable for sharing, but stay unselected by default. Category controls select their visible child checkboxes; payloads derive from those checked records, so unlisted hidden notes are not pulled in by category membership.

@@ -94,6 +94,7 @@ describe('Bookmark management and saved ordering', function () {
     let payload;
     c.document = { querySelectorAll: selector => selector === '.share-bm-cb:checked' ? [{ getAttribute: () => one.id }] : [] };
     c.$ = () => ({});
+    c.location = { origin: 'https://heavenly.test', pathname: '/' };
     c.encodeSharePayload = value => { payload = value; return 'code'; };
     vm.runInContext(source('updateShareOutputCode'), c);
     c.updateShareOutputCode();
