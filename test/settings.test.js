@@ -171,4 +171,12 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('id="reset-branding-btn"'), 'reset-branding-btn should exist');
         assert.ok(html.includes('Restored Heavenly default branding!'), 'reset-branding-btn should restore default branding');
     });
+
+    it('should configure modal focus tracking and restoration for export and import modals in settings.html', function() {
+        assert.ok(html.includes('var lastFocusedElement = null;'), 'settings.html should track lastFocusedElement');
+        assert.ok(html.includes('function restoreLastFocus()'), 'settings.html should define restoreLastFocus helper');
+        assert.ok(html.includes("var closeBtn = $('close-export-modal-btn');"), 'export modal open handler should query close button');
+        assert.ok(html.includes("var closeBtn = $('close-import-modal-btn');"), 'import modal open handler should query close button');
+        assert.ok(html.includes('lastFocusedElement = document.activeElement;'), 'modal open handlers should record trigger element');
+    });
 });
