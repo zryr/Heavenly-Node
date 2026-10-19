@@ -19,7 +19,7 @@ const engine=process.env.HEAVENLY_BROWSER||'chromium';let browser,server,upstrea
  pass('section collapse, Show More and folder expansion preserve existing cards, loaded icons and keyboard focus');
  await page.evaluate(()=>localStorage.setItem('heavenly_broken_links',JSON.stringify({'https://primary.test/0':true,'https://builtin.test/':true})));
  const open=()=>page.evaluate(()=>openBuiltinTestModal('Item 0','https://primary.test/0',location.origin+'/proxy/https://primary.test/0',null,false,'fu_0'));await open();
- const modal=page.locator('#builtin-test-modal');assert.match(await modal.locator('.bookmark-launch-summary p').innerText(),/Active mirror.*https:\/\/user.test/);
+ const modal=page.locator('#builtin-test-modal');assert.equal(await modal.locator('.bookmark-launch-summary p').innerText(),'https://user.test/');
  assert.equal(await modal.locator('.bookmark-mirror-card').first().getAttribute('data-mirror-url'),'https://user.test/');await modal.locator('.bookmark-mirror-card').first().locator('.url-copy-pill').click();assert.equal(await page.evaluate(()=>window.__copied),'https://user.test/');
  const directP=context.waitForEvent('page');await modal.locator('.bookmark-mirror-card').first().getByRole('button',{name:'Test Direct Site',exact:true}).click();const direct=await directP;await direct.waitForURL('https://user.test/');await direct.close();await open();
  assert.equal(await page.evaluate(()=>loadBookmarkData().bookmarks.find(b=>b.id==='fu_0').url),'https://primary.test/0');

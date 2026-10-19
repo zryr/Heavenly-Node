@@ -6806,6 +6806,27 @@
       }, 50);
     }
 
+    var bookmarkPromotionSeen = new Map();
+    var bookmarkPromotionTimer = null;
+    var bookmarkPromotionContext = null;
+    function hideBookmarkPromotion() {
+      var modal = $('builtin-test-modal');
+      var badge = modal.querySelector('.promoted-badge-btn');
+      if (badge) {
+        if (document.activeElement === badge) { var copy = modal.querySelector('.url-copy-pill'); if (copy) copy.focus({ preventScroll: true }); }
+        badge.remove();
+      }
+      var explanation = modal.querySelector('.promoted-tooltip-box');
+      if (explanation) explanation.remove();
+    }
+    function clearBookmarkPromotion() {
+      clearTimeout(bookmarkPromotionTimer); bookmarkPromotionTimer = null;
+      var state = bookmarkPromotionSeen.get(bookmarkPromotionContext);
+      if (state) state.until = 0;
+      hideBookmarkPromotion();
+    }
+    window.addEventListener('pagehide', clearBookmarkPromotion);
+
     var pendingBuiltinUrls = { rawUrl: '', proxiedUrl: '' };
     var pendingEverythingMoeNotice = { title: '', rawUrl: '', proxiedUrl: '' };
 
@@ -7226,6 +7247,7 @@
         openCoolmathLaunchModal(title, rawUrl, targetBmId);
         return;
       }
+      clearTimeout(bookmarkPromotionTimer); bookmarkPromotionTimer = null;
       var currentModal = $('builtin-test-modal');
       var refreshing = currentModal.classList.contains('active') && (targetBmId ? pendingBuiltinUrls.targetBmId === targetBmId : HeavenlyNavigation.bookmarkKey(rawUrl) === HeavenlyNavigation.bookmarkKey(pendingBuiltinUrls.requestedUrl));
       var savedScroll = currentModal.querySelector('.modal-card').scrollTop;
@@ -7308,9 +7330,20 @@
         pendingBuiltinUrls.rawUrl = activeUrl;
         pendingBuiltinUrls.proxiedUrl = location.origin + '/proxy/' + activeUrl;
         var headerCopy = $('builtin-test-modal-summary').querySelector('p');
-        headerCopy.textContent = (primaryCandidate.isPromoted ? 'Active mirror · ' : '') + activeUrl;
+        headerCopy.textContent = activeUrl;
+        headerCopy.title = activeUrl;
+        headerCopy.setAttribute('aria-label', 'Destination URL: ' + activeUrl);
         headerCopy.classList.add('bookmark-active-url');
       }
+
+      bookmarkPromotionContext = targetBm && targetBm.id || HeavenlyNavigation.bookmarkKey(rawPrimaryUrl);
+      var activeKey = HeavenlyNavigation.bookmarkKey(primaryCandidate.url);
+      var promotionState = bookmarkPromotionSeen.get(bookmarkPromotionContext);
+      if (!promotionState || promotionState.url !== activeKey) {
+        promotionState = { url: activeKey, until: primaryCandidate.isPromoted ? Date.now() + 5000 : 0 };
+        bookmarkPromotionSeen.set(bookmarkPromotionContext, promotionState);
+      }
+      var showPromotion = primaryCandidate.isPromoted && promotionState.until > Date.now();
 
       // Check if ALL links (Primary site + all mirrors) are broken
       var allMirrorsList = [ { url: rawPrimaryUrl, isBroken: !!brokenMap[rawPrimaryUrl] } ]
@@ -7368,7 +7401,7 @@
         var titleBox = document.createElement('div');
         titleBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
         var titleText = '<div style="font-weight: 700; font-size: 0.88rem; color: ' + (isBroken ? '#64748b' : '#f8fafc') + ';">' + escapeHtml(item.title) + '</div>';
-        if (item.isPromoted) {
+        if (isPrimaryCard && item.isPromoted && showPromotion) {
           titleText += '<span class="promoted-badge-btn" role="button" tabindex="0" title="Click to learn why this link was promoted" style="font-size: 0.68rem; font-weight: 700; color: #a855f7; background: rgba(168, 85, 247, 0.18); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 6px; padding: 1px 6px; text-transform: uppercase; cursor: pointer; user-select: none;">Promoted</span>';
         } else if (isBroken) {
           titleText += '<span style="font-size: 0.68rem; font-weight: 600; color: #94a3b8; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 1px 6px;">Not Working</span>';
@@ -7681,6 +7714,7 @@
         }
       }
 
+      if (showPromotion) bookmarkPromotionTimer = setTimeout(function () { promotionState.until = 0; bookmarkPromotionTimer = null; hideBookmarkPromotion(); }, Math.max(0, promotionState.until - Date.now()));
       var modal = $('builtin-test-modal');
       if (modal) modal.classList.add('active');
       setTimeout(function () {
@@ -7690,6 +7724,7 @@
     }
 
     function closeBuiltinTestModal() {
+      clearBookmarkPromotion();
       var modal = $('builtin-test-modal');
       if (modal) modal.classList.remove('active');
       restoreLastFocus();
