@@ -97,6 +97,35 @@
     if (primary) primary = Object.assign({}, primary, { isPromoted: primary !== entries[0] });
     return { primary: primary, entries: entries, broken: entries.filter(function (entry) { return entry.isBroken; }) };
   }
+  function shareableData(data, defaults) {
+    // Catalog identity also covers older presets with builtIn:false.
+    var officialEntries = new Map();
+    visit(defaults || {}, function (entry) { officialEntries.set(entry.id, entry); });
+    function project(entry, categoryId, defaultParent, fromOfficial) {
+      if (!entry || entry.hidden) return [];
+      var known = officialEntries.get(entry.id);
+      var defaultChildren = defaultParent && defaultParent.subBookmarks || [];
+      var officialChild = fromOfficial && !entry.isUser && defaultChildren.some(function (item) {
+        return item.id === entry.id || navigation.bookmarkKey(item.url) === navigation.bookmarkKey(entry.url);
+      });
+      var official = entry.builtIn === true || officialEntries.has(entry.id) || officialChild;
+      var children = Array.isArray(entry.subBookmarks) ? entry.subBookmarks : [];
+      if (official) {
+        // Keep user-owned descendants as independent records; never copy the parent.
+        return children.reduce(function (all, child) { return all.concat(project(child, categoryId, known || entry, true)); }, []);
+      }
+      var copy = Object.assign({}, entry);
+      copy.subBookmarks = children.reduce(function (all, child) { return all.concat(project(child, categoryId, null, false)); }, []);
+      if (fromOfficial) {
+        copy.categoryId = categoryId; copy.subSectionId = 'user';
+        copy.type = copy.type || 'bookmark'; copy.builtIn = false;
+      }
+      return [copy];
+    }
+    var bookmarks = (data.bookmarks || []).reduce(function (all, entry) { return all.concat(project(entry, entry.categoryId, null, false)); }, []);
+    var categories = (data.categories || []).filter(function (category) { return bookmarks.some(function (entry) { return entry.categoryId === category.id; }); });
+    return Object.assign({}, data, { categories: categories, bookmarks: bookmarks });
+  }
   function publicSharePayload(payload, includeNotes) {
     var selected = new WeakSet();
     if (includeNotes === true) visit(payload, function (entry) { selected.add(entry); });
@@ -113,6 +142,6 @@
     });
     return data;
   }
-  return { mirrorState: mirrorState, mergeSharedNotes: mergeSharedNotes, supportsQuickSave: supportsQuickSave, findQuickSaveBookmark: findQuickSaveBookmark, setQuickSavePreference: setQuickSavePreference,
+  return { shareableData: shareableData, mirrorState: mirrorState, mergeSharedNotes: mergeSharedNotes, supportsQuickSave: supportsQuickSave, findQuickSaveBookmark: findQuickSaveBookmark, setQuickSavePreference: setQuickSavePreference,
     preserveStoredNotes: preserveStoredNotes, findEntry: findEntry, noteFor: noteFor, saveNote: saveNote, importBookmark: importBookmark, publicSharePayload: publicSharePayload };
 });

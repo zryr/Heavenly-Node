@@ -90,7 +90,8 @@ describe('Bookmark management and saved ordering', function () {
   it('shares exactly checked bookmarks and the category metadata needed to import them', function () {
     const c = context();
     const data = c.loadBookmarkData();
-    const one = data.bookmarks.find(b => b.id === 'bm_everythingmoe');
+    const one = {id:'custom_share',title:'My site',url:'https://custom.test/',categoryId:'cat_movies'};
+    data.bookmarks.push(one); c.saveBookmarkData(data);
     let payload;
     c.document = { querySelectorAll: selector => selector === '.share-bm-cb:checked' ? [{ getAttribute: () => one.id }] : [] };
     c.$ = () => ({});

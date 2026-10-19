@@ -7752,7 +7752,8 @@
 
     function encodeSharePayload(payload, includeNotes) {
       try {
-        var shared = HeavenlyBookmarks.publicSharePayload(payload, includeNotes);
+        var eligible = HeavenlyBookmarks.shareableData(payload, DEFAULT_BOOKMARK_DATA);
+        var shared = HeavenlyBookmarks.publicSharePayload(eligible, includeNotes);
         if (includeNotes === true) shared.notesIncluded = true;
         else delete shared.notesIncluded;
         var str = JSON.stringify(shared);
@@ -7778,23 +7779,22 @@
         if (!parsed || typeof parsed !== 'object' || (!Array.isArray(parsed.bookmarks) && !Array.isArray(parsed.categories))) return null;
         parsed.bookmarks = Array.isArray(parsed.bookmarks) ? parsed.bookmarks.filter(function (entry) { return entry && typeof entry.id === 'string'; }) : [];
         parsed.categories = Array.isArray(parsed.categories) ? parsed.categories.filter(function (entry) { return entry && typeof entry.id === 'string'; }) : [];
-        return HeavenlyBookmarks.publicSharePayload(parsed, parsed.notesIncluded === true);
+        var eligible = HeavenlyBookmarks.shareableData(parsed, DEFAULT_BOOKMARK_DATA);
+        return HeavenlyBookmarks.publicSharePayload(eligible, parsed.notesIncluded === true);
       } catch (e) {
         return null;
       }
     }
 
     function updateShareOutputCode() {
-      var bmsData = loadBookmarkData();
-      var selectedCatCbs = document.querySelectorAll('.share-cat-cb:checked');
+      var bmsData = HeavenlyBookmarks.shareableData(loadBookmarkData(), DEFAULT_BOOKMARK_DATA);
       var selectedBmCbs = document.querySelectorAll('.share-bm-cb:checked');
 
-      var selectedCatIds = Array.from(selectedCatCbs).map(function (cb) { return cb.getAttribute('data-cat-id'); });
       var selectedBmIds = Array.from(selectedBmCbs).map(function (cb) { return cb.getAttribute('data-bm-id'); });
 
       var fileBms = (bmsData.bookmarks || []).filter(function (b) { return selectedBmIds.includes(b.id); });
       var fileCats = (bmsData.categories || []).filter(function (c) {
-        return selectedCatIds.includes(c.id) || fileBms.some(function (b) { return b.categoryId === c.id; });
+        return fileBms.some(function (b) { return b.categoryId === c.id; });
       });
 
       var payload = {
@@ -7815,18 +7815,18 @@
 
       $('share-include-notes').checked = false;
       $('share-replace-notes').checked = false;
-      var bmsData = loadBookmarkData();
+      var bmsData = HeavenlyBookmarks.shareableData(loadBookmarkData(), DEFAULT_BOOKMARK_DATA);
       var container = $('share-tree-container');
       if (container) {
         container.innerHTML = '';
         bmsData.categories.forEach(function (cat) {
-          // Find custom non-builtIn bookmarks in this category
+          // The same eligibility projection protects the tree and encoder.
           var customCatBms = bmsData.bookmarks.filter(function (b) {
             return b.categoryId === cat.id && !b.hidden;
           });
 
-          // Render category if custom section OR contains custom bookmarks
-          if (!cat.builtIn || customCatBms.length > 0) {
+          // Omit categories without eligible user content.
+          if (customCatBms.length > 0) {
             var catCard = document.createElement('div');
             catCard.className = 'bookmark-mgr-item';
             catCard.style.flexDirection = 'column';
@@ -7878,6 +7878,11 @@
           }
         });
 
+        if (!container.children.length) {
+          var empty = document.createElement('p'); empty.className = 'bookmark-note-hint';
+          empty.textContent = 'No custom bookmarks to share yet. Your own saved pages and custom mirrors will appear here.';
+          container.appendChild(empty);
+        }
         // Toggle category child bookmarks
         container.querySelectorAll('.share-cat-cb').forEach(function (catCb) {
           if (!catCb.checked) {
@@ -8049,7 +8054,7 @@
           });
 
           shareBms.forEach(function (bm) {
-            var exists = data.bookmarks.some(function (b) { return b.id === bm.id; });
+            var exists = HeavenlyBookmarks.findEntry(data, bm.id);
             if (!exists) data.bookmarks.push(bm);
           });
 
