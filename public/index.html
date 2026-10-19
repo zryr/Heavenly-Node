@@ -4756,12 +4756,17 @@
     var activeDragPreview = null;
     var bookmarkInputType = 'mouse';
     document.addEventListener('pointerdown', function (event) { bookmarkInputType = event.pointerType || 'mouse'; }, true);
+    function categoryDragIcon(value) {
+      var preset = PRESET_LUCIDE_ICONS.find(function (item) { return item.id === value || 'preset:' + item.id === value; });
+      if (!preset) return null;
+      var icon = document.createElement('span'); icon.innerHTML = preset.svg; return icon;
+    }
     function createPopoutAvatar(sourceEl, mouseX, mouseY) {
       removePopoutAvatar();
-      if (!sourceEl) return;
-      var name = sourceEl.querySelector('.bookmark-title,.category-title,.section-order-name');
-      activeDragPreview = HeavenlyDrag.create({ source: sourceEl, label: name ? name.textContent : 'Move section',
-        kind: sourceEl.classList.contains('bookmark-card') ? 'bookmark' : 'section', input: bookmarkInputType, x: mouseX, y: mouseY });
+      var item = sourceEl && sourceEl.__heavenlyDragItem;
+      if (!item) return;
+      activeDragPreview = HeavenlyDrag.create({ label: item.label, icon: item.icon,
+        kind: item.kind, input: bookmarkInputType, x: mouseX, y: mouseY });
       activePopoutAvatar = activeDragPreview.element;
     }
     function updatePopoutAvatar(x, y) { if (activeDragPreview && (x || y)) activeDragPreview.move(x, y); }
@@ -4900,6 +4905,7 @@
         if (!section) return;
         var row = document.createElement('div');
         row.className = 'section-order-row';
+        row.__heavenlyDragItem = { kind: 'section', label: section.title, icon: categoryDragIcon(section.icon) };
         row.setAttribute('role', 'listitem');
         row.dataset.sectionId = id;
         var name = document.createElement('span');
@@ -5279,6 +5285,7 @@
 
         var card = document.createElement('div');
         card.className = 'section-card';
+        card.__heavenlyDragItem = { kind: 'category', label: cat.title, icon: categoryDragIcon(cat.icon) };
         card.setAttribute('data-category-id', cat.id);
         card.setAttribute('draggable', 'true');
 
@@ -5870,6 +5877,7 @@
             }
 
             var bmIconEl = renderIconElement(bm.icon, bm.url, bm.title);
+            bmCard.__heavenlyDragItem = { kind: 'bookmark', label: bm.title, icon: bmIconEl };
 
             var bmTitle = document.createElement('span');
             bmTitle.className = 'bookmark-title';

@@ -146,6 +146,7 @@
       var li = doc.createElement('li'); li.dataset.shortcut = item.id; li.className = 'qs-editor-row';
       var name = doc.createElement('span'); name.className = 'qs-editor-name'; name.innerHTML = svg(model.icons[item.icon]);
       var text = doc.createElement('span'); text.textContent = item.name; name.appendChild(text); li.appendChild(name);
+      li.__heavenlyDragItem = { kind:'shortcut', label:item.name, icon:name.querySelector('svg') };
       var actions = doc.createElement('div'); actions.className = 'qs-editor-actions';
       var show = doc.createElement('button'); show.type = 'button'; show.dataset.visibility = item.id;
       show.textContent = visible ? 'Hide' : 'Add'; show.setAttribute('aria-label', (visible ? 'Hide ' : 'Show ') + item.name + ' shortcut');
@@ -200,7 +201,7 @@
       if (event.pointerType === 'touch' && touchPointers.size !== 1) return;
       if (event.button !== 0 || drag) return;
       var handle = event.currentTarget;
-      drag = { id: handle.dataset.handle, pointer: event.pointerId, x: event.clientX, y: event.clientY, input: event.pointerType, active: event.pointerType !== 'touch', target: null, after: false };
+      drag = { id: handle.dataset.handle, pointer: event.pointerId, x: event.clientX, y: event.clientY, item: handle.closest('.qs-editor-row').__heavenlyDragItem, input: event.pointerType, active: event.pointerType !== 'touch', target: null, after: false };
       handle.setPointerCapture(event.pointerId);
       if (!drag.active) drag.timer = root.setTimeout(function () { if (drag) { drag.active = true; handle.classList.add('is-dragging'); } }, 400);
       handle.addEventListener('pointermove', dragMove);
@@ -213,7 +214,7 @@
       if (!drag || event.pointerId !== drag.pointer) return;
       if (!drag.active) { if (Math.abs(event.clientX - drag.x) > 8 || Math.abs(event.clientY - drag.y) > 8) cancelDrag(); return; }
       event.preventDefault(); drag.handle.classList.add('is-dragging');
-      if (!drag.preview && root.HeavenlyDrag) drag.preview = root.HeavenlyDrag.create({ id:'heavenly-shortcut-drag-avatar', source:drag.handle.closest('.qs-editor-row'), label:drag.handle.getAttribute('aria-label').replace(/^Reorder /,''), kind:'section', input:drag.input, x:event.clientX, y:event.clientY });
+      if (!drag.preview && root.HeavenlyDrag) drag.preview = root.HeavenlyDrag.create({ id:'heavenly-shortcut-drag-avatar', icon:drag.item.icon, label:drag.item.label, kind:drag.item.kind, input:drag.input, x:event.clientX, y:event.clientY });
       if (drag.preview) drag.preview.move(event.clientX,event.clientY);
       drag.clientX = event.clientX; drag.clientY = event.clientY;
       previewDrop(event.clientX, event.clientY);
