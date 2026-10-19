@@ -21,3 +21,7 @@
 ## 2026-10-13 - Code Editor Area & Action Toolbar Accessibility
 **Learning:** Textareas and icon/text action buttons in code editor interfaces without explicit `aria-label` attributes leave screen reader users unaware of their purpose, while status indicator bars require `aria-live="polite"` to dynamically announce execution and editor updates.
 **Action:** Always add descriptive `aria-label` attributes to code editor textareas and action toolbar buttons, and configure status indicators with `aria-live="polite"`.
+
+## 2026-10-19 - Batch Action & Selection Control Accessibility
+**Learning:** Action buttons in settings and modal overlays (such as batch "Select All", "Import", "Export", and "Reset" buttons) should have descriptive `aria-label` attributes when their context or full action target is ambiguous to screen readers.
+**Action:** Always add descriptive, context-rich `aria-label` attributes to batch action and selection buttons in settings and data management interfaces.

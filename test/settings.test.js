@@ -60,6 +60,21 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('aria-label="Custom preset title"'), 'custom-title input should have aria-label');
         assert.ok(html.includes('aria-label="Custom preset icon URL"'), 'custom-icon input should have aria-label');
         assert.ok(html.includes('aria-label="Panic redirect URL"'), 'set-panic-url input should have aria-label');
+        assert.ok(html.includes('aria-label="Select all randomizer pool presets"'), 'pool-select-all-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Deselect all randomizer pool presets"'), 'pool-deselect-all-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Save custom preset"'), 'save-custom-preset-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Delete selected custom preset"'), 'delete-custom-preset-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Reset to Heavenly default branding"'), 'reset-branding-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Reset built-in bookmarks to default"'), 'reset-builtin-bookmarks-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Reset all widget screen positions"'), 'reset-widget-pos-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Export bookmarks and settings"'), 'open-export-modal-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Import bookmarks and settings from file"'), 'open-import-modal-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Select all export items"'), 'export-select-all-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Deselect all export items"'), 'export-deselect-all-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Download JSON backup file"'), 'download-export-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Select all import items"'), 'import-select-all-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Deselect all import items"'), 'import-deselect-all-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Apply selected import"'), 'apply-import-btn should have aria-label');
     });
 
     it('should include accessible aria-live status notification element in settings.html', function() {
