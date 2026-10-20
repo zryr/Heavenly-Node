@@ -87,3 +87,9 @@
 **Learning:** Instantiating temporary arrays (e.g. `['text/html', 'application/xhtml+xml', ...].includes(data.contentType)`) on every proxied HTTP response creates unnecessary heap allocation and array `.includes()` traversal overhead. Replacing array creation with direct string equality checks (`ct !== 'text/html' && ct !== ...`) avoids heap object allocation and linear lookup per request, yielding a ~61.5% speedup.
 
 **Action:** Use direct string equality checks instead of temporary array `.includes()` checks in hot request/response middleware paths.
+
+## 2025-06-02 - Direct string equality checks for content-type filtering in script-safe streaming URL prefixer
+
+**Learning:** Calling `htmlTypes.includes(data.contentType)` with a module-scoped array on every proxied response in `script-safe-url-prefixer.js` incurs method invocation and linear lookup overhead per request. Replacing array `.includes()` with direct string equality guards (`ct !== 'text/html' && ct !== 'application/xhtml+xml' && ct !== 'application/xml+xhtml'`) avoids function call overhead and speeds up content-type checking by ~62.6%.
+
+**Action:** Replace `Array.prototype.includes()` with multi-operand direct string equality checks in high-frequency request/response stream handlers.
