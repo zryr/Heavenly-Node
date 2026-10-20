@@ -6104,6 +6104,7 @@
                 sbEditBtn.type = 'button';
                 sbEditBtn.className = 'bookmark-card-edit-btn';
                 sbEditBtn.title = 'Edit sub-bookmark';
+                sbEditBtn.setAttribute('aria-label', 'Edit sub-bookmark ' + sb.title);
                 sbEditBtn.style.background = 'none';
                 sbEditBtn.style.border = 'none';
                 sbEditBtn.style.color = '#94a3b8';
@@ -6330,6 +6331,7 @@
             editSubSecBtn.type = 'button';
             editSubSecBtn.className = 'subsec-edit-btn';
             editSubSecBtn.title = 'Edit sub-section';
+            editSubSecBtn.setAttribute('aria-label', 'Edit sub-section ' + subSec.title);
             editSubSecBtn.style.cssText = 'background:none; border:none; color:#94a3b8; cursor:pointer; padding:2px 4px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; transition:all 0.2s ease;';
             editSubSecBtn.innerHTML = '<svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>';
             editSubSecBtn.onmouseover = function () { editSubSecBtn.style.color = '#38bdf8'; editSubSecBtn.style.background = 'rgba(56,189,248,0.15)'; };
@@ -6456,6 +6458,7 @@
         btn.style.justifyContent = 'center';
         btn.style.cursor = 'pointer';
         btn.title = item.name;
+        btn.setAttribute('aria-label', 'Preset icon ' + item.name);
 
         var svgWrap = document.createElement('div');
         svgWrap.style.width = '20px';
@@ -7442,6 +7445,7 @@
           var deleteMirrorBtn = document.createElement('button');
           deleteMirrorBtn.type = 'button';
           deleteMirrorBtn.title = 'Delete custom mirror';
+          deleteMirrorBtn.setAttribute('aria-label', 'Delete custom mirror ' + item.title);
           deleteMirrorBtn.style.cssText = 'background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; border-radius: 8px; padding: 3px 6px; font-size: 0.72rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;';
           deleteMirrorBtn.innerHTML = '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
           deleteMirrorBtn.onclick = function (e) {
@@ -8104,6 +8108,7 @@
         btn.style.justifyContent = 'center';
         btn.style.cursor = 'pointer';
         btn.title = item.name;
+        btn.setAttribute('aria-label', 'Sub-section icon ' + item.name);
 
         var svgWrap = document.createElement('div');
         svgWrap.style.width = '20px';
