@@ -1040,8 +1040,8 @@
                   <span>Randomizer Preset Pool</span>
                 </span>
                 <div style="display: flex; gap: 6px;">
-                  <button id="pool-select-all-btn" type="button" style="padding: 4px 10px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 8px; color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Select All</button>
-                  <button id="pool-deselect-all-btn" type="button" style="padding: 4px 10px; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #cbd5e1; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Deselect All</button>
+                  <button id="pool-select-all-btn" type="button" aria-label="Select all randomizer pool presets" style="padding: 4px 10px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 8px; color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Select All</button>
+                  <button id="pool-deselect-all-btn" type="button" aria-label="Deselect all randomizer pool presets" style="padding: 4px 10px; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #cbd5e1; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Deselect All</button>
                 </div>
               </div>
               <p class="hero-card-desc" style="margin-bottom: 10px; font-size: 0.8rem;">Click preset chips to toggle which specific identities are included in the random rotation pool:</p>
@@ -1079,8 +1079,8 @@
                 <input type="text" id="custom-icon" placeholder="Icon URL (.ico/.png)" aria-label="Custom preset icon URL" style="flex: 1; min-width: 140px; padding: 10px 14px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #fff; font-size: 0.88rem;">
               </div>
               <div style="display: flex; gap: 8px; margin-top: 10px;">
-                <button id="save-custom-preset-btn" type="button" style="padding: 10px 16px; background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%); border: none; border-radius: 10px; color: #030712; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Save Custom Preset</button>
-                <button id="delete-custom-preset-btn" type="button" style="padding: 10px 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 10px; color: #fca5a5; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Delete Selected</button>
+                <button id="save-custom-preset-btn" type="button" aria-label="Save custom preset" style="padding: 10px 16px; background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%); border: none; border-radius: 10px; color: #030712; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Save Custom Preset</button>
+                <button id="delete-custom-preset-btn" type="button" aria-label="Delete selected custom preset" style="padding: 10px 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 10px; color: #fca5a5; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Delete Selected</button>
               </div>
               <div id="preset-status-msg" aria-live="polite" role="status" style="margin-top: 8px; font-size: 0.82rem; min-height: 1.2em; transition: all 0.2s ease;"></div>
             </div>
@@ -1113,7 +1113,7 @@
             </div>
 
             <div style="border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 12px; margin-top: 10px;">
-              <button id="reset-branding-btn" type="button" style="width: 100%; padding: 10px 14px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 10px; color: #38bdf8; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+              <button id="reset-branding-btn" type="button" aria-label="Reset to Heavenly default branding" style="width: 100%; padding: 10px 14px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 10px; color: #38bdf8; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
                 <svg style="width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
                 <span>Reset to Heavenly Default Branding</span>
               </button>
@@ -1189,7 +1189,7 @@
               <p class="hero-card-desc" style="margin-top: 10px;">Check or uncheck pre-made sections and built-in bookmarks to restore or hide them on your homepage.</p>
               <div id="bookmark-mgr-container" class="bookmark-mgr-list" style="padding: 4px 2px; margin-top: 12px;"></div>
               <div style="margin-top: 14px; border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 14px;">
-                <button id="reset-builtin-bookmarks-btn" type="button" style="width: 100%; padding: 12px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; color: #38bdf8; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                <button id="reset-builtin-bookmarks-btn" type="button" aria-label="Reset built-in bookmarks to default" style="width: 100%; padding: 12px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; color: #38bdf8; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
                   <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
                   <span>Reset Built-in Bookmarks to Default</span>
                 </button>
@@ -1375,7 +1375,7 @@
           <div class="hero-card" style="align-items: center; text-align: center; background: rgba(56, 189, 248, 0.08); border-color: rgba(56, 189, 248, 0.3);">
             <span class="hero-card-title" style="color: #38bdf8;">Widget Screen Position Reset</span>
             <p class="hero-card-desc" style="margin-bottom: 8px;">Restores all widget floating positions back to the center of your screen.</p>
-            <button id="reset-widget-pos-btn" type="button" style="width: 100%; padding: 12px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px; color: #38bdf8; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+            <button id="reset-widget-pos-btn" type="button" aria-label="Reset all widget screen positions" style="width: 100%; padding: 12px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px; color: #38bdf8; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
               <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
               <span>Reset All Widget Positions</span>
             </button>
@@ -1398,11 +1398,11 @@
             <span class="hero-card-title">Data Migration & Granular Backup</span>
             <p class="hero-card-desc">Export your bookmarks, folders, categories, and settings to a JSON backup file, or import and selectively merge/overwrite data from a backup file.</p>
             <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-              <button id="open-export-modal-btn" type="button" class="export-import-btn btn-export-primary" style="flex: 1;">
+              <button id="open-export-modal-btn" type="button" class="export-import-btn btn-export-primary" aria-label="Export bookmarks and settings" style="flex: 1;">
                 <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                 <span>Export Bookmarks & Settings</span>
               </button>
-              <button id="open-import-modal-btn" type="button" class="export-import-btn btn-import-primary" style="flex: 1;">
+              <button id="open-import-modal-btn" type="button" class="export-import-btn btn-import-primary" aria-label="Import bookmarks and settings from file" style="flex: 1;">
                 <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 <span>Import from File</span>
               </button>
@@ -1435,15 +1435,15 @@
       <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(148,163,184,0.15); padding-bottom: 10px;">
         <span style="font-size: 0.85rem; font-weight: 600; color: #e0f2fe;">Select Items to Export:</span>
         <div style="display: flex; gap: 8px;">
-          <button id="export-select-all-btn" type="button" style="padding: 4px 10px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 8px; color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Select All</button>
-          <button id="export-deselect-all-btn" type="button" style="padding: 4px 10px; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #cbd5e1; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Deselect All</button>
+          <button id="export-select-all-btn" type="button" aria-label="Select all export items" style="padding: 4px 10px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 8px; color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Select All</button>
+          <button id="export-deselect-all-btn" type="button" aria-label="Deselect all export items" style="padding: 4px 10px; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #cbd5e1; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Deselect All</button>
         </div>
       </div>
 
       <div id="export-tree-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; padding-right: 4px;"></div>
 
       <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
-        <button id="download-export-btn" type="button" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%); border: none; border-radius: 12px; color: #030712; font-weight: 700; font-size: 0.9rem; cursor: pointer;">Download JSON Backup</button>
+        <button id="download-export-btn" type="button" aria-label="Download JSON backup file" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%); border: none; border-radius: 12px; color: #030712; font-weight: 700; font-size: 0.9rem; cursor: pointer;">Download JSON Backup</button>
       </div>
     </div>
   </div>
@@ -1474,8 +1474,8 @@
         <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(148,163,184,0.15); padding-bottom: 8px;">
           <span style="font-size: 0.85rem; font-weight: 600; color: #e0f2fe;">Select Items to Import:</span>
           <div style="display: flex; gap: 8px;">
-            <button id="import-select-all-btn" type="button" style="padding: 4px 10px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 8px; color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Select All</button>
-            <button id="import-deselect-all-btn" type="button" style="padding: 4px 10px; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #cbd5e1; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Deselect All</button>
+            <button id="import-select-all-btn" type="button" aria-label="Select all import items" style="padding: 4px 10px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 8px; color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Select All</button>
+            <button id="import-deselect-all-btn" type="button" aria-label="Deselect all import items" style="padding: 4px 10px; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #cbd5e1; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Deselect All</button>
           </div>
         </div>
 
@@ -1489,7 +1489,7 @@
           </select>
         </div>
 
-        <button id="apply-import-btn" type="button" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #818cf8 0%, #a855f7 100%); border: none; border-radius: 12px; color: #ffffff; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 4px;">Apply Selected Import</button>
+        <button id="apply-import-btn" type="button" aria-label="Apply selected import" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #818cf8 0%, #a855f7 100%); border: none; border-radius: 12px; color: #ffffff; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 4px;">Apply Selected Import</button>
       </div>
 
     </div>
