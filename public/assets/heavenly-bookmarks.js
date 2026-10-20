@@ -61,6 +61,7 @@
   }
   function importBookmark(incoming, previous) {
     var copy = JSON.parse(JSON.stringify(incoming));
+    if (!Object.prototype.hasOwnProperty.call(copy, 'mirrorPreferences') && previous && previous.mirrorPreferences) copy.mirrorPreferences = JSON.parse(JSON.stringify(previous.mirrorPreferences));
     if (!Object.prototype.hasOwnProperty.call(copy, 'personalNote') && noteFor(previous)) copy.personalNote = noteFor(previous);
     if (typeof copy.personalNote !== 'string') delete copy.personalNote;
     else copy.personalNote = copy.personalNote.slice(0, 4000);
@@ -74,28 +75,77 @@
     visit(incoming, function (entry) {
       var previous = findEntry(saved, entry.id);
       if (!previous) return;
+      if (previous.mirrorPreferences) entry.mirrorPreferences = JSON.parse(JSON.stringify(previous.mirrorPreferences));
       var note = noteFor(previous);
       if (note) entry.personalNote = note;
       else delete entry.personalNote;
     });
     return incoming;
   }
+  // Local choices refer to identities, never rewrite catalog destinations or child order.
+  function mirrorIdentity(entry) {
+    return entry.source === 'main' ? 'main' : entry.id ? 'id:' + entry.id : 'url:' + navigation.bookmarkKey(entry.url);
+  }
+  function eligibleMirror(entry) {
+    var key = navigation.bookmarkKey(entry.url);
+    if (!key || entry.hidden || entry.type === 'folder' || entry.mirrorEligible === false) return false;
+    // Saved assets remain ordinary nested links, never automatic website replacements.
+    return !/\.(?:svg|png|jpe?g|gif|webp|ico|css|m?js|json|wasm|mp[34]|webm|pdf|zip)(?:$|[?#])/i.test(new URL(key).pathname);
+  }
   function mirrorState(bookmark, url, title, brokenMap) {
+    brokenMap = brokenMap || {};
     var original = { title: bookmark ? bookmark.title : title, url: bookmark && bookmark.url || url, source: 'main' };
-    var seen = Object.create(null);
+    var seen = Object.create(null), brokenKeys = Object.create(null);
+    Object.keys(brokenMap).forEach(function (url) { if (brokenMap[url]) brokenKeys[navigation.bookmarkKey(url)] = true; });
     var entries = [original].concat(bookmark && bookmark.subBookmarks || []).filter(function (entry) {
       var key = navigation.bookmarkKey(entry.url);
       if (!key || seen[key]) return false;
       seen[key] = true; return true;
     }).map(function (entry) {
-      var copy = Object.assign({}, entry);
-      copy.isBroken = !!brokenMap[entry.url];
-      return copy;
+      return Object.assign({}, entry, { identity: mirrorIdentity(entry), eligible: eligibleMirror(entry), isBroken: !!brokenKeys[navigation.bookmarkKey(entry.url)] });
     });
-    var primary = entries[0];
-    if (primary && primary.isBroken) primary = entries.slice(1).find(function (entry) { return entry.isUser && !entry.isBroken; }) || entries.slice(1).find(function (entry) { return !entry.isBroken; }) || primary;
-    if (primary) primary = Object.assign({}, primary, { isPromoted: primary !== entries[0] });
-    return { primary: primary, entries: entries, broken: entries.filter(function (entry) { return entry.isBroken; }) };
+    var saved = bookmark && bookmark.mirrorPreferences || {};
+    var eligible = entries.filter(function (entry) { return entry.eligible; });
+    // Keep the legacy default priority for collections without an explicit order.
+    var defaults = eligible.filter(function (e) { return e.source === 'main'; }).concat(eligible.filter(function (e) { return e.isUser; }), eligible.filter(function (e) { return e.source !== 'main' && !e.isUser; }));
+    var order = Array.isArray(saved.order) ? saved.order : [];
+    var ordered = defaults.slice().sort(function (a, b) {
+      var ai = order.indexOf(a.identity), bi = order.indexOf(b.identity);
+      return (ai < 0 ? order.length + defaults.indexOf(a) : ai) - (bi < 0 ? order.length + defaults.indexOf(b) : bi);
+    });
+    var preferred = eligible.find(function (e) { return e.identity === saved.preferred; }) || eligible.find(function (e) { return e.source === 'main'; });
+    var previous = eligible.find(function (e) { return e.identity === saved.active; });
+    var available = ordered.filter(function (e) { return !e.isBroken; });
+    var active = previous && (!previous.isBroken || saved.activeBroken === true) ? previous : preferred && !preferred.isBroken ? preferred : available[0] || previous || preferred || entries[0];
+    var changed = !!active && active.identity !== (saved.active || 'main');
+    var promoted = changed && !!available.length && (!previous || previous.isBroken);
+    var preferences = Object.assign({}, saved, { active: active && active.identity, activeBroken: !!(active && active.isBroken) });
+    return { primary: active && Object.assign({}, active, { isPromoted: promoted }), active: active, preferred: preferred, entries: entries,
+      ordered: ordered, available: available, broken: entries.filter(function (e) { return e.isBroken; }), allBroken: !available.length, promoted: promoted, preferences: preferences };
+  }
+  function saveMirrorPreferences(storage, id, preferences) {
+    var data = JSON.parse(storage.getItem('heavenly_bookmarks') || 'null');
+    var bookmark = findEntry(data, id);
+    if (!bookmark) throw new Error('This bookmark no longer exists.');
+    bookmark.mirrorPreferences = Object.assign({}, preferences);
+    storage.setItem('heavenly_bookmarks', JSON.stringify(data));
+    return bookmark;
+  }
+  function chooseMirror(storage, id, identity, brokenMap) {
+    var data = JSON.parse(storage.getItem('heavenly_bookmarks') || 'null'), bookmark = findEntry(data, id);
+    var state = mirrorState(bookmark, '', '', brokenMap);
+    var entry = state.ordered.find(function (e) { return e.identity === identity; });
+    if (!entry) throw new Error('This destination is not eligible.');
+    var preferences = Object.assign({}, state.preferences, { preferred: identity });
+    if (!entry.isBroken) { preferences.active = identity; preferences.activeBroken = false; }
+    return saveMirrorPreferences(storage, id, preferences);
+  }
+  function reorderMirrors(storage, id, source, target, after, brokenMap) {
+    var data = JSON.parse(storage.getItem('heavenly_bookmarks') || 'null'), bookmark = findEntry(data, id);
+    var state = mirrorState(bookmark, '', '', brokenMap), ids = state.ordered.map(function (e) { return e.identity; });
+    if (source === target || ids.indexOf(source) < 0 || ids.indexOf(target) < 0) return bookmark;
+    ids.splice(ids.indexOf(source), 1); ids.splice(ids.indexOf(target) + (after ? 1 : 0), 0, source);
+    return saveMirrorPreferences(storage, id, Object.assign({}, state.preferences, { order: ids }));
   }
   function shareableData(data, defaults) {
     // Catalog identity also covers older presets with builtIn:false.
@@ -130,6 +180,7 @@
     var selected = new WeakSet();
     if (includeNotes === true) visit(payload, function (entry) { selected.add(entry); });
     return JSON.parse(JSON.stringify(payload, function (key, value) {
+      if (key === 'mirrorPreferences') return undefined;
       if (key === 'personalNote') return includeNotes === true && selected.has(this) && typeof value === 'string' ? value.slice(0, 4000) : undefined;
       return value;
     }));
@@ -142,6 +193,6 @@
     });
     return data;
   }
-  return { shareableData: shareableData, mirrorState: mirrorState, mergeSharedNotes: mergeSharedNotes, supportsQuickSave: supportsQuickSave, findQuickSaveBookmark: findQuickSaveBookmark, setQuickSavePreference: setQuickSavePreference,
+  return { eligibleMirror: eligibleMirror, saveMirrorPreferences: saveMirrorPreferences, chooseMirror: chooseMirror, reorderMirrors: reorderMirrors, shareableData: shareableData, mirrorState: mirrorState, mergeSharedNotes: mergeSharedNotes, supportsQuickSave: supportsQuickSave, findQuickSaveBookmark: findQuickSaveBookmark, setQuickSavePreference: setQuickSavePreference,
     preserveStoredNotes: preserveStoredNotes, findEntry: findEntry, noteFor: noteFor, saveNote: saveNote, importBookmark: importBookmark, publicSharePayload: publicSharePayload };
 });
