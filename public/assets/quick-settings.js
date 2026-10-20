@@ -168,7 +168,7 @@
           actions.appendChild(button);
         });
         var handle = doc.createElement('button'); handle.type = 'button'; handle.className = 'qs-editor-handle'; handle.dataset.handle = item.id;
-        handle.textContent = '⠿'; handle.setAttribute('aria-label', 'Reorder ' + item.name); handle.setAttribute('aria-describedby', 'qs-editor-drag-hint');
+        handle.innerHTML = '<svg width="18" height="22" viewBox="0 0 18 24" fill="currentColor" aria-hidden="true"><circle cx="6" cy="5" r="1.7"/><circle cx="12" cy="5" r="1.7"/><circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="6" cy="19" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>'; handle.title = 'Drag to reorder'; handle.setAttribute('aria-label', 'Reorder ' + item.name); handle.setAttribute('aria-describedby', 'qs-editor-drag-hint');
         handle.addEventListener('pointerdown', startDrag);
         handle.addEventListener('keydown', function (event) {
           if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;

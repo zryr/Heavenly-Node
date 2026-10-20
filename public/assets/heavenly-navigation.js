@@ -250,7 +250,7 @@
     wrapper.fail = function () {
       status.textContent = 'This website could not load in a frame. Choose Open normally to continue.';
     };
-    wrapper.home = function () { win.location.href = origin + '/'; };
+    wrapper.home = function () { returnHome(win, origin); };
     // Handle widget Home in the parent event loop. A sandboxed child cannot
     // navigate its parent even by calling a function defined in that parent.
     win.addEventListener('message', function (event) {
@@ -304,6 +304,7 @@
       else if (win.alert && !win.confirm) win.alert('Popup blocked! Please allow popups for this site.');
       return null;
     }
+    registerHomeReturn(win, blank, new URL(url).origin);
     var mounted = false;
     function initialize() {
       if (mounted) return;
@@ -325,6 +326,58 @@
       if (win.setTimeout) win.setTimeout(initialize, 1500);
     } else initialize();
     return blank;
+  }
+
+  // Only tabs opened by this homepage receive a return capability. Message source
+  // checks bind it to that exact WindowProxy; copied session storage is insufficient.
+  function registerHomeReturn(win, target, origin) {
+    if (target === win || !win.location || win.location.origin !== origin || !/^\/(?:index\.html)?$/.test(win.location.pathname)) return;
+    try {
+      var registry = win.__heavenlyHomeReturns;
+      if (!registry) {
+        registry = win.__heavenlyHomeReturns = new Map();
+        win.addEventListener('message', function (event) {
+          var data = event.data;
+          if (event.origin !== origin || !data || data.type !== 'heavenly:return-home') return;
+          var child = registry.get(data.token);
+          if (!child || child !== event.source || child.closed) return;
+          try {
+            // Do not close a launch tab which has since become an unrelated page.
+            var current = child.location;
+            if (current.href !== 'about:blank' && (current.origin !== origin || !/^\/(?:proxy\/|browse\.html)/.test(current.pathname))) return;
+            win.focus();
+            if (!win.document.hasFocus()) { child.postMessage({ type:'heavenly:home-unavailable', token:data.token }, origin); return; }
+            child.close(); registry.delete(data.token);
+          } catch (e) {}
+        });
+      }
+      var token = win.crypto && win.crypto.randomUUID ? win.crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
+      registry.forEach(function (child, key) { if (child.closed) registry.delete(key); });
+      registry.set(token, target);
+      target.sessionStorage.setItem('heavenly_home_return', JSON.stringify({ token:token, origin:origin }));
+      return true;
+    } catch (e) { /* Return Home retains current-tab navigation when access is unavailable. */ }
+  }
+  function returnHome(win, homeOrigin) {
+    var origin = homeOrigin || win.location.origin;
+    function fallback() {
+      try { (win.top || win).location.href = origin + '/'; }
+      catch (e) { win.location.href = origin + '/'; }
+    }
+    // The existing wrapper owns top-level navigation for sandboxed frames.
+    if (win.parent && win.parent !== win) { win.parent.postMessage('heavenly:home', origin); return; }
+    var saved;
+    try { saved = JSON.parse(win.sessionStorage.getItem('heavenly_home_return')); } catch (e) {}
+    if (!saved || saved.origin !== origin || !win.opener || win.opener.closed) { fallback(); return; }
+    var timer;
+    function cleanup() { win.clearTimeout(timer); win.removeEventListener('message', response); win.removeEventListener('pagehide', cleanup); }
+    function response(event) {
+      if (event.origin === origin && event.source === win.opener && event.data && event.data.type === 'heavenly:home-unavailable' && event.data.token === saved.token) { cleanup(); fallback(); }
+    }
+    win.addEventListener('message', response); win.addEventListener('pagehide', cleanup, { once:true });
+    timer = win.setTimeout(function () { cleanup(); if (!win.closed) fallback(); }, 350);
+    try { win.opener.postMessage({ type:'heavenly:return-home', token:saved.token }, origin); }
+    catch (e) { cleanup(); fallback(); }
   }
 
   function launch(win, url, options) {
@@ -351,6 +404,8 @@
         target = win;
       }
     }
+    var returnRegistered = proxied && target !== win && registerHomeReturn(win, target, origin);
+    if (target !== win && !returnRegistered) { try { target.opener = null; } catch (e) {} }
     if (framed) {
       try {
         var key = 'heavenly_browse_' + Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -359,7 +414,6 @@
         return target;
       } catch (e) { notice(win, 'Private browsing storage is unavailable. Opening normally.'); }
     }
-    if (target !== win) { try { target.opener = null; } catch (e) {} }
     target.location.href = url;
     return target;
   }
@@ -378,7 +432,7 @@
     }
   }
 
-  return { readSettings: readSettings, navigationSettings: navigationSettings, updateSettings: updateSettings,
+  return { returnHome: returnHome, readSettings: readSettings, navigationSettings: navigationSettings, updateSettings: updateSettings,
     isCoolmathUrl: isCoolmathUrl, bookmarkKey: bookmarkKey, findBookmarkByUrl: findBookmarkByUrl,
     prepareMissingBookmark: prepareMissingBookmark, migrateBookmarkIcons: migrateBookmarkIcons,
     remoteUrl: remoteUrl, currentRemoteUrl: currentRemoteUrl, loadHistory: loadHistory, recordHistory: recordHistory,

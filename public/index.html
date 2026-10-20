@@ -4748,14 +4748,118 @@
     }
 
     function clearDragGhosts() {
+      clearBookmarkPlacement();
       document.querySelectorAll('.bookmark-drag-ghost, .section-drag-ghost').forEach(function (el) {
         if (el.parentNode) el.parentNode.removeChild(el);
       });
     }
 
+    var placementFrame = 0, placementPointer = null;
+    function clearBookmarkPlacement() {
+      cancelAnimationFrame(placementFrame); placementFrame = 0; placementPointer = null;
+      var indicator = document.querySelector('.bookmark-placement-indicator'); if (indicator) indicator.remove();
+    }
+    function insertionAfter(rect, x, y, grid) {
+      if (!grid) return y > rect.top + rect.height / 2;
+      if (y < rect.top) return false;
+      if (y > rect.bottom) return true;
+      return x > rect.left + rect.width / 2;
+    }
+    function nearestPlacement(nodes, x, y, grid) {
+      var best = null, score = Infinity;
+      nodes.forEach(function (node) {
+        var rect = node.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        var dy = Math.max(rect.top - y, 0, y - rect.bottom), dx = Math.max(rect.left - x, 0, x - rect.right);
+        // Prefer the actual grid row, then the nearest cell within it.
+        var distance = grid ? dy * 10000 + dx : Math.abs(y - rect.top - rect.height / 2);
+        if (distance < score) { best = { node: node, rect: rect, after: insertionAfter(rect, x, y, grid), grid: grid }; score = distance; }
+      });
+      return best;
+    }
+    function resolveBookmarkPlacement(x, y, type, sourceId) {
+      var hit = document.elementFromPoint(x, y);
+      if (!hit || hit.closest('.modal-backdrop.active,#reorder-bar')) return null;
+      var category = hit.closest('.section-card');
+      if (type === 'category') {
+        var column = hit.closest('#left-column,#right-column,#bottom-container');
+        if (!column) return null;
+        var grid = getComputedStyle(column).display === 'grid';
+        var position = nearestPlacement(Array.from(column.children).filter(function (n) { return n.classList.contains('section-card') && n.dataset.categoryId !== sourceId; }), x, y, grid);
+        return Object.assign(position || { node: column, rect: column.getBoundingClientRect(), after: true }, { type: type, target: position && position.node.dataset.categoryId, side: column.id === 'right-column' ? 'right' : column.id === 'bottom-container' ? 'bottom' : 'left' });
+      }
+      if (!category) return null;
+      var section = hit.closest('.subsection-content');
+      if (!section) {
+        var divider = hit.closest('.subsection-divider');
+        section = divider && divider.nextElementSibling;
+        if (!section || !section.classList.contains('subsection-content') || section.hidden || section.inert) {
+          var sections = Array.from(category.querySelectorAll('.subsection-content')).filter(function (n) { return !n.hidden && !n.inert; });
+          var closest = nearestPlacement(sections, x, y, false); section = closest && closest.node;
+        }
+      }
+      if (!section || section.hidden || section.inert) return null;
+      var nodes = Array.from(section.children).map(function (wrapper) { return wrapper.querySelector(':scope > [data-bm-id]'); }).filter(function (n) { return n && n.dataset.bmId !== sourceId && !n.parentNode.hidden; });
+      var grid = getComputedStyle(section).display === 'grid';
+      var position = nearestPlacement(nodes, x, y, grid);
+      return Object.assign(position || { node: section, rect: section.getBoundingClientRect(), after: true }, { type: type, target: position && position.node.dataset.bmId, categoryId: section.dataset.ownerCategoryId, subSectionId: section.dataset.subsectionId });
+    }
+    function paintBookmarkPlacement(position) {
+      var indicator = document.querySelector('.bookmark-placement-indicator');
+      if (!position) { if (indicator) indicator.remove(); return; }
+      if (!indicator) { indicator = document.createElement('div'); indicator.className = 'bookmark-placement-indicator'; indicator.setAttribute('aria-hidden','true'); document.body.appendChild(indicator); }
+      var rect = position.rect, vertical = position.grid && position.target;
+      indicator.style.left = (vertical ? (position.after ? rect.right : rect.left) - 2 : rect.left) + 'px';
+      indicator.style.top = (vertical ? rect.top : (position.after ? rect.bottom : rect.top) - 2) + 'px';
+      indicator.style.width = (vertical ? 3 : Math.max(12, rect.width)) + 'px'; indicator.style.height = (vertical ? rect.height : 3) + 'px';
+      indicator.dataset.target = position.target || ''; indicator.dataset.after = String(position.after);
+    }
+    function previewBookmarkPlacement(x, y, type, sourceId) {
+      placementPointer = { x: x, y: y, type: type, sourceId: sourceId };
+      if (!placementFrame) placementFrame = requestAnimationFrame(function () {
+        placementFrame = 0; var point = placementPointer;
+        if (point) paintBookmarkPlacement(resolveBookmarkPlacement(point.x, point.y, point.type, point.sourceId));
+      });
+    }
+    document.addEventListener('scroll', function () {
+      var point = placementPointer; if (point) previewBookmarkPlacement(point.x, point.y, point.type, point.sourceId);
+    }, { passive:true, capture:true });
+    function commitBookmarkPlacement(type, sourceId, x, y) {
+      // Recompute once at release: scrolling may have moved the target since the last frame.
+      var position = resolveBookmarkPlacement(x, y, type, sourceId); clearBookmarkPlacement();
+      if (!position) return false;
+      var data = loadBookmarkData(), collection = type === 'category' ? data.categories : data.bookmarks;
+      var source = collection.find(function (entry) { return entry.id === sourceId; }); if (!source) return false;
+      var target = position.target && collection.find(function (entry) { return entry.id === position.target; });
+      if (type === 'category') source.side = position.side;
+      else {
+        var category = data.categories.find(function (entry) { return entry.id === position.categoryId && !entry.hidden; });
+        if (!category || !(category.subSections || []).some(function (entry) { return entry.id === position.subSectionId; })) return false;
+        source.categoryId = category.id; source.subSectionId = position.subSectionId;
+      }
+      var ordered = collection.slice().sort(function (a,b) { return (Number(a.order)||0) - (Number(b.order)||0); }).filter(function (entry) { return entry.id !== sourceId; });
+      var index = target ? ordered.indexOf(target) + (position.after ? 1 : 0) : ordered.length;
+      ordered.splice(index, 0, source); ordered.forEach(function (entry,index) { entry.order = index; });
+      saveBookmarkData(data); renderBookmarksUI(); return true;
+    }
+    function installBookmarkDropTarget(node) {
+      node.ondragover = function (e) {
+        var source = document.querySelector('.bookmark-card.dragging[data-bm-id],.section-card.dragging');
+        if (!source) return;
+        e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'move';
+        var type = source.dataset.bmId ? 'bookmark' : 'category';
+        previewBookmarkPlacement(e.clientX, e.clientY, type, source.dataset.bmId || source.dataset.categoryId);
+      };
+      node.ondrop = function (e) {
+        e.preventDefault(); e.stopPropagation();
+        try { var data = JSON.parse(e.dataTransfer.getData('text/plain')); if (data.type === 'bookmark' || data.type === 'category') commitBookmarkPlacement(data.type, data.id, e.clientX, e.clientY); } catch (err) {}
+        clearDragGhosts(); removePopoutAvatar();
+      };
+    }
+
     var activeDragPreview = null;
-    var bookmarkInputType = 'mouse';
-    document.addEventListener('pointerdown', function (event) { bookmarkInputType = event.pointerType || 'mouse'; }, true);
+    var bookmarkInputType = 'mouse', bookmarkDragHandleOrigin = false;
+    document.addEventListener('pointerdown', function (event) { bookmarkInputType = event.pointerType || 'mouse'; bookmarkDragHandleOrigin = !!event.target.closest('.drag-dots-handle'); }, true);
     function categoryDragIcon(value) {
       var preset = PRESET_LUCIDE_ICONS.find(function (item) { return item.id === value || 'preset:' + item.id === value; });
       if (!preset) return null;
@@ -4789,11 +4893,11 @@
     }, true);
 
     document.addEventListener('dragend', function () {
-      removePopoutAvatar();
+      clearBookmarkPlacement(); removePopoutAvatar();
     });
 
     document.addEventListener('drop', function () {
-      removePopoutAvatar();
+      clearBookmarkPlacement(); removePopoutAvatar();
     });
 
     function openReorderBar(item, handle) {
@@ -4868,7 +4972,7 @@
       categorySectionDrop = null;
       list.querySelectorAll('.section-order-row').forEach(function (el) { el.classList.remove('drop-before', 'drop-after'); });
       if (row && list.contains(row) && row.dataset.sectionId !== categorySectionDragId) {
-        var after = y > row.getBoundingClientRect().top + row.getBoundingClientRect().height / 2;
+        var after = insertionAfter(row.getBoundingClientRect(), x, y, false);
         categorySectionDrop = { id: row.dataset.sectionId, after: after };
         row.classList.add(after ? 'drop-after' : 'drop-before');
       }
@@ -4933,8 +5037,9 @@
         handle.type = 'button';
         handle.className = 'drag-dots-handle';
         handle.draggable = true;
+        handle.title = 'Drag to reorder';
         handle.setAttribute('aria-label', 'Reorder ' + section.title + '; use arrow keys to move');
-        handle.innerHTML = '<span class="dots-grid"><span class="dot-node"></span><span class="dot-node"></span><span class="dot-node"></span><span class="dot-node"></span></span>';
+        handle.innerHTML = sixDotGrip;
         handle.onkeydown = function (e) {
           if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
             e.preventDefault();
@@ -5054,6 +5159,8 @@
     }, true);
     document.addEventListener('dragstart', function (e) {
       cancelActiveBookmarkBodyPress();
+      // Native mouse dragging starts from a dedicated grip; body holds keep their own action.
+      if (e.isTrusted && !bookmarkDragHandleOrigin && e.target.closest('.section-card')) { e.preventDefault(); return; }
       // Keep native HTML5 mouse dragging, but never let a card body start a touch drag.
       if ((bookmarkTouchInProgress || Date.now() < bookmarkIgnoreMouseUntil) && (e.target.closest('.section-card') || e.target.closest('.section-order-row'))) {
         e.preventDefault();
@@ -5236,6 +5343,19 @@
       });
     }
 
+    function animateBookmarkContent(node, open, mutate) {
+      var before = node.hidden ? 0 : node.getBoundingClientRect().height;
+      if (node.__accordionAnimation) node.__accordionAnimation.cancel();
+      node.hidden = false;
+      if (mutate) mutate();
+      node.inert = !open;
+      var after = open ? node.getBoundingClientRect().height : 0;
+      if (!node.animate || matchMedia('(prefers-reduced-motion: reduce)').matches) { node.hidden = !open; return; }
+      var animation = node.animate([{ height: before + 'px', opacity: open ? .85 : 1, overflow: 'hidden' }, { height: after + 'px', opacity: open ? 1 : .85, overflow: 'hidden' }], { duration: 210, easing: 'cubic-bezier(.2,.7,.3,1)' });
+      node.__accordionAnimation = animation;
+      animation.onfinish = function () { if (node.__accordionAnimation === animation) { node.hidden = !open; node.__accordionAnimation = null; } };
+    }
+
     function renderBookmarksUI() {
       cancelActiveBookmarkTouch();
       var data = loadBookmarkData();
@@ -5324,8 +5444,8 @@
         handle.setAttribute('role', 'button');
         handle.setAttribute('tabindex', '0');
         handle.setAttribute('aria-label', 'Reorder or manage section ' + cat.title);
-        handle.title = 'Drag to move or long-press/click for menu';
-        handle.innerHTML = '<div class="dots-grid"><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div></div>';
+        handle.title = 'Drag to reorder';
+        handle.innerHTML = sixDotGrip;
 
         handle.onkeydown = function (e) {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -5355,94 +5475,18 @@
         };
 
         var moveHandle = function (e) {
-          var touch = e.touches ? e.touches[0] : e;
-          if (Math.abs(touch.clientX - startX) > 8 || Math.abs(touch.clientY - startY) > 8 || isTouchDraggingCat) {
-            if (pressTimer) clearTimeout(pressTimer);
-            if (e.touches) {
-              if (!isTouchDraggingCat) {
-                isTouchDraggingCat = true;
-                card.classList.add('dragging');
-                createPopoutAvatar(card, touch.clientX, touch.clientY);
-              } else {
-                updatePopoutAvatar(touch.clientX, touch.clientY);
-              }
-
-              // Dynamic touch ghost rendering across section cards & columns
-              var target = document.elementFromPoint(touch.clientX, touch.clientY);
-              if (target) {
-                var targetCard = target.closest('.section-card');
-                var targetCol = target.closest('#left-column, #right-column, #bottom-container');
-                var ghostCat = getSectionGhost();
-
-                if (targetCard && targetCard !== card) {
-                  var p = targetCard.parentNode;
-                  if (p) {
-                    var rect = targetCard.getBoundingClientRect();
-                    var isLowerHalf = (touch.clientY - rect.top) > (rect.height / 2);
-                    var targetPos = isLowerHalf ? targetCard.nextSibling : targetCard;
-                    if (ghostCat.parentNode !== p || ghostCat.nextSibling !== targetPos) {
-                      p.insertBefore(ghostCat, targetPos);
-                    }
-                  }
-                } else if (targetCol && !targetCard) {
-                  if (ghostCat.parentNode !== targetCol) {
-                    targetCol.appendChild(ghostCat);
-                  }
-                }
-              }
-            }
-          }
+          var touch = e.touches && e.touches[0]; if (!touch) return;
+          clearTimeout(pressTimer); isTouchDraggingCat = true; card.classList.add('dragging');
+          if (!activePopoutAvatar) createPopoutAvatar(card, touch.clientX, touch.clientY);
+          updatePopoutAvatar(touch.clientX, touch.clientY);
+          previewBookmarkPlacement(touch.clientX, touch.clientY, 'category', cat.id);
         };
-
         var endHandle = function (e) {
-          if (e.type === 'mouseup' && isBookmarkCompatibilityMouse(e)) return;
-          if (pressTimer) clearTimeout(pressTimer);
-          removePopoutAvatar();
-          clearDragGhosts();
-          if (isTouchDraggingCat && e.changedTouches) {
-            card.classList.remove('dragging');
-            isTouchDraggingCat = false;
-            var endTouch = e.changedTouches[0];
-            var dropTarget = document.elementFromPoint(endTouch.clientX, endTouch.clientY);
-            if (dropTarget) {
-              var targetCard = dropTarget.closest('.section-card');
-              var targetCol = dropTarget.closest('#left-column, #right-column, #bottom-container');
-              if (targetCard && targetCard !== card) {
-                var targetCatId = targetCard.getAttribute('data-category-id');
-                var data = loadBookmarkData();
-                var sourceCat = data.categories.find(function (c) { return c.id === cat.id; });
-                var destCat = data.categories.find(function (c) { return c.id === targetCatId; });
-                if (sourceCat && destCat) {
-                  sourceCat.side = destCat.side;
-                  var rect = targetCard.getBoundingClientRect();
-                  var isLowerHalf = (endTouch.clientY - rect.top) > (rect.height / 2);
-                  data.categories = data.categories.filter(function (c) { return c.id !== sourceCat.id; });
-
-                  var destIndex = data.categories.findIndex(function (c) { return c.id === destCat.id; });
-                  if (destIndex !== -1 && isLowerHalf) {
-                    destIndex += 1;
-                  }
-                  if (destIndex === -1) destIndex = data.categories.length;
-
-                  data.categories.splice(destIndex, 0, sourceCat);
-                  data.categories.forEach(function (c, idx) { c.order = idx; });
-                  saveBookmarkData(data);
-                  renderBookmarksUI();
-                }
-              } else if (targetCol && !targetCard) {
-                var newSide = 'left';
-                if (targetCol.id === 'right-column') newSide = 'right';
-                else if (targetCol.id === 'bottom-container') newSide = 'bottom';
-                var data2 = loadBookmarkData();
-                var sourceCat2 = data2.categories.find(function (c) { return c.id === cat.id; });
-                if (sourceCat2) {
-                  sourceCat2.side = newSide;
-                  saveBookmarkData(data2);
-                  renderBookmarksUI();
-                }
-              }
-            }
+          clearTimeout(pressTimer);
+          if (isTouchDraggingCat && e.changedTouches && e.changedTouches[0]) {
+            var point = e.changedTouches[0]; commitBookmarkPlacement('category', cat.id, point.clientX, point.clientY);
           }
+          isTouchDraggingCat = false; card.classList.remove('dragging'); removePopoutAvatar(); clearDragGhosts();
         };
 
         handle.addEventListener('mousedown', startHandle);
@@ -5550,83 +5594,7 @@
           card.appendChild(notice);
         }
 
-        // Allow dropping bookmarks or categories into category card
-        card.ondragover = function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          e.dataTransfer.dropEffect = 'move';
-          card.classList.add('drag-over');
-
-          var isCategoryDrag = document.querySelector('.section-card.dragging');
-          if (isCategoryDrag && isCategoryDrag !== card) {
-            var col = card.parentNode;
-            if (col) {
-              var ghostCat = getSectionGhost();
-              var rect = card.getBoundingClientRect();
-              var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
-              var targetPos = isLowerHalf ? card.nextSibling : card;
-              if (ghostCat.parentNode !== col || ghostCat.nextSibling !== targetPos) {
-                col.insertBefore(ghostCat, targetPos);
-              }
-            }
-          } else if (!isCategoryDrag) {
-            var listEl = card.querySelector('.bookmarks-list');
-            if (listEl) {
-              var ghostBm = getBookmarkGhost();
-              if (ghostBm.parentNode !== listEl) {
-                listEl.appendChild(ghostBm);
-              }
-            }
-          }
-        };
-
-        card.ondragleave = function (e) {
-          e.stopPropagation();
-          card.classList.remove('drag-over');
-        };
-
-        card.ondrop = function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          card.classList.remove('drag-over');
-          clearDragGhosts();
-          try {
-            var raw = e.dataTransfer.getData('text/plain');
-            if (!raw) return;
-            var dragData = JSON.parse(raw);
-            var allData = loadBookmarkData();
-
-            if (dragData.type === 'category' && dragData.id !== cat.id) {
-              var sourceCat = allData.categories.find(function (c) { return c.id === dragData.id; });
-              var targetCat = allData.categories.find(function (c) { return c.id === cat.id; });
-              if (sourceCat && targetCat) {
-                sourceCat.side = targetCat.side;
-                var rect = card.getBoundingClientRect();
-                var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
-
-                allData.categories = allData.categories.filter(function (c) { return c.id !== sourceCat.id; });
-                var targetIdx = allData.categories.findIndex(function (c) { return c.id === targetCat.id; });
-                if (targetIdx !== -1 && isLowerHalf) {
-                  targetIdx += 1;
-                }
-                if (targetIdx === -1) targetIdx = allData.categories.length;
-
-                allData.categories.splice(targetIdx, 0, sourceCat);
-                allData.categories.forEach(function (c, idx) { c.order = idx; });
-                saveBookmarkData(allData);
-                renderBookmarksUI();
-              }
-            } else if (dragData.type === 'bookmark') {
-              var bm = allData.bookmarks.find(function (b) { return b.id === dragData.id; });
-              if (bm && bm.categoryId !== cat.id) {
-                bm.categoryId = cat.id;
-                bm.order = 999; // Move to end of category
-                saveBookmarkData(allData);
-                renderBookmarksUI();
-              }
-            }
-          } catch (err) {}
-        };
+        installBookmarkDropTarget(card);
 
         // Bookmarks List
         var listContainer = document.createElement('div');
@@ -5675,72 +5643,7 @@
               clearDragGhosts();
             };
 
-            bmCard.ondragover = function (e) {
-              e.preventDefault();
-              e.stopPropagation();
-              e.dataTransfer.dropEffect = 'move';
-              bmCard.classList.add('drag-over');
-
-              var parentList = bmWrapper.parentNode;
-              if (parentList) {
-                var ghostBm = getBookmarkGhost();
-                var rect = bmCard.getBoundingClientRect();
-                var isHorizontal = cat.side === 'bottom' || (getComputedStyle(parentList).display === 'grid');
-                var isAfter = isHorizontal ? ((e.clientX - rect.left) > (rect.width / 2)) : ((e.clientY - rect.top) > (rect.height / 2));
-                var targetPos = isAfter ? bmWrapper.nextSibling : bmWrapper;
-                if (ghostBm.parentNode !== parentList || ghostBm.nextSibling !== targetPos) {
-                  parentList.insertBefore(ghostBm, targetPos);
-                }
-              }
-            };
-
-            bmCard.ondragleave = function (e) {
-              e.stopPropagation();
-              bmCard.classList.remove('drag-over');
-            };
-
-            bmCard.ondrop = function (e) {
-              e.preventDefault();
-              e.stopPropagation();
-              bmCard.classList.remove('drag-over');
-              clearDragGhosts();
-              try {
-                var raw = e.dataTransfer.getData('text/plain');
-                if (!raw) return;
-                var dragData = JSON.parse(raw);
-                var allData = loadBookmarkData();
-
-                if (dragData.type === 'category' && dragData.id !== cat.id) {
-                  var sourceCat = allData.categories.find(function (c) { return c.id === dragData.id; });
-                  var targetCat = allData.categories.find(function (c) { return c.id === cat.id; });
-                  if (sourceCat && targetCat) {
-                    sourceCat.side = targetCat.side;
-                    var rect = card.getBoundingClientRect();
-                    var isLowerHalf = (e.clientY - rect.top) > (rect.height / 2);
-
-                    allData.categories = allData.categories.filter(function (c) { return c.id !== sourceCat.id; });
-                    var targetIdx = allData.categories.findIndex(function (c) { return c.id === targetCat.id; });
-                    if (targetIdx !== -1 && isLowerHalf) {
-                      targetIdx += 1;
-                    }
-                    if (targetIdx === -1) targetIdx = allData.categories.length;
-
-                    allData.categories.splice(targetIdx, 0, sourceCat);
-                    allData.categories.forEach(function (c, idx) { c.order = idx; });
-                    saveBookmarkData(allData);
-                    renderBookmarksUI();
-                  }
-                } else if (dragData.type === 'bookmark') {
-                  var sourceBm = allData.bookmarks.find(function (b) { return b.id === dragData.id; });
-                  if (sourceBm && sourceBm.categoryId !== cat.id) {
-                    sourceBm.categoryId = cat.id;
-                    sourceBm.order = 999;
-                    saveBookmarkData(allData);
-                    renderBookmarksUI();
-                  }
-                }
-              } catch (err) {}
-            };
+            installBookmarkDropTarget(bmCard);
 
             if (bm.type !== 'folder') {
               bmCard.target = '_blank';
@@ -5814,20 +5717,27 @@
                   return;
                 }
 
+                var latest = HeavenlyBookmarks.findEntry(loadBookmarkData(), bm.id) || bm;
+                var launchState = HeavenlyBookmarks.mirrorState(latest, bm.url, bm.title, getBrokenLinksMap());
+                var destination = launchState.active ? HeavenlyNavigation.bookmarkKey(launchState.active.url) : rawTargetUrl;
+                var launchProxy = location.origin + '/proxy/' + destination;
                 var settings = loadSettings();
                 if (bm.launchPreference === 'direct') {
                   e.preventDefault();
-                  openTargetUrlWithSetting(rawTargetUrl);
+                  try { HeavenlyBookmarks.saveMirrorPreferences(localStorage, bm.id, launchState.preferences); } catch (err) {}
+                  openTargetUrlWithSetting(destination);
                   return;
                 } else if (bm.launchPreference === 'proxy') {
                   e.preventDefault();
-                  openTargetUrlWithSetting(proxiedUrl);
+                  try { HeavenlyBookmarks.saveMirrorPreferences(localStorage, bm.id, launchState.preferences); } catch (err) {}
+                  openTargetUrlWithSetting(launchProxy);
                   return;
                 }
 
                 if (settings.skipBuiltinTestPrompt) {
                   e.preventDefault();
-                  openTargetUrlWithSetting(proxiedUrl);
+                  try { HeavenlyBookmarks.saveMirrorPreferences(localStorage, bm.id, launchState.preferences); } catch (err) {}
+                  openTargetUrlWithSetting(launchProxy);
                   return;
                 }
 
@@ -5892,8 +5802,8 @@
             bmHandle.setAttribute('role', 'button');
             bmHandle.setAttribute('tabindex', '0');
             bmHandle.setAttribute('aria-label', 'Reorder or manage bookmark ' + bm.title);
-            bmHandle.title = 'Drag to move or long-press/click for menu';
-            bmHandle.innerHTML = '<div class="dots-grid"><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div><div class="dot-node"></div></div>';
+            bmHandle.title = 'Drag to reorder';
+            bmHandle.innerHTML = sixDotGrip;
 
             bmHandle.onkeydown = function (e) {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -5923,97 +5833,18 @@
             };
 
             var moveBmHandle = function (e) {
-              var touch = e.touches ? e.touches[0] : e;
-              if (Math.abs(touch.clientX - bmSX) > 8 || Math.abs(touch.clientY - bmSY) > 8 || isTouchDraggingBm) {
-                if (bmTimer) clearTimeout(bmTimer);
-                if (e.touches) {
-                  if (!isTouchDraggingBm) {
-                    isTouchDraggingBm = true;
-                    bmCard.classList.add('dragging');
-                    createPopoutAvatar(bmCard, touch.clientX, touch.clientY);
-                  } else {
-                    updatePopoutAvatar(touch.clientX, touch.clientY);
-                  }
-
-                  var target = document.elementFromPoint(touch.clientX, touch.clientY);
-                  if (target) {
-                    var targetBm = target.closest('.bookmark-card');
-                    var targetCat = target.closest('.section-card');
-                    var ghostBm = getBookmarkGhost();
-
-                    if (targetBm && targetBm !== bmCard) {
-                      var targetWrapper = targetBm.parentNode;
-                      var p = targetWrapper.parentNode;
-                      if (p) {
-                        var rect = targetBm.getBoundingClientRect();
-                        var isHorizontal = getComputedStyle(p.closest('.bookmarks-list') || p).display === 'grid';
-                        var isAfter = isHorizontal ? ((touch.clientX - rect.left) > (rect.width / 2)) : ((touch.clientY - rect.top) > (rect.height / 2));
-                        var targetPos = isAfter ? targetWrapper.nextSibling : targetWrapper;
-                        if (ghostBm.parentNode !== p || ghostBm.nextSibling !== targetPos) {
-                          p.insertBefore(ghostBm, targetPos);
-                        }
-                      }
-                    } else if (targetCat) {
-                      var listEl = targetCat.querySelector('.bookmarks-list');
-                      if (listEl && ghostBm.parentNode !== listEl) {
-                        listEl.appendChild(ghostBm);
-                      }
-                    }
-                  }
-                }
-              }
+              var touch = e.touches && e.touches[0]; if (!touch) return;
+              clearTimeout(bmTimer); isTouchDraggingBm = true; bmCard.classList.add('dragging');
+              if (!activePopoutAvatar) createPopoutAvatar(bmCard, touch.clientX, touch.clientY);
+              updatePopoutAvatar(touch.clientX, touch.clientY);
+              previewBookmarkPlacement(touch.clientX, touch.clientY, 'bookmark', bm.id);
             };
-
             var endBmHandle = function (e) {
-              if (e.type === 'mouseup' && isBookmarkCompatibilityMouse(e)) return;
-              if (bmTimer) clearTimeout(bmTimer);
-              removePopoutAvatar();
-              clearDragGhosts();
-              if (isTouchDraggingBm && e.changedTouches) {
-                bmCard.classList.remove('dragging');
-                isTouchDraggingBm = false;
-                var endTouch = e.changedTouches[0];
-                var dropTarget = document.elementFromPoint(endTouch.clientX, endTouch.clientY);
-                if (dropTarget) {
-                  var targetBmCard = dropTarget.closest('.bookmark-card');
-                  var targetCatCard = dropTarget.closest('.section-card');
-                  var allData = loadBookmarkData();
-
-                  if (targetBmCard && targetBmCard !== bmCard) {
-                    var targetBmId = targetBmCard.getAttribute('data-bm-id');
-                    var sourceBm = allData.bookmarks.find(function (b) { return b.id === bm.id; });
-                    var targetBm = allData.bookmarks.find(function (b) { return b.id === targetBmId; });
-                    if (sourceBm && targetBm) {
-                      sourceBm.categoryId = targetBm.categoryId;
-                      var parentList = targetBmCard.closest('.bookmarks-list');
-                      var rect = targetBmCard.getBoundingClientRect();
-                      var isHorizontal = parentList && getComputedStyle(parentList).display === 'grid';
-                      var isAfter = isHorizontal ? ((endTouch.clientX - rect.left) > (rect.width / 2)) : ((endTouch.clientY - rect.top) > (rect.height / 2));
-
-                      allData.bookmarks = allData.bookmarks.filter(function (b) { return b.id !== sourceBm.id; });
-                      var targetIdx = allData.bookmarks.findIndex(function (b) { return b.id === targetBm.id; });
-                      if (targetIdx !== -1 && isAfter) {
-                        targetIdx += 1;
-                      }
-                      if (targetIdx === -1) targetIdx = allData.bookmarks.length;
-
-                      allData.bookmarks.splice(targetIdx, 0, sourceBm);
-                      allData.bookmarks.forEach(function (b, idx) { b.order = idx; });
-                      saveBookmarkData(allData);
-                      renderBookmarksUI();
-                    }
-                  } else if (targetCatCard) {
-                    var targetCatId = targetCatCard.getAttribute('data-category-id');
-                    var sourceBm2 = allData.bookmarks.find(function (b) { return b.id === bm.id; });
-                    if (sourceBm2 && sourceBm2.categoryId !== targetCatId) {
-                      sourceBm2.categoryId = targetCatId;
-                      sourceBm2.order = 999;
-                      saveBookmarkData(allData);
-                      renderBookmarksUI();
-                    }
-                  }
-                }
+              clearTimeout(bmTimer);
+              if (isTouchDraggingBm && e.changedTouches && e.changedTouches[0]) {
+                var point = e.changedTouches[0]; commitBookmarkPlacement('bookmark', bm.id, point.clientX, point.clientY);
               }
+              isTouchDraggingBm = false; bmCard.classList.remove('dragging'); removePopoutAvatar(); clearDragGhosts();
             };
 
             bmHandle.addEventListener('mousedown', startBmHandle);
@@ -6266,7 +6097,7 @@
                 }
               }
               if (!folderChildren && isFolderExpanded) { folderChildren = buildFolderChildren(); bmWrapper.appendChild(folderChildren); }
-              if (folderChildren) folderChildren.hidden = !isFolderExpanded;
+              if (folderChildren) animateBookmarkContent(folderChildren, isFolderExpanded);
               if (expandBtn) {
                 expandBtn.textContent = '>';
                 expandBtn.style.transform = isFolderExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
@@ -6362,7 +6193,7 @@
             subDiv.setAttribute('aria-expanded', String(!isSubCollapsed));
             subArrow.style.transform = isSubCollapsed ? 'rotate(0deg)' : 'rotate(90deg)';
             if (!isSubCollapsed) ensureSectionContent();
-            sectionContent.hidden = isSubCollapsed;
+            animateBookmarkContent(sectionContent, !isSubCollapsed);
           };
 
           subDiv.onclick = toggleSubSection;
@@ -6377,6 +6208,8 @@
 
           var sectionContent = document.createElement('div');
           sectionContent.className = 'subsection-content';
+          sectionContent.dataset.ownerCategoryId = cat.id; sectionContent.dataset.subsectionId = subSec.id;
+          sectionContent.inert = isSubCollapsed;
           sectionContent.hidden = isSubCollapsed;
           listContainer.appendChild(sectionContent);
           var contentBuilt = false;
@@ -6393,17 +6226,20 @@
                 var showMoreBtn = document.createElement('button');
                 showMoreBtn.type = 'button';
                 showMoreBtn.className = 'show-more-btn';
+                showMoreBtn.setAttribute('aria-expanded', String(isSubExpanded));
                 showMoreBtn.innerHTML = '<span>' + (isSubExpanded ? 'Show Less' : 'Show More (' + (subBms.length - limit) + ' more)') + '</span> <span style="margin-left:4px; display:inline-block; transition:transform 0.2s ease; transform:' + (isSubExpanded ? 'rotate(-90deg)' : 'rotate(0deg)') + ';">&gt;</span>';
                 showMoreBtn.onclick = function (e) {
                   e.stopPropagation();
                   isSubExpanded = !isSubExpanded;
                   expandedSubSections[subSecKey] = isSubExpanded;
+                  animateBookmarkContent(sectionContent, true, function () {
                   if (isSubExpanded && renderedCount < subBms.length) {
                     renderBookmarkListSection(subBms.slice(renderedCount), sectionContent);
                     renderedCount = subBms.length;
                     sectionContent.appendChild(showMoreBtn);
                   }
                   Array.from(sectionContent.children).filter(function (node) { return node !== showMoreBtn; }).forEach(function (node, index) { node.hidden = !isSubExpanded && index >= limit; });
+                  });
                   showMoreBtn.querySelector('span').textContent = isSubExpanded ? 'Show Less' : 'Show More (' + (subBms.length - limit) + ' more)';
                   showMoreBtn.setAttribute('aria-expanded', String(isSubExpanded));
                 };
@@ -6809,8 +6645,11 @@
       }, 50);
     }
 
+    var sixDotGrip = '<svg width="18" height="22" viewBox="0 0 18 24" fill="currentColor" aria-hidden="true"><circle cx="6" cy="5" r="1.7"/><circle cx="12" cy="5" r="1.7"/><circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="6" cy="19" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>';
     var bookmarkPromotionSeen = new Map();
     var bookmarkPromotionTimer = null;
+    var bookmarkGuideTimer = null;
+    var bookmarkBrokenAction = null;
     var bookmarkPromotionContext = null;
     function hideBookmarkPromotion() {
       var modal = $('builtin-test-modal');
@@ -6819,13 +6658,15 @@
         if (document.activeElement === badge) { var copy = modal.querySelector('.url-copy-pill'); if (copy) copy.focus({ preventScroll: true }); }
         badge.remove();
       }
-      var explanation = modal.querySelector('.promoted-tooltip-box');
-      if (explanation) explanation.remove();
+
     }
     function clearBookmarkPromotion() {
+      clearTimeout(bookmarkGuideTimer); bookmarkGuideTimer = null;
+      var explanation = $('builtin-test-modal').querySelector('.promoted-tooltip-box');
+      if (explanation) explanation.remove();
       clearTimeout(bookmarkPromotionTimer); bookmarkPromotionTimer = null;
       var state = bookmarkPromotionSeen.get(bookmarkPromotionContext);
-      if (state) state.until = 0;
+      if (state) { state.until = 0; state.guideUntil = 0; }
       hideBookmarkPromotion();
     }
     window.addEventListener('pagehide', clearBookmarkPromotion);
@@ -7030,7 +6871,8 @@
 
     function getBrokenLinksMap() {
       try {
-        return JSON.parse(localStorage.getItem('heavenly_broken_links') || '{}');
+        var map = JSON.parse(localStorage.getItem('heavenly_broken_links') || '{}');
+        return map && typeof map === 'object' && !Array.isArray(map) ? map : {};
       } catch (e) {
         return {};
       }
@@ -7235,11 +7077,10 @@
     function toggleBrokenLinkState(url) {
       if (!url) return;
       var map = getBrokenLinksMap();
-      if (map[url]) {
-        delete map[url];
-      } else {
-        map[url] = true;
-      }
+      var key = HeavenlyNavigation.bookmarkKey(url);
+      var marked = Object.keys(map).filter(function (entry) { return map[entry] && HeavenlyNavigation.bookmarkKey(entry) === key; });
+      if (marked.length) marked.forEach(function (entry) { delete map[entry]; });
+      else map[url] = true;
       try {
         localStorage.setItem('heavenly_broken_links', JSON.stringify(map));
       } catch (e) {}
@@ -7251,6 +7092,7 @@
         return;
       }
       clearTimeout(bookmarkPromotionTimer); bookmarkPromotionTimer = null;
+      clearTimeout(bookmarkGuideTimer); bookmarkGuideTimer = null;
       var currentModal = $('builtin-test-modal');
       var refreshing = currentModal.classList.contains('active') && (targetBmId ? pendingBuiltinUrls.targetBmId === targetBmId : HeavenlyNavigation.bookmarkKey(rawUrl) === HeavenlyNavigation.bookmarkKey(pendingBuiltinUrls.requestedUrl));
       var savedScroll = currentModal.querySelector('.modal-card').scrollTop;
@@ -7271,7 +7113,7 @@
         if (customDesc) {
           descEl.textContent = customDesc;
         } else {
-          descEl.textContent = 'Open the original site directly, or browse through Heavenly’s proxy.';
+          descEl.textContent = 'Open this site directly, or browse through Heavenly’s proxy.';
         }
       }
 
@@ -7282,7 +7124,12 @@
       if (hideContainer) hideContainer.style.display = 'none';
 
       var data = loadBookmarkData();
-      var targetBm = targetBmId ? data.bookmarks.find(function (b) { return b.id === targetBmId; }) : null;
+      var targetBm = targetBmId ? HeavenlyBookmarks.findEntry(data, targetBmId) : null;
+      if (targetBm && HeavenlyNavigation.bookmarkKey(targetBm.url) !== HeavenlyNavigation.bookmarkKey(rawUrl)) {
+        var requested = HeavenlyNavigation.findBookmarkByUrl({ bookmarks: [targetBm] }, rawUrl);
+        if (requested) targetBm = requested;
+      }
+      if (targetBm) targetBmId = targetBm.id;
       if (!targetBm && rawUrl) {
         var cleanRawUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) ? rawUrl : 'https://' + rawUrl;
         targetBm = data.bookmarks.find(function (b) {
@@ -7302,33 +7149,14 @@
       var brokenMap = getBrokenLinksMap();
       var rawPrimaryUrl = (targetBm && targetBm.url) ? targetBm.url : rawUrl;
 
-      // Extract all mirror sources
-      var builtinMirrors = [];
-      var userMirrors = [];
-
-      if (targetBm && targetBm.subBookmarks && targetBm.subBookmarks.length > 0) {
-        targetBm.subBookmarks.forEach(function (sub) {
-          var item = {
-            id: sub.id,
-            title: sub.title,
-            url: sub.url,
-            isUser: !!sub.isUser,
-            isBroken: !!brokenMap[sub.url]
-          };
-          if (sub.isUser) {
-            userMirrors.push(item);
-          } else {
-            builtinMirrors.push(item);
-          }
-        });
-      }
-
       var mirrorState = HeavenlyBookmarks.mirrorState(targetBm, rawUrl, title, brokenMap);
-      userMirrors = mirrorState.entries.slice(1).filter(function (entry) { return entry.isUser; });
-      builtinMirrors = mirrorState.entries.slice(1).filter(function (entry) { return !entry.isUser; });
+      if (targetBm) {
+        try { HeavenlyBookmarks.saveMirrorPreferences(localStorage, targetBm.id, mirrorState.preferences); targetBm.mirrorPreferences = mirrorState.preferences; }
+        catch (e) { /* Keep this launch usable when storage is unavailable. */ }
+      }
       var primaryCandidate = mirrorState.primary;
       if (primaryCandidate) {
-        var activeUrl = HeavenlyNavigation.remoteUrl(primaryCandidate.url);
+        var activeUrl = HeavenlyNavigation.bookmarkKey(primaryCandidate.url);
         if (!/^https?:\/\//.test(activeUrl)) activeUrl = 'https://' + activeUrl;
         pendingBuiltinUrls.rawUrl = activeUrl;
         pendingBuiltinUrls.proxiedUrl = location.origin + '/proxy/' + activeUrl;
@@ -7343,18 +7171,29 @@
       var activeKey = HeavenlyNavigation.bookmarkKey(primaryCandidate.url);
       var promotionState = bookmarkPromotionSeen.get(bookmarkPromotionContext);
       if (!promotionState || promotionState.url !== activeKey) {
-        promotionState = { url: activeKey, until: primaryCandidate.isPromoted ? Date.now() + 5000 : 0 };
+        var firstGuide = mirrorState.promoted && bookmarkBrokenAction === bookmarkPromotionContext && !mirrorState.preferences.explained;
+        promotionState = { url: activeKey, until: mirrorState.promoted ? Date.now() + 7000 : 0, guideUntil: firstGuide ? Date.now() + 18000 : 0 };
         bookmarkPromotionSeen.set(bookmarkPromotionContext, promotionState);
+        if (firstGuide && targetBm) {
+          mirrorState.preferences.explained = true;
+          try { HeavenlyBookmarks.saveMirrorPreferences(localStorage, targetBm.id, mirrorState.preferences); } catch (e) {}
+        }
       }
-      var showPromotion = primaryCandidate.isPromoted && promotionState.until > Date.now();
+      bookmarkBrokenAction = null;
+      var showPromotion = promotionState.until > Date.now();
+      var allAreBroken = mirrorState.allBroken;
 
-      // Check if ALL links (Primary site + all mirrors) are broken
-      var allMirrorsList = [ { url: rawPrimaryUrl, isBroken: !!brokenMap[rawPrimaryUrl] } ]
-        .concat(userMirrors.map(function(m){ return { url: m.url, isBroken: m.isBroken }; }))
-        .concat(builtinMirrors.map(function(m){ return { url: m.url, isBroken: m.isBroken }; }));
-      var allVersions = allMirrorsList;
-      var allAreBroken = allVersions.length > 0 && allVersions.every(function (v) { return !!v.url && v.isBroken; });
-
+      function refreshMirrors(identity, action) {
+        openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
+        var controls = Array.from(currentModal.querySelectorAll('[data-mirror-identity]'));
+        var row = controls.find(function (node) { return node.dataset.mirrorIdentity === identity && node.closest('.available-mirror-list'); });
+        var focus = row && row.querySelector(action || '.mirror-prefer');
+        if (focus) focus.focus({ preventScroll: true });
+      }
+      function mirrorAction(callback) {
+        try { callback(); return true; }
+        catch (e) { alert('Could not save mirror choices. Please check browser storage and try again.'); return false; }
+      }
       // Helper function to create Click-to-Copy URL Pill
       function createUrlCopyPill(urlToCopy) {
         var pill = document.createElement('button');
@@ -7389,7 +7228,9 @@
         var card = document.createElement('div');
         card.className = 'bookmark-mirror-card';
         card.dataset.mirrorUrl = item.url;
+        card.dataset.mirrorIdentity = item.identity;
         var isBroken = item.isBroken;
+        var itemDestination = HeavenlyNavigation.bookmarkKey(item.url) || item.url;
 
         card.style.cssText = isBroken
           ? 'background: rgba(15, 23, 42, 0.35); border: 1px dashed rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0.45; filter: grayscale(50%); transition: all 0.2s ease;'
@@ -7402,9 +7243,10 @@
         topRow.style.cssText = 'display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;';
 
         var titleBox = document.createElement('div');
+        titleBox.className = 'bookmark-mirror-name';
         titleBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
         var titleText = '<div style="font-weight: 700; font-size: 0.88rem; color: ' + (isBroken ? '#64748b' : '#f8fafc') + ';">' + escapeHtml(item.title) + '</div>';
-        if (isPrimaryCard && item.isPromoted && showPromotion) {
+        if (isPrimaryCard && showPromotion) {
           titleText += '<span class="promoted-badge-btn" role="button" tabindex="0" title="Click to learn why this link was promoted" style="font-size: 0.68rem; font-weight: 700; color: #a855f7; background: rgba(168, 85, 247, 0.18); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 6px; padding: 1px 6px; text-transform: uppercase; cursor: pointer; user-select: none;">Promoted</span>';
         } else if (isBroken) {
           titleText += '<span style="font-size: 0.68rem; font-weight: 600; color: #94a3b8; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 1px 6px;">Not Working</span>';
@@ -7415,7 +7257,7 @@
         rightBox.className = 'bookmark-mirror-tools';
         rightBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
 
-        var copyPill = createUrlCopyPill(item.url);
+        var copyPill = createUrlCopyPill(itemDestination);
 
         var toggleBrokenBtn = document.createElement('button');
         toggleBrokenBtn.type = 'button';
@@ -7431,6 +7273,7 @@
         toggleBrokenBtn.onclick = function (e) {
           e.stopPropagation();
           toggleBrokenBtn.disabled = true;
+          if (!item.isBroken) bookmarkBrokenAction = bookmarkPromotionContext;
           toggleBrokenLinkState(item.url);
           openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
           var replacement = Array.from(currentModal.querySelectorAll('[data-mirror-url]')).find(function (node) { return node.dataset.mirrorUrl === item.url; });
@@ -7451,7 +7294,7 @@
           deleteMirrorBtn.onclick = function (e) {
             e.stopPropagation();
             var latestData = loadBookmarkData();
-            var latestBookmark = targetBm && latestData.bookmarks.find(function (entry) { return entry.id === targetBm.id; });
+            var latestBookmark = targetBm && HeavenlyBookmarks.findEntry(latestData, targetBm.id);
             if (latestBookmark && latestBookmark.subBookmarks) {
               latestBookmark.subBookmarks = latestBookmark.subBookmarks.filter(function (s) { return s.id !== item.id; });
               saveBookmarkData(latestData);
@@ -7464,36 +7307,79 @@
         topRow.appendChild(titleBox);
         topRow.appendChild(rightBox);
 
-        var promotedBadge = titleBox.querySelector('.promoted-badge-btn');
-        if (promotedBadge) {
-          var showPromotedExplanation = function (e) {
-            e.stopPropagation();
-            var existingTooltip = card.querySelector('.promoted-tooltip-box');
-            if (existingTooltip) {
-              existingTooltip.remove();
-              return;
-            }
-            var tooltip = document.createElement('div');
-            tooltip.className = 'promoted-tooltip-box';
-            tooltip.style.cssText = 'font-size: 0.76rem; color: #e9d5ff; background: rgba(88, 28, 135, 0.85); border: 1px solid rgba(168, 85, 247, 0.5); border-radius: 8px; padding: 6px 10px; line-height: 1.4; display: flex; align-items: flex-start; gap: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); animation: slideFadeDown 0.2s ease forwards;';
-            tooltip.innerHTML = '<svg style="width:13px;height:13px;fill:none;stroke:#c084fc;stroke-width:2.5;flex-shrink:0;margin-top:2px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg><span>The main site link is currently marked as broken, so this working mirror was automatically promoted to the primary position.</span>';
-            card.insertBefore(tooltip, card.children[1] || null);
-          };
-
-          promotedBadge.onclick = showPromotedExplanation;
-          promotedBadge.onkeydown = function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              showPromotedExplanation(e);
+        if (item.eligible && targetBm) {
+          var controls = document.createElement('div'); controls.className = 'mirror-priority-controls';
+          var prefer = document.createElement('button'); prefer.type = 'button'; prefer.className = 'mirror-prefer';
+          var chosen = mirrorState.preferred && mirrorState.preferred.identity === item.identity;
+          prefer.textContent = chosen ? 'Preferred' : 'Set as Preferred'; prefer.setAttribute('aria-pressed', String(!!chosen));
+          prefer.onclick = function () {
+            if (mirrorAction(function () { HeavenlyBookmarks.chooseMirror(localStorage, targetBm.id, item.identity, getBrokenLinksMap()); })) {
+              promotionState.until = 0; promotionState.guideUntil = 0; refreshMirrors(item.identity);
             }
           };
+          controls.appendChild(prefer);
+          if (!isPrimaryCard && !item.isBroken) {
+            var grip = document.createElement('button'); grip.type = 'button'; grip.className = 'mirror-grip';
+            grip.title = 'Drag to reorder'; grip.setAttribute('aria-label', 'Drag to reorder ' + item.title + '; use arrow keys to move');
+            grip.innerHTML = sixDotGrip;
+            grip.draggable = true;
+            grip.ondragend = function () { currentModal.querySelectorAll('.mirror-drop-before,.mirror-drop-after').forEach(function (n) { n.classList.remove('mirror-drop-before','mirror-drop-after'); }); };
+            grip.ondragstart = function (e) { e.stopPropagation(); e.dataTransfer.setData('application/heavenly-mirror', item.identity); e.dataTransfer.effectAllowed = 'move'; };
+            grip.onkeydown = function (e) {
+              if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); step(e.key === 'ArrowUp' ? -1 : 1); }
+            };
+            function step(delta) {
+              var ids = mirrorState.available.map(function (entry) { return entry.identity; }), index = ids.indexOf(item.identity), target = ids[index + delta];
+              if (target && mirrorAction(function () { HeavenlyBookmarks.reorderMirrors(localStorage, targetBm.id, item.identity, target, delta > 0, getBrokenLinksMap()); })) refreshMirrors(item.identity, '.mirror-grip');
+            }
+            controls.appendChild(grip);
+            [-1, 1].forEach(function (delta) {
+              var move = document.createElement('button'); move.type = 'button'; move.textContent = delta < 0 ? '↑' : '↓'; move.title = delta < 0 ? 'Move Up' : 'Move Down';
+              move.setAttribute('aria-label', move.title + ': ' + item.title);
+              var index = mirrorState.available.findIndex(function (e) { return e.identity === item.identity; });
+              move.disabled = index + delta < 0 || index + delta >= mirrorState.available.length;
+              move.onclick = function () { step(delta); }; controls.appendChild(move);
+            });
+            var mirrorDrop = null;
+            card.ondragover = function (e) {
+              if (!Array.from(e.dataTransfer.types).includes('application/heavenly-mirror')) return;
+              e.preventDefault(); var after = e.clientY > card.getBoundingClientRect().top + card.offsetHeight / 2;
+              currentModal.querySelectorAll('.mirror-drop-before,.mirror-drop-after').forEach(function (n) { n.classList.remove('mirror-drop-before','mirror-drop-after'); });
+              card.classList.add(after ? 'mirror-drop-after' : 'mirror-drop-before'); mirrorDrop = after;
+            };
+            card.ondrop = function (e) { e.preventDefault(); e.stopPropagation();
+              var source = e.dataTransfer.getData('application/heavenly-mirror');
+              if (source && mirrorDrop !== null && mirrorAction(function () { HeavenlyBookmarks.reorderMirrors(localStorage, targetBm.id, source, item.identity, mirrorDrop, getBrokenLinksMap()); })) refreshMirrors(source, '.mirror-grip');
+            };
+            grip.onpointerdown = function (e) {
+              if (e.pointerType === 'mouse' || e.button !== 0) return;
+              e.preventDefault(); grip.setPointerCapture(e.pointerId);
+              var target = null;
+              function move(ev) {
+                var hit = document.elementFromPoint(ev.clientX, ev.clientY), row = hit && hit.closest('.available-mirror-list [data-mirror-identity]');
+                currentModal.querySelectorAll('.mirror-drop-before,.mirror-drop-after').forEach(function (n) { n.classList.remove('mirror-drop-before','mirror-drop-after'); });
+                target = null;
+                if (row) { var rect = row.getBoundingClientRect(); target = { id: row.dataset.mirrorIdentity, after: ev.clientY > rect.top + rect.height / 2 }; row.classList.add(target.after ? 'mirror-drop-after' : 'mirror-drop-before'); }
+                var panel = currentModal.querySelector('.modal-card'), bounds = panel.getBoundingClientRect();
+                if (ev.clientY < bounds.top + 45) panel.scrollTop -= 12; else if (ev.clientY > bounds.bottom - 45) panel.scrollTop += 12;
+              }
+              function finish(ev) {
+                grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', finish); grip.removeEventListener('pointercancel', finish);
+                currentModal.querySelectorAll('.mirror-drop-before,.mirror-drop-after').forEach(function (n) { n.classList.remove('mirror-drop-before','mirror-drop-after'); });
+                if (ev.type === 'pointerup') { move(ev); if (target && mirrorAction(function () { HeavenlyBookmarks.reorderMirrors(localStorage, targetBm.id, item.identity, target.id, target.after, getBrokenLinksMap()); })) refreshMirrors(item.identity, '.mirror-grip'); }
+              }
+              grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', finish); grip.addEventListener('pointercancel', finish);
+            };
+          }
+          if (isPrimaryCard) titleBox.appendChild(prefer);
+          else card.appendChild(controls);
         }
 
         var btnRow = document.createElement('div');
         btnRow.className = 'bookmark-mirror-actions';
         btnRow.style.cssText = 'display: flex; gap: 8px;';
 
-        var itemRawUrl = (item.url.startsWith('http://') || item.url.startsWith('https://')) ? item.url : 'https://' + item.url;
+        var itemRawUrl = itemDestination;
         var itemProxiedUrl = location.protocol + '//' + location.host + '/proxy/' + itemRawUrl;
 
         var directBtn = document.createElement('button');
@@ -7520,8 +7406,13 @@
         btnRow.appendChild(proxyBtn);
         btnRow.appendChild(directBtn);
 
-        card.appendChild(topRow);
+        card.insertBefore(topRow, card.firstChild);
         card.appendChild(btnRow);
+        if (!isPrimaryCard && !item.isBroken && mirrorState.active && item.identity === mirrorState.active.identity) {
+          // Keep the active entry in the ordering controls without duplicating its launch actions.
+          rightBox.remove(); btnRow.remove();
+          var activeLabel = document.createElement('small'); activeLabel.className = 'bookmark-setting-status'; activeLabel.textContent = 'Active'; titleBox.appendChild(activeLabel);
+        }
         return card;
       }
 
@@ -7531,40 +7422,43 @@
         altContainer.style.flexDirection = 'column';
         altContainer.style.gap = '12px';
 
-        // 1. Primary Site Header Card
+        // The active card and every launch control use the same resolved destination.
         var primaryHeaderLabel = document.createElement('div');
         primaryHeaderLabel.style.cssText = 'font-size: 0.8rem; font-weight: 700; color: #7dd3fc; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;';
-        primaryHeaderLabel.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>Primary Site</span>';
+        primaryHeaderLabel.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>Active Site</span>';
         altContainer.appendChild(primaryHeaderLabel);
 
         var primaryCard = renderMirrorItemCard(primaryCandidate, true);
         altContainer.appendChild(primaryCard);
-        if (mirrorState.broken.length) {
-          var brokenSection = document.createElement('details');
-          brokenSection.className = 'broken-mirrors'; brokenSection.dataset.mirrorSection = 'Broken';
-          brokenSection.open = expandedMirrors.indexOf('Broken') !== -1;
-          var brokenToggle = document.createElement('summary');
-          brokenToggle.className = 'broken-mirrors-toggle'; brokenToggle.textContent = 'Broken (' + mirrorState.broken.length + ')';
-          brokenSection.appendChild(brokenToggle);
-          mirrorState.broken.forEach(function (entry) { brokenSection.appendChild(renderMirrorItemCard(entry, false)); });
-          altContainer.appendChild(brokenSection);
+        var info = document.createElement('button'); info.type = 'button'; info.className = 'mirror-info'; info.textContent = 'Info'; info.setAttribute('aria-expanded', 'false');
+        primaryHeaderLabel.appendChild(info);
+        function explain(open) {
+          var existing = primaryCard.querySelector('.promoted-tooltip-box');
+          if (existing) existing.remove();
+          info.setAttribute('aria-expanded', String(open));
+          if (!open) { promotionState.guideUntil = 0; clearTimeout(bookmarkGuideTimer); return; }
+          var panel = document.createElement('div'); panel.className = 'promoted-tooltip-box'; panel.setAttribute('role', 'status');
+          panel.innerHTML = '<span>The selected site was marked as broken, so Heavenly switched to an available mirror. You can choose your preferred site at any time. Broken status is based on your markers.</span>';
+          var dismiss = document.createElement('button'); dismiss.type = 'button'; dismiss.textContent = 'Dismiss';
+          dismiss.onclick = function () { info.focus({ preventScroll: true }); explain(false); };
+          panel.appendChild(dismiss); primaryCard.appendChild(panel);
+          // Interaction makes this panel manual-dismiss only for the current event.
+          ['pointerenter','pointerdown','focusin','keydown'].forEach(function (name) { panel.addEventListener(name, function () { clearTimeout(bookmarkGuideTimer); promotionState.guideUntil = 0; }); });
         }
-
-
-        // Sort mirrors: Working mirrors first, broken mirrors bottom
-        userMirrors.sort(function (a, b) {
-          if (a.isBroken === b.isBroken) return 0;
-          return a.isBroken ? 1 : -1;
-        });
-
-        builtinMirrors.sort(function (a, b) {
-          if (a.isBroken === b.isBroken) return 0;
-          return a.isBroken ? 1 : -1;
-        });
-
-        // 2. Determine section order & default expansion state
-        var hasUserMirrors = userMirrors.length > 0;
-        var userMirrorsTop = hasUserMirrors; // Your mirrors on top when present
+        info.onclick = function () { explain(info.getAttribute('aria-expanded') !== 'true'); };
+        var badge = primaryCard.querySelector('.promoted-badge-btn');
+        if (badge) { badge.onclick = function () { explain(info.getAttribute('aria-expanded') !== 'true'); }; badge.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); badge.click(); } }; }
+        if (promotionState.guideUntil > Date.now()) {
+          explain(true);
+          bookmarkGuideTimer = setTimeout(function () {
+            var panel = primaryCard.querySelector('.promoted-tooltip-box');
+            if (panel && !panel.contains(document.activeElement) && !panel.matches(':hover')) explain(false);
+          }, promotionState.guideUntil - Date.now());
+        }
+        if (allAreBroken) {
+          var unavailable = document.createElement('p'); unavailable.className = 'bookmark-setting-status'; unavailable.setAttribute('role','status');
+          unavailable.textContent = 'None of these destinations is known to be working. Broken status reflects your saved markers, not a live health check.'; altContainer.appendChild(unavailable);
+        }
 
         function createMirrorSection(titleText, iconSvg, mirrorItems, isUserSection, isDefaultCollapsed) {
           var secWrapper = document.createElement('details');
@@ -7600,7 +7494,7 @@
           } else {
             var emptyNotice = document.createElement('div');
             emptyNotice.style.cssText = 'font-size: 0.78rem; color: #94a3b8; font-style: italic; padding: 6px 10px; background: rgba(15,23,42,0.4); border-radius: 8px; border: 1px dashed rgba(148,163,184,0.2);';
-            emptyNotice.textContent = isUserSection ? 'No other custom mirrors available.' : 'No other working mirrors available.';
+            emptyNotice.textContent = 'No available mirrors. Restore a link or add a custom mirror.';
             itemsList.appendChild(emptyNotice);
           }
 
@@ -7639,7 +7533,7 @@
                 return;
               }
               var latestData = loadBookmarkData();
-              var latestBookmark = latestData.bookmarks.find(function (entry) { return entry.id === targetBm.id; });
+              var latestBookmark = HeavenlyBookmarks.findEntry(latestData, targetBm.id);
               if (!latestBookmark) return;
               if (HeavenlyNavigation.findBookmarkByUrl({ bookmarks: [latestBookmark] }, mUrl)) { alert('This URL is already listed for this bookmark.'); return; }
               if (!latestBookmark.subBookmarks) latestBookmark.subBookmarks = [];
@@ -7666,22 +7560,17 @@
           return secWrapper;
         }
 
-        var userSvg = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
         var builtinSvg = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>';
 
-        var userSectionEl = createMirrorSection('Your Mirrors', userSvg, userMirrors.filter(function (m) { return !m.isBroken && m.url !== primaryCandidate.url; }), true, expandUserMirrorsOnLoad ? false : true);
-        var builtinSectionEl = createMirrorSection('Built-in Mirrors', builtinSvg, builtinMirrors.filter(function (m) { return !m.isBroken && m.url !== primaryCandidate.url; }), false, false);
-
-        if (userMirrorsTop) {
-          altContainer.appendChild(userSectionEl);
-          if (builtinMirrors.some(function (m) { return !m.isBroken && m.url !== primaryCandidate.url; })) {
-            altContainer.appendChild(builtinSectionEl);
-          }
-        } else {
-          if (builtinMirrors.some(function (m) { return !m.isBroken && m.url !== primaryCandidate.url; })) {
-            altContainer.appendChild(builtinSectionEl);
-          }
-          altContainer.appendChild(userSectionEl);
+        var availableSection = createMirrorSection('Available Mirrors', builtinSvg, mirrorState.available, true, true);
+        availableSection.className = 'available-mirror-list';
+        altContainer.appendChild(availableSection);
+        if (mirrorState.broken.length) {
+          var brokenSection = document.createElement('details'); brokenSection.className = 'broken-mirrors'; brokenSection.dataset.mirrorSection = 'Broken';
+          brokenSection.open = expandedMirrors.indexOf('Broken') !== -1;
+          var brokenToggle = document.createElement('summary'); brokenToggle.className = 'broken-mirrors-toggle'; brokenToggle.textContent = 'Broken (' + mirrorState.broken.length + ')';
+          brokenSection.appendChild(brokenToggle);
+          mirrorState.broken.forEach(function (entry) { brokenSection.appendChild(renderMirrorItemCard(entry, false)); }); altContainer.appendChild(brokenSection);
         }
       }
 
@@ -8222,50 +8111,7 @@
     function setupContainerDropTarget(containerEl, sideName) {
       if (!containerEl) return;
 
-      containerEl.ondragover = function (e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        containerEl.classList.add('drag-over');
-
-        var isCategoryDrag = document.querySelector('.section-card.dragging');
-        if (isCategoryDrag && !containerEl.querySelector('.section-drag-ghost')) {
-          var ghostCat = document.querySelector('.section-drag-ghost');
-          if (!ghostCat) {
-            ghostCat = document.createElement('div');
-            ghostCat.className = 'section-drag-ghost';
-            ghostCat.textContent = '📁 Move Section Here';
-          }
-          containerEl.appendChild(ghostCat);
-        }
-      };
-
-      containerEl.ondragleave = function (e) {
-        containerEl.classList.remove('drag-over');
-        var ghost = containerEl.querySelector('.section-drag-ghost');
-        if (ghost && !containerEl.contains(e.relatedTarget)) {
-          ghost.remove();
-        }
-      };
-
-      containerEl.ondrop = function (e) {
-        e.preventDefault();
-        containerEl.classList.remove('drag-over');
-        document.querySelectorAll('.section-drag-ghost').forEach(function (el) { el.remove(); });
-        try {
-          var raw = e.dataTransfer.getData('text/plain');
-          if (!raw) return;
-          var dragData = JSON.parse(raw);
-          if (dragData.type === 'category') {
-            var data = loadBookmarkData();
-            var cat = data.categories.find(function (c) { return c.id === dragData.id; });
-            if (cat && cat.side !== sideName) {
-              cat.side = sideName;
-              saveBookmarkData(data);
-              renderBookmarksUI();
-            }
-          }
-        } catch (err) {}
-      };
+      installBookmarkDropTarget(containerEl);
     }
 
     function initBookmarksManager() {

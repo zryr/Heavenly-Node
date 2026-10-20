@@ -24,7 +24,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
             assert.ok(html.includes('id="fallback-svg-logo"'), 'Should provide fallback inline SVG logo');
             assert.ok(html.includes('Return to Heavenly Home'), 'Should include Return Home button');
             assert.ok(html.includes("Return to Heavenly Home"), 'Return Home button should be present');
-            assert.ok(html.includes('href="/"') && html.includes('(window.location.origin + \'/\')'), 'Return Home button should redirect to root URL');
+            assert.ok(html.includes('href="/"') && html.includes('HeavenlyNavigation.returnHome(window)'), 'Return Home button should redirect to root URL');
             assert.ok(html.includes('#030712'), 'Should use Heavenly dark theme background color');
         });
 

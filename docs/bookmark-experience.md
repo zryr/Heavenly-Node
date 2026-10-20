@@ -1,5 +1,7 @@
 # Bookmark experience and proxy compatibility
 
+The [mirror management V2 follow-up](mirror-management-v2.md) supersedes the mirror selection, restoration, promotion timing and interaction details below.
+
 ## Data and implementation map
 
 The current app has three `DEFAULT_BOOKMARK_DATA` readers: `public/index.html` (homepage), `public/settings.html` (management/import/export), and `promptBookmarkCurrentPage()` in `custom-client/unblocker-client.js` (Save to Bookmarks widget). Keep their built-in IDs, destinations and icon paths synchronized. Shared URL comparison, missing-bookmark ordering and icon migration live in `public/assets/heavenly-navigation.js`. Quick Save matching and private note metadata live in `public/assets/heavenly-bookmarks.js`. Both helpers are loaded by all three readers and included before the injected proxy client in its existing bundle. Shared dialog styles live in `public/assets/bookmark-dialogs.css`; no build step or production dependency was added.

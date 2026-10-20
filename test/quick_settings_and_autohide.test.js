@@ -38,7 +38,7 @@ describe('Quick Settings & Auto-Hide Broken Bookmarks Tests', function () {
   });
 
   it('should render single-URL broken link toggle button and check if all versions are broken in openBuiltinTestModal', function () {
-    assert.ok(indexHtml.includes('var allAreBroken = allVersions.length > 0 && allVersions.every('), 'openBuiltinTestModal should check if all versions are broken');
+    assert.ok(indexHtml.includes('var allAreBroken = mirrorState.allBroken;'), 'openBuiltinTestModal should check if all versions are broken');
     assert.ok(indexHtml.includes('bmToHide.hidden = true'), 'builtin-hide-bm-btn click handler should set hidden = true on target bookmark');
     assert.ok(indexHtml.includes('toggleBrokenLinkState'), 'openBuiltinTestModal should provide broken link toggle button for single-URL bookmarks');
   });

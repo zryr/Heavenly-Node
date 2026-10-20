@@ -15,16 +15,16 @@ describe('Bookmark Mirror Modal Upgrades Tests', function () {
     assert.ok(indexHtml.includes('navigator.clipboard.writeText(urlToCopy)'), 'createUrlCopyPill should copy URL to clipboard');
   });
 
-  it('should render Primary Site header card and support auto-failover promotion', function () {
-    assert.ok(indexHtml.includes('<span>Primary Site</span>'), 'openBuiltinTestModal should render Primary Site label');
+  it('should render Active Site header card and support auto-failover promotion', function () {
+    assert.ok(indexHtml.includes('<span>Active Site</span>'), 'openBuiltinTestModal should render Active Site label');
     assert.ok(indexHtml.includes('primaryCandidate'), 'openBuiltinTestModal should determine primaryCandidate');
     assert.ok(indexHtml.includes('promoted-badge-btn'), 'openBuiltinTestModal should render promoted badge button');
     assert.ok(indexHtml.includes('promoted-tooltip-box'), 'promoted badge click should toggle promoted explanation tooltip');
   });
 
-  it('should render Collapsible Your Mirrors and Built-in Mirrors sections with + Add Custom Mirror form', function () {
-    assert.ok(indexHtml.includes('Your Mirrors'), 'openBuiltinTestModal should render Your Mirrors section');
-    assert.ok(indexHtml.includes('Built-in Mirrors'), 'openBuiltinTestModal should render Built-in Mirrors section');
+  it('should render Collapsible Available Mirrors sections with + Add Custom Mirror form', function () {
+    assert.ok(indexHtml.includes('Available Mirrors'), 'openBuiltinTestModal should render Your Mirrors section');
+    assert.ok(indexHtml.includes('Available Mirrors'), 'openBuiltinTestModal should render Built-in Mirrors section');
     assert.ok(indexHtml.includes('createMirrorSection'), 'openBuiltinTestModal should define createMirrorSection helper function');
     assert.ok(indexHtml.includes('+ Add Custom Mirror'), 'Your Mirrors section should contain + Add Custom Mirror form button');
   });

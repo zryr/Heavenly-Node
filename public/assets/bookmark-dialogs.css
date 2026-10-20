@@ -80,7 +80,11 @@
 .bookmark-personal-note summary::-webkit-details-marker { display: none; }
 .bookmark-personal-note summary:focus-visible,.bookmark-note-body textarea:focus-visible { outline: 2px solid #7dd3fc; outline-offset: 3px; }
 .bookmark-launch-card [hidden], .bookmarks-list [hidden], #share-modal [hidden] { display:none !important; }
-.subsection-content { display:contents; }
+.subsection-content { display:flex; flex-direction:column; gap:8px; min-width:0; }
+.bottom-section-container .bookmarks-list .subsection-content { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr)); gap:10px; grid-column:1 / -1; }
+.subsection-content > .show-more-btn { grid-column:1 / -1; }
+.subsection-content > div { min-width:0; }
+.bookmark-card { will-change:auto; }
 .subsection-content[hidden] { display:none !important; }
 .bookmark-active-url { overflow-wrap:anywhere; }
 .broken-mirrors { border:1px solid rgba(148,163,184,.22); border-radius:10px; padding:0 10px 8px; }
@@ -96,3 +100,31 @@
 .broken-mirrors .bookmark-mirror-top > div:first-child > div { color:#cbd5e1 !important; }
 .bookmark-launch-summary { flex:1; }
 .bookmark-launch-summary .bookmark-active-url { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; overflow-wrap:anywhere; }
+
+.category-actions .btn-add-bm-quick { background:rgba(56,189,248,.08); border-color:rgba(56,189,248,.2); color:#38bdf8; }
+.category-actions .btn-add-bm-quick:hover { background:rgba(56,189,248,.18); border-color:#38bdf8; color:#7dd3fc; }
+.category-actions .btn-add-bm-quick:focus-visible { outline-color:#7dd3fc; }
+#quick-settings-info-btn { color:#c084fc; border-color:rgba(168,85,247,.3); background:rgba(168,85,247,.08); }
+#quick-settings-info-btn:hover { background:rgba(168,85,247,.16); border-color:#a855f7; }
+.mirror-priority-controls { display:flex; flex-wrap:wrap; align-items:center; gap:4px; }
+.mirror-priority-controls button,.mirror-prefer,.mirror-info,.promoted-tooltip-box button { color:#7dd3fc; background:rgba(56,189,248,.07); border:1px solid rgba(56,189,248,.22); border-radius:8px; padding:4px 8px; font:inherit; font-size:.73rem; cursor:pointer; }
+.mirror-priority-controls .mirror-prefer { margin-right:auto; }
+.mirror-prefer[aria-pressed="true"],.mirror-info { color:#c084fc; border-color:rgba(168,85,247,.35); background:rgba(168,85,247,.1); }
+.mirror-grip { touch-action:none; cursor:grab !important; }
+.mirror-priority-controls button:disabled { opacity:.35; cursor:default; }
+.mirror-drop-before { box-shadow:0 -3px #c084fc !important; }
+.mirror-drop-after { box-shadow:0 3px #c084fc !important; }
+.promoted-tooltip-box { display:flex; align-items:flex-start; gap:8px; padding:10px; border-radius:10px; border:1px solid rgba(168,85,247,.35); color:#e9d5ff; background:rgba(168,85,247,.12); font-size:.78rem; line-height:1.5; }
+.promoted-tooltip-box button { flex-shrink:0; color:#c084fc; }
+.mirror-info { margin-left:auto; text-transform:none; letter-spacing:normal; min-height:32px !important; }
+.bookmark-placement-indicator { position:fixed; z-index:2147483646; pointer-events:none; border-radius:3px; background:#c084fc; height:3px; box-shadow:0 0 0 1px #030712; }
+.drag-dots-handle svg,.qs-editor-handle svg { flex-shrink:0; }
+
+.section-header-title > .drag-dots-handle { padding:4px 2px; }
+/* Resize the popup immediately; viewport width/height must not interpolate. */
+#builtin-test-modal { transition:opacity .2s ease; }
+@media (prefers-reduced-motion: reduce) { #builtin-test-modal { transition:none; animation:none; } }
+
+.bookmark-mirror-name { min-width:0; flex-wrap:wrap; overflow-wrap:anywhere; }
+.bookmark-mirror-name > div { min-width:0; }
+.bookmark-mirror-name .mirror-prefer { min-height:32px !important; }
