@@ -5,6 +5,8 @@
 
   var icons = typeof module !== "undefined" && module.exports ? require("../public/assets/heavenly-icons.js") : global.HeavenlyIcons;
 
+  var bookmarks = typeof module !== "undefined" && module.exports ? require("../public/assets/heavenly-bookmarks.js") : global.HeavenlyBookmarks;
+
   // todo:
   // - postMessage
   // - open
@@ -1190,6 +1192,14 @@
     }
   }
 
+  function openIntentionalProxyLink(window, config, proxiedUrl) {
+    if (navigation.isCoolmathUrl(navigation.remoteUrl(proxiedUrl, config.proxyOrigin))) {
+      return navigation.launch(window, proxiedUrl, { origin: config.proxyOrigin, newTab: true });
+    }
+    var openFn = window.__nativeWinOpen || window.open;
+    return openFn.call(window, proxiedUrl, '_blank', 'noopener');
+  }
+
   function openFmhyLinkModal(window, config, rawUrl, proxiedUrl) {
     try {
       var existingModal = window.document.getElementById('heavenly-fmhy-link-modal');
@@ -1234,8 +1244,7 @@
       openProxyBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;';
       openProxyBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span>';
       openProxyBtn.onclick = function () {
-        var openFn = window.__nativeWinOpen || window.open;
-        openFn.call(window, targetProxiedUrl, '_blank', 'noopener');
+        openIntentionalProxyLink(window, config, targetProxiedUrl);
         backdrop.remove();
       };
 
@@ -1265,7 +1274,7 @@
       if (targetParent) targetParent.appendChild(backdrop);
     } catch (e) {
       console.error('Error in FMHY link modal:', e);
-      window.open(proxiedUrl, '_blank', 'noopener');
+      openIntentionalProxyLink(window, config, proxiedUrl);
     }
   }
 
@@ -1313,8 +1322,7 @@
       openProxyBtn.style.cssText = 'padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#38bdf8 0%,#60a5fa 100%);border:none;color:#030712;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;';
       openProxyBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span>';
       openProxyBtn.onclick = function () {
-        var openFn = window.__nativeWinOpen || window.open;
-        openFn.call(window, targetProxiedUrl, '_blank', 'noopener');
+        openIntentionalProxyLink(window, config, targetProxiedUrl);
         backdrop.remove();
       };
 
@@ -1344,7 +1352,7 @@
       if (targetParent) targetParent.appendChild(backdrop);
     } catch (e) {
       console.error('Error in EverythingMoe link modal:', e);
-      window.open(proxiedUrl, '_blank', 'noopener');
+      openIntentionalProxyLink(window, config, proxiedUrl);
     }
   }
 
@@ -1504,7 +1512,7 @@
         ],
         bookmarks: [
           { id: "bm_everythingmoe", categoryId: "cat_anime", title: "EverythingMoe", url: "https://everythingmoe.com/", type: "bookmark", icon: "/proxy/https://everythingmoe.com/favicon.ico", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
-          { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "/proxy/https://fmhy.net/hall.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
+          { id: "bm_fmhy_anime", categoryId: "cat_anime", title: "FMHY: Anime", url: "https://fmhy.net/video#anime-streaming", type: "bookmark", icon: "/assets/icons/fmhy-halloween-icon.png", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
           { id: "bm_anisnatch", categoryId: "cat_anime", title: "AniSnatch", url: "https://anisnatch.top/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=anisnatch.top&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
           { id: "bm_miruro", categoryId: "cat_anime", title: "Miruro", url: "https://www.miruro.bz/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=miruro.bz&sz=64", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
           { id: "bm_aniclover", categoryId: "cat_anime", title: "AniClover", url: "https://aniclover.cc/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=aniclover.cc&sz=64", builtIn: true, hidden: false, order: 4, subBookmarks: [] },
@@ -1512,7 +1520,7 @@
           { id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7, subBookmarks: [
             { id: "sub_movish_latestmovies_anime", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }
           ] },
-          { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "/proxy/https://fmhy.net/hall.png", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
+          { id: "bm_fmhy_movies", categoryId: "cat_movies", title: "FMHY: Movies", url: "https://fmhy.net/video", type: "bookmark", icon: "/assets/icons/fmhy-halloween-icon.png", builtIn: true, hidden: false, order: 0, subBookmarks: [] },
           { id: "bm_streamopro", categoryId: "cat_movies", title: "Streamo", url: "https://streamo.pro/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=streamo.pro&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
           { id: "bm_movish_movies", categoryId: "cat_movies", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 2, subBookmarks: [
             { id: "sub_movish_latestmovies_movies", title: "Latest Movies", url: "https://latestmovies.net/", icon: "https://www.google.com/s2/favicons?domain=latestmovies.net&sz=64" }
@@ -1575,6 +1583,7 @@
               { id: "sub_bloxcraft_fastly", title: "Bloxcraft (Fastly)", url: "https://bloxcraftubg.freetls.fastly.net/games/", icon: "https://www.google.com/s2/favicons?domain=bloxcraftubg.freetls.fastly.net&sz=64" }
             ]
           },
+          { id: "bm_coolmath", categoryId: "cat_games", title: "Coolmath Games", url: "https://www.coolmathgames.com/", type: "bookmark", icon: "/assets/icons/coolmath-icon.ico", builtIn: true, hidden: false, order: 22, subBookmarks: [] },
           {
             id: "bm_aether",
             categoryId: "cat_op_websites",
@@ -1582,7 +1591,7 @@
             title: "Aether",
             url: "https://actstudy.s3.us-east-1.amazonaws.com/index.html",
             type: "folder_bookmark",
-            icon: "/assets/aether-logo.png",
+            icon: "/assets/icons/aether-icon.png",
             builtIn: true,
             hidden: false,
             order: 0,
@@ -1606,7 +1615,7 @@
             ]
           },
           { id: "bm_korona", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Korona", url: "https://korona.lat/dashboard", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=korona.lat&sz=64", builtIn: true, hidden: false, order: 1, subBookmarks: [] },
-          { id: "bm_nexus", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Nexus", url: "https://car-meow.github.io/toothbrush/", type: "bookmark", icon: "/assets/nexus-logo.png", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
+          { id: "bm_nexus", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Nexus", url: "https://car-meow.github.io/toothbrush/", type: "bookmark", icon: "/assets/icons/nexus-icon.png", builtIn: true, hidden: false, order: 2, subBookmarks: [] },
           { id: "bm_flux", categoryId: "cat_op_websites", subSectionId: "browser_games", title: "Flux", url: "https://web.flux.focuznow.com/", type: "folder_bookmark", icon: "/proxy/https://web.flux.focuznow.com/assets/flux-mark.webp", builtIn: true, hidden: false, order: 3, subBookmarks: [] },
           {
             id: "bm_opium",
@@ -1615,7 +1624,7 @@
             title: "Opium",
             url: "https://opium.best/",
             type: "folder_bookmark",
-            icon: "/assets/opium-logo.png",
+            icon: "/assets/icons/opium-icon.png",
             builtIn: true,
             hidden: false,
             order: 4,
@@ -1673,7 +1682,7 @@
             title: "Arctic",
             url: "https://storage.googleapis.com/math-homework/index.html",
             type: "folder_bookmark",
-            icon: "/assets/artic-logo.png",
+            icon: "/assets/icons/artic-icon.png",
             builtIn: true,
             hidden: false,
             order: 6,
@@ -1701,7 +1710,7 @@
             title: "Ultimate Doc Of Docs",
             url: "https://0800webdev.github.io/The-Ultimate-Doc-Of-Docs/",
             type: "folder_bookmark",
-            icon: "/assets/doc-of-docs-logo.png",
+            icon: "/assets/icons/doc-of-docs-icon.png",
             builtIn: true,
             hidden: false,
             order: 2,
@@ -1721,7 +1730,7 @@
           var parsed = JSON.parse(raw);
           if (parsed && parsed.categories && parsed.bookmarks) {
             data = parsed;
-            var updated = false;
+            var updated = navigation.migrateBookmarkIcons(data);
 
             // Build lookup maps for DEFAULT_BOOKMARK_DATA categories and bookmarks
             var defaultCatMap = Object.create(null);
@@ -1788,7 +1797,7 @@
                         userSub.title = defSub.title;
                         updated = true;
                       }
-                      if (userSub.icon !== defSub.icon && defSub.icon) {
+                      if ((!userSub.icon || userSub.icon.trim() === '') && defSub.icon) {
                         userSub.icon = defSub.icon;
                         updated = true;
                       }
@@ -1850,7 +1859,8 @@
             DEFAULT_BOOKMARK_DATA.bookmarks.forEach(function (defBm) {
               var userBm = userBmMap[defBm.id];
               if (!userBm) {
-                var newBm = JSON.parse(JSON.stringify(defBm));
+                if (defBm.id === 'bm_coolmath' && navigation.findBookmarkByUrl(data, defBm.url)) return;
+                var newBm = navigation.prepareMissingBookmark(data, defBm);
                 data.bookmarks.push(newBm);
                 userBmMap[defBm.id] = newBm;
                 updated = true;
@@ -1868,11 +1878,11 @@
                     userBm.url = defBm.url;
                     updated = true;
                   }
-                  if (userBm.icon !== defBm.icon && defBm.icon) {
+                  if ((!userBm.icon || userBm.icon.trim() === '') && defBm.icon) {
                     userBm.icon = defBm.icon;
                     updated = true;
                   }
-                  if (defBm.disableQuickSaveWidget !== undefined && userBm.disableQuickSaveWidget !== defBm.disableQuickSaveWidget) {
+                  if (defBm.disableQuickSaveWidget !== undefined && userBm.disableQuickSaveWidget === undefined) {
                     userBm.disableQuickSaveWidget = defBm.disableQuickSaveWidget;
                     updated = true;
                   }
@@ -1887,19 +1897,7 @@
                     userBm.subBookmarks = [];
                     updated = true;
                   }
-                  var defSubMap = Object.create(null);
-                  for (var dSi = 0; dSi < defBm.subBookmarks.length; dSi++) {
-                    defSubMap[defBm.subBookmarks[dSi].id] = defBm.subBookmarks[dSi];
-                  }
-
-                  if (defBm.builtIn) {
-                    var initSubLen = userBm.subBookmarks.length;
-                    userBm.subBookmarks = userBm.subBookmarks.filter(function (userSub) {
-                      return Boolean(defSubMap[userSub.id]);
-                    });
-                    if (userBm.subBookmarks.length !== initSubLen) updated = true;
-                  }
-
+                  // Merge defaults without deleting user-saved children.
                   var userSubBmMap = Object.create(null);
                   for (var uSbi = 0; uSbi < userBm.subBookmarks.length; uSbi++) {
                     userSubBmMap[userBm.subBookmarks[uSbi].id] = userBm.subBookmarks[uSbi];
@@ -1922,7 +1920,7 @@
                           userSub.url = defSub.url;
                           updated = true;
                         }
-                        if (userSub.icon !== defSub.icon && defSub.icon) {
+                        if ((!userSub.icon || userSub.icon.trim() === '') && defSub.icon) {
                           userSub.icon = defSub.icon;
                           updated = true;
                         }
@@ -2176,6 +2174,18 @@
         var finalUrl = navigation.remoteUrl(urlInput.value.trim() || unproxiedUrl, config.proxyOrigin, prefix);
         if (!finalUrl) { window.alert('Enter a valid HTTP or HTTPS bookmark address.'); return; }
         var finalIcon = iconInput.value.trim() || defaultFavicon;
+
+        // Another tab may have saved this page while the form was open.
+        var latest = storage.getItem('heavenly_bookmarks');
+        if (latest) {
+          var parsed = JSON.parse(latest);
+          if (parsed && Array.isArray(parsed.bookmarks) && Array.isArray(parsed.categories)) data = parsed;
+        }
+        if (navigation.findBookmarkByUrl(data, finalUrl)) {
+          backdrop.remove();
+          window.alert('This page is already saved in your bookmarks.');
+          return;
+        }
 
         data.bookmarks.push({
           id: 'bm_' + Date.now(),
@@ -4186,6 +4196,7 @@
       if (url && url !== lastUrl) {
         lastUrl = url;
         saveToHeavenlyHistory(window, config);
+        if (window.__heavenlyRefreshQuickSave) window.__heavenlyRefreshQuickSave();
       }
       syncPresentation();
     }
@@ -4219,32 +4230,25 @@
   function initFolderQuickSaveWidget(config, window, settings) {
     try {
       if (!isTopOrAboutBlankIframe(window)) return;
+      if (!window.__heavenlyRefreshQuickSave) {
+        window.__heavenlyRefreshQuickSave = function () { initFolderQuickSaveWidget(config, window); };
+        window.addEventListener('storage', function (event) {
+          if (event.key === 'heavenly_bookmarks' || event.key === 'heavenly_settings' || event.key === null) window.__heavenlyRefreshQuickSave();
+        });
+      }
+      function removeWidget() {
+        var existing = window.document && window.document.getElementById('heavenly-folder-save-root');
+        if (existing) { if (existing.__heavenlyCleanup) existing.__heavenlyCleanup(); existing.remove(); }
+      }
       if (!settings) {
         settings = loadHeavenlySettings(window);
       }
       if (settings.disableAllWidgets || settings.disableAllFeatures) {
-        var existingSave = window.document ? window.document.getElementById('heavenly-folder-save-root') : null;
-        if (existingSave) existingSave.remove();
+        removeWidget();
         return;
       }
-      var targetUrl = (config && config.url) ? config.url : '';
-      if (!targetUrl && window.location) {
-        var path = window.location.pathname;
-        var prefix = (config && config.prefix) ? config.prefix : '/proxy/';
-        if (path.startsWith(prefix)) {
-          targetUrl = path.substr(prefix.length) + window.location.search + window.location.hash;
-        }
-      }
-
-      if (!targetUrl || targetUrl.startsWith('about:') || targetUrl.startsWith('data:')) return;
-
-      var currentHost = '';
-      try {
-        var u = new URL(targetUrl.startsWith('http') ? targetUrl : 'https://' + targetUrl);
-        currentHost = u.hostname.toLowerCase();
-      } catch (e) {
-        return;
-      }
+      var targetUrl = navigation.currentRemoteUrl(window, config);
+      if (!targetUrl) { removeWidget(); return; }
 
       var storage = window.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
       if (!storage) return;
@@ -4255,21 +4259,10 @@
       var data = JSON.parse(raw);
       if (!data || !data.bookmarks) return;
 
-      // Find matching Folder or Folder-Bookmark
-      var matchedFolder = data.bookmarks.find(function (bm) {
-        if (bm.hidden) return false;
-        if (bm.disableQuickSaveWidget === true || bm.id === 'bm_ng') return false;
-        if (bm.type !== 'folder' && bm.type !== 'folder_bookmark') return false;
-        if (!bm.url) return false;
-        try {
-          var folderHost = new URL(bm.url.startsWith('http') ? bm.url : 'https://' + bm.url).hostname.toLowerCase();
-          return currentHost === folderHost || currentHost.endsWith('.' + folderHost);
-        } catch (e) {
-          return false;
-        }
-      });
-
-      if (!matchedFolder) return;
+      var matchedFolder = bookmarks.findQuickSaveBookmark(data, targetUrl);
+      if (!matchedFolder || matchedFolder.disableQuickSaveWidget === true) { removeWidget(); return; }
+      var existing = window.document.getElementById('heavenly-folder-save-root');
+      if (existing && existing.dataset.bookmarkId !== matchedFolder.id) removeWidget();
 
       function setupWidget() {
         if (!window.document || !window.document.body) return;
@@ -4277,6 +4270,7 @@
 
         var saveContainer = window.document.createElement('div');
         saveContainer.id = 'heavenly-folder-save-root';
+        saveContainer.dataset.bookmarkId = matchedFolder.id;
         saveContainer.style.cssText = 'position:fixed;bottom:70px;right:20px;z-index:2147483646;user-select:none;-webkit-user-select:none;font-family:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
 
         // Restore position from localStorage
@@ -4407,17 +4401,22 @@
           window.removeEventListener('touchend', onSaveEnd, { capture: true });
         };
 
+        saveContainer.__heavenlyCleanup = onSaveEnd;
         bar.addEventListener('mousedown', onSaveStart);
         bar.addEventListener('touchstart', onSaveStart, { passive: false });
 
         var btn = window.document.createElement('button');
         btn.type = 'button';
         btn.className = 'save-btn';
-        btn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg><span>Save to ' + matchedFolder.title + '</span>';
+        btn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg><span></span>';
 
+        btn.querySelector('span').textContent = 'Save to ' + matchedFolder.title;
         btn.onclick = function (e) {
           e.stopPropagation();
           if (hasMovedSave) return;
+          targetUrl = navigation.currentRemoteUrl(window, config);
+          var activeSettings = loadHeavenlySettings(window);
+          if (activeSettings.disableAllWidgets || activeSettings.disableAllFeatures) { removeWidget(); return; }
           var title = window.__heavenlyOriginalTitle || window.document.title || targetUrl;
           var customTitle = prompt("Save page to folder '" + matchedFolder.title + "':", title);
           if (customTitle === null) return;
@@ -4425,7 +4424,8 @@
           var freshRaw = storage.getItem('heavenly_bookmarks');
           var freshData = freshRaw ? JSON.parse(freshRaw) : data;
           var targetBm = freshData.bookmarks.find(function (b) { return b.id === matchedFolder.id; });
-          if (targetBm) {
+          if (targetBm && targetBm.disableQuickSaveWidget !== true) {
+            if (navigation.findBookmarkByUrl(freshData, targetUrl)) { window.alert('This page is already saved in your bookmarks.'); return; }
             if (!targetBm.subBookmarks) targetBm.subBookmarks = [];
             targetBm.subBookmarks.push({
               id: 'sub_' + Date.now(),
@@ -4434,7 +4434,7 @@
               icon: ''
             });
             storage.setItem('heavenly_bookmarks', JSON.stringify(freshData));
-            (window.top || window).location.href = window.location.origin + '/';
+            goHeavenlyHome(window, config);
           }
         };
 
@@ -4444,7 +4444,7 @@
         closeBtn.textContent = '✕';
         closeBtn.onclick = function (e) {
           e.stopPropagation();
-          saveContainer.remove();
+          removeWidget();
         };
 
         bar.appendChild(btn);
@@ -4647,10 +4647,10 @@
     if (!settings.disableAllWidgets && !settings.disableAllFeatures) {
       initHeavenlyWidgets(window, settings, config);
       initManualIconPickerWidget(config, window, settings);
-      initFolderQuickSaveWidget(config, window, settings);
       initNewgroundsPagination(config, window, settings);
     }
 
+    initFolderQuickSaveWidget(config, window, settings);
     initHeavenlyNavigationHistory(window, config);
 
     // Touch event guard for injected client modal dialogues to prevent top overscroll / elastic bounce
@@ -4708,6 +4708,7 @@
       fixSrcset: fixSrcset,
       isTopOrAboutBlankIframe: isTopOrAboutBlankIframe,
       openAboutBlankLauncher: openAboutBlankLauncher,
+      openIntentionalProxyLink: openIntentionalProxyLink,
       getActiveProxiedUrl: getActiveProxiedUrl,
     };
   }

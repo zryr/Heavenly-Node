@@ -44,7 +44,7 @@ describe("OP Websites Category, Bookmarks & Advice Modals", function () {
   it("should configure specific icons for Aether, Flux, UBGDir, and Docs bookmarks across client files", function () {
     [indexHtml, settingsHtml, clientJs].forEach((content, idx) => {
       const fileName = ["index.html", "settings.html", "unblocker-client.js"][idx];
-      assert.strictEqual(content.includes("/assets/aether-logo.png"), true, `${fileName} should contain Aether custom icon`);
+      assert.strictEqual(content.includes("/assets/icons/aether-icon.png"), true, `${fileName} should contain Aether custom icon`);
       assert.strictEqual(content.includes("/proxy/https://web.flux.focuznow.com/assets/flux-mark.webp"), true, `${fileName} should contain Flux custom icon`);
       assert.strictEqual(content.includes("/proxy/https://0800webdev.github.io/UBGdir/favicon.png"), true, `${fileName} should contain UBGDir custom icon`);
       assert.strictEqual(content.includes("https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico"), true, `${fileName} should contain Google Docs favicon`);
@@ -77,12 +77,12 @@ describe("OP Websites Category, Bookmarks & Advice Modals", function () {
   it("should configure local assets, Polaris SVG, subsection icons, and proxied icons across client files", function () {
     [indexHtml, settingsHtml, clientJs].forEach((content, idx) => {
       const fileName = ["index.html", "settings.html", "unblocker-client.js"][idx];
-      assert.strictEqual(content.includes('/assets/artic-logo.png'), true, `${fileName} should contain Artic logo asset`);
-      assert.strictEqual(content.includes('/assets/doc-of-docs-logo.png'), true, `${fileName} should contain Doc of Docs logo asset`);
-      assert.strictEqual(content.includes('/assets/nexus-logo.png'), true, `${fileName} should contain Nexus logo asset`);
-      assert.strictEqual(content.includes('/assets/opium-logo.png'), true, `${fileName} should contain Opium logo asset`);
+      assert.strictEqual(content.includes('/assets/icons/artic-icon.png'), true, `${fileName} should contain Artic logo asset`);
+      assert.strictEqual(content.includes('/assets/icons/doc-of-docs-icon.png'), true, `${fileName} should contain Doc of Docs logo asset`);
+      assert.strictEqual(content.includes('/assets/icons/nexus-icon.png'), true, `${fileName} should contain Nexus logo asset`);
+      assert.strictEqual(content.includes('/assets/icons/opium-icon.png'), true, `${fileName} should contain Opium logo asset`);
       assert.strictEqual(content.includes('/assets/polaris.svg'), true, `${fileName} should contain Polaris SVG asset`);
-      assert.strictEqual(content.includes('/proxy/https://fmhy.net/hall.png'), true, `${fileName} should contain FMHY proxied icon`);
+      assert.strictEqual(content.includes('/assets/icons/fmhy-halloween-icon.png'), true, `${fileName} should contain FMHY local icon`);
       assert.strictEqual(content.includes('/proxy/https://everythingmoe.com/favicon.ico'), true, `${fileName} should contain EverythingMoe proxied icon`);
       assert.strictEqual(content.includes('/proxy/https://pinkdev.d13qic2f6zga3.amplifyapp.com/favicon.png'), true, `${fileName} should contain Interdimensional Lite proxied icon`);
       assert.strictEqual(content.includes('icon: "file-text"'), true, `${fileName} should contain file-text icon for docs_games sub-section`);

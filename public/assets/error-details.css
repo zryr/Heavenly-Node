@@ -1,0 +1,21 @@
+.advanced-details { width:100%; min-width:0; border:1px solid #334155; border-radius:14px; background:#101a2b; text-align:left; font-size:.83rem; }
+.advanced-details > summary { display:flex; align-items:center; gap:10px; cursor:pointer; min-height:48px; padding:10px 14px; list-style:none; color:#e2e8f0; }
+.advanced-details > summary::-webkit-details-marker { display:none; }
+.advanced-details > summary svg { width:18px; height:18px; color:#7dd3fc; flex-shrink:0; }
+.diagnostic-status { color:#94a3b8; font-size:.72rem; margin-left:auto; }
+.diagnostic-chevron { color:#7dd3fc; transition:transform .15s; }
+.advanced-details[open] .diagnostic-chevron { transform:rotate(180deg); }
+.advanced-content { padding:0 14px 14px; border-top:1px solid #253348; }
+.advanced-content .diagnostic-grid { display:grid; grid-template-columns:minmax(85px,.8fr) minmax(0,1.6fr); gap:0 12px; margin:5px 0 10px; }
+.diagnostic-grid dt,.diagnostic-grid dd { padding:8px 0; border-bottom:1px solid rgba(148,163,184,.12); line-height:1.4; }
+.diagnostic-grid code { font-size:.75rem; overflow-wrap:anywhere; }
+.advanced-content > p { font-size:.76rem; color:#94a3b8; margin:8px 0; }
+.diagnostic-report { margin:10px 0; border:1px solid #29374b; border-radius:10px; background:#0b1322; }
+.diagnostic-report > summary { min-height:44px; padding:10px 12px; cursor:pointer; color:#a5cce3; }
+.diagnostic-report-label { display:block; margin:0 12px 6px; font-size:.72rem; color:#94a3b8; }
+.advanced-details .diagnostic-report textarea { display:block; width:calc(100% - 24px); margin:0 12px 12px; height:164px; min-height:120px; max-height:320px; resize:vertical; border:1px solid #334155; background:#080f1c; font:12px/1.5 ui-monospace,monospace; color:#cbd5e1; padding:10px; }
+.diagnostic-copy-row { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; }
+.diagnostic-copy-row .btn-action { min-height:44px; padding:9px 13px; border-radius:10px; box-shadow:none; font-size:.79rem; }
+#heavenly-advanced-copy-status { flex:1 1 180px; color:#94a3b8; font-size:.73rem; line-height:1.5; }
+@media(max-width:400px) { .diagnostic-status { display:none; } }
+@media(prefers-reduced-motion:reduce) { .diagnostic-chevron { transition:none; } }

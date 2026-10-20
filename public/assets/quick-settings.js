@@ -17,6 +17,7 @@
     var draft = null, baseline = null, externalLayout = false, lastSettings = null;
     var syncedSettings = signature(read());
     var drag = null, dragFrame = null;
+    var touchPointers = new Set();
     var modal = doc.createElement('div');
     modal.id = 'qs-editor';
     modal.className = 'qs-editor-backdrop';
@@ -145,6 +146,7 @@
       var li = doc.createElement('li'); li.dataset.shortcut = item.id; li.className = 'qs-editor-row';
       var name = doc.createElement('span'); name.className = 'qs-editor-name'; name.innerHTML = svg(model.icons[item.icon]);
       var text = doc.createElement('span'); text.textContent = item.name; name.appendChild(text); li.appendChild(name);
+      li.__heavenlyDragItem = { kind:'shortcut', label:item.name, icon:name.querySelector('svg') };
       var actions = doc.createElement('div'); actions.className = 'qs-editor-actions';
       var show = doc.createElement('button'); show.type = 'button'; show.dataset.visibility = item.id;
       show.textContent = visible ? 'Hide' : 'Add'; show.setAttribute('aria-label', (visible ? 'Hide ' : 'Show ') + item.name + ' shortcut');
@@ -196,9 +198,10 @@
     }
     // Handle-only hold prevents a scroll gesture over a row from becoming a drag.
     function startDrag(event) {
+      if (event.pointerType === 'touch' && touchPointers.size !== 1) return;
       if (event.button !== 0 || drag) return;
       var handle = event.currentTarget;
-      drag = { id: handle.dataset.handle, pointer: event.pointerId, x: event.clientX, y: event.clientY, active: event.pointerType === 'mouse', target: null, after: false };
+      drag = { id: handle.dataset.handle, pointer: event.pointerId, x: event.clientX, y: event.clientY, item: handle.closest('.qs-editor-row').__heavenlyDragItem, input: event.pointerType, active: event.pointerType !== 'touch', target: null, after: false };
       handle.setPointerCapture(event.pointerId);
       if (!drag.active) drag.timer = root.setTimeout(function () { if (drag) { drag.active = true; handle.classList.add('is-dragging'); } }, 400);
       handle.addEventListener('pointermove', dragMove);
@@ -211,6 +214,8 @@
       if (!drag || event.pointerId !== drag.pointer) return;
       if (!drag.active) { if (Math.abs(event.clientX - drag.x) > 8 || Math.abs(event.clientY - drag.y) > 8) cancelDrag(); return; }
       event.preventDefault(); drag.handle.classList.add('is-dragging');
+      if (!drag.preview && root.HeavenlyDrag) drag.preview = root.HeavenlyDrag.create({ id:'heavenly-shortcut-drag-avatar', icon:drag.item.icon, label:drag.item.label, kind:drag.item.kind, input:drag.input, x:event.clientX, y:event.clientY });
+      if (drag.preview) drag.preview.move(event.clientX,event.clientY);
       drag.clientX = event.clientX; drag.clientY = event.clientY;
       previewDrop(event.clientX, event.clientY);
       var body = modal.querySelector('.qs-editor-body'), rect = body.getBoundingClientRect();
@@ -235,6 +240,7 @@
     function cancelDrag() {
       if (!drag) return;
       root.clearTimeout(drag.timer); root.cancelAnimationFrame(dragFrame);
+      if (drag.preview) drag.preview.destroy();
       var handle = drag.handle, pointer = drag.pointer; drag = null;
       handle.removeEventListener('pointermove', dragMove); handle.removeEventListener('pointerup', finishDrag); handle.removeEventListener('pointercancel', cancelDrag); handle.removeEventListener('lostpointercapture', cancelDrag);
       handle.classList.remove('is-dragging'); if (handle.hasPointerCapture(pointer)) handle.releasePointerCapture(pointer);
@@ -277,8 +283,18 @@
     // A delayed initial pageshow must not interrupt help or configuration focus.
     // Restore from the back/forward cache, or refresh if saved values changed.
     root.addEventListener('pageshow', function (event) { if (event.persisted || signature(read()) !== syncedSettings) refresh(); });
-    root.addEventListener('blur', cancelDrag);
-    doc.addEventListener('visibilitychange', function () { if (doc.hidden) cancelDrag(); });
+    // A second finger anywhere cancels both a pending hold and an active drag.
+    doc.addEventListener('pointerdown', function (event) {
+      if (event.pointerType !== 'touch') return;
+      touchPointers.add(event.pointerId);
+      if (touchPointers.size > 1) cancelDrag();
+    }, true);
+    ['pointerup', 'pointercancel'].forEach(function (type) {
+      doc.addEventListener(type, function (event) { touchPointers.delete(event.pointerId); }, true);
+    });
+    function interruptDrag() { touchPointers.clear(); cancelDrag(); }
+    root.addEventListener('blur', interruptDrag);
+    doc.addEventListener('visibilitychange', function () { if (doc.hidden) interruptDrag(); });
     var hint = doc.createElement('p'); hint.id = 'qs-editor-drag-hint'; hint.className = 'qs-sr-only'; hint.textContent = 'Hold the handle to drag. Use Up and Down arrows or the Move buttons to reorder.'; card.appendChild(hint);
     renderPanel();
     return { closeHelp: function () { if (help) help.close(false); } };

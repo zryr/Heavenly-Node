@@ -13,7 +13,7 @@ function source(name, content = html) {
 function context() {
   const store = new Map();
   const sandbox = {
-    Set,
+    HeavenlyBookmarks: require('../public/assets/heavenly-bookmarks'), Set, URL, HeavenlyNavigation: require('../public/assets/heavenly-navigation'), navigation: require('../public/assets/heavenly-navigation'),
     localStorage: { getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value) }
   };
   vm.createContext(sandbox);
@@ -90,10 +90,12 @@ describe('Bookmark management and saved ordering', function () {
   it('shares exactly checked bookmarks and the category metadata needed to import them', function () {
     const c = context();
     const data = c.loadBookmarkData();
-    const one = data.bookmarks.find(b => b.id === 'bm_everythingmoe');
+    const one = {id:'custom_share',title:'My site',url:'https://custom.test/',categoryId:'cat_movies'};
+    data.bookmarks.push(one); c.saveBookmarkData(data);
     let payload;
     c.document = { querySelectorAll: selector => selector === '.share-bm-cb:checked' ? [{ getAttribute: () => one.id }] : [] };
     c.$ = () => ({});
+    c.location = { origin: 'https://heavenly.test', pathname: '/' };
     c.encodeSharePayload = value => { payload = value; return 'code'; };
     vm.runInContext(source('updateShareOutputCode'), c);
     c.updateShareOutputCode();

@@ -175,7 +175,12 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   const source = page.locator('[data-handle="pill-proxy-url"]'), target = page.locator('#qs-editor-visible [data-shortcut="pill-bm-newtab"]');
   const from = await source.boundingBox(), to = await target.boundingBox();
   await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2); await page.mouse.down();
-  await page.mouse.move(to.x + 20, to.y + 5, { steps: 8 }); await page.mouse.up();
+  await page.mouse.move(to.x + 20, to.y + 5, { steps: 8 });
+  const preview = page.locator('.heavenly-drag-preview'); await preview.waitFor();
+  assert.equal(await preview.getAttribute('data-kind'), 'shortcut');
+  assert.equal(await preview.locator('svg').innerHTML(), await source.evaluate(e => e.closest('.qs-editor-row').__heavenlyDragItem.icon.innerHTML));
+  assert.equal(await preview.innerText(), await source.evaluate(e => e.closest('.qs-editor-row').__heavenlyDragItem.label));
+  await page.mouse.up();
   assert.equal((await draftIds(page))[0], 'pill-proxy-url');
   await page.locator('[data-id="pill-proxy-url"][data-move="down"]').click(); assert.equal((await draftIds(page))[1], 'pill-proxy-url');
   await page.locator('[data-id="pill-proxy-url"][data-move="up"]').click(); assert.equal((await draftIds(page))[0], 'pill-proxy-url');
@@ -200,7 +205,27 @@ const pass = message => { checks++; console.log('PASS ' + message); };
     const beforeScrollOrder = await draftIds(page);
     await touch('touchStart', s.x + 35, s.y + s.height - 35); await touch('touchMove', s.x + 35, s.y + 45); await touch('touchEnd');
     assert.deepEqual(await draftIds(page), beforeScrollOrder); await cancel(page);
-    await cdp.detach(); pass('native Chromium emulated touch handle drag works; row scrolling does not reorder');
+    pass('native Chromium emulated touch handle drag works; row scrolling does not reorder');
+    for (const held of [false, true]) {
+      await open(page); const beforeMultiTouch = await draftIds(page);
+      const handleBox = await source.boundingBox(), targetBox = await target.boundingBox();
+      const point = { x: handleBox.x + 20, y: handleBox.y + 20, id: 1, radiusX: 3, radiusY: 3, force: 1 };
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
+      if (held) {
+        await page.waitForTimeout(450);
+        point.x = targetBox.x + 20; point.y = targetBox.y + 5;
+        await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [point] });
+        assert(await source.evaluate(node => node.classList.contains('is-dragging')));
+      }
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point, { ...point, id: 2, x: point.x + 35 }] });
+      await page.waitForTimeout(450);
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      assert.deepEqual(await draftIds(page), beforeMultiTouch);
+      assert.equal(await page.locator('.is-dragging, .qs-drop-before, .qs-drop-after').count(), 0);
+      await cancel(page);
+      pass('second finger cancels ' + (held ? 'active shortcut dragging' : 'pending shortcut hold') + ' without reordering');
+    }
+    await cdp.detach();
   }
   await page.emulateMedia({ reducedMotion: 'reduce' }); await open(page);
   assert.equal(await page.locator('#qs-editor .qs-editor-card').evaluate(node => getComputedStyle(node).animationName), 'none'); await cancel(page);
