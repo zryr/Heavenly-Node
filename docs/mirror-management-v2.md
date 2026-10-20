@@ -1,6 +1,6 @@
 # Mirror management V2
 
-This follow-up starts from PR #179's final commit, `ead7eff`. PR #179 was already merged when this work began. Additional commits belong to its existing `feat/bookmark-experience-overhaul` branch; they do not change the historical merge or automatically enter `main`.
+This follow-up builds on merged PR #179 and the latest `main`. All follow-up work lives on the dedicated `feat/mirror-management-v2` branch. PR #179's historical merge remains unchanged; these changes have not been merged into `main`.
 
 ## Destination state and storage
 
