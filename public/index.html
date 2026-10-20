@@ -3168,8 +3168,8 @@
         <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(148,163,184,0.15); padding-bottom: 6px;">
           <span style="font-size: 0.82rem; font-weight: 600; color: #e0f2fe;">Select Items:</span>
           <div style="display: flex; gap: 6px;">
-            <button id="share-select-all-btn" type="button" style="padding: 3px 8px; background: rgba(129, 140, 248, 0.15); border: 1px solid rgba(129, 140, 248, 0.35); border-radius: 6px; color: #818cf8; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Select All</button>
-            <button id="share-deselect-all-btn" type="button" style="padding: 3px 8px; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 6px; color: #cbd5e1; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Deselect All</button>
+            <button id="share-select-all-btn" type="button" aria-label="Select all bookmarks and categories to share" style="padding: 3px 8px; background: rgba(129, 140, 248, 0.15); border: 1px solid rgba(129, 140, 248, 0.35); border-radius: 6px; color: #818cf8; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Select All</button>
+            <button id="share-deselect-all-btn" type="button" aria-label="Deselect all bookmarks and categories" style="padding: 3px 8px; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 6px; color: #cbd5e1; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Deselect All</button>
           </div>
         </div>
 
@@ -3180,24 +3180,24 @@
           <label for="share-code-output" style="font-size: 0.82rem; font-weight: 600; color: #cbd5e1;">Your Share Code / Link:</label>
           <input type="text" id="share-code-output" readonly placeholder="Generating code..." style="padding: 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(129, 140, 248, 0.4); border-radius: 10px; color: #a5b4fc; font-size: 0.82rem; font-family: monospace;" />
           <div style="display: flex; gap: 8px;">
-            <button id="copy-share-code-btn" type="button" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%); border: none; border-radius: 10px; color: #ffffff; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Copy Code</span></button>
-            <button id="copy-share-link-btn" type="button" style="flex: 1; padding: 10px; background: rgba(129, 140, 248, 0.18); border: 1px solid #818cf8; border-radius: 10px; color: #818cf8; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>Copy Link</span></button>
+            <button id="copy-share-code-btn" type="button" aria-label="Copy share code to clipboard" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%); border: none; border-radius: 10px; color: #ffffff; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Copy Code</span></button>
+            <button id="copy-share-link-btn" type="button" aria-label="Copy share link to clipboard" style="flex: 1; padding: 10px; background: rgba(129, 140, 248, 0.18); border: 1px solid #818cf8; border-radius: 10px; color: #818cf8; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>Copy Link</span></button>
           </div>
-          <div id="share-copy-status" style="font-size: 0.8rem; text-align: center; color: #38bdf8; min-height: 1.2em;"></div>
+          <div id="share-copy-status" role="status" aria-live="polite" style="font-size: 0.8rem; text-align: center; color: #38bdf8; min-height: 1.2em;"></div>
         </div>
       </div>
 
       <!-- Redeem Share Code Tab -->
       <div id="share-view-redeem" style="display: none; flex-direction: column; gap: 12px;">
         <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Paste a share code or share link received from a friend:</p>
-        <input type="text" id="share-code-input" placeholder="Paste share code or link here..." style="padding: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(129, 140, 248, 0.4); border-radius: 12px; color: #ffffff; font-size: 0.88rem; font-family: monospace;" />
+        <input type="text" id="share-code-input" aria-label="Paste share code or share link" placeholder="Paste share code or link here..." style="padding: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(129, 140, 248, 0.4); border-radius: 12px; color: #ffffff; font-size: 0.88rem; font-family: monospace;" />
 
         <div id="share-preview-container" style="display: none; flex-direction: column; gap: 8px;">
           <span style="font-size: 0.85rem; font-weight: 600; color: #e0f2fe;">Shared Bookmarks Found:</span>
           <div id="share-preview-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; padding: 10px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2);"></div>
         </div>
 
-        <button id="apply-share-code-btn" type="button" style="padding: 12px; background: linear-gradient(135deg, #818cf8 0%, #a855f7 100%); border: none; border-radius: 12px; color: #ffffff; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 4px;">Import Shared Bookmarks</button>
+        <button id="apply-share-code-btn" type="button" aria-label="Import shared bookmarks" style="padding: 12px; background: linear-gradient(135deg, #818cf8 0%, #a855f7 100%); border: none; border-radius: 12px; color: #ffffff; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 4px;">Import Shared Bookmarks</button>
       </div>
     </div>
   </div>
@@ -3385,7 +3385,7 @@
             </div>
           </div>
           <div style="display: flex; justify-content: flex-end;">
-            <button id="syshi-open-isshonime-btn" type="button" class="modal-submit-btn" style="padding: 6px 12px; font-size: 0.8rem; margin-top: 0; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; display: inline-flex; align-items: center; gap: 6px;">
+            <button id="syshi-open-isshonime-btn" type="button" aria-label="Open Isshonime site" class="modal-submit-btn" style="padding: 6px 12px; font-size: 0.8rem; margin-top: 0; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; display: inline-flex; align-items: center; gap: 6px;">
               <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
               <span>Open Isshonime</span>
             </button>
@@ -3400,7 +3400,7 @@
             </div>
           </div>
           <div style="display: flex; justify-content: flex-end;">
-            <button id="syshi-open-anilist-btn" type="button" class="modal-submit-btn" style="padding: 6px 12px; font-size: 0.8rem; margin-top: 0; background: rgba(129, 140, 248, 0.18); border: 1px solid #818cf8; color: #a5b4fc; display: inline-flex; align-items: center; gap: 6px;">
+            <button id="syshi-open-anilist-btn" type="button" aria-label="Open AniList site" class="modal-submit-btn" style="padding: 6px 12px; font-size: 0.8rem; margin-top: 0; background: rgba(129, 140, 248, 0.18); border: 1px solid #818cf8; color: #a5b4fc; display: inline-flex; align-items: center; gap: 6px;">
               <svg style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
               <span>Open AniList</span>
             </button>
@@ -3569,11 +3569,11 @@
         </div>
 
         <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 4px;">
-          <button id="distrosea-direct-btn" type="button" class="modal-submit-btn" style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; margin-top: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
-            <svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          <button id="distrosea-direct-btn" type="button" aria-label="Test Distrosea direct site" class="modal-submit-btn" style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; flex: 1; margin-top: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"></path></svg>
             <span>Test Direct Site</span>
           </button>
-          <button id="distrosea-proxy-btn" type="button" class="modal-submit-btn" style="flex: 1; margin-top: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <button id="distrosea-proxy-btn" type="button" aria-label="Open Distrosea with proxy" class="modal-submit-btn" style="flex: 1; margin-top: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
             <svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             <span>Open with Proxy</span>
           </button>

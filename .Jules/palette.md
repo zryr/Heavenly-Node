@@ -21,3 +21,7 @@
 ## 2026-10-13 - Code Editor Area & Action Toolbar Accessibility
 **Learning:** Textareas and icon/text action buttons in code editor interfaces without explicit `aria-label` attributes leave screen reader users unaware of their purpose, while status indicator bars require `aria-live="polite"` to dynamically announce execution and editor updates.
 **Action:** Always add descriptive `aria-label` attributes to code editor textareas and action toolbar buttons, and configure status indicators with `aria-live="polite"`.
+
+## 2026-10-18 - Modal Copy Status Announcements & Action ARIA Labels
+**Learning:** Dynamic status feedback elements (like copy confirmation text in modal dialogs) that update without `role="status"` and `aria-live="polite"` remain unannounced to screen reader users, while icon/text action buttons in secondary modals require explicit `aria-label` attributes to clarify action intent.
+**Action:** Always assign `role="status"` and `aria-live="polite"` to dynamic feedback containers and provide descriptive `aria-label` attributes on modal action buttons.
