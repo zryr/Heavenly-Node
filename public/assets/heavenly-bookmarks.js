@@ -89,12 +89,12 @@
   function eligibleMirror(entry) {
     var key = navigation.bookmarkKey(entry.url);
     if (!key || entry.hidden || entry.type === 'folder' || entry.mirrorEligible === false) return false;
-    // Saved assets remain ordinary nested links, never automatic website replacements.
-    return !/\.(?:svg|png|jpe?g|gif|webp|ico|css|m?js|json|wasm|mp[34]|webm|pdf|zip)(?:$|[?#])/i.test(new URL(key).pathname);
+    // The catalog intentionally includes asset-style destinations. Eligibility is explicit, not guessed from a suffix.
+    return true;
   }
   function mirrorState(bookmark, url, title, brokenMap) {
     brokenMap = brokenMap || {};
-    var original = { title: bookmark ? bookmark.title : title, url: bookmark && bookmark.url || url, source: 'main' };
+    var original = { title: bookmark ? bookmark.title : title, url: bookmark && bookmark.url || url, source: 'main', mirrorEligible: bookmark && bookmark.mirrorEligible };
     var seen = Object.create(null), brokenKeys = Object.create(null);
     Object.keys(brokenMap).forEach(function (url) { if (brokenMap[url]) brokenKeys[navigation.bookmarkKey(url)] = true; });
     var entries = [original].concat(bookmark && bookmark.subBookmarks || []).filter(function (entry) {

@@ -928,80 +928,8 @@
       }
     }
 
-    /* Drag and Drop styling */
-    .section-card.drag-over {
-      border-color: #38bdf8 !important;
-      background: rgba(56, 189, 248, 0.15) !important;
-      box-shadow: 0 0 25px rgba(56, 189, 248, 0.4) !important;
-    }
-
-    .side-column.drag-over, .bottom-section-container.drag-over {
-      outline: 2px dashed #38bdf8;
-      outline-offset: 4px;
-      border-radius: 18px;
-    }
-
-    .section-card.dragging, .bookmark-card.dragging {
-      opacity: 0.3 !important;
-    }
-
-    .heavenly-drag-preview { will-change: transform; margin: 0; transition: none; animation: none; }
-
-    .drop-indicator-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 8px;
-      flex-shrink: 0;
-    }
-
-    .drop-indicator-cyan {
-      background: #38bdf8;
-      box-shadow: 0 0 10px #38bdf8, 0 0 20px #38bdf8;
-      animation: pulseGlow 1.2s ease-in-out infinite;
-    }
-
-    .drop-indicator-purple {
-      background: #c084fc;
-      box-shadow: 0 0 10px #c084fc, 0 0 20px #c084fc;
-      animation: pulseGlow 1.2s ease-in-out infinite;
-    }
-
-    .bookmark-drag-ghost {
-      height: 40px;
-      border: 2px dashed #38bdf8;
-      background: rgba(56, 189, 248, 0.18);
-      border-radius: 14px;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4) inset, 0 0 15px rgba(56, 189, 248, 0.3);
-      margin: 4px 0;
-      transition: all 0.15s ease;
-      pointer-events: none !important;
-      display: flex;
-      align-items: center;
-      padding: 0 12px;
-      color: #38bdf8;
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
-
-    .section-drag-ghost {
-      min-height: 100px;
-      border: 2px dashed #c084fc;
-      background: rgba(192, 132, 252, 0.15);
-      border-radius: 20px;
-      box-shadow: 0 0 25px rgba(192, 132, 252, 0.4) inset, 0 0 20px rgba(192, 132, 252, 0.3);
-      margin: 12px 0;
-      transition: all 0.15s ease;
-      pointer-events: none !important;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #c084fc;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-    }
+    /* Drag previews use metadata; insertion spaces are shared and scoped below. */
+    .heavenly-drag-preview { will-change:transform; margin:0; transition:none; animation:none; }
 
     /* 4 Transparent Dots Drag Handle :: */
     .drag-dots-handle {
@@ -1323,7 +1251,7 @@
       align-items: center;
       justify-content: center;
       padding: clamp(12px, 3vh, 24px) 16px;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       box-sizing: border-box;
       margin: 0;
       overflow-y: auto;
@@ -4727,36 +4655,12 @@
     var emptyDragImage = new Image();
     emptyDragImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
-    function getSectionGhost() {
-      var ghost = document.querySelector('.section-drag-ghost');
-      if (!ghost) {
-        ghost = document.createElement('div');
-        ghost.className = 'section-drag-ghost';
-        ghost.innerHTML = '<span class="drop-indicator-dot drop-indicator-purple"></span><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;margin-right:6px;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>Drop Section Here';
-      }
-      return ghost;
-    }
-
-    function getBookmarkGhost() {
-      var ghost = document.querySelector('.bookmark-drag-ghost');
-      if (!ghost) {
-        ghost = document.createElement('div');
-        ghost.className = 'bookmark-drag-ghost';
-        ghost.innerHTML = '<span class="drop-indicator-dot drop-indicator-cyan"></span><svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;margin-right:6px;" viewBox="0 0 24 24"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>Drop Bookmark Here';
-      }
-      return ghost;
-    }
-
-    function clearDragGhosts() {
-      clearBookmarkPlacement();
-      document.querySelectorAll('.bookmark-drag-ghost, .section-drag-ghost').forEach(function (el) {
-        if (el.parentNode) el.parentNode.removeChild(el);
-      });
-    }
+    function clearDragGhosts() { clearBookmarkPlacement(); }
 
     var placementFrame = 0, placementPointer = null;
+    var bookmarkSpace = HeavenlyDrag.space();
     function clearBookmarkPlacement() {
-      cancelAnimationFrame(placementFrame); placementFrame = 0; placementPointer = null;
+      cancelAnimationFrame(placementFrame); placementFrame = 0; placementPointer = null; bookmarkSpace.clear();
       var indicator = document.querySelector('.bookmark-placement-indicator'); if (indicator) indicator.remove();
     }
     function insertionAfter(rect, x, y, grid) {
@@ -4768,11 +4672,13 @@
     function nearestPlacement(nodes, x, y, grid) {
       var best = null, score = Infinity;
       nodes.forEach(function (node) {
-        var rect = node.getBoundingClientRect();
+        var rect = HeavenlyDrag.rect(node);
         if (!rect.width || !rect.height) return;
         var dy = Math.max(rect.top - y, 0, y - rect.bottom), dx = Math.max(rect.left - x, 0, x - rect.right);
         // Prefer the actual grid row, then the nearest cell within it.
-        var distance = grid ? dy * 10000 + dx : Math.abs(y - rect.top - rect.height / 2);
+        // A tall category under the pointer wins over a short neighboring
+        // category whose center happens to be closer.
+        var distance = dy * 10000 + (grid ? dx : Math.abs(y - rect.top - rect.height / 2));
         if (distance < score) { best = { node: node, rect: rect, after: insertionAfter(rect, x, y, grid), grid: grid }; score = distance; }
       });
       return best;
@@ -4805,14 +4711,24 @@
       return Object.assign(position || { node: section, rect: section.getBoundingClientRect(), after: true }, { type: type, target: position && position.node.dataset.bmId, categoryId: section.dataset.ownerCategoryId, subSectionId: section.dataset.subsectionId });
     }
     function paintBookmarkPlacement(position) {
-      var indicator = document.querySelector('.bookmark-placement-indicator');
-      if (!position) { if (indicator) indicator.remove(); return; }
-      if (!indicator) { indicator = document.createElement('div'); indicator.className = 'bookmark-placement-indicator'; indicator.setAttribute('aria-hidden','true'); document.body.appendChild(indicator); }
-      var rect = position.rect, vertical = position.grid && position.target;
-      indicator.style.left = (vertical ? (position.after ? rect.right : rect.left) - 2 : rect.left) + 'px';
-      indicator.style.top = (vertical ? rect.top : (position.after ? rect.bottom : rect.top) - 2) + 'px';
-      indicator.style.width = (vertical ? 3 : Math.max(12, rect.width)) + 'px'; indicator.style.height = (vertical ? rect.height : 3) + 'px';
-      indicator.dataset.target = position.target || ''; indicator.dataset.after = String(position.after);
+      var indicator=document.querySelector('.bookmark-placement-indicator');
+      if(!position){bookmarkSpace.clear();if(indicator)indicator.remove();return;}
+      var category=position.type==='category', target=position.target&&(category?position.node:position.node.parentNode);
+      var container=target?target.parentNode:position.node;
+      var items=Array.from(container.children).filter(function(node){
+        if(category)return node.classList.contains('section-card')&&node.dataset.categoryId!==placementPointer.sourceId;
+        var card=node.querySelector(':scope > [data-bm-id]');return card&&card.dataset.bmId!==placementPointer.sourceId&&!node.hidden;
+      });
+      bookmarkSpace.update(items,target,position.after,!!position.grid);
+      if(!indicator){indicator=document.createElement('div');indicator.className='bookmark-placement-indicator heavenly-placement-slot';indicator.setAttribute('aria-hidden','true');document.body.appendChild(indicator);}
+      indicator.dataset.kind=position.type;indicator.dataset.target=position.target||'';indicator.dataset.after=String(position.after);
+      var rect=position.rect,vertical=position.grid&&position.target;
+      var edge=position.after?rect.bottom:rect.top;
+      indicator.style.left=(vertical?(position.after?rect.right:rect.left)-8:rect.left)+'px';
+      indicator.style.top=(vertical?rect.top:edge-10)+'px';
+      indicator.style.width=(vertical?16:Math.max(24,rect.width))+'px';indicator.style.height=(vertical?rect.height:20)+'px';
+      var categoryName=position.target&&position.node.querySelector('.category-title');
+      indicator.textContent=vertical?'':category?(position.target?(position.after?'After ':'Before ')+(categoryName?categoryName.textContent:'section'):'Move section here'):(position.target?'Place bookmark':'Add bookmark here');
     }
     function previewBookmarkPlacement(x, y, type, sourceId) {
       placementPointer = { x: x, y: y, type: type, sourceId: sourceId };
@@ -4826,7 +4742,10 @@
     }, { passive:true, capture:true });
     function commitBookmarkPlacement(type, sourceId, x, y) {
       // Recompute once at release: scrolling may have moved the target since the last frame.
-      var position = resolveBookmarkPlacement(x, y, type, sourceId); clearBookmarkPlacement();
+      var position = resolveBookmarkPlacement(x, y, type, sourceId);
+      var selector=type==='category'?'.section-card[data-category-id]':'[data-bm-id]';
+      var previousRects=new Map(Array.from(document.querySelectorAll(selector)).map(function(node){return [type==='category'?node.dataset.categoryId:node.dataset.bmId,node.getBoundingClientRect()];}));
+      clearBookmarkPlacement();
       if (!position) return false;
       var data = loadBookmarkData(), collection = type === 'category' ? data.categories : data.bookmarks;
       var source = collection.find(function (entry) { return entry.id === sourceId; }); if (!source) return false;
@@ -4840,7 +4759,11 @@
       var ordered = collection.slice().sort(function (a,b) { return (Number(a.order)||0) - (Number(b.order)||0); }).filter(function (entry) { return entry.id !== sourceId; });
       var index = target ? ordered.indexOf(target) + (position.after ? 1 : 0) : ordered.length;
       ordered.splice(index, 0, source); ordered.forEach(function (entry,index) { entry.order = index; });
-      saveBookmarkData(data); renderBookmarksUI(); return true;
+      saveBookmarkData(data); renderBookmarksUI();
+      var nodes=Array.from(document.querySelectorAll(selector));
+      HeavenlyDrag.flip(nodes,previousRects,function(node){return type==='category'?node.dataset.categoryId:node.dataset.bmId;});
+      HeavenlyDrag.settle(nodes.find(function(node){return (type==='category'?node.dataset.categoryId:node.dataset.bmId)===sourceId;}));
+      return true;
     }
     function installBookmarkDropTarget(node) {
       node.ondragover = function (e) {
@@ -4869,6 +4792,8 @@
       removePopoutAvatar();
       var item = sourceEl && sourceEl.__heavenlyDragItem;
       if (!item) return;
+      document.body.dataset.heavenlyDragKind = item.kind;
+      if (item.kind === 'bookmark') sourceEl.parentElement.classList.add('heavenly-drag-source');
       activeDragPreview = HeavenlyDrag.create({ label: item.label, icon: item.icon,
         kind: item.kind, input: bookmarkInputType, x: mouseX, y: mouseY });
       activePopoutAvatar = activeDragPreview.element;
@@ -4878,6 +4803,8 @@
       if (typeof stopBookmarkEdgeScroll === 'function') stopBookmarkEdgeScroll();
       if (activeDragPreview) activeDragPreview.destroy();
       activeDragPreview = null; activePopoutAvatar = null;
+      delete document.body.dataset.heavenlyDragKind;
+      document.querySelectorAll('.heavenly-drag-source').forEach(function(node){node.classList.remove('heavenly-drag-source');});
     }
 
     document.addEventListener('drag', function (e) {
@@ -4887,9 +4814,24 @@
     }, true);
 
     document.addEventListener('dragover', function (e) {
+      if (placementPointer) {
+        var point = placementPointer;
+        previewBookmarkPlacement(e.clientX,e.clientY,point.type,point.sourceId);
+        // Animated neighbors expose gaps between cards. Accept those gaps using
+        // the same geometric resolver as the indicator and release handler.
+        if (resolveBookmarkPlacement(e.clientX,e.clientY,point.type,point.sourceId)) e.preventDefault();
+      }
       if (activePopoutAvatar && e.clientX !== 0 && e.clientY !== 0) {
         updatePopoutAvatar(e.clientX, e.clientY);
       }
+    }, true);
+
+    document.addEventListener('drop', function (e) {
+      if (!placementPointer) return;
+      var point = placementPointer;
+      e.preventDefault(); e.stopPropagation();
+      commitBookmarkPlacement(point.type,point.sourceId,e.clientX,e.clientY);
+      removePopoutAvatar();
     }, true);
 
     document.addEventListener('dragend', function () {
@@ -6646,6 +6588,7 @@
     }
 
     var sixDotGrip = '<svg width="18" height="22" viewBox="0 0 18 24" fill="currentColor" aria-hidden="true"><circle cx="6" cy="5" r="1.7"/><circle cx="12" cy="5" r="1.7"/><circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="6" cy="19" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>';
+    var bookmarkMirrorCleanup = null;
     var bookmarkPromotionSeen = new Map();
     var bookmarkPromotionTimer = null;
     var bookmarkGuideTimer = null;
@@ -6661,12 +6604,13 @@
 
     }
     function clearBookmarkPromotion() {
+      if (bookmarkMirrorCleanup) { bookmarkMirrorCleanup(); bookmarkMirrorCleanup = null; }
       clearTimeout(bookmarkGuideTimer); bookmarkGuideTimer = null;
       var explanation = $('builtin-test-modal').querySelector('.promoted-tooltip-box');
       if (explanation) explanation.remove();
       clearTimeout(bookmarkPromotionTimer); bookmarkPromotionTimer = null;
       var state = bookmarkPromotionSeen.get(bookmarkPromotionContext);
-      if (state) { state.until = 0; state.guideUntil = 0; }
+      if (state) { state.until = 0; state.guideUntil = 0; state.guideRemaining = 0; }
       hideBookmarkPromotion();
     }
     window.addEventListener('pagehide', clearBookmarkPromotion);
@@ -7093,6 +7037,7 @@
       }
       clearTimeout(bookmarkPromotionTimer); bookmarkPromotionTimer = null;
       clearTimeout(bookmarkGuideTimer); bookmarkGuideTimer = null;
+      if (bookmarkMirrorCleanup) { bookmarkMirrorCleanup(); bookmarkMirrorCleanup = null; }
       var currentModal = $('builtin-test-modal');
       var refreshing = currentModal.classList.contains('active') && (targetBmId ? pendingBuiltinUrls.targetBmId === targetBmId : HeavenlyNavigation.bookmarkKey(rawUrl) === HeavenlyNavigation.bookmarkKey(pendingBuiltinUrls.requestedUrl));
       var savedScroll = currentModal.querySelector('.modal-card').scrollTop;
@@ -7156,7 +7101,7 @@
       }
       var primaryCandidate = mirrorState.primary;
       if (primaryCandidate) {
-        var activeUrl = HeavenlyNavigation.bookmarkKey(primaryCandidate.url);
+        var activeUrl = /^https?:\/\//i.test(primaryCandidate.url) ? primaryCandidate.url : HeavenlyNavigation.bookmarkKey(primaryCandidate.url);
         if (!/^https?:\/\//.test(activeUrl)) activeUrl = 'https://' + activeUrl;
         pendingBuiltinUrls.rawUrl = activeUrl;
         pendingBuiltinUrls.proxiedUrl = location.origin + '/proxy/' + activeUrl;
@@ -7180,6 +7125,7 @@
         }
       }
       bookmarkBrokenAction = null;
+      if (mirrorState.promoted) promotionState.event = true;
       var showPromotion = promotionState.until > Date.now();
       var allAreBroken = mirrorState.allBroken;
 
@@ -7187,7 +7133,7 @@
         openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
         var controls = Array.from(currentModal.querySelectorAll('[data-mirror-identity]'));
         var row = controls.find(function (node) { return node.dataset.mirrorIdentity === identity && node.closest('.available-mirror-list'); });
-        var focus = row && row.querySelector(action || '.mirror-prefer');
+        var focus = row && row.querySelector(action || '.mirror-options') || currentModal.querySelector('.mirror-active-card .mirror-options');
         if (focus) focus.focus({ preventScroll: true });
       }
       function mirrorAction(callback) {
@@ -7223,197 +7169,150 @@
         return pill;
       }
 
-      // Helper function to render a mirror item card
-      function renderMirrorItemCard(item, isPrimaryCard) {
-        var card = document.createElement('div');
-        card.className = 'bookmark-mirror-card';
-        card.dataset.mirrorUrl = item.url;
-        card.dataset.mirrorIdentity = item.identity;
-        var isBroken = item.isBroken;
-        var itemDestination = HeavenlyNavigation.bookmarkKey(item.url) || item.url;
-
-        card.style.cssText = isBroken
-          ? 'background: rgba(15, 23, 42, 0.35); border: 1px dashed rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0.45; filter: grayscale(50%); transition: all 0.2s ease;'
-          : (isPrimaryCard
-              ? 'background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);'
-              : 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;');
-
-        var topRow = document.createElement('div');
-        topRow.className = 'bookmark-mirror-top';
-        topRow.style.cssText = 'display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;';
-
-        var titleBox = document.createElement('div');
-        titleBox.className = 'bookmark-mirror-name';
-        titleBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
-        var titleText = '<div style="font-weight: 700; font-size: 0.88rem; color: ' + (isBroken ? '#64748b' : '#f8fafc') + ';">' + escapeHtml(item.title) + '</div>';
-        if (isPrimaryCard && showPromotion) {
-          titleText += '<span class="promoted-badge-btn" role="button" tabindex="0" title="Click to learn why this link was promoted" style="font-size: 0.68rem; font-weight: 700; color: #a855f7; background: rgba(168, 85, 247, 0.18); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 6px; padding: 1px 6px; text-transform: uppercase; cursor: pointer; user-select: none;">Promoted</span>';
-        } else if (isBroken) {
-          titleText += '<span style="font-size: 0.68rem; font-weight: 600; color: #94a3b8; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 1px 6px;">Not Working</span>';
-        }
-        titleBox.innerHTML = titleText;
-
-        var rightBox = document.createElement('div');
-        rightBox.className = 'bookmark-mirror-tools';
-        rightBox.style.cssText = 'display: flex; align-items: center; gap: 6px;';
-
-        var copyPill = createUrlCopyPill(itemDestination);
-
-        var toggleBrokenBtn = document.createElement('button');
-        toggleBrokenBtn.type = 'button';
-        toggleBrokenBtn.title = isBroken ? 'Mark this link as working' : 'Mark this link as not working';
-        toggleBrokenBtn.style.cssText = isBroken
-          ? 'background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;'
-          : 'background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; border-radius: 8px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;';
-
-        toggleBrokenBtn.innerHTML = isBroken
-          ? '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Mark Working</span>'
-          : '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Mark Broken</span>';
-
-        toggleBrokenBtn.onclick = function (e) {
-          e.stopPropagation();
-          toggleBrokenBtn.disabled = true;
-          if (!item.isBroken) bookmarkBrokenAction = bookmarkPromotionContext;
-          toggleBrokenLinkState(item.url);
-          openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
-          var replacement = Array.from(currentModal.querySelectorAll('[data-mirror-url]')).find(function (node) { return node.dataset.mirrorUrl === item.url; });
-          (replacement && replacement.querySelector('button[title^="Mark"]') || currentModal.querySelector('.broken-mirrors-toggle') || $('close-builtin-modal-btn')).focus({ preventScroll: true });
-        };
-
-        rightBox.appendChild(copyPill);
-        rightBox.appendChild(toggleBrokenBtn);
-
-        // Delete button for user custom mirrors
-        if (item.isUser && item.id) {
-          var deleteMirrorBtn = document.createElement('button');
-          deleteMirrorBtn.type = 'button';
-          deleteMirrorBtn.title = 'Delete custom mirror';
-          deleteMirrorBtn.setAttribute('aria-label', 'Delete custom mirror ' + item.title);
-          deleteMirrorBtn.style.cssText = 'background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; border-radius: 8px; padding: 3px 6px; font-size: 0.72rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;';
-          deleteMirrorBtn.innerHTML = '<svg style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
-          deleteMirrorBtn.onclick = function (e) {
-            e.stopPropagation();
-            var latestData = loadBookmarkData();
-            var latestBookmark = targetBm && HeavenlyBookmarks.findEntry(latestData, targetBm.id);
-            if (latestBookmark && latestBookmark.subBookmarks) {
-              latestBookmark.subBookmarks = latestBookmark.subBookmarks.filter(function (s) { return s.id !== item.id; });
-              saveBookmarkData(latestData);
-              openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
-            }
-          };
-          rightBox.appendChild(deleteMirrorBtn);
-        }
-
-        topRow.appendChild(titleBox);
-        topRow.appendChild(rightBox);
-
-        if (item.eligible && targetBm) {
-          var controls = document.createElement('div'); controls.className = 'mirror-priority-controls';
-          var prefer = document.createElement('button'); prefer.type = 'button'; prefer.className = 'mirror-prefer';
-          var chosen = mirrorState.preferred && mirrorState.preferred.identity === item.identity;
-          prefer.textContent = chosen ? 'Preferred' : 'Set as Preferred'; prefer.setAttribute('aria-pressed', String(!!chosen));
-          prefer.onclick = function () {
-            if (mirrorAction(function () { HeavenlyBookmarks.chooseMirror(localStorage, targetBm.id, item.identity, getBrokenLinksMap()); })) {
-              promotionState.until = 0; promotionState.guideUntil = 0; refreshMirrors(item.identity);
-            }
-          };
-          controls.appendChild(prefer);
-          if (!isPrimaryCard && !item.isBroken) {
-            var grip = document.createElement('button'); grip.type = 'button'; grip.className = 'mirror-grip';
-            grip.title = 'Drag to reorder'; grip.setAttribute('aria-label', 'Drag to reorder ' + item.title + '; use arrow keys to move');
-            grip.innerHTML = sixDotGrip;
-            grip.draggable = true;
-            grip.ondragend = function () { currentModal.querySelectorAll('.mirror-drop-before,.mirror-drop-after').forEach(function (n) { n.classList.remove('mirror-drop-before','mirror-drop-after'); }); };
-            grip.ondragstart = function (e) { e.stopPropagation(); e.dataTransfer.setData('application/heavenly-mirror', item.identity); e.dataTransfer.effectAllowed = 'move'; };
-            grip.onkeydown = function (e) {
-              if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); step(e.key === 'ArrowUp' ? -1 : 1); }
-            };
-            function step(delta) {
-              var ids = mirrorState.available.map(function (entry) { return entry.identity; }), index = ids.indexOf(item.identity), target = ids[index + delta];
-              if (target && mirrorAction(function () { HeavenlyBookmarks.reorderMirrors(localStorage, targetBm.id, item.identity, target, delta > 0, getBrokenLinksMap()); })) refreshMirrors(item.identity, '.mirror-grip');
-            }
-            controls.appendChild(grip);
-            [-1, 1].forEach(function (delta) {
-              var move = document.createElement('button'); move.type = 'button'; move.textContent = delta < 0 ? '↑' : '↓'; move.title = delta < 0 ? 'Move Up' : 'Move Down';
-              move.setAttribute('aria-label', move.title + ': ' + item.title);
-              var index = mirrorState.available.findIndex(function (e) { return e.identity === item.identity; });
-              move.disabled = index + delta < 0 || index + delta >= mirrorState.available.length;
-              move.onclick = function () { step(delta); }; controls.appendChild(move);
-            });
-            var mirrorDrop = null;
-            card.ondragover = function (e) {
-              if (!Array.from(e.dataTransfer.types).includes('application/heavenly-mirror')) return;
-              e.preventDefault(); var after = e.clientY > card.getBoundingClientRect().top + card.offsetHeight / 2;
-              currentModal.querySelectorAll('.mirror-drop-before,.mirror-drop-after').forEach(function (n) { n.classList.remove('mirror-drop-before','mirror-drop-after'); });
-              card.classList.add(after ? 'mirror-drop-after' : 'mirror-drop-before'); mirrorDrop = after;
-            };
-            card.ondrop = function (e) { e.preventDefault(); e.stopPropagation();
-              var source = e.dataTransfer.getData('application/heavenly-mirror');
-              if (source && mirrorDrop !== null && mirrorAction(function () { HeavenlyBookmarks.reorderMirrors(localStorage, targetBm.id, source, item.identity, mirrorDrop, getBrokenLinksMap()); })) refreshMirrors(source, '.mirror-grip');
-            };
-            grip.onpointerdown = function (e) {
-              if (e.pointerType === 'mouse' || e.button !== 0) return;
-              e.preventDefault(); grip.setPointerCapture(e.pointerId);
-              var target = null;
-              function move(ev) {
-                var hit = document.elementFromPoint(ev.clientX, ev.clientY), row = hit && hit.closest('.available-mirror-list [data-mirror-identity]');
-                currentModal.querySelectorAll('.mirror-drop-before,.mirror-drop-after').forEach(function (n) { n.classList.remove('mirror-drop-before','mirror-drop-after'); });
-                target = null;
-                if (row) { var rect = row.getBoundingClientRect(); target = { id: row.dataset.mirrorIdentity, after: ev.clientY > rect.top + rect.height / 2 }; row.classList.add(target.after ? 'mirror-drop-after' : 'mirror-drop-before'); }
-                var panel = currentModal.querySelector('.modal-card'), bounds = panel.getBoundingClientRect();
-                if (ev.clientY < bounds.top + 45) panel.scrollTop -= 12; else if (ev.clientY > bounds.bottom - 45) panel.scrollTop += 12;
-              }
-              function finish(ev) {
-                grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', finish); grip.removeEventListener('pointercancel', finish);
-                currentModal.querySelectorAll('.mirror-drop-before,.mirror-drop-after').forEach(function (n) { n.classList.remove('mirror-drop-before','mirror-drop-after'); });
-                if (ev.type === 'pointerup') { move(ev); if (target && mirrorAction(function () { HeavenlyBookmarks.reorderMirrors(localStorage, targetBm.id, item.identity, target.id, target.after, getBrokenLinksMap()); })) refreshMirrors(item.identity, '.mirror-grip'); }
-              }
-              grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', finish); grip.addEventListener('pointercancel', finish);
-            };
+      var mirrorIcons = {
+        options:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+        info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>'
+      };
+      function mirrorSvg(paths) { return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">'+paths+'</svg>'; }
+      var mirrorMenuCounter = 0;
+      var mirrorList = null, mirrorDrag = null, mirrorFrame = 0, mirrorEdgeFrame = 0, mirrorSlot = null, pendingMirrorDetach = null;
+      var mirrorSpace = HeavenlyDrag.space();
+      var mirrorOrderStatus = document.createElement('span'); mirrorOrderStatus.className = 'mirror-sr-only'; mirrorOrderStatus.setAttribute('role','status');
+      function closeMirrorMenus(except) {
+        currentModal.querySelectorAll('.mirror-row-actions:not([hidden])').forEach(function (menu) {
+          if (menu.parentNode !== except) {
+            var options=menu.parentNode.querySelector('.mirror-options');
+            if(menu.contains(document.activeElement))options.focus({preventScroll:true});
+            menu.hidden=true;options.setAttribute('aria-expanded','false');
           }
-          if (isPrimaryCard) titleBox.appendChild(prefer);
-          else card.appendChild(controls);
+        });
+      }
+      function outsideMirrorMenu(e) { closeMirrorMenus(e.target.closest('[data-mirror-identity]')); }
+      currentModal.addEventListener('pointerdown',outsideMirrorMenu);
+      function resolveMirrorDrop(x,y) {
+        if (!mirrorList || !mirrorDrag) return null;
+        var bounds=mirrorList.getBoundingClientRect();
+        if (x<bounds.left || x>bounds.right || y<bounds.top || y>bounds.bottom) return null;
+        var rows=Array.from(mirrorList.children).filter(function (row) { return row.dataset.mirrorIdentity !== mirrorDrag.id; });
+        var closest=null,distance=Infinity;
+        rows.forEach(function (row) { var r=HeavenlyDrag.rect(row), d=Math.abs(y-r.top-r.height/2); if(d<distance){distance=d;closest={row:row,rect:r,after:y>r.top+r.height/2};} });
+        return closest;
+      }
+      function paintMirrorDrop() {
+        mirrorFrame=0; if(!mirrorDrag)return;
+        var drop=resolveMirrorDrop(mirrorDrag.x,mirrorDrag.y); mirrorDrag.drop=drop;
+        if(!drop){mirrorSpace.clear();if(mirrorSlot)mirrorSlot.hidden=true;return;}
+        var rows=Array.from(mirrorList.children).filter(function (row) { return row.dataset.mirrorIdentity !== mirrorDrag.id; });
+        mirrorSpace.update(rows,drop.row,drop.after,false);
+        if(!mirrorSlot){mirrorSlot=document.createElement('div');mirrorSlot.className='heavenly-placement-slot mirror-placement-slot';mirrorSlot.setAttribute('aria-hidden','true');document.body.appendChild(mirrorSlot);}
+        mirrorSlot.hidden=false;mirrorSlot.dataset.target=drop.row.dataset.mirrorIdentity;mirrorSlot.dataset.after=String(drop.after);
+        var edge=drop.after?drop.rect.bottom:drop.rect.top;
+        mirrorSlot.style.cssText='left:'+drop.rect.left+'px;top:'+(edge-10)+'px;width:'+drop.rect.width+'px;height:20px;';
+      }
+      function queueMirrorDrop(x,y) {
+        if(!mirrorDrag)return;mirrorDrag.x=x;mirrorDrag.y=y;mirrorDrag.preview.move(x,y);
+        if(!mirrorFrame)mirrorFrame=requestAnimationFrame(paintMirrorDrop);
+      }
+      function mirrorEdgeScroll() {
+        mirrorEdgeFrame=0;if(!mirrorDrag || !mirrorList)return;
+        var r=mirrorList.getBoundingClientRect(),p=mirrorDrag;
+        var speed=p.x>=r.left&&p.x<=r.right?(p.y<r.top+30?-7:p.y>r.bottom-30?7:0):0;
+        var before=mirrorList.scrollTop;if(speed)mirrorList.scrollTop+=speed;
+        if(mirrorList.scrollTop!==before)queueMirrorDrop(p.x,p.y);
+        mirrorEdgeFrame=requestAnimationFrame(mirrorEdgeScroll);
+      }
+      function cancelMirrorDrag() {
+        if(pendingMirrorDetach)pendingMirrorDetach();
+        cancelAnimationFrame(mirrorFrame);cancelAnimationFrame(mirrorEdgeFrame);mirrorFrame=mirrorEdgeFrame=0;
+        mirrorSpace.clear();if(mirrorSlot){mirrorSlot.remove();mirrorSlot=null;}
+        if(mirrorDrag){mirrorDrag.row.classList.remove('mirror-dragging');mirrorDrag.preview.destroy();if(mirrorDrag.detach)mirrorDrag.detach();}
+        mirrorDrag=null;currentModal.classList.remove('is-mirror-dragging');
+        document.removeEventListener('keydown',mirrorDragKey,true);window.removeEventListener('blur',cancelMirrorDrag);
+      }
+      function mirrorDragKey(e) { if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();cancelMirrorDrag();} }
+      function pickupMirror(item,row,input,x,y) {
+        closeMirrorMenus();
+        mirrorDrag={id:item.identity,row:row,x:x,y:y,preview:HeavenlyDrag.create({id:'heavenly-mirror-drag-avatar',kind:'mirror',label:item.title,icon:row.querySelector(':scope > .mirror-row-main > .mirror-site-icon'),input:input,x:x,y:y})};
+        row.classList.add('mirror-dragging');currentModal.classList.add('is-mirror-dragging');
+        document.addEventListener('keydown',mirrorDragKey,true);window.addEventListener('blur',cancelMirrorDrag);
+        mirrorEdgeFrame=requestAnimationFrame(mirrorEdgeScroll);queueMirrorDrop(x,y);
+      }
+      function reorderMirrorRows(source,target,after,focus) {
+        var saved;
+        if(!mirrorAction(function(){saved=HeavenlyBookmarks.reorderMirrors(localStorage,targetBm.id,source,target,after,getBrokenLinksMap());}))return;
+        mirrorState=HeavenlyBookmarks.mirrorState(saved,rawUrl,title,getBrokenLinksMap());
+        var rows=new Map(Array.from(mirrorList.children).map(function(row){return [row.dataset.mirrorIdentity,row];}));
+        if(mirrorState.available.length!==rows.size || mirrorState.available.some(function(entry){return !rows.has(entry.identity);})){refreshMirrors(source,'.mirror-grip');return;}
+        var scrollTop=mirrorList.scrollTop;
+        var previousRows=new Map(Array.from(rows).map(function(pair){return [pair[0],pair[1].getBoundingClientRect()];}));
+        mirrorState.available.forEach(function(entry){mirrorList.appendChild(rows.get(entry.identity));});
+        mirrorList.scrollTop=scrollTop;
+        HeavenlyDrag.flip(Array.from(rows.values()),previousRows,function(row){return row.dataset.mirrorIdentity;});
+        mirrorList.querySelectorAll('[data-mirror-step]').forEach(function(button){var id=button.closest('[data-mirror-identity]').dataset.mirrorIdentity,index=mirrorState.available.findIndex(function(entry){return entry.identity===id;});var delta=Number(button.dataset.mirrorStep);button.disabled=index+delta<0||index+delta>=mirrorState.available.length;});
+        var row=rows.get(source);if(row){HeavenlyDrag.settle(row);if(focus)row.querySelector('.mirror-grip').focus({preventScroll:true});}
+        var index=mirrorState.available.findIndex(function(entry){return entry.identity===source;});mirrorOrderStatus.textContent='Moved to position '+(index+1)+' of '+mirrorState.available.length+'.';
+      }
+      function finishMirrorDrag(x,y,commit) {
+        if(!mirrorDrag)return;var source=mirrorDrag.id,drop=commit&&resolveMirrorDrop(x,y);cancelMirrorDrag();
+        if(drop)reorderMirrorRows(source,drop.row.dataset.mirrorIdentity,drop.after,true);
+      }
+      function scrolledMirrorList(){if(mirrorDrag)queueMirrorDrop(mirrorDrag.x,mirrorDrag.y);}
+      currentModal.addEventListener('scroll',scrolledMirrorList,true);
+      bookmarkMirrorCleanup=function(){cancelMirrorDrag();currentModal.removeEventListener('pointerdown',outsideMirrorMenu);currentModal.removeEventListener('scroll',scrolledMirrorList,true);};
+
+      function renderMirrorItemCard(item,isPrimaryCard) {
+        var card=document.createElement('div');card.className='bookmark-mirror-card '+(isPrimaryCard?'mirror-active-card':'mirror-destination-row');
+        card.dataset.mirrorUrl=item.url;card.dataset.mirrorIdentity=item.identity;card.dataset.broken=String(!!item.isBroken);
+        var destination=/^https?:\/\//i.test(item.url)?item.url:HeavenlyNavigation.bookmarkKey(item.url);
+        var proxied=location.origin+'/proxy/'+destination;
+        var chosen=mirrorState.preferred&&mirrorState.preferred.identity===item.identity;
+        var active=mirrorState.active&&mirrorState.active.identity===item.identity;
+        card.dataset.preferred=String(!!chosen);card.dataset.active=String(!!active);
+        var head=document.createElement('div');head.className='mirror-row-main';
+        var grip=null;
+        function step(delta){var ids=mirrorState.available.map(function(e){return e.identity;}),index=ids.indexOf(item.identity),target=ids[index+delta];if(target){closeMirrorMenus();reorderMirrorRows(item.identity,target,delta>0,true);}}
+        if(!isPrimaryCard&&!item.isBroken&&item.eligible&&targetBm){
+          grip=document.createElement('button');grip.type='button';grip.className='mirror-grip';grip.title='Drag to reorder';grip.setAttribute('aria-label','Drag to reorder '+item.title+'; use arrow keys to move');grip.innerHTML=sixDotGrip;grip.draggable=false;
+          grip.onkeydown=function(e){if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();step(e.key==='ArrowUp'?-1:1);}};
+          grip.onpointerdown=function(e){
+            if(e.button!==0||!e.isPrimary)return;e.preventDefault();cancelMirrorDrag();grip.setPointerCapture(e.pointerId);
+            var startX=e.clientX,startY=e.clientY,started=false;
+            function detach(){grip.removeEventListener('pointermove',move);grip.removeEventListener('pointerup',finish);grip.removeEventListener('pointercancel',finish);grip.removeEventListener('lostpointercapture',lost);if(pendingMirrorDetach===detach)pendingMirrorDetach=null;if(grip.hasPointerCapture(e.pointerId))grip.releasePointerCapture(e.pointerId);}
+            function move(ev){if(!started&&Math.hypot(ev.clientX-startX,ev.clientY-startY)<6)return;if(!started){started=true;pickupMirror(item,card,e.pointerType,startX,startY);mirrorDrag.detach=detach;}queueMirrorDrop(ev.clientX,ev.clientY);}
+            function finish(ev){detach();if(started)finishMirrorDrag(ev.clientX,ev.clientY,ev.type==='pointerup');else grip.focus({preventScroll:true});}
+            function lost(){detach();if(started)cancelMirrorDrag();}
+            grip.addEventListener('pointermove',move);grip.addEventListener('pointerup',finish);grip.addEventListener('pointercancel',finish);grip.addEventListener('lostpointercapture',lost);
+            pendingMirrorDetach=detach;
+          };
+          head.appendChild(grip);
         }
-
-        var btnRow = document.createElement('div');
-        btnRow.className = 'bookmark-mirror-actions';
-        btnRow.style.cssText = 'display: flex; gap: 8px;';
-
-        var itemRawUrl = itemDestination;
-        var itemProxiedUrl = location.protocol + '//' + location.host + '/proxy/' + itemRawUrl;
-
-        var directBtn = document.createElement('button');
-        directBtn.type = 'button';
-        directBtn.className = 'modal-submit-btn long-press-btn';
-        directBtn.style.cssText = (isBroken
-          ? 'background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8;'
-          : 'background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8;') +
-          ' flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; overflow: hidden; user-select: none;';
-        directBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;position:relative;z-index:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span style="position:relative;z-index:2;">Test Direct Site</span>';
-
-        var proxyBtn = document.createElement('button');
-        proxyBtn.type = 'button';
-        proxyBtn.className = 'modal-submit-btn long-press-btn';
-        proxyBtn.style.cssText = (isBroken
-          ? 'background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #cbd5e1;'
-          : '') +
-          ' flex: 1; margin-top: 0; padding: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; overflow: hidden; user-select: none;';
-        proxyBtn.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;position:relative;z-index:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span style="position:relative;z-index:2;">Open with Proxy</span>';
-
-        bindLongPressToElement(directBtn, 'direct', function () { return itemRawUrl; });
-        bindLongPressToElement(proxyBtn, 'proxy', function () { return itemProxiedUrl; });
-
-        btnRow.appendChild(proxyBtn);
-        btnRow.appendChild(directBtn);
-
-        card.insertBefore(topRow, card.firstChild);
-        card.appendChild(btnRow);
-        if (!isPrimaryCard && !item.isBroken && mirrorState.active && item.identity === mirrorState.active.identity) {
-          // Keep the active entry in the ordering controls without duplicating its launch actions.
-          rightBox.remove(); btnRow.remove();
-          var activeLabel = document.createElement('small'); activeLabel.className = 'bookmark-setting-status'; activeLabel.textContent = 'Active'; titleBox.appendChild(activeLabel);
+        var icon=renderIconElement(item.icon || targetBm&&targetBm.icon,item.url,'');icon.classList.add('mirror-site-icon');icon.draggable=false;head.appendChild(icon);
+        var copy=document.createElement('div');copy.className='mirror-row-copy';var name=document.createElement('strong');name.textContent=item.title;name.title=item.title;copy.appendChild(name);
+        if(!isPrimaryCard){var address=document.createElement('small');address.textContent=item.url;address.title=item.url;copy.appendChild(address);}
+        head.appendChild(copy);
+        var status=document.createElement('span');status.className='mirror-status';status.textContent=item.isBroken?'Broken':active&&!isPrimaryCard?(chosen?'Active · Preferred':'Active'):chosen?'Preferred':'';if(status.textContent)copy.insertBefore(status,copy.children[1]||null);
+        if(isPrimaryCard&&showPromotion){var badge=document.createElement('button');badge.type='button';badge.className='promoted-badge-btn';badge.textContent='Promoted';badge.setAttribute('aria-label','Why this site was promoted');head.appendChild(badge);}
+        var options=document.createElement('button');options.type='button';options.className='mirror-options';options.innerHTML=mirrorSvg(mirrorIcons.options);options.title='Mirror options';options.setAttribute('aria-label','Options for '+item.title);options.setAttribute('aria-expanded','false');head.appendChild(options);
+        var menu=document.createElement('div');menu.className='mirror-row-actions';menu.id='mirror-actions-'+(++mirrorMenuCounter);options.setAttribute('aria-controls',menu.id);menu.hidden=true;menu.setAttribute('role','group');menu.setAttribute('aria-label','Actions for '+item.title);
+        var menuBuilt=false;
+        function action(label,handler,cls){var button=document.createElement('button');button.type='button';button.textContent=label;button.className=cls||'';button.onclick=function(e){e.stopPropagation();closeMirrorMenus();handler(button);};menu.appendChild(button);return button;}
+        function choose(){if(mirrorAction(function(){HeavenlyBookmarks.chooseMirror(localStorage,targetBm.id,item.identity,getBrokenLinksMap());})){promotionState.until=0;promotionState.guideUntil=0;promotionState.guideRemaining=0;refreshMirrors(item.identity);}}
+        function mark(){if(!item.isBroken)bookmarkBrokenAction=bookmarkPromotionContext;toggleBrokenLinkState(item.url);openBuiltinTestModal(title,rawUrl,proxiedUrl,customDesc,showDontAsk,targetBmId);var replacement=Array.from(currentModal.querySelectorAll('[data-mirror-identity]')).find(function(n){return n.dataset.mirrorIdentity===item.identity&&n.getClientRects().length;});(replacement&&replacement.querySelector('.mirror-options')||currentModal.querySelector('.broken-mirrors-toggle')||currentModal.querySelector('.mirror-active-card .mirror-options')).focus({preventScroll:true});}
+        function launchButton(parent,text,kind,url,primary){var button=document.createElement('button');button.type='button';button.className=(primary?'modal-submit-btn ':'')+'long-press-btn mirror-launch-'+kind;button.textContent=text;bindLongPressToElement(button,kind,function(){return url;});parent.appendChild(button);return button;}
+        function buildMenu(){if(menuBuilt)return;menuBuilt=true;
+          if(item.eligible&&targetBm){var prefer=action(chosen&&!active?'Use Preferred Site':chosen?'Preferred Site':'Set as Preferred',choose,'mirror-prefer');prefer.setAttribute('aria-pressed',String(!!chosen));prefer.disabled=!!(chosen&&active);}
+          if(!isPrimaryCard){launchButton(menu,'Open with Proxy','proxy',proxied,false);launchButton(menu,'Test Direct Site','direct',destination,false);}
+          action('Copy URL',function(button){if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(destination).then(function(){mirrorOrderStatus.textContent='URL copied.';}).catch(function(){window.prompt('Copy URL:',destination);});else window.prompt('Copy URL:',destination);},'mirror-copy-action');
+          var broken=action(item.isBroken?'Mark Working':'Mark Broken',mark,'mirror-broken-action');broken.title=item.isBroken?'Mark this link as working':'Mark this link as not working';
+          if(grip){[-1,1].forEach(function(delta){var button=action(delta<0?'Move Up':'Move Down',function(){step(delta);});button.dataset.mirrorStep=String(delta);button.setAttribute('aria-label',(delta<0?'Move Up: ':'Move Down: ')+item.title);var index=mirrorState.available.findIndex(function(e){return e.identity===item.identity;});button.disabled=index+delta<0||index+delta>=mirrorState.available.length;});}
+          if(item.isUser&&item.id)action('Delete Custom Mirror',function(){var latest=loadBookmarkData(),bookmark=HeavenlyBookmarks.findEntry(latest,targetBm.id);if(bookmark){bookmark.subBookmarks=(bookmark.subBookmarks||[]).filter(function(e){return e.id!==item.id;});saveBookmarkData(latest);refreshMirrors(item.identity);}},'mirror-delete-action');
         }
-        return card;
+        function toggleMenu(open,focus){closeMirrorMenus(card);buildMenu();menu.hidden=!open;options.setAttribute('aria-expanded',String(open));if(open&&focus){var first=menu.querySelector('button:not(:disabled)');if(first)first.focus();}if(open&&mirrorList&&mirrorList.contains(menu)){var r=menu.getBoundingClientRect(),bounds=mirrorList.getBoundingClientRect();if(r.bottom>bounds.bottom)mirrorList.scrollTop+=r.bottom-bounds.bottom+8;}}
+        options.onclick=function(){toggleMenu(menu.hidden,false);};options.onkeydown=function(e){if(e.key==='ArrowDown'){e.preventDefault();toggleMenu(true,true);}};
+        card.addEventListener('keydown',function(e){if(e.key==='Escape'&&!menu.hidden){e.preventDefault();e.stopPropagation();toggleMenu(false,false);options.focus({preventScroll:true});}});
+        card.appendChild(head);
+        if(isPrimaryCard){var urlPill=createUrlCopyPill(destination);urlPill.classList.add('mirror-active-copy');card.appendChild(urlPill);var launches=document.createElement('div');launches.className='bookmark-mirror-actions';launchButton(launches,'Open with Proxy','proxy',proxied,true);launchButton(launches,'Test Direct Site','direct',destination,true);card.appendChild(launches);}
+        card.appendChild(menu);return card;
       }
 
       if (altContainer) {
@@ -7430,31 +7329,71 @@
 
         var primaryCard = renderMirrorItemCard(primaryCandidate, true);
         altContainer.appendChild(primaryCard);
-        var info = document.createElement('button'); info.type = 'button'; info.className = 'mirror-info'; info.textContent = 'Info'; info.setAttribute('aria-expanded', 'false');
+        var info = document.createElement('button'); info.type = 'button'; info.className = 'mirror-info'; info.innerHTML = mirrorSvg(mirrorIcons.info); info.setAttribute('aria-label','About mirror selection');info.setAttribute('aria-controls','mirror-selection-help'); info.title='About mirror selection'; info.setAttribute('aria-expanded','false');
         primaryHeaderLabel.appendChild(info);
-        function explain(open) {
+        function explain(open, eventSpecific, automatic) {
+          clearTimeout(bookmarkGuideTimer);
           var existing = primaryCard.querySelector('.promoted-tooltip-box');
           if (existing) existing.remove();
           info.setAttribute('aria-expanded', String(open));
-          if (!open) { promotionState.guideUntil = 0; clearTimeout(bookmarkGuideTimer); return; }
-          var panel = document.createElement('div'); panel.className = 'promoted-tooltip-box'; panel.setAttribute('role', 'status');
-          panel.innerHTML = '<span>The selected site was marked as broken, so Heavenly switched to an available mirror. You can choose your preferred site at any time. Broken status is based on your markers.</span>';
-          var dismiss = document.createElement('button'); dismiss.type = 'button'; dismiss.textContent = 'Dismiss';
-          dismiss.onclick = function () { info.focus({ preventScroll: true }); explain(false); };
-          panel.appendChild(dismiss); primaryCard.appendChild(panel);
-          // Interaction makes this panel manual-dismiss only for the current event.
-          ['pointerenter','pointerdown','focusin','keydown'].forEach(function (name) { panel.addEventListener(name, function () { clearTimeout(bookmarkGuideTimer); promotionState.guideUntil = 0; }); });
+          if (!open) {
+            promotionState.guideUntil = 0;
+            promotionState.guideRemaining = 0;
+            return;
+          }
+          var remaining = automatic ? promotionState.guideRemaining || Math.max(0, promotionState.guideUntil-Date.now()) : 0;
+          if (!automatic) {
+            promotionState.guideUntil = 0;
+            promotionState.guideRemaining = 0;
+          }
+          var panel = document.createElement('div');
+          panel.className = 'promoted-tooltip-box';
+          panel.id = 'mirror-selection-help';
+          panel.setAttribute('role', eventSpecific ? 'status' : 'region');
+          panel.setAttribute('aria-label', eventSpecific ? 'Mirror selection update' : 'About mirror selection');
+          panel.dataset.helpKind = eventSpecific ? 'promotion' : 'general';
+          var message = document.createElement('p');
+          message.textContent = eventSpecific
+            ? 'The selected site was marked as broken, so Heavenly switched to an available mirror. You can choose your preferred site at any time.'
+            : 'Active Site is the destination Heavenly opens now. Preferred Site is your choice. Drag mirrors to set fallback order; use each row’s options to choose a site or manage its broken marker. Markers reflect your reports, not live health checks.';
+          var dismiss = document.createElement('button');
+          dismiss.type = 'button';
+          dismiss.textContent = 'Dismiss';
+          dismiss.onclick = function () { info.focus({ preventScroll:true }); explain(false); };
+          panel.appendChild(message);
+          panel.appendChild(dismiss);
+          primaryCard.appendChild(panel);
+          function pause() {
+            if (!automatic) return;
+            clearTimeout(bookmarkGuideTimer);
+            if (promotionState.guideUntil) remaining = Math.max(0, promotionState.guideUntil-Date.now());
+            promotionState.guideUntil = 0;
+            promotionState.guideRemaining = remaining;
+          }
+          function resume(ignoreHover) {
+            if (!automatic || !panel.isConnected || panel.contains(document.activeElement) || (ignoreHover !== true && panel.matches(':hover'))) return;
+            promotionState.guideRemaining = 0;
+            promotionState.guideUntil = Date.now()+remaining;
+            clearTimeout(bookmarkGuideTimer);
+            bookmarkGuideTimer = setTimeout(function () {
+              if (!panel.contains(document.activeElement) && !panel.matches(':hover')) explain(false);
+            }, remaining);
+          }
+          panel.addEventListener('pointerenter', pause);
+          // Firefox can still match :hover during pointerleave. The event itself
+          // establishes that the pointer left; keyboard focus still pauses it.
+          panel.addEventListener('pointerleave', function () { resume(true); });
+          panel.addEventListener('focusin', pause);
+          panel.addEventListener('focusout', function () {
+            clearTimeout(bookmarkGuideTimer);
+            bookmarkGuideTimer = setTimeout(resume, 0);
+          });
+          if (automatic) resume(true);
         }
-        info.onclick = function () { explain(info.getAttribute('aria-expanded') !== 'true'); };
+        info.onclick = function () { explain(info.getAttribute('aria-expanded') !== 'true', false); };
         var badge = primaryCard.querySelector('.promoted-badge-btn');
-        if (badge) { badge.onclick = function () { explain(info.getAttribute('aria-expanded') !== 'true'); }; badge.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); badge.click(); } }; }
-        if (promotionState.guideUntil > Date.now()) {
-          explain(true);
-          bookmarkGuideTimer = setTimeout(function () {
-            var panel = primaryCard.querySelector('.promoted-tooltip-box');
-            if (panel && !panel.contains(document.activeElement) && !panel.matches(':hover')) explain(false);
-          }, promotionState.guideUntil - Date.now());
-        }
+        if (badge) badge.onclick = function () { explain(true, !!promotionState.event); };
+        if (promotionState.guideUntil > Date.now() || promotionState.guideRemaining > 0) explain(true, true, true);
         if (allAreBroken) {
           var unavailable = document.createElement('p'); unavailable.className = 'bookmark-setting-status'; unavailable.setAttribute('role','status');
           unavailable.textContent = 'None of these destinations is known to be working. Broken status reflects your saved markers, not a live health check.'; altContainer.appendChild(unavailable);
@@ -7483,7 +7422,7 @@
           secHeader.appendChild(arrow);
 
           var itemsList = document.createElement('div');
-          itemsList.style.cssText = 'display:flex; flex-direction:column; gap:8px;';
+          itemsList.className = 'mirror-destination-list'; mirrorList = itemsList;
 
           secWrapper.addEventListener('toggle', function () { arrow.style.transform = secWrapper.open ? 'rotate(90deg)' : 'rotate(0deg)'; });
 
@@ -7500,12 +7439,9 @@
 
           // + Add Custom Mirror Form inside "Your Mirrors" subsection
           if (isUserSection && targetBm) {
-            var addForm = document.createElement('div');
-            addForm.style.cssText = 'display: flex; flex-direction: column; gap: 8px; padding: 10px; background: rgba(15, 23, 42, 0.6); border-radius: 12px; border: 1px dashed rgba(56, 189, 248, 0.3); margin-top: 4px;';
-
-            var formTitle = document.createElement('div');
-            formTitle.style.cssText = 'font-size: 0.8rem; font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 4px;';
-            formTitle.innerHTML = '<svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>Add Custom Mirror</span>';
+            var addForm = document.createElement('details'); addForm.className='mirror-add-form'; addForm.open=!!expandUserMirrorsOnLoad;
+            var addSummary=document.createElement('summary');addSummary.textContent='+ Add Custom Mirror';addForm.appendChild(addSummary);
+            var addBody=document.createElement('div');addBody.className='mirror-add-body';
 
             var titleInp = document.createElement('input');
             titleInp.type = 'text';
@@ -7548,15 +7484,14 @@
               openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId, true);
             };
 
-            addForm.appendChild(formTitle);
-            addForm.appendChild(titleInp);
-            addForm.appendChild(urlInp);
-            addForm.appendChild(submitAddBtn);
-            itemsList.appendChild(addForm);
+            titleInp.setAttribute('aria-label','Mirror name');urlInp.setAttribute('aria-label','Mirror URL');
+            addBody.appendChild(titleInp);addBody.appendChild(urlInp);addBody.appendChild(submitAddBtn);addForm.appendChild(addBody);
           }
 
           secWrapper.appendChild(secHeader);
           secWrapper.appendChild(itemsList);
+          if (typeof addForm !== 'undefined') secWrapper.appendChild(addForm);
+          secWrapper.appendChild(mirrorOrderStatus);
           return secWrapper;
         }
 
