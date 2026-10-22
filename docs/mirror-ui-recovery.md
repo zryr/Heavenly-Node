@@ -1,5 +1,7 @@
 # Mirror UI recovery for PR #186
 
+For the subsequent body-drag freeze fix, responsive menus, confirmation, dialog motion and repaired screenshot delivery, see [Final UX refinement](final-ux-refinement.md). The measurements and test counts below describe the earlier recovery revision.
+
 The original V2 renderer repeated full action cards for each destination, and the six-dot grip's padding increased bookmark row height. Functional placement was reduced to a detached line, while mirror mouse dragging used a native handle image. The Info control reused a fallback explanation even when no fallback had occurred.
 
 ## Measured compactness
