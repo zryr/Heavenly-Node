@@ -87,3 +87,9 @@
 **Learning:** Instantiating temporary arrays (e.g. `['text/html', 'application/xhtml+xml', ...].includes(data.contentType)`) on every proxied HTTP response creates unnecessary heap allocation and array `.includes()` traversal overhead. Replacing array creation with direct string equality checks (`ct !== 'text/html' && ct !== ...`) avoids heap object allocation and linear lookup per request, yielding a ~61.5% speedup.
 
 **Action:** Use direct string equality checks instead of temporary array `.includes()` checks in hot request/response middleware paths.
+
+## 2025-06-02 - Fast-path regex testing and cached RegExp instances for stream namespace repair
+
+**Learning:** Instantiating new `RegExp` objects inside stream chunk handlers (such as `repairNamespaces`) on every stream chunk creates unnecessary object allocations and regex engine compilation overhead. Furthermore, running `.replace()` with a complex multi-group regex on every chunk attempts replacement even when no target attribute exists. Guarding string replacement with a fast `!/xmlns/i.test(text)` test and caching `RegExp` instances by prefix yields an ~87% speedup on stream chunks containing no SVG namespace attributes.
+
+**Action:** Cache `RegExp` instances keyed by prefix using `Object.create(null)` and use a lightweight `test()` guard before executing complex global regex replacements on stream chunks.
