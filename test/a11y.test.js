@@ -102,4 +102,14 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('id="bar-edit"') && html.includes('aria-label="Edit selected item"'), 'bar-edit should specify aria-label');
         assert.ok(html.includes('id="search-newtab-btn"') && html.includes('aria-label="Open search query in new tab"'), 'search-newtab-btn should specify aria-label');
     });
+
+    it('should configure Icon Source tab buttons with tablist and tab ARIA attributes and sync aria-selected', function() {
+        assert.ok(html.includes('role="tablist"') && html.includes('aria-label="Icon Source selection"'), 'Icon source container should have role="tablist"');
+        assert.ok(html.includes('id="icon-tab-favicon"') && html.includes('role="tab"') && html.includes('aria-selected="true"'), 'icon-tab-favicon should specify role="tab" and aria-selected="true"');
+        assert.ok(html.includes('id="icon-tab-preset"') && html.includes('role="tab"') && html.includes('aria-controls="icon-preset-container"'), 'icon-tab-preset should specify role="tab" and aria-controls');
+        assert.ok(html.includes('id="icon-tab-manual"') && html.includes('role="tab"') && html.includes('aria-controls="icon-manual-container"'), 'icon-tab-manual should specify role="tab" and aria-controls');
+        assert.ok(html.includes('btnFavicon.setAttribute(\'aria-selected\', mode === \'favicon\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnFavicon');
+        assert.ok(html.includes('btnPreset.setAttribute(\'aria-selected\', mode === \'preset\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnPreset');
+        assert.ok(html.includes('btnManual.setAttribute(\'aria-selected\', mode === \'manual\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnManual');
+    });
 });
