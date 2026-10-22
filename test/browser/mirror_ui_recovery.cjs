@@ -33,9 +33,10 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   const open = id => page.evaluate(id => { const b=HeavenlyBookmarks.findEntry(loadBookmarkData(),id); openBuiltinTestModal(b.title,b.url,location.origin+'/proxy/'+b.url,null,false,id); },id);
   const expand = async () => { if (!await available.evaluate(n=>n.open)) await available.locator(':scope > summary').click(); };
   const action = async (card,name) => {
-    const button=card.getByRole('button',{name,exact:true});
+    const primary=await card.evaluate(n=>n.classList.contains('mirror-active-card'));
+    const button=primary&&name==='Mark Broken'?card.getByRole('button',{name:'Mark as Broken',exact:true}):card.getByRole('button',{name,exact:true});
     if (!await button.isVisible()) await card.locator('.mirror-options').click();
-    await button.click(); await page.mouse.move(0,0);
+    await button.click();if(await modal.locator('.mirror-broken-confirm:not([hidden])').count())await modal.getByRole('button',{name:'Confirm broken',exact:true}).click(); await page.mouse.move(0,0);
   };
   const data = () => page.evaluate(() => loadBookmarkData());
   for (const id of ['cat_movies','cat_anime']) {
@@ -62,7 +63,7 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   await modal.locator('.mirror-info').click();
   const help=modal.locator('.promoted-tooltip-box');
   assert.equal(await help.getAttribute('data-help-kind'),'general');
-  assert.match(await help.innerText(),/Active Site.*Preferred Site/);
+  assert.match(await help.innerText(),/Active Site[\s\S]*Preferred Site/);
   assert(!/was marked as broken/.test(await help.innerText()));
   await screenshot('neutral-info'); await help.getByRole('button',{name:'Dismiss',exact:true}).click();
   assert(await modal.locator('.mirror-info').evaluate(n=>n===document.activeElement));

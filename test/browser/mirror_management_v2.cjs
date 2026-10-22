@@ -17,7 +17,7 @@ const pass=s=>{checks++;console.log('PASS '+s)};
  const modal=page.locator('#builtin-test-modal'),active=modal.locator('.bookmark-mirror-card').first(),available=modal.locator('[data-mirror-section="Available Mirrors"]');
  const open=()=>page.evaluate(()=>openBuiltinTestModal('Site 0','https://original.test/0',location.origin+'/proxy/https://original.test/0',null,false,'v2_0'));
  const row=id=>available.locator('[data-mirror-identity="'+id+'"]');
- const action=async(row,label)=>{const button=row.getByRole('button',{name:label,exact:true});if(!await button.isVisible())await row.locator('.mirror-options').click();await button.click();await page.mouse.move(0,0);};
+ const action=async(row,label)=>{const primary=await row.evaluate(n=>n.classList.contains('mirror-active-card'));const button=primary&&label==='Mark Broken'?row.getByRole('button',{name:'Mark as Broken',exact:true}):row.getByRole('button',{name:label,exact:true});if(!await button.isVisible())await row.locator('.mirror-options').click();await button.click();if(await modal.locator('.mirror-broken-confirm:not([hidden])').count())await modal.getByRole('button',{name:'Confirm broken',exact:true}).click();await page.mouse.move(0,0);};
  await open();assert.match(await modal.innerText(),/ACTIVE SITE/);assert.equal(await modal.locator('.promoted-badge-btn').count(),0);await available.locator(':scope > summary').click();
  assert.equal(await available.locator('.bookmark-mirror-card').count(),3);await action(row('id:one'),'Set as Preferred');
  assert.equal(await modal.locator('.bookmark-active-url').innerText(),'https://one.test/');assert.equal(await row('id:one').getAttribute('data-preferred'),'true');

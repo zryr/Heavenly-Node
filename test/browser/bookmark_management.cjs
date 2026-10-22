@@ -34,11 +34,13 @@ const baseUrl = process.env.HEAVENLY_BASE_URL || 'http://127.0.0.1:8080/';
   }
   async function drag(from, to, hold = 550, cancel = false) {
     await from.scrollIntoViewIfNeeded();
-    const a = await from.boundingBox(), b = await to.boundingBox();
+    await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+    const a = await from.boundingBox();
     const x = a.x + a.width / 2, y = a.y + a.height / 2;
     await touch('touchStart', x, y);
     await delay(hold);
-    await touch('touchMove', b.x + b.width / 2, b.y + b.height * 0.85);
+    const b = await to.evaluate(n => HeavenlyDrag.rect(n));
+    await touch('touchMove', b.left + b.width / 2, b.top + b.height * 0.85);
     await delay(60);
     await touch(cancel ? 'touchCancel' : 'touchEnd');
     await delay(100);

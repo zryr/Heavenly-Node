@@ -17,6 +17,7 @@
   <script src="/assets/heavenly-navigation.js"></script>
   <script src="/assets/heavenly-bookmarks.js"></script>
   <script src="/assets/heavenly-drag.js"></script>
+  <script src="/assets/heavenly-dialogs.js"></script>
   <link rel="stylesheet" href="/assets/quick-settings.css">
   <script src="/assets/cloak-pool.js"></script>
   <script src="/assets/quick-settings-model.js"></script>
@@ -3299,10 +3300,9 @@
         </div>
         <button id="close-syshis-notes-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 6px;">
-        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(129, 140, 248, 0.3); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+      <ul class="heavenly-notes-list">
+        <li class="heavenly-note-card">
           <div style="display: flex; gap: 10px; align-items: flex-start;">
-            <span style="color: #38bdf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
             <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
               Use <strong>Isshonime</strong> to help decide what anime to watch next when you have no idea what to pick.
             </div>
@@ -3313,11 +3313,10 @@
               <span>Open Isshonime</span>
             </button>
           </div>
-        </div>
+        </li>
 
-        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(129, 140, 248, 0.3); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+        <li class="heavenly-note-card">
           <div style="display: flex; gap: 10px; align-items: flex-start;">
-            <span style="color: #818cf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
             <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
               Recommended: Use <strong>AniList</strong> to keep track of your watched anime and ratings.
             </div>
@@ -3328,8 +3327,8 @@
               <span>Open AniList</span>
             </button>
           </div>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
   </div>
 
@@ -3345,35 +3344,31 @@
         </div>
         <button id="close-op-websites-notes-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
-        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;">
-          <span style="color: #38bdf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
+      <ul class="heavenly-notes-list">
+        <li class="heavenly-note-card">
           <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
             Test sites directly first before using proxy mode.
           </div>
-        </div>
+        </li>
 
-        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;">
-          <span style="color: #38bdf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
+        <li class="heavenly-note-card">
           <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
             Device differences matter: some sites only load on Chrome (not Safari); Spotify works best on PC; Spotify/TikTok often require the libcurl proxy option in Aether settings. The point is you have to play around with the sites to find what works best on your specific device.
           </div>
-        </div>
+        </li>
 
-        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;">
-          <span style="color: #38bdf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
+        <li class="heavenly-note-card">
           <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
             Proxy browsers can also unblock streaming sites with trial and error (e.g., <a href="https://aniclover.cc/" target="_blank" rel="noopener" style="color:#38bdf8;text-decoration:underline;">aniclover.cc</a> and <a href="https://reanime.to" target="_blank" rel="noopener" style="color:#38bdf8;text-decoration:underline;">https://reanime.to</a> work on Aether proxy). If buttons do not click, long-press and select 'Open in New Tab'.
           </div>
-        </div>
+        </li>
 
-        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;">
-          <span style="color: #38bdf8; font-weight: 700; font-size: 1.1rem; line-height: 1;">•</span>
+        <li class="heavenly-note-card">
           <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
             Discord Tip: If an OP website features a Discord link, join their server—it's the best way to get newly unblocked links and private mirrors before they spread.
           </div>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
   </div>
 
@@ -3472,22 +3467,22 @@
       <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
         <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
           <div style="display: flex; gap: 8px; align-items: flex-start; font-size: 0.88rem; color: #e2e8f0; line-height: 1.45;">
-            <span style="color: #38bdf8; font-weight: 700;">•</span>
+            <span class="distrosea-bullet" aria-hidden="true">•</span>
             <span>Requires a free account and a mouse for proper controls.</span>
           </div>
           <div style="display: flex; gap: 8px; align-items: flex-start; font-size: 0.88rem; color: #e2e8f0; line-height: 1.45;">
-            <span style="color: #38bdf8; font-weight: 700;">•</span>
+            <span class="distrosea-bullet" aria-hidden="true">•</span>
             <span>Enable internet/networking in session settings before launching.</span>
           </div>
         </div>
 
         <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
-          <div style="font-size: 0.85rem; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em;">Recommended Distros:</div>
+          <h3 class="distrosea-heading">Recommended Distros:</h3>
           <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.45;">
-            <strong style="color: #7dd3fc;">Best for Games &amp; Apps:</strong> <strong>Nobara Linux</strong> (gaming-ready) and <strong>Linux Mint</strong> / <strong>Zorin OS</strong> (familiar Windows-like desktop with 1-click app stores).
+            <strong class="distrosea-label">Best for Games &amp; Apps:</strong> <strong>Nobara Linux</strong> (gaming-ready) and <strong>Linux Mint</strong> / <strong>Zorin OS</strong> (familiar Windows-like desktop with 1-click app stores).
           </div>
           <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.45;">
-            <strong style="color: #7dd3fc;">Best for Weak/Laggy Devices:</strong> <strong>Lubuntu</strong> (lightweight and fastest in-browser).
+            <strong class="distrosea-label">Best for Weak/Laggy Devices:</strong> <strong>Lubuntu</strong> (lightweight and fastest in-browser).
           </div>
         </div>
 
@@ -4627,6 +4622,7 @@
       var img = document.createElement('img');
       img.className = 'bookmark-icon';
       img.alt = altText || 'Bookmark icon';
+      img.draggable = false;
       if (iconVal && (iconVal.startsWith('http') || iconVal.startsWith('data:') || iconVal.startsWith('/proxy/') || iconVal.startsWith('/assets/') || iconVal.startsWith('/'))) {
         img.src = iconVal;
       } else {
@@ -4775,14 +4771,15 @@
       };
       node.ondrop = function (e) {
         e.preventDefault(); e.stopPropagation();
+        if(bookmarkGestureSource !== 'drag')return;
         try { var data = JSON.parse(e.dataTransfer.getData('text/plain')); if (data.type === 'bookmark' || data.type === 'category') commitBookmarkPlacement(data.type, data.id, e.clientX, e.clientY); } catch (err) {}
         clearDragGhosts(); removePopoutAvatar();
       };
     }
 
     var activeDragPreview = null;
-    var bookmarkInputType = 'mouse', bookmarkDragHandleOrigin = false;
-    document.addEventListener('pointerdown', function (event) { bookmarkInputType = event.pointerType || 'mouse'; bookmarkDragHandleOrigin = !!event.target.closest('.drag-dots-handle'); }, true);
+    var bookmarkInputType = 'mouse', bookmarkDragHandleOrigin = false, bookmarkPointerOrigin = null, bookmarkPointerStart = null;
+    document.addEventListener('pointerdown', function (event) { bookmarkInputType = event.pointerType || 'mouse'; bookmarkPointerOrigin = event.target; bookmarkPointerStart = { x:event.clientX, y:event.clientY }; bookmarkDragHandleOrigin = !!event.target.closest('.drag-dots-handle'); }, true);
     function categoryDragIcon(value) {
       var preset = PRESET_LUCIDE_ICONS.find(function (item) { return item.id === value || 'preset:' + item.id === value; });
       if (!preset) return null;
@@ -5099,28 +5096,54 @@
         e.stopImmediatePropagation();
       }
     }, true);
+    document.addEventListener('pointermove', function (event) {
+      if (event.pointerType === 'mouse' && bookmarkGestureSource === 'body' && bookmarkPointerStart &&
+          (Math.abs(event.clientX-bookmarkPointerStart.x)>8 || Math.abs(event.clientY-bookmarkPointerStart.y)>8)) cancelActiveBookmarkBodyPress();
+    }, true);
+    function clearBookmarkDrag() {
+      if(bookmarkGestureSource==='drag'||activePopoutAvatar)suppressBookmarkClickUntil=Math.max(suppressBookmarkClickUntil,Date.now()+500);
+      cancelActiveBookmarkTouch();
+      document.querySelectorAll('.bookmark-card.dragging,.section-card.dragging,.drag-over').forEach(function (node) {
+        node.classList.remove('dragging', 'drag-over');
+      });
+      clearBookmarkPlacement();
+      removePopoutAvatar();
+      bookmarkGestureSource = '';
+    }
     document.addEventListener('dragstart', function (e) {
       cancelActiveBookmarkBodyPress();
-      // Native mouse dragging starts from a dedicated grip; body holds keep their own action.
-      if (e.isTrusted && !bookmarkDragHandleOrigin && e.target.closest('.section-card')) { e.preventDefault(); return; }
-      // Keep native HTML5 mouse dragging, but never let a card body start a touch drag.
-      if ((bookmarkTouchInProgress || Date.now() < bookmarkIgnoreMouseUntil) && (e.target.closest('.section-card') || e.target.closest('.section-order-row'))) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
+      var source = e.target.closest('.bookmark-card[data-bm-id],.section-card');
+      var origin = bookmarkPointerOrigin;
+      var interactive = origin && origin.closest('button,input,textarea,select,summary,[contenteditable="true"],.category-actions,.folder-expand-btn');
+      var desktopBody = bookmarkInputType === 'mouse' && origin && source && !interactive &&
+        (source.matches('.bookmark-card') || origin.closest('.section-header') || origin === source);
+      var touch = bookmarkTouchInProgress || Date.now() < bookmarkIgnoreMouseUntil;
+      if ((touch && e.target.closest('.section-card,.section-order-row')) ||
+          (e.isTrusted && source && !bookmarkDragHandleOrigin && !desktopBody)) {
+        // A canceled native start has no dragend. Stop target handlers too:
+        // they must never create a ghost or dim a card after cancellation.
+        e.preventDefault(); e.stopImmediatePropagation(); clearBookmarkDrag();
         return;
       }
       bookmarkGestureSource = 'drag';
     }, true);
-    document.addEventListener('dragend', function () { bookmarkGestureSource = ''; }, true);
+    document.addEventListener('dragend', function () {
+      if (bookmarkGestureSource === 'drag') suppressBookmarkClickUntil = Date.now()+300;
+      clearBookmarkDrag();
+    }, true);
     function interruptBookmarkTouch() {
-      cancelActiveBookmarkTouch();
+      clearBookmarkDrag();
       bookmarkTouchInProgress = false;
-      bookmarkGestureSource = '';
     }
     window.addEventListener('blur', interruptBookmarkTouch);
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) interruptBookmarkTouch();
     });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && (activePopoutAvatar || bookmarkGestureSource === 'drag')) {
+        clearBookmarkDrag(); closeReorderBar();
+      }
+    }, true);
 
     function trackBookmarkTouch(e, handlers) {
       cancelActiveBookmarkTouch();
@@ -5285,21 +5308,22 @@
       });
     }
 
-    function animateBookmarkContent(node, open, mutate) {
+    function animateBookmarkContent(node, open, mutate, complete) {
       var before = node.hidden ? 0 : node.getBoundingClientRect().height;
       if (node.__accordionAnimation) node.__accordionAnimation.cancel();
+      node.__accordionAnimation = null;
       node.hidden = false;
       if (mutate) mutate();
       node.inert = !open;
       var after = open ? node.getBoundingClientRect().height : 0;
-      if (!node.animate || matchMedia('(prefers-reduced-motion: reduce)').matches) { node.hidden = !open; return; }
+      if (!node.animate || matchMedia('(prefers-reduced-motion: reduce)').matches) { node.hidden = !open; if(complete)complete(); return; }
       var animation = node.animate([{ height: before + 'px', opacity: open ? .85 : 1, overflow: 'hidden' }, { height: after + 'px', opacity: open ? 1 : .85, overflow: 'hidden' }], { duration: 210, easing: 'cubic-bezier(.2,.7,.3,1)' });
       node.__accordionAnimation = animation;
-      animation.onfinish = function () { if (node.__accordionAnimation === animation) { node.hidden = !open; node.__accordionAnimation = null; } };
+      animation.onfinish = function () { if (node.__accordionAnimation === animation) { node.hidden = !open; node.__accordionAnimation = null; if(complete)complete(); } };
     }
 
     function renderBookmarksUI() {
-      cancelActiveBookmarkTouch();
+      clearBookmarkDrag();
       var data = loadBookmarkData();
       var leftCol = $('left-column');
       var rightCol = $('right-column');
@@ -5353,6 +5377,7 @@
 
         // HTML5 Drag and drop for Category Sections
         card.ondragstart = function (e) {
+          if (e.defaultPrevented) return;
           e.stopPropagation();
           clearTimeout(pressTimer);
           card.classList.add('dragging');
@@ -5565,6 +5590,7 @@
             bmCard.setAttribute('draggable', 'true');
             bmCard.setAttribute('data-bm-id', bm.id);
             bmCard.ondragstart = function (e) {
+              if (e.defaultPrevented) return;
               e.stopPropagation();
               clearTimeout(bmTimer);
               bmCard.classList.add('dragging');
@@ -6578,7 +6604,7 @@
       else if (type === 'subsection') $('modal-title').textContent = 'Add Sub-Section';
       else $('modal-title').textContent = editBmId ? 'Edit Bookmark' : 'Add Bookmark / Folder';
 
-      modal.classList.add('active');
+      HeavenlyDialogs.open(modal);
 
       setTimeout(function () {
         if (type === 'category' && $('cat-title')) $('cat-title').focus();
@@ -6641,7 +6667,7 @@
       if (titleEl) titleEl.textContent = pendingEverythingMoeNotice.title;
 
       var modal = $('everythingmoe-modal');
-      if (modal) modal.classList.add('active');
+      if (modal) HeavenlyDialogs.open(modal);
       setTimeout(function () {
         var btn = $('close-everythingmoe-modal-btn');
         if (btn) btn.focus();
@@ -6651,7 +6677,7 @@
     function openSyshisNotesModal() {
       if (document.activeElement) lastFocusedElement = document.activeElement;
       var modal = $('syshis-notes-modal');
-      if (modal) modal.classList.add('active');
+      if (modal) HeavenlyDialogs.open(modal);
       setTimeout(function () {
         var btn = $('close-syshis-notes-modal-btn');
         if (btn) btn.focus();
@@ -6660,7 +6686,7 @@
 
     function closeSyshisNotesModal() {
       var modal = $('syshis-notes-modal');
-      if (modal) modal.classList.remove('active');
+      if (modal) HeavenlyDialogs.close(modal);
       restoreLastFocus();
     }
 
@@ -6671,7 +6697,7 @@
       if (!modal) return;
 
       updateJulesCloakingInfo();
-      modal.classList.add('active');
+      HeavenlyDialogs.open(modal);
       setTimeout(function () {
         var btn = $('close-jules-dev-modal-btn');
         if (btn) btn.focus();
@@ -6680,7 +6706,7 @@
 
     function closeJulesDevModal() {
       var modal = $('jules-dev-modal');
-      if (modal) modal.classList.remove('active');
+      if (modal) HeavenlyDialogs.close(modal);
       restoreLastFocus();
     }
 
@@ -6778,7 +6804,7 @@
     function openOpWebsitesNotesModal() {
       if (document.activeElement) lastFocusedElement = document.activeElement;
       var modal = $('op-websites-notes-modal');
-      if (modal) modal.classList.add('active');
+      if (modal) HeavenlyDialogs.open(modal);
       setTimeout(function () {
         var btn = $('close-op-websites-notes-modal-btn');
         if (btn) btn.focus();
@@ -6787,14 +6813,14 @@
 
     function closeOpWebsitesNotesModal() {
       var modal = $('op-websites-notes-modal');
-      if (modal) modal.classList.remove('active');
+      if (modal) HeavenlyDialogs.close(modal);
       restoreLastFocus();
     }
 
     function openDistroseaInfoModal() {
       if (document.activeElement) lastFocusedElement = document.activeElement;
       var modal = $('distrosea-info-modal');
-      if (modal) modal.classList.add('active');
+      if (modal) HeavenlyDialogs.open(modal);
       setTimeout(function () {
         var btn = $('close-distrosea-info-modal-btn');
         if (btn) btn.focus();
@@ -6803,13 +6829,13 @@
 
     function closeDistroseaInfoModal() {
       var modal = $('distrosea-info-modal');
-      if (modal) modal.classList.remove('active');
+      if (modal) HeavenlyDialogs.close(modal);
       restoreLastFocus();
     }
 
     function closeEverythingMoeNoticeModal() {
       var modal = $('everythingmoe-modal');
-      if (modal) modal.classList.remove('active');
+      if (modal) HeavenlyDialogs.close(modal);
       restoreLastFocus();
     }
 
@@ -6830,14 +6856,14 @@
     }
 
     function closeBookmarkPopup(id) {
-      $(id).classList.remove('active');
+      HeavenlyDialogs.close($(id));
       if (id === 'coolmath-launch-modal') pendingCoolmathLaunch = null;
       if (bookmarkPopupOpener && bookmarkPopupOpener.isConnected) bookmarkPopupOpener.focus();
     }
 
     function showBookmarkPopup(id, focusId) {
       bookmarkPopupOpener = document.activeElement;
-      $(id).classList.add('active');
+      HeavenlyDialogs.open($(id));
       $(focusId).focus();
     }
 
@@ -7043,8 +7069,8 @@
       var savedScroll = currentModal.querySelector('.modal-card').scrollTop;
       var noteSection = refreshing && currentModal.querySelector('.bookmark-personal-note');
       var noteDraft = noteSection && { value: noteSection.querySelector('textarea').value, open: noteSection.open };
-      var expandedMirrors = refreshing ? Array.from(currentModal.querySelectorAll('[data-mirror-section]')).filter(function (node) { return node.open; }).map(function (node) { return node.dataset.mirrorSection; }) : [];
-      var collapsedMirrors = refreshing ? Array.from(currentModal.querySelectorAll('[data-mirror-section]')).filter(function (node) { return !node.open; }).map(function (node) { return node.dataset.mirrorSection; }) : [];
+      var expandedMirrors = refreshing ? Array.from(currentModal.querySelectorAll('[data-mirror-section]')).filter(function (node) { return node.open&&node.dataset.expanded!=='false'; }).map(function (node) { return node.dataset.mirrorSection; }) : [];
+      var collapsedMirrors = refreshing ? Array.from(currentModal.querySelectorAll('[data-mirror-section]')).filter(function (node) { return !node.open||node.dataset.expanded==='false'; }).map(function (node) { return node.dataset.mirrorSection; }) : [];
       if (!refreshing && document.activeElement) lastFocusedElement = document.activeElement;
       rawUrl = rawUrl || '';
       pendingBuiltinUrls.requestedUrl = rawUrl;
@@ -7133,7 +7159,7 @@
         openBuiltinTestModal(title, rawUrl, proxiedUrl, customDesc, showDontAsk, targetBmId);
         var controls = Array.from(currentModal.querySelectorAll('[data-mirror-identity]'));
         var row = controls.find(function (node) { return node.dataset.mirrorIdentity === identity && node.closest('.available-mirror-list'); });
-        var focus = row && row.querySelector(action || '.mirror-options') || currentModal.querySelector('.mirror-active-card .mirror-options');
+        var focus = row && row.querySelector(action || '.mirror-options') || currentModal.querySelector('.mirror-active-card .mirror-options:not([hidden]),.mirror-active-card .mirror-mark-broken');
         if (focus) focus.focus({ preventScroll: true });
       }
       function mirrorAction(callback) {
@@ -7174,21 +7200,43 @@
         info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>'
       };
       function mirrorSvg(paths) { return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">'+paths+'</svg>'; }
-      var mirrorMenuCounter = 0;
+      var mirrorMenuCounter = 0, requestActiveBroken = null, cancelBrokenConfirmation = null, openMirrorMenu = null;
+      var mirrorCommandIcons = {
+        prefer:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/>',
+        proxy:'<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+        direct:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18"/>',
+        copy:'<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>',
+        broken:'<path d="m10 13 4-4m-6 7-2 2a4 4 0 0 1-6-6l4-4m12 0 2-2a4 4 0 0 1 6 6l-4 4M3 3l18 18"/>',
+        working:'<path d="m5 12 4 4L19 6"/>',
+        up:'<path d="m6 12 6-6 6 6M12 6v14"/>',
+        down:'<path d="m6 12 6 6 6-6M12 4v14"/>',
+        delete:'<path d="M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7"/>'
+      };
+      function commandContent(button, label, icon) {
+        button.innerHTML = mirrorSvg(mirrorCommandIcons[icon] || mirrorCommandIcons.prefer);
+        var text = document.createElement('span'); text.textContent = label; button.appendChild(text);
+      }
       var mirrorList = null, mirrorDrag = null, mirrorFrame = 0, mirrorEdgeFrame = 0, mirrorSlot = null, pendingMirrorDetach = null;
       var mirrorSpace = HeavenlyDrag.space();
       var mirrorOrderStatus = document.createElement('span'); mirrorOrderStatus.className = 'mirror-sr-only'; mirrorOrderStatus.setAttribute('role','status');
       function closeMirrorMenus(except) {
         currentModal.querySelectorAll('.mirror-row-actions:not([hidden])').forEach(function (menu) {
-          if (menu.parentNode !== except) {
-            var options=menu.parentNode.querySelector('.mirror-options');
+          var owner=menu.__mirrorOwner||menu.parentNode;
+          if (owner !== except) {
+            var options=owner.querySelector('.mirror-options');
             if(menu.contains(document.activeElement))options.focus({preventScroll:true});
-            menu.hidden=true;options.setAttribute('aria-expanded','false');
+            if(menu.hidePopover&&menu.matches(':popover-open'))menu.hidePopover();
+            if(openMirrorMenu&&openMirrorMenu.menu===menu)openMirrorMenu=null;
+            menu.hidden=true;owner.classList.remove('mirror-menu-open');options.setAttribute('aria-expanded','false');
           }
         });
       }
-      function outsideMirrorMenu(e) { closeMirrorMenus(e.target.closest('[data-mirror-identity]')); }
-      currentModal.addEventListener('pointerdown',outsideMirrorMenu);
+      function outsideMirrorMenu(e) {
+        var surface=e.target.closest('.mirror-row-actions');
+        closeMirrorMenus(surface&&surface.__mirrorOwner||e.target.closest('[data-mirror-identity]'));
+        if(cancelBrokenConfirmation&&!e.target.closest('.mirror-broken-control'))cancelBrokenConfirmation(false);
+      }
+      document.addEventListener('pointerdown',outsideMirrorMenu);
       function resolveMirrorDrop(x,y) {
         if (!mirrorList || !mirrorDrag) return null;
         var bounds=mirrorList.getBoundingClientRect();
@@ -7248,7 +7296,7 @@
         mirrorState.available.forEach(function(entry){mirrorList.appendChild(rows.get(entry.identity));});
         mirrorList.scrollTop=scrollTop;
         HeavenlyDrag.flip(Array.from(rows.values()),previousRows,function(row){return row.dataset.mirrorIdentity;});
-        mirrorList.querySelectorAll('[data-mirror-step]').forEach(function(button){var id=button.closest('[data-mirror-identity]').dataset.mirrorIdentity,index=mirrorState.available.findIndex(function(entry){return entry.identity===id;});var delta=Number(button.dataset.mirrorStep);button.disabled=index+delta<0||index+delta>=mirrorState.available.length;});
+        currentModal.querySelectorAll('[data-mirror-step]').forEach(function(button){var owner=button.closest('[data-mirror-identity]')||button.closest('.mirror-row-actions').__mirrorOwner;var id=owner.dataset.mirrorIdentity,index=mirrorState.available.findIndex(function(entry){return entry.identity===id;});var delta=Number(button.dataset.mirrorStep);button.disabled=index+delta<0||index+delta>=mirrorState.available.length;});
         var row=rows.get(source);if(row){HeavenlyDrag.settle(row);if(focus)row.querySelector('.mirror-grip').focus({preventScroll:true});}
         var index=mirrorState.available.findIndex(function(entry){return entry.identity===source;});mirrorOrderStatus.textContent='Moved to position '+(index+1)+' of '+mirrorState.available.length+'.';
       }
@@ -7256,9 +7304,9 @@
         if(!mirrorDrag)return;var source=mirrorDrag.id,drop=commit&&resolveMirrorDrop(x,y);cancelMirrorDrag();
         if(drop)reorderMirrorRows(source,drop.row.dataset.mirrorIdentity,drop.after,true);
       }
-      function scrolledMirrorList(){if(mirrorDrag)queueMirrorDrop(mirrorDrag.x,mirrorDrag.y);}
+      function scrolledMirrorList(){if(mirrorDrag)queueMirrorDrop(mirrorDrag.x,mirrorDrag.y);else if(openMirrorMenu)openMirrorMenu.position();}
       currentModal.addEventListener('scroll',scrolledMirrorList,true);
-      bookmarkMirrorCleanup=function(){cancelMirrorDrag();currentModal.removeEventListener('pointerdown',outsideMirrorMenu);currentModal.removeEventListener('scroll',scrolledMirrorList,true);};
+      bookmarkMirrorCleanup=function(){cancelMirrorDrag();closeMirrorMenus();currentModal.querySelectorAll(':scope > .mirror-row-actions').forEach(function(n){n.remove();});currentModal.querySelectorAll('.mirror-disclosure-body').forEach(function(n){if(n.__accordionAnimation)n.__accordionAnimation.cancel();n.__accordionAnimation=null;});if(cancelBrokenConfirmation)cancelBrokenConfirmation(false);document.removeEventListener('pointerdown',outsideMirrorMenu);currentModal.removeEventListener('scroll',scrolledMirrorList,true);};
 
       function renderMirrorItemCard(item,isPrimaryCard) {
         var card=document.createElement('div');card.className='bookmark-mirror-card '+(isPrimaryCard?'mirror-active-card':'mirror-destination-row');
@@ -7293,26 +7341,93 @@
         var status=document.createElement('span');status.className='mirror-status';status.textContent=item.isBroken?'Broken':active&&!isPrimaryCard?(chosen?'Active · Preferred':'Active'):chosen?'Preferred':'';if(status.textContent)copy.insertBefore(status,copy.children[1]||null);
         if(isPrimaryCard&&showPromotion){var badge=document.createElement('button');badge.type='button';badge.className='promoted-badge-btn';badge.textContent='Promoted';badge.setAttribute('aria-label','Why this site was promoted');head.appendChild(badge);}
         var options=document.createElement('button');options.type='button';options.className='mirror-options';options.innerHTML=mirrorSvg(mirrorIcons.options);options.title='Mirror options';options.setAttribute('aria-label','Options for '+item.title);options.setAttribute('aria-expanded','false');head.appendChild(options);
-        var menu=document.createElement('div');menu.className='mirror-row-actions';menu.id='mirror-actions-'+(++mirrorMenuCounter);options.setAttribute('aria-controls',menu.id);menu.hidden=true;menu.setAttribute('role','group');menu.setAttribute('aria-label','Actions for '+item.title);
+        var menu=document.createElement('div');menu.className='mirror-row-actions';menu.id='mirror-actions-'+(++mirrorMenuCounter);options.setAttribute('aria-controls',menu.id);menu.hidden=true;menu.setAttribute('role','group');menu.setAttribute('aria-label','Actions for '+item.title);if(menu.showPopover)menu.setAttribute('popover','manual');
+        var commands=document.createElement('div');commands.className='mirror-command-list';menu.appendChild(commands);
+        var moveRail=document.createElement('div');moveRail.className='mirror-move-rail';moveRail.setAttribute('role','group');moveRail.setAttribute('aria-label','Reorder '+item.title);menu.appendChild(moveRail);
         var menuBuilt=false;
-        function action(label,handler,cls){var button=document.createElement('button');button.type='button';button.textContent=label;button.className=cls||'';button.onclick=function(e){e.stopPropagation();closeMirrorMenus();handler(button);};menu.appendChild(button);return button;}
+        function action(label, handler, cls, icon) {
+          var button=document.createElement('button');button.type='button';button.className=cls||'';
+          commandContent(button,label,icon);
+          button.onclick=function(e){e.stopPropagation();closeMirrorMenus();handler(button);};
+          commands.appendChild(button);return button;
+        }
         function choose(){if(mirrorAction(function(){HeavenlyBookmarks.chooseMirror(localStorage,targetBm.id,item.identity,getBrokenLinksMap());})){promotionState.until=0;promotionState.guideUntil=0;promotionState.guideRemaining=0;refreshMirrors(item.identity);}}
         function mark(){if(!item.isBroken)bookmarkBrokenAction=bookmarkPromotionContext;toggleBrokenLinkState(item.url);openBuiltinTestModal(title,rawUrl,proxiedUrl,customDesc,showDontAsk,targetBmId);var replacement=Array.from(currentModal.querySelectorAll('[data-mirror-identity]')).find(function(n){return n.dataset.mirrorIdentity===item.identity&&n.getClientRects().length;});(replacement&&replacement.querySelector('.mirror-options')||currentModal.querySelector('.broken-mirrors-toggle')||currentModal.querySelector('.mirror-active-card .mirror-options')).focus({preventScroll:true});}
-        function launchButton(parent,text,kind,url,primary){var button=document.createElement('button');button.type='button';button.className=(primary?'modal-submit-btn ':'')+'long-press-btn mirror-launch-'+kind;button.textContent=text;bindLongPressToElement(button,kind,function(){return url;});parent.appendChild(button);return button;}
+        function launchButton(parent,text,kind,url,primary){var button=document.createElement('button');button.type='button';button.className=(primary?'modal-submit-btn ':'')+'long-press-btn mirror-launch-'+kind;commandContent(button,text,kind);bindLongPressToElement(button,kind,function(){return url;});parent.appendChild(button);return button;}
         function buildMenu(){if(menuBuilt)return;menuBuilt=true;
-          if(item.eligible&&targetBm){var prefer=action(chosen&&!active?'Use Preferred Site':chosen?'Preferred Site':'Set as Preferred',choose,'mirror-prefer');prefer.setAttribute('aria-pressed',String(!!chosen));prefer.disabled=!!(chosen&&active);}
-          if(!isPrimaryCard){launchButton(menu,'Open with Proxy','proxy',proxied,false);launchButton(menu,'Test Direct Site','direct',destination,false);}
-          action('Copy URL',function(button){if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(destination).then(function(){mirrorOrderStatus.textContent='URL copied.';}).catch(function(){window.prompt('Copy URL:',destination);});else window.prompt('Copy URL:',destination);},'mirror-copy-action');
-          var broken=action(item.isBroken?'Mark Working':'Mark Broken',mark,'mirror-broken-action');broken.title=item.isBroken?'Mark this link as working':'Mark this link as not working';
-          if(grip){[-1,1].forEach(function(delta){var button=action(delta<0?'Move Up':'Move Down',function(){step(delta);});button.dataset.mirrorStep=String(delta);button.setAttribute('aria-label',(delta<0?'Move Up: ':'Move Down: ')+item.title);var index=mirrorState.available.findIndex(function(e){return e.identity===item.identity;});button.disabled=index+delta<0||index+delta>=mirrorState.available.length;});}
-          if(item.isUser&&item.id)action('Delete Custom Mirror',function(){var latest=loadBookmarkData(),bookmark=HeavenlyBookmarks.findEntry(latest,targetBm.id);if(bookmark){bookmark.subBookmarks=(bookmark.subBookmarks||[]).filter(function(e){return e.id!==item.id;});saveBookmarkData(latest);refreshMirrors(item.identity);}},'mirror-delete-action');
+          if(item.eligible&&targetBm){var prefer=action(chosen&&!active?'Use Preferred Site':chosen?'Preferred Site':'Set as Preferred',choose,'mirror-prefer','prefer');prefer.setAttribute('aria-pressed',String(!!chosen));prefer.disabled=!!(chosen&&active);}
+          if(!isPrimaryCard){launchButton(commands,'Open with Proxy','proxy',proxied,false);launchButton(commands,'Test Direct Site','direct',destination,false);}
+          if(!isPrimaryCard)action('Copy URL',function(button){if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(destination).then(function(){mirrorOrderStatus.textContent='URL copied.';}).catch(function(){window.prompt('Copy URL:',destination);});else window.prompt('Copy URL:',destination);},'mirror-copy-action','copy');
+          if(!isPrimaryCard){var broken=action(item.isBroken?'Mark Working':'Mark Broken',function(){if(active&&!item.isBroken&&requestActiveBroken)requestActiveBroken();else mark();},'mirror-broken-action',item.isBroken?'working':'broken');broken.title=item.isBroken?'Mark this link as working':'Mark this link as not working';}
+          if(grip){[-1,1].forEach(function(delta){var button=action(delta<0?'Move Up':'Move Down',function(){step(delta);});button.dataset.mirrorStep=String(delta);button.setAttribute('aria-label',(delta<0?'Move Up: ':'Move Down: ')+item.title);var index=mirrorState.available.findIndex(function(e){return e.identity===item.identity;});button.disabled=index+delta<0||index+delta>=mirrorState.available.length;button.title=delta<0?'Move Up':'Move Down';button.innerHTML=mirrorSvg(mirrorCommandIcons[delta<0?'up':'down']);moveRail.appendChild(button);});}
+          if(item.isUser&&item.id)action('Delete Custom Mirror',function(){var latest=loadBookmarkData(),bookmark=HeavenlyBookmarks.findEntry(latest,targetBm.id);if(bookmark){bookmark.subBookmarks=(bookmark.subBookmarks||[]).filter(function(e){return e.id!==item.id;});saveBookmarkData(latest);refreshMirrors(item.identity);}},'mirror-delete-action','delete');
         }
-        function toggleMenu(open,focus){closeMirrorMenus(card);buildMenu();menu.hidden=!open;options.setAttribute('aria-expanded',String(open));if(open&&focus){var first=menu.querySelector('button:not(:disabled)');if(first)first.focus();}if(open&&mirrorList&&mirrorList.contains(menu)){var r=menu.getBoundingClientRect(),bounds=mirrorList.getBoundingClientRect();if(r.bottom>bounds.bottom)mirrorList.scrollTop+=r.bottom-bounds.bottom+8;}}
+        function positionMenu() {
+          if(menu.hidden)return;
+          var anchor=options.getBoundingClientRect(),box=menu.getBoundingClientRect();
+          var region=(mirrorList&&mirrorList.contains(card)?mirrorList:currentModal.querySelector('.modal-card')).getBoundingClientRect();
+          if(anchor.bottom<=region.top||anchor.top>=region.bottom){toggleMenu(false,false);return;}
+          var below=innerHeight-anchor.bottom-12,above=anchor.top-12;
+          var top=below>=box.height||below>=above?anchor.bottom+7:anchor.top-box.height-7;
+          menu.style.left=Math.max(12,Math.min(innerWidth-box.width-12,anchor.right-box.width))+'px';
+          menu.style.top=Math.max(12,Math.min(innerHeight-box.height-12,top))+'px';
+        }
+        function toggleMenu(open,focus) {
+          closeMirrorMenus(card);buildMenu();
+          if(open){
+            menu.hidden=false;card.classList.add('mirror-menu-open');
+            if(menu.showPopover){menu.setAttribute('popover','manual');menu.showPopover();}
+            else{menu.removeAttribute('popover');menu.__mirrorOwner=card;currentModal.appendChild(menu);}
+            openMirrorMenu={menu:menu,position:positionMenu};positionMenu();
+          }else{
+            if(menu.hidePopover&&menu.matches(':popover-open'))menu.hidePopover();
+            if(menu.contains(document.activeElement))options.focus({preventScroll:true});
+            if(openMirrorMenu&&openMirrorMenu.menu===menu)openMirrorMenu=null;
+            menu.hidden=true;card.classList.remove('mirror-menu-open');
+          }
+          options.setAttribute('aria-expanded',String(open));
+          if(open&&focus){var first=menu.querySelector('button:not(:disabled)');if(first)first.focus();}
+        }
+        menu.addEventListener('keydown',function(e){
+          if(e.key==='Escape'){e.preventDefault();e.stopPropagation();toggleMenu(false,false);options.focus({preventScroll:true});return;}
+          var buttons=Array.from(menu.querySelectorAll('button:not(:disabled)'));
+          var index=buttons.indexOf(document.activeElement),next=null;
+          if(e.key==='ArrowDown')next=buttons[(index+1)%buttons.length];
+          if(e.key==='ArrowUp')next=buttons[(index+buttons.length-1)%buttons.length];
+          if(e.key==='Home')next=buttons[0];if(e.key==='End')next=buttons[buttons.length-1];
+          if(next){e.preventDefault();next.focus();}
+        });
+        window.addEventListener('resize',positionMenu);
+        var previousCleanup=bookmarkMirrorCleanup;
+        bookmarkMirrorCleanup=function(){window.removeEventListener('resize',positionMenu);previousCleanup();};
         options.onclick=function(){toggleMenu(menu.hidden,false);};options.onkeydown=function(e){if(e.key==='ArrowDown'){e.preventDefault();toggleMenu(true,true);}};
         card.addEventListener('keydown',function(e){if(e.key==='Escape'&&!menu.hidden){e.preventDefault();e.stopPropagation();toggleMenu(false,false);options.focus({preventScroll:true});}});
         card.appendChild(head);
         if(isPrimaryCard){var urlPill=createUrlCopyPill(destination);urlPill.classList.add('mirror-active-copy');card.appendChild(urlPill);var launches=document.createElement('div');launches.className='bookmark-mirror-actions';launchButton(launches,'Open with Proxy','proxy',proxied,true);launchButton(launches,'Test Direct Site','direct',destination,true);card.appendChild(launches);}
-        card.appendChild(menu);return card;
+        if(isPrimaryCard){
+          var control=document.createElement('div');control.className='mirror-broken-control';
+          var markButton=document.createElement('button');markButton.type='button';markButton.className='mirror-mark-broken';
+          commandContent(markButton,item.isBroken?'Mark as Working':'Mark as Broken',item.isBroken?'working':'broken');
+          var confirmation=document.createElement('div');confirmation.className='mirror-broken-confirm';confirmation.hidden=true;
+          var question=document.createElement('span');question.textContent='Mark this site as broken?';question.setAttribute('role','status');
+          var confirm=document.createElement('button');confirm.type='button';confirm.className='mirror-confirm-broken';confirm.textContent='Confirm broken';
+          var cancel=document.createElement('button');cancel.type='button';cancel.textContent='Cancel';
+          confirmation.append(question,confirm,cancel);control.append(markButton,confirmation);card.appendChild(control);
+          var confirmationTimer=null;
+          function cancelConfirmation(focus){clearTimeout(confirmationTimer);confirmation.hidden=true;markButton.hidden=false;if(focus)markButton.focus({preventScroll:true});}
+          cancelBrokenConfirmation=cancelConfirmation;
+          requestActiveBroken=function(){
+            if(item.isBroken){mark();return;}
+            closeMirrorMenus();markButton.hidden=true;confirmation.hidden=false;confirm.focus({preventScroll:true});
+            clearTimeout(confirmationTimer);confirmationTimer=setTimeout(function(){cancelConfirmation(confirmation.contains(document.activeElement));},6000);
+          };
+          markButton.onclick=requestActiveBroken;
+          confirm.onclick=function(){cancelConfirmation(false);mark();};cancel.onclick=function(){cancelConfirmation(true);};
+          control.addEventListener('keydown',function(e){if(e.key==='Escape'&&!confirmation.hidden){e.preventDefault();e.stopPropagation();cancelConfirmation(true);}});
+        }
+        card.appendChild(menu);
+        if(isPrimaryCard&&chosen&&!item.isUser){options.hidden=true;card.classList.add('mirror-no-options');}
+        return card;
       }
 
       if (altContainer) {
@@ -7352,10 +7467,14 @@
           panel.setAttribute('role', eventSpecific ? 'status' : 'region');
           panel.setAttribute('aria-label', eventSpecific ? 'Mirror selection update' : 'About mirror selection');
           panel.dataset.helpKind = eventSpecific ? 'promotion' : 'general';
-          var message = document.createElement('p');
-          message.textContent = eventSpecific
-            ? 'The selected site was marked as broken, so Heavenly switched to an available mirror. You can choose your preferred site at any time.'
-            : 'Active Site is the destination Heavenly opens now. Preferred Site is your choice. Drag mirrors to set fallback order; use each row’s options to choose a site or manage its broken marker. Markers reflect your reports, not live health checks.';
+          var message = document.createElement(eventSpecific?'p':'ul');
+          if(eventSpecific)message.textContent='The selected site was marked as broken, so Heavenly switched to an available mirror. You can choose your preferred site at any time.';
+          else [
+            ['Active Site','The website Heavenly opens right now.'],
+            ['Preferred Site','The website you choose to use first.'],
+            ['Mirrors','Other links you can switch to when needed.'],
+            ['Broken Links',"Sites you've marked as not working."]
+          ].forEach(function(entry){var li=document.createElement('li'),term=document.createElement('strong');term.textContent=entry[0]+': ';li.append(term,document.createTextNode(entry[1]));message.appendChild(li);});
           var dismiss = document.createElement('button');
           dismiss.type = 'button';
           dismiss.textContent = 'Dismiss';
@@ -7488,10 +7607,23 @@
             addBody.appendChild(titleInp);addBody.appendChild(urlInp);addBody.appendChild(submitAddBtn);addForm.appendChild(addBody);
           }
 
-          secWrapper.appendChild(secHeader);
-          secWrapper.appendChild(itemsList);
-          if (typeof addForm !== 'undefined') secWrapper.appendChild(addForm);
-          secWrapper.appendChild(mirrorOrderStatus);
+          var body=document.createElement('div');body.className='mirror-disclosure-body';
+          body.appendChild(itemsList);if(typeof addForm!=='undefined')body.appendChild(addForm);body.appendChild(mirrorOrderStatus);
+          secWrapper.append(secHeader,body);
+          body.hidden=!secWrapper.open;body.inert=!secWrapper.open;
+          secWrapper.dataset.expanded=String(secWrapper.open);secHeader.setAttribute('aria-expanded',String(secWrapper.open));
+          function setExpanded(open){
+            if(!open){closeMirrorMenus();if(body.contains(document.activeElement))secHeader.focus({preventScroll:true});}
+            secWrapper.dataset.expanded=String(open);secHeader.setAttribute('aria-expanded',String(open));
+            secWrapper.open=true;arrow.style.transform=open?'rotate(90deg)':'rotate(0deg)';
+            animateBookmarkContent(body,open,null,function(){secWrapper.open=open;});
+          }
+          secHeader.addEventListener('click',function(e){e.preventDefault();setExpanded(secWrapper.dataset.expanded!=='true');});
+          secWrapper.addEventListener('toggle',function(){
+            if(body.__accordionAnimation)return;
+            body.hidden=!secWrapper.open;body.inert=!secWrapper.open;
+            secWrapper.dataset.expanded=String(secWrapper.open);secHeader.setAttribute('aria-expanded',String(secWrapper.open));
+          });
           return secWrapper;
         }
 
@@ -7544,7 +7676,7 @@
 
       if (showPromotion) bookmarkPromotionTimer = setTimeout(function () { promotionState.until = 0; bookmarkPromotionTimer = null; hideBookmarkPromotion(); }, Math.max(0, promotionState.until - Date.now()));
       var modal = $('builtin-test-modal');
-      if (modal) modal.classList.add('active');
+      if (modal) HeavenlyDialogs.open(modal);
       setTimeout(function () {
         if (refreshing) currentModal.querySelector('.modal-card').scrollTop = savedScroll;
         else { var btn = $('close-builtin-modal-btn'); if (btn) btn.focus(); }
@@ -7554,7 +7686,7 @@
     function closeBuiltinTestModal() {
       clearBookmarkPromotion();
       var modal = $('builtin-test-modal');
-      if (modal) modal.classList.remove('active');
+      if (modal) HeavenlyDialogs.close(modal);
       restoreLastFocus();
     }
 
@@ -7738,7 +7870,7 @@
 
       switchShareTab('create');
       updateShareOutputCode();
-      modal.classList.add('active');
+      HeavenlyDialogs.open(modal);
       setTimeout(function () {
         var btn = $('close-share-modal-btn');
         if (btn) btn.focus();
@@ -7747,7 +7879,7 @@
 
     function closeShareModal() {
       var modal = $('share-modal');
-      if (modal) modal.classList.remove('active');
+      if (modal) HeavenlyDialogs.close(modal);
       $('share-copy-status').textContent = '';
       restoreLastFocus();
     }
@@ -7968,12 +8100,12 @@
       }
 
       var modal = $('subsec-modal');
-      if (modal) modal.classList.add('active');
+      if (modal) HeavenlyDialogs.open(modal);
     }
 
     function closeSubSecModal() {
       var modal = $('subsec-modal');
-      if (modal) modal.classList.remove('active');
+      if (modal) HeavenlyDialogs.close(modal);
       $('subsec-edit-cat-id').value = '';
       $('subsec-edit-sec-id').value = '';
       $('subsec-edit-title-input').value = '';
@@ -7991,12 +8123,12 @@
       $('subsec-delete-sec-id').value = subSecId;
       $('subsec-delete-warning-text').innerHTML = 'Are you sure you want to delete <strong style="color: #38bdf8;">' + escapeHtml(subSec.title) + '</strong>? Any bookmarks inside will be moved to <strong style="color: #38bdf8;">Your Bookmarks</strong>.';
       var deleteModal = $('subsec-delete-modal');
-      if (deleteModal) deleteModal.classList.add('active');
+      if (deleteModal) HeavenlyDialogs.open(deleteModal);
     }
 
     function closeSubSecDeleteModal() {
       var deleteModal = $('subsec-delete-modal');
-      if (deleteModal) deleteModal.classList.remove('active');
+      if (deleteModal) HeavenlyDialogs.close(deleteModal);
       $('subsec-delete-cat-id').value = '';
       $('subsec-delete-sec-id').value = '';
     }
@@ -8010,12 +8142,12 @@
       updateSubBmIconPreview();
 
       var modal = $('sub-bm-modal');
-      if (modal) modal.classList.add('active');
+      if (modal) HeavenlyDialogs.open(modal);
     }
 
     function closeSubBmModal() {
       var modal = $('sub-bm-modal');
-      if (modal) modal.classList.remove('active');
+      if (modal) HeavenlyDialogs.close(modal);
       $('sub-bm-parent-id').value = '';
       $('sub-bm-idx').value = '';
       $('sub-bm-title-input').value = '';
@@ -8029,7 +8161,7 @@
       categorySectionDraft = [];
       $('cat-edit-id').value = '';
       var modal = $('add-modal');
-      if (modal) modal.classList.remove('active');
+      if (modal) HeavenlyDialogs.close(modal);
       $('bm-id').value = '';
       $('bm-title').value = '';
       $('bm-url').value = '';

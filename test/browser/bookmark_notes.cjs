@@ -13,7 +13,7 @@ const engine=process.env.HEAVENLY_BROWSER||'chromium';let browser,server,checks=
  const opener=page.locator('[data-category-id="cat_anime"] .special-links-btn');await opener.focus();
  await open();const modal=page.locator('#builtin-test-modal'),note=modal.locator('.bookmark-personal-note'),text=note.locator('textarea');
  assert.equal(await note.getAttribute('open'),null);assert.equal(await modal.locator('.bookmark-launch-summary .bookmark-icon').count(),1);
- await modal.locator('.mirror-active-card .mirror-options').click();assert.equal(await modal.locator('.mirror-active-card').getByRole('button',{name:'Mark Broken',exact:true}).count(),1);await modal.locator('.mirror-active-card .mirror-options').click();
+ assert.equal(await modal.locator('.mirror-active-card').getByRole('button',{name:'Mark as Broken',exact:true}).count(),1);
  const before=await gn();await note.locator('summary').click();
  const privateNote='Private reminder <img src=x onerror="window.noteExecuted=true">';await text.fill(privateNote);await note.getByRole('button',{name:'Save Note',exact:true}).click();
  assert.equal((await gn()).personalNote,privateNote);const metadata=await gn();delete metadata.personalNote;assert.deepEqual(metadata,before);
