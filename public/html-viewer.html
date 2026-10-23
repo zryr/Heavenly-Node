@@ -695,7 +695,7 @@
     <!-- Control Toolbar -->
     <div class="control-bar">
       <div class="control-group">
-        <button type="button" id="btn-run" class="btn-action btn-run" aria-label="Execute current code live in preview frame" title="Execute current code live in preview frame">
+        <button type="button" id="btn-run" class="btn-action btn-run" aria-label="Execute current code live in preview frame (Ctrl+Enter)" title="Execute current code live in preview frame (Ctrl+Enter)">
           <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
           <span>Run Code</span>
         </button>
@@ -1175,7 +1175,7 @@
           if (editorWrapper) editorWrapper.classList.remove('focus-glow');
         };
 
-        // Support Tab key indentation inside textarea
+        // Support Tab key indentation & Ctrl/Cmd+Enter code execution inside textarea
         codeInput.onkeydown = function (e) {
           if (e.key === 'Tab') {
             e.preventDefault();
@@ -1184,6 +1184,9 @@
             this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
             this.selectionStart = this.selectionEnd = start + 2;
             updateLineNumbers();
+          } else if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            runCode();
           }
         };
       }

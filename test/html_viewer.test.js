@@ -58,12 +58,13 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
     assert.ok(html.includes('btnSplit.setAttribute(\'aria-selected\', \'true\')') || html.includes('setAttribute(\'aria-selected\', \'true\')'), 'setViewMode should set aria-selected to true on active tab');
   });
 
-  it('should configure code textarea, action buttons, and status indicator with accessible ARIA attributes', function() {
+  it('should configure code textarea, action buttons, keyboard shortcuts, and status indicator with accessible ARIA attributes', function() {
     var html = fs.readFileSync(path.join(__dirname, '../public/html-viewer.html'), 'utf8');
 
     assert.ok(html.includes('id="code-input"') && html.includes('aria-label="HTML, CSS, and JavaScript source code editor"'), 'code-input textarea should specify descriptive aria-label');
-    assert.ok(html.includes('id="btn-run"') && html.includes('aria-label="Execute current code live in preview frame"'), 'btn-run should specify descriptive aria-label');
+    assert.ok(html.includes('id="btn-run"') && html.includes('aria-label="Execute current code live in preview frame (Ctrl+Enter)"'), 'btn-run should specify descriptive aria-label with shortcut hint');
     assert.ok(html.includes('id="btn-clear"') && html.includes('aria-label="Clear code editor content"'), 'btn-clear should specify descriptive aria-label');
     assert.ok(html.includes('class="status-indicator" aria-live="polite"'), 'status-indicator should specify aria-live="polite"');
+    assert.ok(html.includes('(e.ctrlKey || e.metaKey) && e.key === \'Enter\''), 'codeInput.onkeydown should handle Ctrl/Cmd+Enter shortcut to run code');
   });
 });
