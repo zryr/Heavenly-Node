@@ -10,17 +10,16 @@ describe("Developer QA Panel, Loading Screen Redesign & Touch Drop Indicators", 
   });
 
   describe("Touch Drag Precision & Colored Drop Indicators", function () {
-    it("should define glowing cyan and purple drop indicator dot CSS classes", function () {
-      assert(indexHtml.includes('.drop-indicator-cyan'), "Index.html should define .drop-indicator-cyan");
-      assert(indexHtml.includes('.drop-indicator-purple'), "Index.html should define .drop-indicator-purple");
-      assert(indexHtml.includes('drop-indicator-dot'), "Index.html should define .drop-indicator-dot");
+    it("uses one restrained insertion space, with distinct category and bookmark identity", function () {
+      const css=fs.readFileSync(path.join(__dirname,'../public/assets/bookmark-dialogs.css'),'utf8');
+      assert(css.includes('.heavenly-placement-slot[data-kind="category"]'));
+      assert(indexHtml.includes("indicator.dataset.kind=position.type"));
+      assert(!indexHtml.includes('Drop Section Here'));assert(!indexHtml.includes('Drop Bookmark Here'));
     });
 
-    it("should update ghost helper functions with glowing indicator dots and drop labels", function () {
-      assert(indexHtml.includes('drop-indicator-cyan'), "getBookmarkGhost should contain drop-indicator-cyan");
-      assert(indexHtml.includes('drop-indicator-purple'), "getSectionGhost should contain drop-indicator-purple");
-      assert(indexHtml.includes('Drop Bookmark Here'), "getBookmarkGhost should say Drop Bookmark Here");
-      assert(indexHtml.includes('Drop Section Here'), "getSectionGhost should say Drop Section Here");
+    it("uses stable shared measurements and animated neighboring items", function () {
+      assert(indexHtml.includes('HeavenlyDrag.rect(node)'));assert(indexHtml.includes('bookmarkSpace.update'));
+      assert(indexHtml.includes('HeavenlyDrag.flip'));
     });
 
     it("should use the shared adaptive preview renderer with actual input context", function () {

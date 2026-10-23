@@ -31,9 +31,12 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright'),app=
  await reset();await page.evaluate(()=>{expandedFolders.gesture_0=true;renderBookmarksUI()});const child=page.locator('[data-note-bookmark-id="gesture_child"] .bookmark-title');await child.scrollIntoViewIfNeeded();a=await child.boundingBox();await touch('touchStart',[point(a.x+8,a.y+8)]);await touch('touchMove',[point(a.x+8,a.y+26)]);await page.waitForTimeout(650);await touch('touchEnd');assert.equal(await preference(),'direct');
  await child.scrollIntoViewIfNeeded();a=await child.boundingBox();await touch('touchStart',[point(a.x+8,a.y+8)]);await page.waitForTimeout(650);assert.equal(await preference(),'ask');await touch('touchEnd');await page.keyboard.press('Escape');
  pass('nested bookmarks distinguish scrolling from intentional body long presses');
- // Browser-generated HTML5 dragstart is the old failure: it cleared the handle timer, not the body timer.
+ // Mouse pointer pickup cancels the body hold without handing the anchor to native dragging.
  await reset();await body.scrollIntoViewIfNeeded();a=await body.boundingBox();await page.mouse.move(a.x+8,a.y+8);await page.mouse.down();await page.mouse.move(a.x+35,a.y+40,{steps:5});await page.waitForTimeout(650);assert.equal(await preference(),'direct');assert.equal(await page.locator('.modal-backdrop.active').count(),0);await page.mouse.up();
- pass('native mouse dragging cancels the body reset timer');
+ pass('mouse pointer dragging cancels the body reset timer');
+ await reset();await body.hover();a=await body.boundingBox();await page.mouse.move(a.x+8,a.y+8);await page.mouse.down();await page.waitForTimeout(650);assert.equal(await preference(),'direct');assert.equal(await page.locator('.modal-backdrop.active').count(),0);await page.mouse.up();assert.equal(await preference(),'ask');assert.equal(await page.locator('#builtin-test-modal.active').count(),1);await page.keyboard.press('Escape');
+ pass('stationary desktop holds retain their reset action on release, while delayed pickup stays safe');
+
  await handle.scrollIntoViewIfNeeded();await handle.focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#reorder-bar.active').count(),1);assert.equal(context.pages().length,1);
  pass('keyboard management remains available after touch and mouse interactions');
  console.log(checks+' bookmark gesture conflict checks passed');

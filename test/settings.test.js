@@ -111,38 +111,12 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('Built-in presets cannot be deleted'), 'deleteBtn tooltip should explain built-in preset restriction');
     });
 
-    it('should configure Newgrounds authentic favicon and strict icon preservation in DEFAULT_BOOKMARK_DATA and loadBookmarkData', function() {
-        var indexHtml = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
-        assert.ok(indexHtml.includes('https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64'), 'Newgrounds should use authentic favicon URL');
-        assert.ok(indexHtml.includes('(!userBm.icon || userBm.icon.trim() === \'\')'), 'loadBookmarkData should strictly backfill icons only when stored icon is empty');
-        assert.ok(indexHtml.includes('settings.skipBuiltinTestPrompt'), 'index.html bookmark click handler should respect skipBuiltinTestPrompt');
-    });
-
-    it('should configure UBG98, UBGames, Unbleeked, and disableQuickSaveWidget for Movish in DEFAULT_BOOKMARK_DATA across client files', function() {
-        var indexHtml = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
-        var clientJs = fs.readFileSync(path.join(__dirname, '../custom-client/unblocker-client.js'), 'utf8');
-
-        [indexHtml, html, clientJs].forEach(function(content, i) {
-            var label = i === 0 ? 'index.html' : (i === 1 ? 'settings.html' : 'unblocker-client.js');
-            assert.ok(content.includes('id: "bm_ubg98"'), label + ' should contain bm_ubg98');
-            assert.ok(content.includes('title: "UBG98"'), label + ' should contain UBG98 title');
-            assert.ok(content.includes('https://ubg98.com'), label + ' should contain ubg98 URL');
-            assert.ok(content.includes('id: "bm_ubgames"'), label + ' should contain bm_ubgames');
-            assert.ok(content.includes('title: "UBGames"'), label + ' should contain UBGames title');
-            assert.ok(content.includes('https://ubgames.uk'), label + ' should contain ubgames URL');
-            assert.ok(content.includes('id: "bm_unbleeked"'), label + ' should contain bm_unbleeked');
-            assert.ok(content.includes('title: "Unbleeked"'), label + ' should contain Unbleeked title');
-            assert.ok(content.includes('https://unbleeked.vercel.app/'), label + ' should contain unbleeked URL');
-            assert.ok(content.includes('id: "bm_duckmath"'), label + ' should contain bm_duckmath');
-            assert.ok(content.includes('title: "DuckMath"'), label + ' should contain DuckMath title');
-            assert.ok(content.includes('https://duckmath.org/'), label + ' should contain duckmath URL');
-            assert.ok(content.includes('title: "DuckMath a1"'), label + ' should contain DuckMath a1 sub-bookmark');
-            assert.ok(content.includes('https://classroom-a1.b-cdn.net/'), label + ' should contain DuckMath a1 URL');
-            assert.ok(content.includes('id: "bm_movish_anime", categoryId: "cat_anime", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 7'), label + ' should configure bm_movish_anime');
-            assert.ok(content.includes('id: "bm_movish_movies", categoryId: "cat_movies", title: "Movish", url: "https://movish.to/", type: "bookmark", icon: "https://www.google.com/s2/favicons?domain=movish.to&sz=64", builtIn: true, hidden: false, order: 2'), label + ' should configure bm_movish_movies');
-            assert.ok(content.includes('Latest Movies'), label + ' should include Latest Movies mirror link under Movish');
-            assert.ok(content.includes('id: "bm_bloxcraftstudios"') && content.includes('type: "bookmark"'), label + ' should contain bm_bloxcraftstudios as type bookmark');
-        });
+    it('uses the same current defaults and protects customized icons',function(){
+        const catalog=require('../public/assets/heavenly-catalog');
+        assert.equal(catalog.defaults.bookmarks.find(b=>b.id==='bm_ng').icon,'https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64');
+        const data=catalog.fresh();data.bookmarks.find(b=>b.id==='bm_ng').icon='https://custom.test/icon';assert.equal(catalog.prepare(data).bookmarks.find(b=>b.id==='bm_ng').icon,'https://custom.test/icon');
+        for(const id of ['bm_ubg98','bm_ubgames','bm_unbleeked','bm_duckmath','bm_movish_anime','bm_movish_movies','bm_bloxcraftstudios'])assert(catalog.defaults.bookmarks.some(b=>b.id===id));
+        assert(html.includes('HeavenlyCatalog.defaults'));
     });
 
     it('should deduplicate bookmarks and categories on reset in settings.html', function() {

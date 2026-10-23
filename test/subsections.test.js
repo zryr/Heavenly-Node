@@ -13,30 +13,11 @@ describe("Sub-Sections Functionality & Data Model", function () {
     clientJs = fs.readFileSync(path.join(__dirname, "../custom-client/unblocker-client.js"), "utf8");
   });
 
-  it("should configure default subSections in DEFAULT_BOOKMARK_DATA across all client files", function () {
-    assert.strictEqual(indexHtml.includes('{ id: "naenae", title: "Nae-Nae", builtIn: true, defaultCollapsed: true }'), true);
-    assert.strictEqual(settingsHtml.includes('{ id: "naenae", title: "Nae-Nae", builtIn: true, defaultCollapsed: true }'), true);
-    assert.strictEqual(clientJs.includes('{ id: "naenae", title: "Nae-Nae", builtIn: true, defaultCollapsed: true }'), true);
-  });
+  const catalog=require('../public/assets/heavenly-catalog');
+  it('defines Nae-Nae as a collapsed built-in section',()=>{const section=catalog.defaults.categories.find(c=>c.id==='cat_movies').subSections.find(s=>s.id==='naenae');assert.equal(section.defaultCollapsed,true);assert.equal(section.title,'Nae-Nae');});
+  it('keeps the Nae-Nae destinations in their section',()=>{for(const id of ['bm_zig_and_sharko','bm_larva','bm_spongebob'])assert.equal(catalog.defaults.bookmarks.find(b=>b.id===id).subSectionId,'naenae');});
+  it('repairs a missing legacy section without adding optional content',()=>{const data=catalog.fresh();delete data.bookmarks.find(b=>b.id==='bm_project_idk').subSectionId;const repaired=catalog.prepare(data);assert.equal(repaired.bookmarks.find(b=>b.id==='bm_project_idk').subSectionId,'docs_games');});
 
-  it("should configure Nae-Nae default bookmarks across client files", function () {
-    [indexHtml, settingsHtml, clientJs].forEach(function (content, i) {
-      var name = i === 0 ? "index.html" : (i === 1 ? "settings.html" : "unblocker-client.js");
-      assert.strictEqual(content.includes('id: "bm_zig_and_sharko"'), true, name + ' missing bm_zig_and_sharko');
-      assert.strictEqual(content.includes('title: "Zig & Sharko"'), true, name + ' missing Zig & Sharko title');
-      assert.strictEqual(content.includes('id: "bm_larva"'), true, name + ' missing bm_larva');
-      assert.strictEqual(content.includes('title: "Larva"'), true, name + ' missing Larva title');
-      assert.strictEqual(content.includes('id: "bm_spongebob"'), true, name + ' missing bm_spongebob');
-      assert.strictEqual(content.includes('title: "SpongeBob"'), true, name + ' missing SpongeBob title');
-      assert.strictEqual(content.includes('subSectionId: "naenae"'), true, name + ' missing naenae subSectionId');
-    });
-  });
-
-  it("should reconcile subSectionId on bookmarks during loadBookmarkData", function () {
-    [indexHtml, settingsHtml, clientJs].forEach(function (content) {
-      assert.strictEqual(content.includes("defaultBm.subSectionId : (bm.builtIn ? 'builtin' : 'user')"), true);
-    });
-  });
 
   it("should configure accordion sections and synchronized toggle logic in Preset Bookmark Manager", function () {
     assert.strictEqual(settingsHtml.includes('details.className = \'bm-mgr-section\';'), true);

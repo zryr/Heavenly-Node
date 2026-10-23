@@ -12,7 +12,7 @@ function harness() {
   function target() {
     const listeners = new Map();
     return {
-      closest: selector => selector === '.section-card' ? {} : null,
+      closest: selector => selector.includes('.section-card') ? {} : null,
       addEventListener(type, fn, options = {}) {
         const capture = options === true || !!options.capture;
         const entries = listeners.get(type) || [];
@@ -34,9 +34,10 @@ function harness() {
     };
   }
   const document = target(), window = target(), handle = target();
+  document.querySelectorAll = () => [];
   const calls = { hold: 0, move: 0, drop: 0, cancel: 0, close: 0 };
   const context = {
-    document, window, Date: { now: () => now },
+    document, window, bookmarkPointerOrigin:null, bookmarkPointerStart:null, bookmarkInputType:'mouse', bookmarkDragHandleOrigin:true, clearBookmarkPlacement(){}, Date: { now: () => now },
     setTimeout(fn, delay) { const id = ++nextTimer; timers.set(id, { fn, due: now + delay }); return id; },
     clearTimeout(id) { timers.delete(id); },
     closeReorderBar() { calls.close++; },
@@ -218,6 +219,15 @@ describe('Bookmark touch scrolling and deliberate handle dragging', function () 
     assert.equal(h.context.bookmarkTouchInProgress, false);
   });
 
+  it('recognizes a fresh real mouse pointer when sourceCapabilities is unavailable', function () {
+    const h = harness();
+    h.touch('touchstart'); h.touch('touchend');
+    h.context.bookmarkInputType = 'mouse'; h.context.bookmarkPointerStart = { x:20,y:20 };
+    h.document.emit('mousedown', h.event('mousedown'), true);
+    assert.equal(h.context.bookmarkIgnoreMouseUntil, 0);
+    assert.equal(h.context.isBookmarkCompatibilityMouse({}), false);
+  });
+
   it('recognizes compatibility mouse input during a long touch when sourceCapabilities is unavailable', function () {
     const h = harness();
     h.touch('touchstart'); h.tick(1500);
@@ -261,7 +271,7 @@ describe('Bookmark touch scrolling and deliberate handle dragging', function () 
 
   it('keeps modal section handles on the touch path without starting a duplicate native drag', function () {
     const h = harness();
-    const rowTarget = { closest: selector => selector === '.section-order-row' ? {} : null };
+    const rowTarget = { closest: selector => selector.includes('.section-order-row') ? {} : null };
     h.touch('touchstart', 20, 20, { target: rowTarget });
     assert.equal(h.context.bookmarkTouchInProgress, true);
     h.tick(600);

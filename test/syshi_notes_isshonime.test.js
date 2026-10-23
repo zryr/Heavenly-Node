@@ -30,9 +30,7 @@ describe("Syshi's Notes, Isshonime Bookmark & De-emphasized Broken Links", funct
   });
 
   it("should apply de-emphasized styling for broken mirror links in index.html", function () {
-    const content = fs.readFileSync("./public/index.html", "utf8");
-
-    assert.ok(content.includes("opacity: 0.45"), "index.html should set lower opacity for broken links");
-    assert.ok(content.includes("filter: grayscale(50%)"), "index.html should set grayscale filter for broken links");
+    const content = fs.readFileSync("./public/assets/bookmark-dialogs.css", "utf8");
+    assert.ok(content.includes('.mirror-destination-row[data-broken="true"] .mirror-site-icon'), "broken-link icons use restrained styling while text stays readable");
   });
 });

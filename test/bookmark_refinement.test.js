@@ -77,10 +77,10 @@ describe('Notes and Quick Save survive every built-in reader', () => {
   for (const name of ['public/index.html', 'public/settings.html', 'custom-client/unblocker-client.js']) it(name, () => {
     const source = fs.readFileSync(name, 'utf8'), definition = source.indexOf('var DEFAULT_BOOKMARK_DATA =');
     const end = name.startsWith('custom') ? source.indexOf('\n      };', definition) + 9 : source.indexOf('\n    };', definition) + 7;
-    const c = { HeavenlyBookmarks: bookmarks, HeavenlyNavigation: navigation, navigation, localStorage: null, storage: null }; vm.createContext(c); vm.runInContext(source.slice(definition, end), c);
+    const c = { HeavenlyCatalog: require('../public/assets/heavenly-catalog'), catalog: require('../public/assets/heavenly-catalog'), HeavenlyBookmarks: bookmarks, HeavenlyNavigation: navigation, navigation, localStorage: null, storage: null }; vm.createContext(c); c.DEFAULT_BOOKMARK_DATA = c.HeavenlyCatalog.defaults;
     const data = clone(c.DEFAULT_BOOKMARK_DATA); data.bookmarks.find(b => b.id === 'bm_gn_math').personalNote = 'Keep across updates'; data.bookmarks.find(b => b.id === 'bm_duckmath').disableQuickSaveWidget = false;
     c.localStorage = c.storage = storage(data);
-    if (name.startsWith('custom')) vm.runInContext(source.slice(source.indexOf('      var data = JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));'), source.indexOf("      var prefix = (config && config.prefix) ? config.prefix")), c);
+    if (name.startsWith('custom')) c.catalog.load(c.storage);
     else {
       for (const fn of ['loadBookmarkData', 'saveBookmarkData']) { const a = source.indexOf('    function ' + fn + '('), b = source.indexOf('\n    function ', a + 1); vm.runInContext(source.slice(a, b), c); }
       c.loadBookmarkData();

@@ -293,7 +293,7 @@ var unblockerConfig = {
 
 // Bundle the shared browser helpers before the proxy client (no build tool required).
 var fs = require('fs');
-var unblockerClientBundle = fs.readFileSync(__dirname + '/public/assets/heavenly-icons.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-navigation.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-bookmarks.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/custom-client/unblocker-client.js', 'utf8');
+var unblockerClientBundle = fs.readFileSync(__dirname + '/public/assets/heavenly-icons.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-navigation.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-bookmarks.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-catalog.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/custom-client/unblocker-client.js', 'utf8');
 app.get('/proxy/client/unblocker-client.js', function(req, res) {
     res.type('application/javascript').send(unblockerClientBundle);
 });
@@ -565,7 +565,8 @@ function renderHeavenlyErrorPage(opts) {
 '        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>\n' +
 '        <span>Test Direct Connection (No Proxy)</span>\n' +
 '      </a>\n' : '') +
-'      <a href="/" target="_top" onclick="try { var root = (window.location && window.location.origin && window.location.origin !== \'null\' && window.location.origin.indexOf(\'http\') === 0) ? (window.location.origin + \'/\') : \'/\'; (window.top || window).location.href = root; } catch(e) { window.location.href = \'/\'; } return false;" class="btn-action btn-outline">\n' +
+'      <script src="/assets/heavenly-navigation.js"></script>\n' +
+'      <a href="/" target="_top" onclick="if(window.HeavenlyNavigation){HeavenlyNavigation.returnHome(window);return false;}" class="btn-action btn-outline">\n' +
 '        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>\n' +
 '        <span>Return to Heavenly Home</span>\n' +
 '      </a>\n' +

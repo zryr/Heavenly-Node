@@ -22,6 +22,8 @@ Previously, accordion, Show More and folder controls called `renderBookmarksUI()
 
 ## Active mirrors and restoration
 
+This section records the first iteration. See [mirror management V2](mirror-management-v2.md) for persistent Preferred/Active Site choices, ordering, restoration and seven-second feedback.
+
 `HeavenlyBookmarks.mirrorState()` chooses the canonical site when working, then a working user mirror, then a working built-in mirror. It deduplicates by the existing URL key. The launch dialog uses that result for the active URL, primary card, copying, Direct and Proxy; promotion never changes the stored canonical address. Broken entries are available in a compact **Broken (n)** disclosure next to the mirror interface, including the original address. Explicit restoration updates the existing broken-link map and recalculates the primary. Dialog refresh retains note drafts, expanded mirror sections, focus and scroll. User mirrors are preserved, and adding the same URL is rejected.
 
 The header displays only the active destination URL beneath the original title and website icon. Long URLs wrap into a bounded two-line area, with the complete URL retained in its accessible label and title. **PROMOTED** is feedback for a newly observed primary change: it lasts approximately five seconds, then disappears without altering the active URL, ordering or broken markers. Reopening the same destination does not restart it. A different promoted primary can receive fresh feedback. State is held in memory for the current document; close, refresh and page lifecycle handlers clean up the timer. Expiry restores keyboard focus to the URL control if the badge held focus. Reduced-motion rules apply.

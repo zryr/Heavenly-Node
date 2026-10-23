@@ -13,11 +13,11 @@ function source(name, content = html) {
 function context() {
   const store = new Map();
   const sandbox = {
-    HeavenlyBookmarks: require('../public/assets/heavenly-bookmarks'), Set, URL, HeavenlyNavigation: require('../public/assets/heavenly-navigation'), navigation: require('../public/assets/heavenly-navigation'),
+    HeavenlyCatalog: require('../public/assets/heavenly-catalog'), catalog: require('../public/assets/heavenly-catalog'), HeavenlyBookmarks: require('../public/assets/heavenly-bookmarks'), Set, URL, HeavenlyNavigation: require('../public/assets/heavenly-navigation'), navigation: require('../public/assets/heavenly-navigation'),
     localStorage: { getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value) }
   };
   vm.createContext(sandbox);
-  vm.runInContext(html.slice(html.indexOf('    var DEFAULT_BOOKMARK_DATA ='), html.indexOf('    var expandedCategories =')), sandbox);
+  sandbox.DEFAULT_BOOKMARK_DATA = sandbox.HeavenlyCatalog.defaults;
   vm.runInContext(['loadBookmarkData', 'saveBookmarkData', 'reorderSectionDraft'].map(name => source(name)).join('\n'), sandbox);
   return sandbox;
 }
@@ -83,7 +83,7 @@ describe('Bookmark management and saved ordering', function () {
     verify(loaded);
     const client = fs.readFileSync(path.join(__dirname, '../custom-client/unblocker-client.js'), 'utf8');
     c.storage = c.localStorage;
-    vm.runInContext(client.slice(client.indexOf('      var data = JSON.parse(JSON.stringify(DEFAULT_BOOKMARK_DATA));'), client.indexOf("      var prefix = (config && config.prefix) ? config.prefix")), c);
+    vm.runInContext('var data = catalog.load(storage);', c);
     verify(c.data);
   });
 
