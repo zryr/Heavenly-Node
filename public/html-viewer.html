@@ -921,6 +921,19 @@
       }
     }
 
+    function updateEditorStatus(text, dotClass) {
+      var statusEl = document.querySelector('.editor-pane .status-indicator');
+      if (!statusEl) return;
+      var dot = statusEl.querySelector('.status-dot');
+      var label = statusEl.querySelector('span:last-child');
+      if (dot) {
+        dot.className = 'status-dot' + (dotClass ? ' ' + dotClass : '');
+      }
+      if (label && text) {
+        label.textContent = text;
+      }
+    }
+
     // Line Numbers & Editor Functionality
     function updateLineNumbers() {
       var codeInput = $('code-input');
@@ -966,6 +979,7 @@
         doc.write(codeInput.value);
         doc.close();
       }
+      updateEditorStatus('Preview Executed', '');
     }
 
     function clearCode() {
@@ -983,6 +997,7 @@
       codeInput.value = '';
       updateLineNumbers();
       runCode();
+      updateEditorStatus('Editor Cleared', 'idle');
       try {
         localStorage.removeItem('heavenly_html_viewer_code');
       } catch (e) {}
@@ -1175,8 +1190,13 @@
           if (editorWrapper) editorWrapper.classList.remove('focus-glow');
         };
 
-        // Support Tab key indentation inside textarea
+        // Support Ctrl/Cmd+Enter execution & Tab key indentation inside textarea
         codeInput.onkeydown = function (e) {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            runCode();
+            return;
+          }
           if (e.key === 'Tab') {
             e.preventDefault();
             var start = this.selectionStart;
@@ -1204,10 +1224,12 @@
         codeInput.value = SAMPLE_STARTER_CODE;
         updateLineNumbers();
         runCode();
+        updateEditorStatus('Sample Loaded', '');
       };
 
       $('btn-copy-code').onclick = function () {
         if (!codeInput.value) return;
+        updateEditorStatus('Code Copied', '');
         navigator.clipboard.writeText(codeInput.value).then(function () {
           var btn = $('btn-copy-code');
           if (btn) {

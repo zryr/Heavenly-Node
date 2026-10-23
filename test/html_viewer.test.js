@@ -66,4 +66,13 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
     assert.ok(html.includes('id="btn-clear"') && html.includes('aria-label="Clear code editor content"'), 'btn-clear should specify descriptive aria-label');
     assert.ok(html.includes('class="status-indicator" aria-live="polite"'), 'status-indicator should specify aria-live="polite"');
   });
+
+  it('should support Ctrl/Cmd+Enter keyboard execution shortcut and dynamic updateEditorStatus announcements', function() {
+    var html = fs.readFileSync(path.join(__dirname, '../public/html-viewer.html'), 'utf8');
+
+    assert.ok(html.includes('function updateEditorStatus'), 'should define updateEditorStatus helper');
+    assert.ok(html.includes('(e.ctrlKey || e.metaKey) && e.key === \'Enter\''), 'code-input should handle Ctrl/Cmd+Enter shortcut');
+    assert.ok(html.includes('updateEditorStatus(\'Preview Executed\''), 'runCode should announce Preview Executed');
+    assert.ok(html.includes('updateEditorStatus(\'Editor Cleared\''), 'clearCode should announce Editor Cleared');
+  });
 });
