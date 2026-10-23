@@ -29,7 +29,7 @@
       stop(node); done();
     }
     state.animations[1].onfinish = finish;
-    state.timer = setTimeout(finish, duration+40);
+    state.timer = setTimeout(finish, 1200);
   }
   function open(node) {
     if (!node) return;
@@ -52,5 +52,12 @@
     node.setAttribute('aria-hidden','true');
     animate(node, true, function () { node.classList.remove('modal-closing'); unlock(); });
   }
+  root.document.addEventListener('visibilitychange', function () {
+    if (root.document.visibilityState !== 'hidden') return;
+    root.document.querySelectorAll('.modal-backdrop').forEach(function (node) {
+      stop(node);
+      if (node.classList.contains('modal-closing')) { node.classList.remove('modal-closing'); unlock(); }
+    });
+  });
   root.HeavenlyDialogs = { open:open, close:close };
 })(window);

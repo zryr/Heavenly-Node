@@ -94,7 +94,7 @@
   }
   function mirrorState(bookmark, url, title, brokenMap) {
     brokenMap = brokenMap || {};
-    var original = { title: bookmark ? bookmark.title : title, url: bookmark && bookmark.url || url, source: 'main', mirrorEligible: bookmark && bookmark.mirrorEligible };
+    var original = { title: bookmark ? bookmark.title : title, url: bookmark && bookmark.url || url, source: 'main', mirrorEligible: bookmark && bookmark.mirrorEligible, catalogPreviousUrls: bookmark && bookmark.catalogPreviousUrls };
     var seen = Object.create(null), brokenKeys = Object.create(null);
     Object.keys(brokenMap).forEach(function (url) { if (brokenMap[url]) brokenKeys[navigation.bookmarkKey(url)] = true; });
     var entries = [original].concat(bookmark && bookmark.subBookmarks || []).filter(function (entry) {
@@ -102,7 +102,7 @@
       if (!key || seen[key]) return false;
       seen[key] = true; return true;
     }).map(function (entry) {
-      return Object.assign({}, entry, { identity: mirrorIdentity(entry), eligible: eligibleMirror(entry), isBroken: !!brokenKeys[navigation.bookmarkKey(entry.url)] });
+      return Object.assign({}, entry, { identity: mirrorIdentity(entry), eligible: eligibleMirror(entry), isBroken: !!brokenKeys[navigation.bookmarkKey(entry.url)] || (entry.catalogPreviousUrls || []).some(function(url){return !!brokenKeys[navigation.bookmarkKey(url)];}) });
     });
     var saved = bookmark && bookmark.mirrorPreferences || {};
     var eligible = entries.filter(function (entry) { return entry.eligible; });

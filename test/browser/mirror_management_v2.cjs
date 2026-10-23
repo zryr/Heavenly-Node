@@ -33,7 +33,7 @@ const pass=s=>{checks++;console.log('PASS '+s)};
  await new Promise(r=>setTimeout(r,11000));await page.waitForFunction(()=>!document.querySelector('#builtin-test-modal .promoted-tooltip-box'));assert.equal(await modal.locator('.promoted-tooltip-box').count(),0);assert.equal(await modal.locator('.bookmark-active-url').innerText(),'https://original.test/0');
  await modal.locator('.mirror-info').click();assert.equal(await modal.locator('.promoted-tooltip-box').count(),1);await modal.getByRole('button',{name:'Dismiss',exact:true}).click();assert.equal(await modal.locator('.promoted-tooltip-box').count(),0);
  pass('fallback badge lasts seven seconds, first guidance lasts eighteen seconds, expiry never changes destination, and Info/Dismiss remain available');
- await modal.locator('.bookmark-personal-note summary').click();await modal.locator('textarea').fill('Unsaved draft');await modal.locator('.broken-mirrors-toggle').click();
+ await modal.locator('.bookmark-personal-note summary').click();await modal.locator('textarea').fill('Unsaved draft');if(!(await modal.locator('.broken-mirrors').evaluate(n=>n.open)))await modal.locator('.broken-mirrors-toggle').click();
  await action(modal.locator('.broken-mirrors [data-mirror-identity="id:one"]'),'Mark Working');
  assert.equal(await modal.locator('.bookmark-active-url').innerText(),'https://original.test/0');assert.equal(await modal.locator('textarea').inputValue(),'Unsaved draft');assert.equal(await modal.locator('.promoted-badge-btn').count(),0);
  await action(active,'Mark Broken');assert.equal(await modal.locator('.bookmark-active-url').innerText(),'https://one.test/');assert.equal(await modal.locator('.promoted-tooltip-box').count(),0);

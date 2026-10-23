@@ -2,15 +2,8 @@ const assert = require("assert");
 const unblockerClient = require("../custom-client/unblocker-client.js");
 
 describe("FMHY Bookmarks & Link Interception", function () {
-  it("should contain FMHY: Movies and FMHY: Anime in DEFAULT_BOOKMARK_DATA in unblocker-client.js", function () {
-    const fs = require("fs");
-    const content = fs.readFileSync("./custom-client/unblocker-client.js", "utf8");
+  it('provides both FMHY destinations through the shared client catalog',()=>{const data=require('../public/assets/heavenly-catalog').defaults;assert.equal(data.bookmarks.find(b=>b.id==='bm_fmhy_movies').url,'https://fmhy.net/video');assert.equal(data.bookmarks.find(b=>b.id==='bm_fmhy_anime').url,'https://fmhy.net/video#anime-streaming');});
 
-    assert.strictEqual(content.includes('bm_fmhy_movies'), true, "bm_fmhy_movies should exist in client script");
-    assert.strictEqual(content.includes('bm_fmhy_anime'), true, "bm_fmhy_anime should exist in client script");
-    assert.strictEqual(content.includes('https://fmhy.net/video'), true, "FMHY Movies URL should exist");
-    assert.strictEqual(content.includes('https://fmhy.net/video#anime-streaming'), true, "FMHY Anime URL should exist");
-  });
 
   it("should contain openFmhyLinkModal and isFmhyPage functions in unblocker-client.js", function () {
     const fs = require("fs");

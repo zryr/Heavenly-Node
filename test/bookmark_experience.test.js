@@ -10,10 +10,10 @@ const plain = value => JSON.parse(JSON.stringify(value));
 function context(page = 'index.html') {
   const content = fs.readFileSync(require.resolve('../public/' + page), 'utf8');
   const store = new Map();
-  const c = { HeavenlyBookmarks: require('../public/assets/heavenly-bookmarks'), URL, HeavenlyNavigation: navigation, localStorage: { getItem: k => store.get(k) || null, setItem: (k, v) => store.set(k, v) } };
+  const c = { bookmarkStorageError: null, HeavenlyCatalog: require('../public/assets/heavenly-catalog'), catalog: require('../public/assets/heavenly-catalog'), HeavenlyBookmarks: require('../public/assets/heavenly-bookmarks'), URL, HeavenlyNavigation: navigation, localStorage: { getItem: k => store.get(k) || null, setItem: (k, v) => store.set(k, v) } };
   vm.createContext(c);
   const start = content.indexOf('    var DEFAULT_BOOKMARK_DATA =');
-  vm.runInContext(content.slice(start, content.indexOf('\n    };', start) + 7), c);
+  c.DEFAULT_BOOKMARK_DATA = c.HeavenlyCatalog.defaults;
   for (const name of ['loadBookmarkData', 'saveBookmarkData']) {
     const a = content.indexOf('    function ' + name + '('), b = content.indexOf('\n    function ', a + 1);
     vm.runInContext(content.slice(a, b), c);
@@ -35,7 +35,8 @@ for (const page of ['index.html', 'settings.html']) describe('Safe bookmark reco
     const saved = plain(game);
     c.saveBookmarkData(data);
     for (let i = 0; i < 3; i++) {
-      const result = c.loadBookmarkData();
+      let result = c.loadBookmarkData();
+      if(i===0) { c.HeavenlyCatalog.commit(c.localStorage, 'applied'); result=c.loadBookmarkData(); }
       assert.equal(result.bookmarks.filter(b => b.id === 'bm_coolmath').length, 1);
       assert.equal(result.bookmarks.find(b => b.id === 'bm_coolmath').order, 701);
       assert.deepEqual(plain(result.bookmarks.find(b => b.id === 'bm_ng')).subBookmarks, saved.subBookmarks);
@@ -49,6 +50,7 @@ for (const page of ['index.html', 'settings.html']) describe('Safe bookmark reco
     const custom = { id: 'my-coolmath', categoryId: 'cat_games', title: 'My games', url: 'http://coolmathgames.com', icon: 'preset:star', order: 82, subBookmarks: [] };
     data.bookmarks.push(custom); c.saveBookmarkData(data);
     assert.deepEqual(plain(c.loadBookmarkData().bookmarks.find(b => b.id === custom.id)), { ...custom, subSectionId: 'user' });
+    c.HeavenlyCatalog.commit(c.localStorage, 'applied');
     assert(!c.loadBookmarkData().bookmarks.some(b => b.id === 'bm_coolmath'));
   });
   it('migrates shipped icon paths once and preserves custom FMHY icons', () => {
