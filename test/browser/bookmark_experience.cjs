@@ -74,12 +74,25 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   }
   await page.locator('[data-category-id="cat_anime"] .special-links-btn').click(); await page.locator('.special-link-row').nth(1).click();
   assert.equal(await page.locator('.modal-backdrop.active').count(),1);assert(await page.locator('#everythingmoe-modal').evaluate(e=>e.classList.contains('active')));await page.keyboard.press('Escape');
-  await page.locator('#bm-universal-search').fill('FMHY');await page.locator('#bm-universal-search').dispatchEvent('input');assert.equal(await page.locator('[data-bm-id="bm_fmhy_anime"]').count(),1);await page.locator('#bm-universal-search').fill('');await page.locator('#bm-universal-search').dispatchEvent('input');
+  await page.locator('#bm-universal-search').fill('FMHY');await page.locator('#bm-universal-search').dispatchEvent('input');assert.equal(await page.locator('#bookmark-search-results [data-bookmark-id="bm_fmhy_anime"]').count(),1);await page.locator('#bm-universal-search').fill('');await page.locator('#bm-universal-search').dispatchEvent('input');
   pass('Special Links aligns icons/names/domains for one or two entries and retains launch notices/search');
   for(const [width,height] of [[320,740],[390,844],[820,1180],[1180,820],[1366,1000]]) {
     await page.setViewportSize({width,height});await page.waitForTimeout(350);
+    // Adaptive panels can be intentionally collapsed; inspect the actual expanded
+    // sidebar using its public control before measuring its category header.
+    if (!(await page.evaluate(() => HeavenlyLayout.getState().actual.right.open))) {
+      await page.locator('[data-sidebar-toggle="right"]:visible').first().click();
+      await page.waitForTimeout(250);
+    }
     const row = page.locator('[data-category-id="cat_anime"] .section-header');
-    const title=await row.locator('.category-title').boundingBox(),actions=await row.locator('.category-actions').boundingBox();assert(Math.abs(title.y+title.height/2-actions.y-actions.height/2)<2,JSON.stringify({width,title,actions}));
+    // Read all geometry in one frame: the expansion gesture may still be
+    // smoothly bringing the panel into view, so separate bbox calls can disagree.
+    const {title,actions,header}=await row.evaluate(node=>({title:node.querySelector('.category-title').getBoundingClientRect().toJSON(),actions:node.querySelector('.category-actions').getBoundingClientRect().toJSON(),header:node.getBoundingClientRect().toJSON()}));
+    const sameRow=Math.abs(title.y+title.height/2-actions.y-actions.height/2)<2;
+    const stacked=title.bottom<=actions.y+1;
+    assert(sameRow||stacked,JSON.stringify({width,title,actions,header}));
+    assert(title.x>=header.x&&title.right<=header.right&&actions.x>=header.x&&actions.right<=header.right,'Header controls stay inside the card at '+width);
+    assert(sameRow?title.right<=actions.x+1:title.bottom<=actions.y+1,'Category title and action targets never overlap at '+width);
     assert.equal(await row.locator('.category-actions button').count(),3);
     assert(await row.locator('.category-title').evaluate(e=>e.scrollWidth<=e.clientWidth),'Full category title fits at '+width);
     const names=await row.locator('.category-actions button').evaluateAll(es=>es.map(e=>e.className));assert(names[0].includes('syshi-notes'));assert(names[1].includes('special-links'));

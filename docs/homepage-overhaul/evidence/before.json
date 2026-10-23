@@ -1,0 +1,124 @@
+{
+  "phase": "before",
+  "base": "013cd07a36854c74b8feb8f29a8437f2c4daa72b",
+  "captured": "2026-10-23T18:37:48.907Z",
+  "browser": "154.0.8037.57",
+  "externalRequests": "External fonts, images and stylesheets allowed. Proxy/navigation requests blocked; local assets unchanged.",
+  "captures": [
+    {
+      "id": "wide",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/before-wide.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 672
+    },
+    {
+      "id": "medium",
+      "width": 1180,
+      "height": 900,
+      "file": "evidence/before-medium.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 440
+    },
+    {
+      "id": "ipad-portrait",
+      "width": 820,
+      "height": 1180,
+      "file": "evidence/before-ipad-portrait.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 788
+    },
+    {
+      "id": "ipad-landscape",
+      "width": 1180,
+      "height": 820,
+      "file": "evidence/before-ipad-landscape.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 440
+    },
+    {
+      "id": "phone",
+      "width": 390,
+      "height": 844,
+      "file": "evidence/before-phone.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 358
+    },
+    {
+      "id": "large-phone",
+      "width": 430,
+      "height": 932,
+      "file": "evidence/before-large-phone.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 398
+    },
+    {
+      "id": "small-laptop",
+      "width": 1366,
+      "height": 768,
+      "file": "evidence/before-small-laptop.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 626
+    },
+    {
+      "id": "ultrawide",
+      "width": 1920,
+      "height": 1080,
+      "file": "evidence/before-ultrawide.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 672
+    },
+    {
+      "id": "search",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/before-search.png",
+      "note": "Universal bookmark search for Games.",
+      "overflow": false,
+      "centerWidth": 672
+    },
+    {
+      "id": "show-more",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/before-show-more.png",
+      "note": "First available Show More section expanded with built-in content.",
+      "overflow": false,
+      "centerWidth": 672
+    },
+    {
+      "id": "reduced-motion",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/before-reduced-motion.png",
+      "note": "Reduced-motion presentation.",
+      "overflow": false,
+      "centerWidth": 672
+    },
+    {
+      "id": "touch-drag",
+      "width": 1180,
+      "height": 820,
+      "file": "evidence/before-touch-drag.png",
+      "note": "Actual Chromium CDP emulated continuous touch: 520ms hold followed by 14 incremental moves. Preview present: 1. Built-in bookmark bm_streamopro."
+    },
+    {
+      "id": "drop",
+      "width": 1180,
+      "height": 820,
+      "file": "evidence/before-drop.png",
+      "note": "Touch release and short settling interval. Saved before: bm_fmhy_movies, bm_streamopro, bm_movish_movies, bm_7movies, bm_rivestream. Saved after: bm_fmhy_movies, bm_movish_movies, bm_7movies, bm_rivestream, bm_streamopro."
+    }
+  ],
+  "recording": "evidence/before-touch-drag.webm",
+  "errors": []
+}
