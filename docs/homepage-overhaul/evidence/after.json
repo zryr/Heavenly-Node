@@ -1,0 +1,643 @@
+{
+  "phase": "after",
+  "captured": "2026-10-23T23:41:45.987Z",
+  "browser": "154.0.8037.57",
+  "externalRequests": "External fonts, images and stylesheets allowed. Proxy/navigation requests blocked; local assets unchanged.",
+  "captures": [
+    {
+      "id": "wide",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/after-wide.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 864,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "medium",
+      "width": 1180,
+      "height": 900,
+      "file": "evidence/after-medium.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 604,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "ipad-portrait",
+      "width": 820,
+      "height": 1180,
+      "file": "evidence/after-ipad-portrait.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 456,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": false,
+            "width": 240
+          }
+        }
+      }
+    },
+    {
+      "id": "ipad-landscape",
+      "width": 1180,
+      "height": 820,
+      "file": "evidence/after-ipad-landscape.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 604,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "phone",
+      "width": 390,
+      "height": 844,
+      "file": "evidence/after-phone.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 366,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": true,
+          "left": {
+            "open": false,
+            "width": 256
+          },
+          "right": {
+            "open": false,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "large-phone",
+      "width": 430,
+      "height": 932,
+      "file": "evidence/after-large-phone.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 406,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": true,
+          "left": {
+            "open": false,
+            "width": 256
+          },
+          "right": {
+            "open": false,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "small-laptop",
+      "width": 1366,
+      "height": 768,
+      "file": "evidence/after-small-laptop.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 790,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "ultrawide",
+      "width": 1920,
+      "height": 1080,
+      "file": "evidence/after-ultrawide.png",
+      "note": "Default saved-layout intent, built-in catalog content.",
+      "overflow": false,
+      "centerWidth": 992,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "both-expanded",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/after-both-expanded.png",
+      "note": "Both panels expanded, default widths.",
+      "overflow": false,
+      "centerWidth": 864,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "left-collapsed",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/after-left-collapsed.png",
+      "note": "Left panel explicitly collapsed; right panel stays open.",
+      "overflow": false,
+      "centerWidth": 1076,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": false,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "right-collapsed",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/after-right-collapsed.png",
+      "note": "Right panel explicitly collapsed; left panel stays open.",
+      "overflow": false,
+      "centerWidth": 1076,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "right",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": false,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "both-collapsed",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/after-both-collapsed.png",
+      "note": "Both panels explicitly collapsed.",
+      "overflow": false,
+      "centerWidth": 1288,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": false,
+            "width": 256
+          },
+          "right": {
+            "open": false,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "search-collapsed",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/after-search-collapsed.png",
+      "note": "Unified central search for Games with both sidebars collapsed; saved layout remains unchanged.",
+      "overflow": false,
+      "centerWidth": 1288,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": false,
+            "width": 256
+          },
+          "right": {
+            "open": false,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "narrow-sidebar",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/after-narrow-sidebar.png",
+      "note": "Left panel resized to its functional 240px minimum using the accessible separator.",
+      "overflow": false,
+      "centerWidth": 880,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 240,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 240
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "search",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/after-search.png",
+      "note": "Universal bookmark search for Games.",
+      "overflow": false,
+      "centerWidth": 864,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "show-more",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/after-show-more.png",
+      "note": "First available Show More section expanded with built-in content.",
+      "overflow": false,
+      "centerWidth": 864,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "reduced-motion",
+      "width": 1440,
+      "height": 1000,
+      "file": "evidence/after-reduced-motion.png",
+      "note": "Reduced-motion presentation.",
+      "overflow": false,
+      "centerWidth": 864,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      }
+    },
+    {
+      "id": "resizing",
+      "width": 1180,
+      "height": 820,
+      "file": "evidence/after-resizing.png",
+      "note": "Actual pressed mouse resize at the left inner divider. No bookmark drag preview was created."
+    },
+    {
+      "id": "touch-drag",
+      "width": 1180,
+      "height": 820,
+      "file": "evidence/after-touch-drag.png",
+      "note": "Actual Chromium CDP emulated continuous touch: 520ms hold followed by 14 incremental moves. Preview present: 1. Built-in bookmark bm_streamopro."
+    },
+    {
+      "id": "drop",
+      "width": 1180,
+      "height": 820,
+      "file": "evidence/after-drop.png",
+      "note": "Touch release and short settling interval. Saved before: bm_fmhy_movies, bm_streamopro, bm_movish_movies, bm_7movies, bm_rivestream. Saved after: bm_fmhy_movies, bm_movish_movies, bm_7movies, bm_rivestream, bm_streamopro."
+    }
+  ],
+  "recording": "evidence/after-touch-drag.webm",
+  "errors": []
+}

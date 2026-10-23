@@ -1,0 +1,53 @@
+{
+  "baseline": "013cd07a36854c74b8feb8f29a8437f2c4daa72b",
+  "browser": "Chromium desktop emulation",
+  "physicalDevice": false,
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "captures": [
+    {
+      "label": "before",
+      "firstOpenKeyframes": [
+        {
+          "height": "104px",
+          "opacity": "0.86"
+        },
+        {
+          "height": "104px",
+          "opacity": "1"
+        }
+      ],
+      "video": "motion-before-live.webm",
+      "frames": [
+        "motion-before-0ms.png",
+        "motion-before-70ms.png",
+        "motion-before-140ms.png",
+        "motion-before-210ms.png"
+      ],
+      "note": "Filmstrip samples pause the real WAAPI effect at labeled times; live video runs normal clicks/reversal without pausing."
+    },
+    {
+      "label": "after",
+      "firstOpenKeyframes": [
+        {
+          "height": "0px",
+          "opacity": "0.86"
+        },
+        {
+          "height": "132px",
+          "opacity": "1"
+        }
+      ],
+      "video": "motion-after-live.webm",
+      "frames": [
+        "motion-after-0ms.png",
+        "motion-after-70ms.png",
+        "motion-after-140ms.png",
+        "motion-after-210ms.png"
+      ],
+      "note": "Filmstrip samples pause the real WAAPI effect at labeled times; live video runs normal clicks/reversal without pausing."
+    }
+  ]
+}

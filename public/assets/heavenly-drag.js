@@ -2,6 +2,26 @@
   'use strict';
   var movement = new WeakMap();
 
+  // All homepage gestures reserve one input stream, including the pending hold.
+  // A second interaction cannot steal ownership or silently cancel its neighbor.
+  var gestureOwner = '', gestureCancel = null;
+  root.HeavenlyGestures = {
+    get owner() { return gestureOwner; },
+    acquire: function (owner, cancel) {
+      if (gestureOwner && gestureOwner !== owner) return false;
+      gestureOwner = owner; gestureCancel = cancel; return true;
+    },
+    release: function (owner) {
+      if (gestureOwner !== owner) return;
+      gestureOwner = ''; gestureCancel = null;
+    },
+    cancel: function () {
+      var cancel = gestureCancel;
+      gestureOwner = ''; gestureCancel = null;
+      if (cancel) cancel();
+    }
+  };
+
   function reducedMotion() {
     return root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
@@ -110,16 +130,23 @@
     ghost.appendChild(content);
     doc.body.appendChild(ghost);
     var width = ghost.offsetWidth || (compact ? 180 : 240), height = ghost.offsetHeight || 42;
-    var frame = 0, x = 0, y = 0, removed = false;
+    var frame = 0, x = 0, y = 0, removed = false, firstPaint = true;
     ghost.style.visibility = 'hidden';
-    if (content.animate && !reducedMotion()) {
-      content.animate([{ scale:'.96', opacity:.55, translate:'0px 3px' }, { scale:'1.015', opacity:1, translate:'0px -1px' }, { scale:'1', opacity:1, translate:'0px 0px' }], { duration:150, easing:'ease-out' });
-    }
     function paint() {
       frame = 0;
       if (!removed) {
         ghost.style.visibility = 'visible';
         ghost.style.transform = 'translate3d('+x+'px,'+y+'px,0)';
+        // Start only when visible. Creating the animation while hidden let its
+        // clock run ahead of the first frame, particularly on slower devices.
+        if (firstPaint) {
+          firstPaint = false;
+          if (content.animate && !reducedMotion()) content.animate([
+            { transform:'translateY(3px) scale(.96)', opacity:.55 },
+            { transform:'translateY(-1px) scale(1.015)', opacity:1 },
+            { transform:'translateY(0) scale(1)', opacity:1 }
+          ], { duration:150, easing:'ease-out' });
+        }
       }
     }
     function move(px, py) {

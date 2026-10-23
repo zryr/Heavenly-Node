@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <script src="/assets/heavenly-navigation.js"></script>
   <script src="/assets/heavenly-bookmarks.js"></script>
+  <script src="/assets/heavenly-bookmark-view.js"></script>
+  <link rel="stylesheet" href="/assets/heavenly-bookmark-view.css">
   <script src="/assets/heavenly-catalog.js"></script>
   <script src="/assets/heavenly-catalog-ui.js"></script>
   <link rel="stylesheet" href="/assets/heavenly-catalog.css">
@@ -1166,6 +1168,21 @@
             </div>
           </div>
 
+          <div class="hero-card" id="bookmark-display-settings">
+            <h3 class="hero-card-title">Bookmark display counts</h3>
+            <p class="hero-card-desc">Choose how many bookmarks appear before Show More. Categories and subsections can use their own count.</p>
+            <div class="bookmark-count-controls">
+              <label for="set-bookmark-initial-limit">Default visible bookmarks (1–30)</label>
+              <input type="number" id="set-bookmark-initial-limit" min="1" max="30" step="1" inputmode="numeric" value="5">
+              <label for="set-bookmark-limit-section">Category or subsection override</label>
+              <select id="set-bookmark-limit-section"></select>
+              <label for="set-bookmark-section-limit">Visible bookmarks · leave blank for global default</label>
+              <input type="number" id="set-bookmark-section-limit" min="1" max="30" step="1" inputmode="numeric" disabled>
+              <button type="button" id="reset-bookmark-section-limit" disabled>Use global default</button>
+              <p id="bookmark-limit-status" role="status" aria-live="polite"></p>
+            </div>
+          </div>
+
           <!-- Hero Card: Open Bookmarks in New Tab -->
           <div class="hero-card">
             <div class="hero-card-header">
@@ -1542,6 +1559,7 @@
 
     var DEFAULT_BOOKMARK_DATA = HeavenlyCatalog.defaults;
     var bookmarkStorageError = null;
+    var bookmarkLimitSettings = null;
 
     var DEFAULT_RANDOM_POOL = HeavenlyCloakPool.defaults.slice();
 
@@ -1806,6 +1824,7 @@
 
     var lastSyncedDockPosition = null;
     function syncSettingsToUI(options) {
+      if (bookmarkLimitSettings) bookmarkLimitSettings.refresh();
       var settings = loadSettings();
       $('set-auto-cloak').checked = settings.autoCloak;
       $('set-persistent-cloak').checked = settings.persistentCloak;
@@ -2781,6 +2800,7 @@
       if (window.__heavenlySettingsInitialized) return;
       window.__heavenlySettingsInitialized = true;
       bindSettingsEvents();
+      bookmarkLimitSettings = HeavenlyBookmarkView.initLimitSettings({ document: document, settings: function () { return HeavenlyNavigation.readSettings(localStorage); }, data: loadBookmarkData, save: saveSettings });
       initCloak();
       setTimeout(hideLoadingScreen, 300);
     }
