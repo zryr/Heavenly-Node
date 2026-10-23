@@ -1,5 +1,7 @@
 # Final UX refinement for PR #186
 
+For the subsequent delayed-pickup fix, captured mouse dragging, genuinely external desktop panels and corrected unlink icon, see [Desktop drag recovery and dual panels](premium-dragging-panels.md). Counts below describe this earlier revision.
+
 This continues `feat/mirror-management-v2`. The implementation is commit `419ae0f`; comparisons use the preceding PR head, `48761be`. Earlier density and placement recovery remains documented in [mirror-ui-recovery.md](mirror-ui-recovery.md).
 
 ## Drag freeze and resulting behavior
