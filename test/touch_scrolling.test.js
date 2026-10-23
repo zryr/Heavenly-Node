@@ -37,7 +37,7 @@ function harness() {
   document.querySelectorAll = () => [];
   const calls = { hold: 0, move: 0, drop: 0, cancel: 0, close: 0 };
   const context = {
-    document, window, bookmarkPointerOrigin:null, bookmarkInputType:'mouse', bookmarkDragHandleOrigin:true, clearBookmarkPlacement(){}, Date: { now: () => now },
+    document, window, bookmarkPointerOrigin:null, bookmarkPointerStart:null, bookmarkInputType:'mouse', bookmarkDragHandleOrigin:true, clearBookmarkPlacement(){}, Date: { now: () => now },
     setTimeout(fn, delay) { const id = ++nextTimer; timers.set(id, { fn, due: now + delay }); return id; },
     clearTimeout(id) { timers.delete(id); },
     closeReorderBar() { calls.close++; },
@@ -217,6 +217,15 @@ describe('Bookmark touch scrolling and deliberate handle dragging', function () 
     assert.equal(h.calls.cancel, 1);
     assert.equal(h.calls.hold, 0);
     assert.equal(h.context.bookmarkTouchInProgress, false);
+  });
+
+  it('recognizes a fresh real mouse pointer when sourceCapabilities is unavailable', function () {
+    const h = harness();
+    h.touch('touchstart'); h.touch('touchend');
+    h.context.bookmarkInputType = 'mouse'; h.context.bookmarkPointerStart = { x:20,y:20 };
+    h.document.emit('mousedown', h.event('mousedown'), true);
+    assert.equal(h.context.bookmarkIgnoreMouseUntil, 0);
+    assert.equal(h.context.isBookmarkCompatibilityMouse({}), false);
   });
 
   it('recognizes compatibility mouse input during a long touch when sourceCapabilities is unavailable', function () {

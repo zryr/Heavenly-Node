@@ -18,6 +18,7 @@
   <script src="/assets/heavenly-bookmarks.js"></script>
   <script src="/assets/heavenly-drag.js"></script>
   <script src="/assets/heavenly-dialogs.js"></script>
+  <script src="/assets/heavenly-mirror-menu.js"></script>
   <link rel="stylesheet" href="/assets/quick-settings.css">
   <script src="/assets/cloak-pool.js"></script>
   <script src="/assets/quick-settings-model.js"></script>
@@ -4779,7 +4780,7 @@
 
     var activeDragPreview = null;
     var bookmarkInputType = 'mouse', bookmarkDragHandleOrigin = false, bookmarkPointerOrigin = null, bookmarkPointerStart = null;
-    document.addEventListener('pointerdown', function (event) { bookmarkInputType = event.pointerType || 'mouse'; bookmarkPointerOrigin = event.target; bookmarkPointerStart = { x:event.clientX, y:event.clientY }; bookmarkDragHandleOrigin = !!event.target.closest('.drag-dots-handle'); }, true);
+    document.addEventListener('pointerdown', function (event) { if (bookmarkMouseDrag && event.pointerType !== 'mouse') clearBookmarkDrag(); bookmarkInputType = event.pointerType || 'mouse'; bookmarkPointerOrigin = event.target; bookmarkPointerStart = { x:event.clientX, y:event.clientY }; bookmarkDragHandleOrigin = !!event.target.closest('.drag-dots-handle'); }, true);
     function categoryDragIcon(value) {
       var preset = PRESET_LUCIDE_ICONS.find(function (item) { return item.id === value || 'preset:' + item.id === value; });
       if (!preset) return null;
@@ -5050,7 +5051,11 @@
     var suppressBookmarkClickUntil = 0;
 
     function isBookmarkCompatibilityMouse(e) {
-      return e.sourceCapabilities ? e.sourceCapabilities.firesTouchEvents : bookmarkTouchInProgress || Date.now() < bookmarkIgnoreMouseUntil;
+      if (e.sourceCapabilities) return e.sourceCapabilities.firesTouchEvents;
+      // Firefox omits sourceCapabilities. A new mouse pointerdown distinguishes
+      // real mouse input from the compatibility mousedown after a touch.
+      if (bookmarkInputType === 'mouse' && typeof bookmarkPointerStart !== 'undefined' && bookmarkPointerStart) return false;
+      return bookmarkTouchInProgress || Date.now() < bookmarkIgnoreMouseUntil;
     }
 
     function cancelActiveBookmarkBodyPress() {
@@ -5096,11 +5101,83 @@
         e.stopImmediatePropagation();
       }
     }, true);
-    document.addEventListener('pointermove', function (event) {
-      if (event.pointerType === 'mouse' && bookmarkGestureSource === 'body' && bookmarkPointerStart &&
-          (Math.abs(event.clientX-bookmarkPointerStart.x)>8 || Math.abs(event.clientY-bookmarkPointerStart.y)>8)) cancelActiveBookmarkBodyPress();
+    // Mouse uses the same geometric placement as touch/pen, without handing
+    // anchor dragging to the browser (which cancels the pointer stream).
+    var bookmarkMouseDrag = null;
+    function cancelBookmarkMouseDrag() {
+      var state = bookmarkMouseDrag;
+      if (!state) return;
+      bookmarkMouseDrag = null;
+      state.detach();
+      if (state.source.__cancelMouseHold) state.source.__cancelMouseHold();
+      if (state.started) suppressBookmarkClickUntil = Date.now()+500;
+    }
+    document.addEventListener('pointerdown', function (event) {
+      if (event.pointerType !== 'mouse' || event.button !== 0 || !event.isPrimary) return;
+      if (bookmarkMouseDrag) clearBookmarkDrag();
+      var origin = event.target, source = origin.closest('.bookmark-card[data-bm-id],.section-card');
+      if (!source || origin.closest('.modal-backdrop')) return;
+      var handle = origin.closest('.drag-dots-handle');
+      if (!handle && origin.closest('a:not(.bookmark-card),button,input,textarea,select,summary,[role="button"],[contenteditable="true"],.category-actions,.folder-expand-btn,.subsection-divider')) return;
+      if (!source.matches('.bookmark-card') && !handle && !origin.closest('.section-header') && origin !== source) return;
+      var state = { source:source, pointer:event.pointerId, x:event.clientX, y:event.clientY, started:false };
+      bookmarkMouseDrag = state;
+      function detach() {
+        document.removeEventListener('pointermove', move, true);
+        document.removeEventListener('pointerup', finish, true);
+        document.removeEventListener('pointercancel', cancel, true);
+        source.removeEventListener('lostpointercapture', cancel);
+        try { if(source.hasPointerCapture(state.pointer))source.releasePointerCapture(state.pointer); } catch(e) {}
+      }
+      state.detach = detach;
+      function cancel(event) {
+        if (event && event.pointerId !== state.pointer) return;
+        clearBookmarkDrag();
+      }
+      function move(event) {
+        if (event.pointerId !== state.pointer || bookmarkMouseDrag !== state) return;
+        if (!source.isConnected || !(event.buttons & 1)) { cancel(); return; }
+        if (!state.started && Math.hypot(event.clientX-state.x,event.clientY-state.y)<6) return;
+        if (!state.started) {
+          cancelActiveBookmarkTouch();
+          if (source.__cancelMouseHold) source.__cancelMouseHold();
+          closeReorderBar();
+          state.started = true; bookmarkGestureSource = 'drag';
+          source.classList.add('dragging');
+          try { source.setPointerCapture(state.pointer); } catch(e) {}
+          createPopoutAvatar(source,event.clientX,event.clientY);
+        }
+        event.preventDefault();
+        var kind = source.dataset.bmId ? 'bookmark' : 'category';
+        var id = source.dataset.bmId || source.dataset.categoryId;
+        updatePopoutAvatar(event.clientX,event.clientY);
+        previewBookmarkPlacement(event.clientX,event.clientY,kind,id);
+        scrollBookmarkEdge(source,event.clientX,event.clientY,function(e){
+          var point=e.touches[0];
+          updatePopoutAvatar(point.clientX,point.clientY);
+          previewBookmarkPlacement(point.clientX,point.clientY,kind,id);
+        });
+      }
+      function finish(event) {
+        if (event.pointerId !== state.pointer || bookmarkMouseDrag !== state) return;
+        var started = state.started;
+        // Detach before commit: saving rerenders the source and releases capture.
+        cancelBookmarkMouseDrag();
+        if (!started) return;
+        event.preventDefault();
+        cancelActiveBookmarkTouch();
+        source.classList.remove('dragging');
+        removePopoutAvatar();
+        commitBookmarkPlacement(source.dataset.bmId?'bookmark':'category',source.dataset.bmId||source.dataset.categoryId,event.clientX,event.clientY);
+        clearBookmarkDrag();
+      }
+      document.addEventListener('pointermove',move,{capture:true,passive:false});
+      document.addEventListener('pointerup',finish,true);
+      document.addEventListener('pointercancel',cancel,true);
+      source.addEventListener('lostpointercapture',cancel);
     }, true);
     function clearBookmarkDrag() {
+      cancelBookmarkMouseDrag();
       if(bookmarkGestureSource==='drag'||activePopoutAvatar)suppressBookmarkClickUntil=Math.max(suppressBookmarkClickUntil,Date.now()+500);
       cancelActiveBookmarkTouch();
       document.querySelectorAll('.bookmark-card.dragging,.section-card.dragging,.drag-over').forEach(function (node) {
@@ -5113,6 +5190,7 @@
     document.addEventListener('dragstart', function (e) {
       cancelActiveBookmarkBodyPress();
       var source = e.target.closest('.bookmark-card[data-bm-id],.section-card');
+      if (e.isTrusted && bookmarkMouseDrag && source === bookmarkMouseDrag.source) { e.preventDefault(); e.stopImmediatePropagation(); return; }
       var origin = bookmarkPointerOrigin;
       var interactive = origin && origin.closest('button,input,textarea,select,summary,[contenteditable="true"],.category-actions,.folder-expand-btn');
       var desktopBody = bookmarkInputType === 'mouse' && origin && source && !interactive &&
@@ -5140,7 +5218,7 @@
       if (document.hidden) interruptBookmarkTouch();
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && (activePopoutAvatar || bookmarkGestureSource === 'drag')) {
+      if (e.key === 'Escape' && (bookmarkMouseDrag || activePopoutAvatar || bookmarkGestureSource === 'drag')) {
         clearBookmarkDrag(); closeReorderBar();
       }
     }, true);
@@ -5373,9 +5451,9 @@
         card.className = 'section-card';
         card.__heavenlyDragItem = { kind: 'category', label: cat.title, icon: categoryDragIcon(cat.icon) };
         card.setAttribute('data-category-id', cat.id);
-        card.setAttribute('draggable', 'true');
+        card.draggable = !window.PointerEvent;
 
-        // HTML5 Drag and drop for Category Sections
+        // Native fallback for browsers without Pointer Events.
         card.ondragstart = function (e) {
           if (e.defaultPrevented) return;
           e.stopPropagation();
@@ -5426,6 +5504,7 @@
         var startX = 0, startY = 0;
         var isTouchDraggingCat = false;
 
+        card.__cancelMouseHold = function () { clearTimeout(pressTimer); };
         var startHandle = function (e) {
           if (e.button !== 0 || isBookmarkCompatibilityMouse(e)) return;
           e.stopPropagation();
@@ -5587,7 +5666,7 @@
 
             var bmCard = document.createElement(bm.type === 'folder' ? 'div' : 'a');
             bmCard.className = 'bookmark-card';
-            bmCard.setAttribute('draggable', 'true');
+            bmCard.draggable = !window.PointerEvent;
             bmCard.setAttribute('data-bm-id', bm.id);
             bmCard.ondragstart = function (e) {
               if (e.defaultPrevented) return;
@@ -5622,7 +5701,7 @@
 
               var cardLongPressTimer = null;
               var cardAnimTimer = null;
-              var isCardLongPress = false;
+              var isCardLongPress = false, cardMousePressAt = 0;
 
               function startCardPress(e) {
                 if (e.type === 'mousedown' && (e.button !== 0 || isBookmarkCompatibilityMouse(e))) return;
@@ -5637,25 +5716,37 @@
                 cardAnimTimer = setTimeout(function () {
                   bmCard.classList.add('pressing');
                 }, 100);
-                cardLongPressTimer = setTimeout(function () {
+                cardMousePressAt = e.type === 'mousedown' ? Date.now() : 0;
+                // Touch keeps its immediate long-press action. Mouse waits for
+                // a stationary release so a delayed pickup cannot launch/reset.
+                if (!cardMousePressAt) cardLongPressTimer = setTimeout(function () {
                   if (cancelBookmarkBodyPress !== cancelCardPress || bookmarkGestureSource !== 'body' || !bmCard.isConnected) return;
-                  isCardLongPress = true;
-                  bmCard.classList.remove('pressing');
-                  // Reset launch preference to "ask" on long press
-                  try {
-                    var data = loadBookmarkData();
-                    var targetBm = data.bookmarks.find(function (b) { return b.id === bm.id; });
-                    if (targetBm) {
-                      targetBm.launchPreference = 'ask';
-                      saveBookmarkData(data);
-                      bm.launchPreference = 'ask';
-                    }
-                  } catch (err) {}
-                  openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, false, bm.id);
+                  activateCardLongPress();
                 }, 500);
               }
 
+              function activateCardLongPress() {
+                isCardLongPress = true;
+                bmCard.classList.remove('pressing');
+                // Reset launch preference to "ask" on long press
+                try {
+                  var data = loadBookmarkData();
+                  var targetBm = data.bookmarks.find(function (b) { return b.id === bm.id; });
+                  if (targetBm) {
+                    targetBm.launchPreference = 'ask';
+                    saveBookmarkData(data);
+                    bm.launchPreference = 'ask';
+                  }
+                } catch (err) {}
+                openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, false, bm.id);
+              }
+              function finishCardMousePress() {
+                if (cardMousePressAt && Date.now()-cardMousePressAt>=500 && cancelBookmarkBodyPress===cancelCardPress && bookmarkGestureSource==='body') activateCardLongPress();
+                cancelCardPress();
+              }
+
               function cancelCardPress() {
+                cardMousePressAt = 0;
                 if (cancelBookmarkBodyPress === cancelCardPress) cancelBookmarkBodyPress = null;
                 if (bookmarkGestureSource === 'body') bookmarkGestureSource = '';
                 if (cardAnimTimer) {
@@ -5671,7 +5762,7 @@
 
               bmCard.addEventListener('mousedown', startCardPress);
               bmCard.addEventListener('touchstart', startCardPress, { passive: true });
-              bmCard.addEventListener('mouseup', cancelCardPress);
+              bmCard.addEventListener('mouseup', finishCardMousePress);
               bmCard.addEventListener('mouseleave', cancelCardPress);
               bmCard.addEventListener('touchend', cancelCardPress);
               bmCard.addEventListener('touchcancel', cancelCardPress);
@@ -5785,6 +5876,7 @@
             var bmSX = 0, bmSY = 0;
             var isTouchDraggingBm = false;
 
+            bmCard.__cancelMouseHold = function () { clearTimeout(bmTimer); };
             var startBmHandle = function (e) {
               if (e.button !== 0 || isBookmarkCompatibilityMouse(e)) return;
               e.stopPropagation();
@@ -6925,7 +7017,7 @@
         };
         modal.addEventListener('keydown', function (e) {
           if (e.key !== 'Tab') return;
-          var controls = Array.from(modal.querySelectorAll('button, a[href], input, select, textarea, summary')).filter(function (el) { return !el.disabled && el.offsetParent !== null; });
+          var controls = Array.from(modal.querySelectorAll('button, a[href], input, select, textarea, summary')).filter(function (el) { return !el.disabled && !el.closest('[inert]') && el.getClientRects().length>0; });
           var first = controls[0], last = controls[controls.length - 1];
           if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
           else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
@@ -7199,14 +7291,14 @@
         options:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
         info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>'
       };
-      function mirrorSvg(paths) { return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">'+paths+'</svg>'; }
-      var mirrorMenuCounter = 0, requestActiveBroken = null, cancelBrokenConfirmation = null, openMirrorMenu = null;
+      function mirrorSvg(paths) { return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>'; }
+      var mirrorMenuCounter = 0, requestActiveBroken = null, cancelBrokenConfirmation = null, openMirrorMenu = null, mirrorMenuControllers = [];
       var mirrorCommandIcons = {
         prefer:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/>',
         proxy:'<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
         direct:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18"/>',
         copy:'<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>',
-        broken:'<path d="m10 13 4-4m-6 7-2 2a4 4 0 0 1-6-6l4-4m12 0 2-2a4 4 0 0 1 6 6l-4 4M3 3l18 18"/>',
+        broken:'<path d="M18.84 12.25l1.72-1.71a5 5 0 0 0-7.07-7.07l-1.72 1.71M5.16 11.75l-1.72 1.71a5 5 0 0 0 7.07 7.07l1.72-1.71M8 2v3M2 8h3m14 8h3m-6 3v3"/>',
         working:'<path d="m5 12 4 4L19 6"/>',
         up:'<path d="m6 12 6-6 6 6M12 6v14"/>',
         down:'<path d="m6 12 6 6 6-6M12 4v14"/>',
@@ -7220,23 +7312,16 @@
       var mirrorSpace = HeavenlyDrag.space();
       var mirrorOrderStatus = document.createElement('span'); mirrorOrderStatus.className = 'mirror-sr-only'; mirrorOrderStatus.setAttribute('role','status');
       function closeMirrorMenus(except) {
-        currentModal.querySelectorAll('.mirror-row-actions:not([hidden])').forEach(function (menu) {
-          var owner=menu.__mirrorOwner||menu.parentNode;
-          if (owner !== except) {
-            var options=owner.querySelector('.mirror-options');
-            if(menu.contains(document.activeElement))options.focus({preventScroll:true});
-            if(menu.hidePopover&&menu.matches(':popover-open'))menu.hidePopover();
-            if(openMirrorMenu&&openMirrorMenu.menu===menu)openMirrorMenu=null;
-            menu.hidden=true;owner.classList.remove('mirror-menu-open');options.setAttribute('aria-expanded','false');
-          }
-        });
+        mirrorMenuControllers.forEach(function(entry){if(entry.owner!==except)entry.controller.close(false,!!except);});
       }
       function outsideMirrorMenu(e) {
-        var surface=e.target.closest('.mirror-row-actions');
+        var surface=e.target.closest('.mirror-row-actions,.mirror-menu-panel');
         closeMirrorMenus(surface&&surface.__mirrorOwner||e.target.closest('[data-mirror-identity]'));
         if(cancelBrokenConfirmation&&!e.target.closest('.mirror-broken-control'))cancelBrokenConfirmation(false);
       }
       document.addEventListener('pointerdown',outsideMirrorMenu);
+      function mirrorMenuKey(e){if(e.key==='Escape'&&openMirrorMenu){e.preventDefault();e.stopImmediatePropagation();openMirrorMenu.menu.__mirrorController.close(true);}}
+      currentModal.addEventListener('keydown',mirrorMenuKey,true);
       function resolveMirrorDrop(x,y) {
         if (!mirrorList || !mirrorDrag) return null;
         var bounds=mirrorList.getBoundingClientRect();
@@ -7296,7 +7381,7 @@
         mirrorState.available.forEach(function(entry){mirrorList.appendChild(rows.get(entry.identity));});
         mirrorList.scrollTop=scrollTop;
         HeavenlyDrag.flip(Array.from(rows.values()),previousRows,function(row){return row.dataset.mirrorIdentity;});
-        currentModal.querySelectorAll('[data-mirror-step]').forEach(function(button){var owner=button.closest('[data-mirror-identity]')||button.closest('.mirror-row-actions').__mirrorOwner;var id=owner.dataset.mirrorIdentity,index=mirrorState.available.findIndex(function(entry){return entry.identity===id;});var delta=Number(button.dataset.mirrorStep);button.disabled=index+delta<0||index+delta>=mirrorState.available.length;});
+        currentModal.querySelectorAll('[data-mirror-step]').forEach(function(button){var owner=button.closest('[data-mirror-identity]')||button.closest('.mirror-menu-panel,.mirror-row-actions').__mirrorOwner;var id=owner.dataset.mirrorIdentity,index=mirrorState.available.findIndex(function(entry){return entry.identity===id;});var delta=Number(button.dataset.mirrorStep);button.disabled=index+delta<0||index+delta>=mirrorState.available.length;});
         var row=rows.get(source);if(row){HeavenlyDrag.settle(row);if(focus)row.querySelector('.mirror-grip').focus({preventScroll:true});}
         var index=mirrorState.available.findIndex(function(entry){return entry.identity===source;});mirrorOrderStatus.textContent='Moved to position '+(index+1)+' of '+mirrorState.available.length+'.';
       }
@@ -7306,7 +7391,7 @@
       }
       function scrolledMirrorList(){if(mirrorDrag)queueMirrorDrop(mirrorDrag.x,mirrorDrag.y);else if(openMirrorMenu)openMirrorMenu.position();}
       currentModal.addEventListener('scroll',scrolledMirrorList,true);
-      bookmarkMirrorCleanup=function(){cancelMirrorDrag();closeMirrorMenus();currentModal.querySelectorAll(':scope > .mirror-row-actions').forEach(function(n){n.remove();});currentModal.querySelectorAll('.mirror-disclosure-body').forEach(function(n){if(n.__accordionAnimation)n.__accordionAnimation.cancel();n.__accordionAnimation=null;});if(cancelBrokenConfirmation)cancelBrokenConfirmation(false);document.removeEventListener('pointerdown',outsideMirrorMenu);currentModal.removeEventListener('scroll',scrolledMirrorList,true);};
+      bookmarkMirrorCleanup=function(){cancelMirrorDrag();mirrorMenuControllers.forEach(function(entry){entry.controller.destroy();});currentModal.querySelectorAll(':scope > .mirror-row-actions').forEach(function(n){n.remove();});currentModal.querySelectorAll('.mirror-disclosure-body').forEach(function(n){if(n.__accordionAnimation)n.__accordionAnimation.cancel();n.__accordionAnimation=null;});if(cancelBrokenConfirmation)cancelBrokenConfirmation(false);document.removeEventListener('pointerdown',outsideMirrorMenu);currentModal.removeEventListener('keydown',mirrorMenuKey,true);currentModal.removeEventListener('scroll',scrolledMirrorList,true);};
 
       function renderMirrorItemCard(item,isPrimaryCard) {
         var card=document.createElement('div');card.className='bookmark-mirror-card '+(isPrimaryCard?'mirror-active-card':'mirror-destination-row');
@@ -7359,49 +7444,19 @@
           if(!isPrimaryCard){launchButton(commands,'Open with Proxy','proxy',proxied,false);launchButton(commands,'Test Direct Site','direct',destination,false);}
           if(!isPrimaryCard)action('Copy URL',function(button){if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(destination).then(function(){mirrorOrderStatus.textContent='URL copied.';}).catch(function(){window.prompt('Copy URL:',destination);});else window.prompt('Copy URL:',destination);},'mirror-copy-action','copy');
           if(!isPrimaryCard){var broken=action(item.isBroken?'Mark Working':'Mark Broken',function(){if(active&&!item.isBroken&&requestActiveBroken)requestActiveBroken();else mark();},'mirror-broken-action',item.isBroken?'working':'broken');broken.title=item.isBroken?'Mark this link as working':'Mark this link as not working';}
-          if(grip){[-1,1].forEach(function(delta){var button=action(delta<0?'Move Up':'Move Down',function(){step(delta);});button.dataset.mirrorStep=String(delta);button.setAttribute('aria-label',(delta<0?'Move Up: ':'Move Down: ')+item.title);var index=mirrorState.available.findIndex(function(e){return e.identity===item.identity;});button.disabled=index+delta<0||index+delta>=mirrorState.available.length;button.title=delta<0?'Move Up':'Move Down';button.innerHTML=mirrorSvg(mirrorCommandIcons[delta<0?'up':'down']);moveRail.appendChild(button);});}
+          if(grip){[-1,1].forEach(function(delta){var button=action(delta<0?'Move Up':'Move Down',function(){step(delta);});button.dataset.mirrorStep=String(delta);button.setAttribute('aria-label','Move '+item.title+(delta<0?' up':' down'));var index=mirrorState.available.findIndex(function(e){return e.identity===item.identity;});button.disabled=index+delta<0||index+delta>=mirrorState.available.length;button.title=delta<0?'Move Up':'Move Down';button.innerHTML=mirrorSvg(mirrorCommandIcons[delta<0?'up':'down']);moveRail.appendChild(button);});}
           if(item.isUser&&item.id)action('Delete Custom Mirror',function(){var latest=loadBookmarkData(),bookmark=HeavenlyBookmarks.findEntry(latest,targetBm.id);if(bookmark){bookmark.subBookmarks=(bookmark.subBookmarks||[]).filter(function(e){return e.id!==item.id;});saveBookmarkData(latest);refreshMirrors(item.identity);}},'mirror-delete-action','delete');
         }
-        function positionMenu() {
-          if(menu.hidden)return;
-          var anchor=options.getBoundingClientRect(),box=menu.getBoundingClientRect();
-          var region=(mirrorList&&mirrorList.contains(card)?mirrorList:currentModal.querySelector('.modal-card')).getBoundingClientRect();
-          if(anchor.bottom<=region.top||anchor.top>=region.bottom){toggleMenu(false,false);return;}
-          var below=innerHeight-anchor.bottom-12,above=anchor.top-12;
-          var top=below>=box.height||below>=above?anchor.bottom+7:anchor.top-box.height-7;
-          menu.style.left=Math.max(12,Math.min(innerWidth-box.width-12,anchor.right-box.width))+'px';
-          menu.style.top=Math.max(12,Math.min(innerHeight-box.height-12,top))+'px';
+        var controller=HeavenlyMirrorMenu.create({host:menu,commands:commands,rail:moveRail,owner:card,anchor:options,modal:currentModal,
+          onState:function(open){if(open)openMirrorMenu={menu:menu,position:controller.position};else if(openMirrorMenu&&openMirrorMenu.menu===menu)openMirrorMenu=null;}});
+        menu.__mirrorController=controller;
+        mirrorMenuControllers.push({owner:card,controller:controller});
+        function toggleMenu(open,focus){
+          if(open){closeMirrorMenus(card);buildMenu();controller.show(focus);}else controller.close(false);
         }
-        function toggleMenu(open,focus) {
-          closeMirrorMenus(card);buildMenu();
-          if(open){
-            menu.hidden=false;card.classList.add('mirror-menu-open');
-            if(menu.showPopover){menu.setAttribute('popover','manual');menu.showPopover();}
-            else{menu.removeAttribute('popover');menu.__mirrorOwner=card;currentModal.appendChild(menu);}
-            openMirrorMenu={menu:menu,position:positionMenu};positionMenu();
-          }else{
-            if(menu.hidePopover&&menu.matches(':popover-open'))menu.hidePopover();
-            if(menu.contains(document.activeElement))options.focus({preventScroll:true});
-            if(openMirrorMenu&&openMirrorMenu.menu===menu)openMirrorMenu=null;
-            menu.hidden=true;card.classList.remove('mirror-menu-open');
-          }
-          options.setAttribute('aria-expanded',String(open));
-          if(open&&focus){var first=menu.querySelector('button:not(:disabled)');if(first)first.focus();}
-        }
-        menu.addEventListener('keydown',function(e){
-          if(e.key==='Escape'){e.preventDefault();e.stopPropagation();toggleMenu(false,false);options.focus({preventScroll:true});return;}
-          var buttons=Array.from(menu.querySelectorAll('button:not(:disabled)'));
-          var index=buttons.indexOf(document.activeElement),next=null;
-          if(e.key==='ArrowDown')next=buttons[(index+1)%buttons.length];
-          if(e.key==='ArrowUp')next=buttons[(index+buttons.length-1)%buttons.length];
-          if(e.key==='Home')next=buttons[0];if(e.key==='End')next=buttons[buttons.length-1];
-          if(next){e.preventDefault();next.focus();}
-        });
-        window.addEventListener('resize',positionMenu);
-        var previousCleanup=bookmarkMirrorCleanup;
-        bookmarkMirrorCleanup=function(){window.removeEventListener('resize',positionMenu);previousCleanup();};
-        options.onclick=function(){toggleMenu(menu.hidden,false);};options.onkeydown=function(e){if(e.key==='ArrowDown'){e.preventDefault();toggleMenu(true,true);}};
-        card.addEventListener('keydown',function(e){if(e.key==='Escape'&&!menu.hidden){e.preventDefault();e.stopPropagation();toggleMenu(false,false);options.focus({preventScroll:true});}});
+        options.onclick=function(){toggleMenu(options.getAttribute('aria-expanded')!=='true',false);};
+        options.onkeydown=function(e){if(e.key==='ArrowDown'){e.preventDefault();toggleMenu(true,true);}};
+        card.addEventListener('keydown',function(e){if(e.key==='Escape'&&options.getAttribute('aria-expanded')==='true'){e.preventDefault();e.stopPropagation();controller.close(true);}});
         card.appendChild(head);
         if(isPrimaryCard){var urlPill=createUrlCopyPill(destination);urlPill.classList.add('mirror-active-copy');card.appendChild(urlPill);var launches=document.createElement('div');launches.className='bookmark-mirror-actions';launchButton(launches,'Open with Proxy','proxy',proxied,true);launchButton(launches,'Test Direct Site','direct',destination,true);card.appendChild(launches);}
         if(isPrimaryCard){

@@ -21,7 +21,7 @@ const pass=s=>{checks++;console.log('PASS '+s)};
  await open();assert.match(await modal.innerText(),/ACTIVE SITE/);assert.equal(await modal.locator('.promoted-badge-btn').count(),0);await available.locator(':scope > summary').click();
  assert.equal(await available.locator('.bookmark-mirror-card').count(),3);await action(row('id:one'),'Set as Preferred');
  assert.equal(await modal.locator('.bookmark-active-url').innerText(),'https://one.test/');assert.equal(await row('id:one').getAttribute('data-preferred'),'true');
- await action(row('id:one'),'Move Up: One');
+ await action(row('id:one'),'Move One up');
  assert.deepEqual(await available.locator('.bookmark-mirror-card').evaluateAll(nodes=>nodes.map(n=>n.dataset.mirrorIdentity)),['main','id:one','id:two']);
  await page.keyboard.press('Escape');await page.reload({waitUntil:'domcontentloaded'});await open();await available.locator(':scope > summary').click();
  assert.equal(await modal.locator('.bookmark-active-url').innerText(),'https://one.test/');assert.equal(await row('id:one').getAttribute('data-preferred'),'true');
@@ -60,7 +60,7 @@ const pass=s=>{checks++;console.log('PASS '+s)};
  // Real mouse drop in a vertical list and geometric grid/cross-section releases.
  const before=await page.evaluate(()=>loadBookmarkData().bookmarks.find(b=>b.id==='v2_0').launchPreference);
  let source=page.locator('[data-bm-id="v2_0"] .drag-dots-handle'),target=page.locator('[data-bm-id="v2_2"]');await source.scrollIntoViewIfNeeded();let a=await source.boundingBox(),b=await target.boundingBox();
- await page.mouse.move(a.x+8,a.y+8);await page.mouse.down();await page.mouse.move(b.x+b.width/2,b.y+b.height*.85,{steps:12});b=await target.boundingBox();await page.mouse.move(b.x+b.width/2,b.y+b.height*.85);await page.mouse.move(b.x+b.width/2+1,b.y+b.height*.85);await page.waitForFunction(()=>document.querySelector('.bookmark-placement-indicator')?.dataset.target==='v2_2');
+ await page.mouse.move(a.x+8,a.y+8);await page.mouse.down();await page.mouse.move(b.x+b.width/2,b.y+b.height*.85,{steps:12});b=await target.evaluate(n=>HeavenlyDrag.rect(n));await page.mouse.move(b.left+b.width/2,b.top+b.height*.85);await page.mouse.move(b.left+b.width/2+1,b.top+b.height*.85);await page.waitForFunction(()=>document.querySelector('.bookmark-placement-indicator')?.dataset.target==='v2_2');
  assert.equal(await page.locator('.bookmark-placement-indicator').getAttribute('data-target'),'v2_2');assert.equal(await page.locator('.bookmark-placement-indicator').getAttribute('data-after'),'true');await page.mouse.up();
  let order=await page.evaluate(()=>loadBookmarkData().bookmarks.filter(b=>b.categoryId==='v2').sort((a,b)=>a.order-b.order).map(b=>b.id));assert(order.indexOf('v2_0')>order.indexOf('v2_2'));
  assert.equal(await page.evaluate(()=>loadBookmarkData().bookmarks.find(b=>b.id==='v2_0').launchPreference),before);assert.equal(await page.locator('.bookmark-placement-indicator,#heavenly-drag-avatar').count(),0);
@@ -73,7 +73,7 @@ const pass=s=>{checks++;console.log('PASS '+s)};
  pass('mouse indicator matches actual list insertion; grid row geometry, empty cross-category sections, invalid cancellation and launch preferences are preserved');
  // Responsive glass popup and shared accents.
  await page.emulateMedia({reducedMotion:'reduce'});await open();
- for(const size of [{width:820,height:1180},{width:1366,height:768},{width:320,height:740}]){await page.setViewportSize(size);await page.waitForTimeout(200);assert(await modal.locator('.modal-card').evaluate(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight}));assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+ for(const size of [{width:820,height:1180},{width:1366,height:768},{width:320,height:740}]){await page.setViewportSize(size);await page.waitForTimeout(200);assert(await modal.locator('.modal-card').evaluate(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight}));await page.waitForFunction(()=>document.documentElement.scrollWidth<=innerWidth);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
  const add=page.locator('.category-actions .btn-add-bm-quick').first();assert.equal(await add.evaluate(n=>getComputedStyle(n).color),'rgb(56, 189, 248)');
  assert.equal(await page.locator('#quick-settings-info-btn').evaluate(n=>getComputedStyle(n).color),'rgb(192, 132, 252)');
  fs.mkdirSync('work/mirror-v2',{recursive:true});await page.screenshot({path:'work/mirror-v2/'+engine+'.png',fullPage:true});await page.keyboard.press('Escape');await page.emulateMedia({reducedMotion:'no-preference'});await page.setViewportSize({width:1366,height:900});

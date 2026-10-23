@@ -88,10 +88,10 @@
     ghost.dataset.compact = String(compact);
     ghost.dataset.input = options.input || 'mouse';
     ghost.setAttribute('aria-hidden','true');
-    ghost.style.cssText = 'position:fixed;left:0;top:0;pointer-events:none;z-index:2147483647;box-sizing:border-box;border:1px solid currentColor;border-radius:12px;background:#10192bf5;box-shadow:0 8px 22px #0005;color:'+(bookmark?'#c4b5fd':'#7dd3fc')+';font:600 13px/1.3 system-ui;max-width:'+(compact?'180px':'240px')+';';
+    ghost.style.cssText = 'position:fixed;left:0;top:0;pointer-events:none;z-index:2147483647;box-sizing:border-box;border:1px solid currentColor;border-radius:14px;background:linear-gradient(145deg,#24314bf5,#10192bf8);box-shadow:0 8px 22px #0005;color:'+(bookmark?'#c4b5fd':'#7dd3fc')+';font:600 13px/1.3 system-ui;max-width:'+(compact?'180px':'240px')+';';
     var content = doc.createElement('div');
     content.className = 'heavenly-drag-preview-content';
-    content.style.cssText = 'display:flex;align-items:center;gap:8px;padding:'+(compact?'8px 10px':'10px 13px')+';min-width:0;';
+    content.style.cssText = 'display:flex;align-items:center;gap:9px;padding:'+(compact?'9px 11px':'12px 14px')+';min-width:'+(compact?'0':'175px')+';';
     var icon = options.icon;
     if (icon) {
       icon = icon.cloneNode(true);
@@ -113,7 +113,7 @@
     var frame = 0, x = 0, y = 0, removed = false;
     ghost.style.visibility = 'hidden';
     if (content.animate && !reducedMotion()) {
-      content.animate([{ scale:'.98', opacity:.7 }, { scale:'1.03', opacity:1 }, { scale:'1', opacity:1 }], { duration:150, easing:'ease-out' });
+      content.animate([{ scale:'.96', opacity:.55, translate:'0px 3px' }, { scale:'1.015', opacity:1, translate:'0px -1px' }, { scale:'1', opacity:1, translate:'0px 0px' }], { duration:150, easing:'ease-out' });
     }
     function paint() {
       frame = 0;
