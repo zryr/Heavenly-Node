@@ -112,4 +112,12 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('btnPreset.setAttribute(\'aria-selected\', mode === \'preset\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnPreset');
         assert.ok(html.includes('btnManual.setAttribute(\'aria-selected\', mode === \'manual\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnManual');
     });
+
+    it('should configure Share Bookmarks modal tab buttons with tablist and tab ARIA attributes and sync aria-selected', function() {
+        assert.ok(html.includes('role="tablist"') && html.includes('aria-label="Share options"'), 'Share options container should have role="tablist"');
+        assert.ok(html.includes('id="tab-share-create"') && html.includes('role="tab"') && html.includes('aria-controls="share-view-create"') && html.includes('aria-selected="true"'), 'tab-share-create should specify role="tab", aria-controls="share-view-create", and aria-selected="true"');
+        assert.ok(html.includes('id="tab-share-redeem"') && html.includes('role="tab"') && html.includes('aria-controls="share-view-redeem"') && html.includes('aria-selected="false"'), 'tab-share-redeem should specify role="tab", aria-controls="share-view-redeem", and aria-selected="false"');
+        assert.ok(html.includes('tabCreate.setAttribute(\'aria-selected\', \'false\')') && html.includes('tabRedeem.setAttribute(\'aria-selected\', \'true\')'), 'switchShareTab should set tabCreate false and tabRedeem true when tab is redeem');
+        assert.ok(html.includes('tabCreate.setAttribute(\'aria-selected\', \'true\')') && html.includes('tabRedeem.setAttribute(\'aria-selected\', \'false\')'), 'switchShareTab should set tabCreate true and tabRedeem false when tab is create');
+    });
 });
