@@ -84,7 +84,7 @@ describe('Navigation settings compatibility', () => {
       const html = fs.readFileSync(require.resolve('../public/' + page), 'utf8');
       const start = html.indexOf('    function loadSettings(');
       const end = html.indexOf('\n    }', start) + 6;
-      const sandbox = { HeavenlyNavigation: navigation, DEFAULT_RANDOM_POOL: [] };
+      const sandbox = { HeavenlyNavigation: navigation, DEFAULT_RANDOM_POOL: [], settingsSaveFeedback() {} };
       Object.defineProperty(sandbox, 'localStorage', { get() { throw new Error('SecurityError'); } });
       vm.createContext(sandbox);
       vm.runInContext(html.slice(start, end), sandbox);

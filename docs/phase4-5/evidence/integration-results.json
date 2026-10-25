@@ -1,0 +1,48 @@
+{
+  "executed": "2026-10-25T16:19:54.205Z",
+  "physicalDevices": [],
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "homepage dismisses during initialization without a 300ms hold or waiting for a delayed decorative image",
+        "interrupted dismiss/show cannot hide the current loader, and loader changes preserve focus",
+        "HQ has no visible shortcut/search result; intentional codex submission through Go and Enter opens it without changing bookmarks",
+        "reduced motion stops the shimmer, dismissal is immediate, and an interrupted initialization has a bounded fallback",
+        "Settings shares immediate readiness dismissal and introduces no HQ launch control",
+        "a deliberately throwing page initializer cannot leave a blocking overlay"
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "homepage dismisses during initialization without a 300ms hold or waiting for a delayed decorative image",
+        "interrupted dismiss/show cannot hide the current loader, and loader changes preserve focus",
+        "HQ has no visible shortcut/search result; intentional codex submission through Go and Enter opens it without changing bookmarks",
+        "reduced motion stops the shimmer, dismissal is immediate, and an interrupted initialization has a bounded fallback",
+        "Settings shares immediate readiness dismissal and introduces no HQ launch control",
+        "a deliberately throwing page initializer cannot leave a blocking overlay"
+      ],
+      "errors": [],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "homepage dismisses during initialization without a 300ms hold or waiting for a delayed decorative image",
+        "interrupted dismiss/show cannot hide the current loader, and loader changes preserve focus",
+        "HQ has no visible shortcut/search result; intentional codex submission through Go and Enter opens it without changing bookmarks",
+        "reduced motion stops the shimmer, dismissal is immediate, and an interrupted initialization has a bounded fallback",
+        "Settings shares immediate readiness dismissal and introduces no HQ launch control",
+        "a deliberately throwing page initializer cannot leave a blocking overlay"
+      ],
+      "errors": [],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

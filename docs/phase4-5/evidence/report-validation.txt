@@ -1,0 +1,2 @@
+PASS 41 embedded screenshots decode and render in a real browser
+PASS every screenshot opens at full resolution; viewing and dismissal work on desktop and narrow layouts

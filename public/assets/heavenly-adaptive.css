@@ -33,3 +33,14 @@
 .qs-homepage .subsection-content > .show-more-btn { grid-column: 1 / -1; width: 100%; }
 @media (pointer: coarse) { .qs-homepage .category-collapse-toggle { width: 44px; } .qs-homepage .is-category-collapsed .drag-dots-handle { width: 44px; min-width: 44px; } }
 @media (prefers-reduced-motion: reduce) { .category-collapse-toggle svg { transition: none; } }
+
+/* A derived rail: each category stays named and draggable; saved panel widths
+   remain untouched until a category needs its expanded collection again. */
+.qs-homepage .is-category-compact .side-column { flex-direction: column; gap: 8px; }
+.qs-homepage .is-category-compact .side-column > .section-card { flex: 0 0 auto; width: 100%; }
+.qs-homepage .is-category-compact .sidebar-heading { padding-left: 6px; padding-right: 2px; font-size: 12px; }
+.qs-homepage .is-category-compact .sidebar-heading > span { gap: 5px; }
+.qs-homepage .is-category-compact .category-title { max-width: none; }
+@media (forced-colors: active) {
+  .qs-homepage .is-category-compact .section-card { border-color: ButtonText; }
+}

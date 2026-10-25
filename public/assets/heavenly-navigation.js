@@ -25,7 +25,12 @@
   }
 
   function updateSettings(storage, patch) {
-    var settings = Object.assign({}, readSettings(storage), patch);
+    // Forgiving reads can render recovery UI, but must never authorize replacing
+    // unreadable preferences with defaults when a single control is changed.
+    var raw = storage.getItem('heavenly_settings');
+    var saved = raw == null ? {} : JSON.parse(raw);
+    if (!saved || typeof saved !== 'object' || Array.isArray(saved)) throw new Error('Saved settings could not be read. Export a recovery copy in Settings before repairing them.');
+    var settings = Object.assign({}, saved, patch);
     storage.setItem('heavenly_settings', JSON.stringify(settings));
     return settings;
   }

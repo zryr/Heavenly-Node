@@ -1,0 +1,42 @@
+{
+  "executed": "2026-10-25T21:24:08.394Z",
+  "physicalDevices": [],
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "executed authored JS cannot read parent/top/own app storage, mutate parent DOM, or open an automatic popup",
+        "before registration, real wrong-source/sibling messages and synthetic wrong-origin/token channels are rejected",
+        "re-running replaces the browsing context and old timers/diagnostics do not leak into the next session",
+        "a real malformed script produces useful diagnostics while parent state remains intact",
+        "explicit new-tab execution severs opener and keeps authored code isolated from shell DOM and shared storage"
+      ],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "executed authored JS cannot read parent/top/own app storage, mutate parent DOM, or open an automatic popup",
+        "before registration, real wrong-source/sibling messages and synthetic wrong-origin/token channels are rejected",
+        "re-running replaces the browsing context and old timers/diagnostics do not leak into the next session",
+        "a real malformed script produces useful diagnostics while parent state remains intact",
+        "explicit new-tab execution severs opener and keeps authored code isolated from shell DOM and shared storage"
+      ],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "executed authored JS cannot read parent/top/own app storage, mutate parent DOM, or open an automatic popup",
+        "before registration, real wrong-source/sibling messages and synthetic wrong-origin/token channels are rejected",
+        "re-running replaces the browsing context and old timers/diagnostics do not leak into the next session",
+        "a real malformed script produces useful diagnostics while parent state remains intact",
+        "explicit new-tab execution severs opener and keeps authored code isolated from shell DOM and shared storage"
+      ],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

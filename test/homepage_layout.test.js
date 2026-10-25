@@ -21,6 +21,24 @@ describe('Content-sized homepage layout', function () {
     assert(layout.calculate(1440,prefs).right.open);
     prefs.left.collapsed=true;assert(!layout.calculate(1440,prefs).left.open);
   });
+  it('derives category rails without changing saved widths or manual intent', function () {
+    const prefs=layout.defaults();prefs.left.width=384;prefs.right.width=320;prefs.categoryCollapsed.a=true;prefs.categoryCollapsed.b=true;
+    const before=JSON.stringify(prefs),expanded=layout.calculate(1440,prefs),rail=layout.calculate(1440,prefs,'left',null,{left:176});
+    assert.equal(rail.left.open,true);assert.equal(rail.left.categoryCompact,true);assert.equal(rail.left.width,176);
+    assert.equal(rail.right.width,320);assert.equal(rail.right.categoryCompact,false);assert(expanded.left.width-rail.left.width>200);
+    for (let available=280;available<=2000;available+=17) {
+      const state=layout.calculate(available,prefs,'right',null,{left:176,right:200});
+      if(!state.compact) {
+        const used=['left','right'].reduce((sum,side)=>sum+(state[side].open?state[side].width:44),32);
+        assert(available-used>=440);
+      }
+    }
+    assert.equal(JSON.stringify(prefs),before);
+    assert.equal(layout.calculate(1440,prefs).left.width,384,'expanded category restores saved width');
+    prefs.left.collapsed=true;
+    const manual=layout.calculate(1440,prefs,'left',null,{left:176});assert.equal(manual.left.open,false);assert.equal(manual.left.categoryCompact,true);
+    const empty=layout.calculate(1440,prefs,'left',{left:false,right:true},{left:176});assert.equal(empty.left.empty,true);assert.equal(empty.left.categoryCompact,false);assert.equal(empty.left.width,0);
+  });
   it('validates stored widths without touching any bookmark data', function () {
     assert.deepEqual(layout.normalize(null),layout.defaults());
     const parsed=layout.normalize({version:1,left:{width:-300,collapsed:true},right:{width:10000}});

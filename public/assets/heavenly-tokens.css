@@ -1,0 +1,50 @@
+/* Heavenly's shared foundation. Tokens are safe for legacy selectors and Shadow DOM consumers. */
+:root {
+  --hn-bg: #080f20;
+  --hn-surface: #111e33;
+  --hn-raised: #17283e;
+  --hn-inset: #0b1526;
+  --hn-text: #edf5ff;
+  --hn-muted: #a8bcd3;
+  --hn-accent: #8cdeef;
+  --hn-blue: #7eafff;
+  --hn-purple: #b5a5ed;
+  --hn-success: #9cdec4;
+  --hn-warning: #efd39b;
+  --hn-error: #ffb4bd;
+  --hn-border: rgba(157, 191, 226, .18);
+  --hn-control-border: #435d7b;
+  --hn-radius-sm: 10px;
+  --hn-radius-md: 16px;
+  --hn-radius-lg: 24px;
+  --hn-radius-pill: 999px;
+  --hn-shadow: 0 12px 36px #02071459;
+  --hn-shadow-float: 0 18px 56px #02071480;
+  --hn-font: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --hn-heading: 'Space Grotesk', var(--hn-font);
+  --hn-code: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  --hn-space-1: 4px;
+  --hn-space-2: 8px;
+  --hn-space-3: 12px;
+  --hn-space-4: 16px;
+  --hn-space-5: 24px;
+  --hn-space-6: 32px;
+  --hn-duration-fast: 140ms;
+  --hn-duration: 220ms;
+  --hn-ease: cubic-bezier(.2, .75, .25, 1);
+  --hn-focus: 2px solid #a0e5f5;
+  --hn-brand-gradient: linear-gradient(115deg, #f2fbff 5%, #b2e8f5 44%, #88bcf4 78%, #b5b9ed);
+}
+.hn-page, .qs-homepage { color-scheme: dark; accent-color: var(--hn-accent); scrollbar-color: #526c8a var(--hn-inset); }
+.hn-page ::selection, .qs-homepage ::selection { color: #f5fbff; background: #345777; }
+.hn-page :is(input, textarea), .qs-homepage :is(input, textarea) { caret-color: var(--hn-accent); }
+.hn-page :is(button, a, input, select, textarea, summary):focus-visible { outline: var(--hn-focus); outline-offset: 3px; }
+.hn-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; border: 1px solid var(--hn-control-border); border-radius: var(--hn-radius-sm); background: var(--hn-raised); color: var(--hn-text); font: 500 .9rem/1.3 var(--hn-font); text-decoration: none; cursor: pointer; transition: background-color var(--hn-duration-fast), border-color var(--hn-duration-fast); }
+.hn-button:hover { background: #233b55; border-color: #7194b5; }
+.hn-button:disabled { color: var(--hn-muted); background: var(--hn-inset); border-style: dashed; cursor: default; }
+.hn-button-primary { background: var(--hn-accent); color: #081a2a; border-color: transparent; font-weight: 600; }
+.hn-button-primary:hover { background: #b5edfa; }
+.hn-button-danger { color: var(--hn-error); border-color: #785160; background: #302435; }
+.hn-empty { color: var(--hn-muted); padding: 24px 16px; line-height: 1.6; text-align: center; }
+@media (prefers-reduced-motion: reduce) { :root { --hn-duration-fast: 0ms; --hn-duration: 0ms; } }
+@media (forced-colors: active) { :root { --hn-focus: 2px solid Highlight; } .hn-button { border: 1px solid ButtonText; } }

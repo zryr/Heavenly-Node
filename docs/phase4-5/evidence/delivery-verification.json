@@ -1,0 +1,27 @@
+{
+  "baseline": "f870d509569f241a23090c52c7b4c0b5696fc69b",
+  "command": "npm test",
+  "exitCode": 0,
+  "baselinePassing": 519,
+  "finalPassing": 525,
+  "physicalDevices": [],
+  "browserVersions": {
+    "chromium": "154.0.8037.57",
+    "firefox": "153.0",
+    "webkit": "26.5"
+  },
+  "settingsGroupsPerEngine": 15,
+  "viewerAcceptancePerEngine": {
+    "groups": 17,
+    "responsiveStates": 4
+  },
+  "independentSecurityGroupsPerEngine": 5,
+  "practiceCompatibilityGroupsPerEngine": 4,
+  "widgetGroups": {
+    "chromium": 7,
+    "firefox": 5,
+    "webkit": 5
+  },
+  "compactRailGroupsPerEngine": 9,
+  "reportScreenshots": 41
+}

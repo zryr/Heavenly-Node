@@ -27,7 +27,16 @@ function pass(message) { checks++; console.log('PASS ' + message); }
   const section = page.locator('[data-category-id="view_left"] .subsection-content');
   assert.equal(await section.locator('.bookmark-card:visible').count(), 5);
   const bottomSection = page.locator('[data-category-id="view_bottom"] .subsection-content');
-  await page.waitForTimeout(250);
+  await page.evaluate(() => document.fonts.ready);
+  // ResizeObserver density updates can arrive after the first WebKit paint.
+  // Wait for the visible one-row contract rather than a fixed 250ms deadline.
+  await page.waitForFunction(() => {
+    const node = document.querySelector('[data-category-id="view_bottom"] .subsection-content');
+    const cards = Array.from(node.querySelectorAll('.bookmark-card')).filter(card => card.getClientRects().length);
+    const gap = parseFloat(getComputedStyle(node).columnGap) || 0;
+    const expected = Math.min(9, Math.max(1, Math.floor((node.clientWidth + gap) / (200 + gap))));
+    return cards.length === expected && cards.every(card => Math.abs(card.getBoundingClientRect().top - cards[0].getBoundingClientRect().top) < 2);
+  });
   const measuredRow = await bottomSection.evaluate(node => {
     const cards = Array.from(node.querySelectorAll('.bookmark-card')).filter(card => card.getClientRects().length);
     const firstTop = cards[0].getBoundingClientRect().top;

@@ -19,7 +19,7 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
         assert.ok(res.text.includes('id="btn-clear"'));
         assert.ok(res.text.includes('id="btn-blank"'));
         assert.ok(res.text.includes('id="btn-vus"'));
-        assert.ok(res.text.includes('launchVUSWaterfall'));
+        assert.ok(res.text.includes('src="/assets/heavenly-viewer.js"'));
         done();
       });
   });
@@ -54,8 +54,7 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
     assert.ok(html.includes('id="view-split"') && html.includes('role="tab"') && html.includes('aria-selected="true"') && html.includes('aria-controls="workspace"'), 'view-split should specify role="tab", aria-selected, and aria-controls');
     assert.ok(html.includes('id="view-editor"') && html.includes('role="tab"') && html.includes('aria-selected="false"') && html.includes('aria-controls="workspace"'), 'view-editor should specify role="tab", aria-selected, and aria-controls');
     assert.ok(html.includes('id="view-preview"') && html.includes('role="tab"') && html.includes('aria-selected="false"') && html.includes('aria-controls="workspace"'), 'view-preview should specify role="tab", aria-selected, and aria-controls');
-    assert.ok(html.includes('btn.setAttribute(\'aria-selected\', \'false\')'), 'setViewMode should reset aria-selected to false');
-    assert.ok(html.includes('btnSplit.setAttribute(\'aria-selected\', \'true\')') || html.includes('setAttribute(\'aria-selected\', \'true\')'), 'setViewMode should set aria-selected to true on active tab');
+    assert.ok(html.includes('tabindex="-1"'), 'inactive tabs should start outside the tab order');
   });
 
   it('should configure code textarea, action buttons, and status indicator with accessible ARIA attributes', function() {
@@ -68,11 +67,26 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
   });
 
   it('should support Ctrl/Cmd+Enter keyboard execution shortcut and dynamic updateEditorStatus announcements', function() {
-    var html = fs.readFileSync(path.join(__dirname, '../public/html-viewer.html'), 'utf8');
+    var html = fs.readFileSync(path.join(__dirname, '../public/assets/heavenly-viewer.js'), 'utf8');
 
     assert.ok(html.includes('function updateEditorStatus'), 'should define updateEditorStatus helper');
     assert.ok(html.includes('(e.ctrlKey || e.metaKey) && e.key === \'Enter\''), 'code-input should handle Ctrl/Cmd+Enter shortcut');
     assert.ok(html.includes('updateEditorStatus(\'Preview Executed\''), 'runCode should announce Preview Executed');
     assert.ok(html.includes('updateEditorStatus(\'Editor Cleared\''), 'clearCode should announce Editor Cleared');
+  });
+});
+
+
+describe('HTML Viewer deployed execution boundary', function() {
+  it('serves the shared workspace assets', function(done) {
+    supertest(app).get('/assets/heavenly-viewer.js').expect(200).expect('Content-Type', /javascript/).end(done);
+  });
+
+  it('defaults preview to an opaque scripted sandbox with no popup or top-navigation grants', function() {
+    var html = fs.readFileSync(path.join(__dirname, '../public/html-viewer.html'), 'utf8');
+    var sandbox = html.match(/id="preview-iframe"[^>]+sandbox="([^"]+)"/)[1].split(' ');
+    assert.deepStrictEqual(sandbox, ['allow-scripts', 'allow-forms']);
+    assert.ok(html.includes('referrerpolicy="no-referrer"'));
+    assert.ok(html.includes('id="workspace-resize"') && html.includes('role="separator"'));
   });
 });

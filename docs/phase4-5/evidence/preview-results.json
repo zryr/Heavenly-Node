@@ -1,0 +1,19 @@
+{
+  "origin": "https://heavenly-node-m8ocxn5nj-syshi.vercel.app",
+  "physicalDevices": [],
+  "checks": [
+    "Deployed homepage initializes, dismisses loader and opens HQ only on intentional submission",
+    "Deployed all-category compact rail reclaims center width without overwriting saved panel width",
+    "Deployed Settings searches individual names/aliases and clearing preserves saved preferences",
+    "Deployed authored JavaScript executes while parent storage and DOM attacks remain blocked",
+    "Deployed phone view preserves edited source and has no horizontal page overflow"
+  ],
+  "errors": [],
+  "browser": "154.0.8037.57",
+  "status": "passed",
+  "deploymentId": "dpl_GBxgyyLuidLxvLJZQkc7zUNdWPqv",
+  "sourceCommit": "c647d3093f0aef4f49d793ce9621f948656c2cd2",
+  "target": "preview",
+  "state": "READY",
+  "access": "Existing Vercel SSO remains enabled; temporary share URL was provided separately and is not committed."
+}

@@ -26,6 +26,13 @@
   // call() and apply() on `this || original_thing`
   // prevent a failure in one initializer from stopping subsequent initializers
 
+  // Adapted from Bolt PR #197. Keep JavaScript whitespace semantics for legacy
+  // inputs while avoiding a regexp call for each ordinary ASCII character.
+  function isSrcsetWhitespace(c) {
+    return c === ' ' || c === '\t' || c === '\n' || c === '\r' ||
+      c === '\f' || c === '\v' || (c >= '\u0080' && /\s/.test(c));
+  }
+
   function fixSrcset(srcsetStr, config, location) {
     if (srcsetStr === null || srcsetStr === undefined) {
       return srcsetStr;
@@ -36,9 +43,9 @@
     // parser does, rather than splitting base64 placeholders into fake URLs.
     var fixedCandidates = [], index = 0;
     while (index < srcsetStr.length) {
-      while (index < srcsetStr.length && /[\s,]/.test(srcsetStr[index])) index++;
+      while (index < srcsetStr.length && (isSrcsetWhitespace(srcsetStr[index]) || srcsetStr[index] === ',')) index++;
       var start = index;
-      while (index < srcsetStr.length && !/\s/.test(srcsetStr[index])) index++;
+      while (index < srcsetStr.length && !isSrcsetWhitespace(srcsetStr[index])) index++;
       var url = srcsetStr.slice(start, index);
       if (!url) break;
       var descriptor = '';
@@ -1856,6 +1863,39 @@
         settings = loadHeavenlySettings(window);
       }
 
+      if (typeof window.__heavenlyWidgetDispose === 'function') window.__heavenlyWidgetDispose();
+      var widgetListeners = [];
+      var widgetCleanups = [];
+      var hasInjected = false;
+      function listenWindow(type, handler, options) {
+        if (!window.addEventListener) return;
+        if (!widgetListeners.some(function (entry) { return entry.type === type && entry.handler === handler; })) {
+          widgetListeners.push({ type: type, handler: handler, options: options });
+          window.addEventListener(type, handler, options);
+        }
+      }
+      function unlistenWindow(type, handler, options) {
+        if (window.removeEventListener) window.removeEventListener(type, handler, options);
+        widgetListeners = widgetListeners.filter(function (entry) { return entry.type !== type || entry.handler !== handler; });
+      }
+      window.__heavenlyWidgetDispose = function () {
+        widgetListeners.forEach(function (entry) { if (window.removeEventListener) window.removeEventListener(entry.type, entry.handler, entry.options); });
+        widgetListeners = [];
+        widgetCleanups.forEach(function (cleanup) { cleanup(); });
+        widgetCleanups = [];
+        if (window.document && window.document.removeEventListener) window.document.removeEventListener('DOMContentLoaded', injectUI);
+        ['heavenly-scroll-lock-root', 'heavenly-magnifier-root', 'heavenly-nav-root', 'heavenly-dock-root'].forEach(function (id) {
+          var root = window.document && window.document.getElementById(id);
+          if (root) root.remove();
+        });
+      };
+      listenWindow('storage', function (event) {
+        if (!event || (event.key !== 'heavenly_settings' && event.key !== null)) return;
+        var latest = loadHeavenlySettings(window);
+        var keys = ['disableAllFeatures', 'disableAllWidgets', 'showScrollLock', 'showMagnifier', 'showNavBookmark', 'showNavSearch', 'showNavHome', 'useWidgetDock', 'dockPosition', 'showProxiedUrl'];
+        if (keys.some(function (key) { return latest[key] !== settings[key]; })) initHeavenlyWidgets(window, latest, config);
+      });
+
       if (settings.disableAllWidgets || settings.disableAllFeatures) {
         ['heavenly-scroll-lock-root', 'heavenly-magnifier-root', 'heavenly-nav-root', 'heavenly-dock-root'].forEach(function (id) {
           var el = window.document ? window.document.getElementById(id) : null;
@@ -1885,9 +1925,9 @@
       }
 
       // Intercept keydown during capture phase to prevent browser scrolling when lock is ON
-      window.addEventListener('keydown', function (e) {
+      listenWindow('keydown', function (e) {
         if (!scrollLockEnabled) return;
-        var target = e.target;
+        var target = typeof e.composedPath === 'function' ? e.composedPath()[0] : e.target;
         var isInput = false;
         if (target) {
           var tagName = target.tagName ? target.tagName.toLowerCase() : '';
@@ -1904,91 +1944,44 @@
         }
       }, true);
 
-      // Shared Stylesheet for Heavenly Widgets
+      // Shared isolated Heavenly surface and control language.
       var widgetCss = [
-        '.heavenly-widget {',
-        '  background: rgba(15, 23, 42, 0.88);',
-        '  backdrop-filter: blur(12px);',
-        '  -webkit-backdrop-filter: blur(12px);',
-        '  border: 1px solid rgba(56, 189, 248, 0.3);',
-        '  border-radius: 14px;',
-        '  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 15px rgba(56, 189, 248, 0.2);',
-        '  padding: 8px 12px;',
-        '  display: flex;',
-        '  align-items: center;',
-        '  gap: 8px;',
-        '  color: #f8fafc;',
-        '  font-size: 13px;',
-        '  font-weight: 500;',
-        '  cursor: grab;',
-        '  box-sizing: border-box;',
-        '  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);',
-        '  opacity: 1;',
-        '  overflow: hidden;',
-        '}',
-        '.heavenly-widget:active { cursor: grabbing; }',
-        '.heavenly-widget:hover {',
-        '  border-color: rgba(56, 189, 248, 0.6);',
-        '  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.35);',
-        '}',
-        '/* Auto-minimized circle state */',
-        '.heavenly-widget.minimized {',
-        '  width: 38px !important;',
-        '  height: 38px !important;',
-        '  padding: 0 !important;',
-        '  border-radius: 50% !important;',
-        '  justify-content: center !important;',
-        '  opacity: 0.45 !important;',
-        '  background: rgba(15, 23, 42, 0.75) !important;',
-        '  border-color: rgba(56, 189, 248, 0.4) !important;',
-        '  cursor: pointer !important;',
-        '}',
-        '.heavenly-widget.minimized:hover {',
-        '  opacity: 0.95 !important;',
-        '  transform: scale(1.08);',
-        '  box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);',
-        '}',
-        '.heavenly-widget.minimized .widget-content { display: none !important; }',
-        '.heavenly-widget.minimized .mini-icon { display: flex !important; }',
-        '.mini-icon { display: none; align-items: center; justify-content: center; width: 100%; height: 100%; }',
-        '.widget-content { display: flex; align-items: center; gap: 8px; }',
-        '.heavenly-widget.left-mode .widget-content { flex-direction: row-reverse; }',
-        '.drag-handle { display: flex; align-items: center; gap: 6px; white-space: nowrap; color: #e0f2fe; font-weight: 600; }',
-        '.btn-close-widget { background: none; border: none; color: #94a3b8; font-size: 13px; font-weight: 700; cursor: pointer; padding: 2px 6px; border-radius: 6px; }',
-        '.btn-close-widget:hover { color: #ef4444; background: rgba(239, 68, 68, 0.15); }',
-        '.title-icon {',
-        '  width: 16px; height: 16px; fill: none; stroke: #38bdf8; stroke-width: 2;',
-        '  stroke-linecap: round; stroke-linejoin: round;',
-        '  filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.6));',
-        '}',
-        '.btn-toggle, .btn-ctrl {',
-        '  background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(148, 163, 184, 0.3);',
-        '  color: #94a3b8; padding: 5px 9px; border-radius: 8px; font-size: 12px; font-weight: 600;',
-        '  cursor: pointer; outline: none; transition: all 0.2s ease;',
-        '  display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;',
-        '}',
-        '.btn-toggle:hover, .btn-ctrl:hover { background: rgba(51, 65, 85, 0.9); color: #f8fafc; }',
-        '.btn-toggle .title-icon { stroke: currentColor; flex-shrink: 0; filter: none; }',
-        '.btn-toggle.active {',
-        '  background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 100%);',
-        '  border: 1px solid transparent; color: #030712; box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);',
-        '}',
-        '.nav-input {',
-        '  background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(148, 163, 184, 0.35);',
-        '  color: #f8fafc; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 500;',
-        '  outline: none; width: 150px; transition: border-color 0.2s, width 0.2s, box-shadow 0.2s;',
-        '  font-family: inherit;',
-        '}',
-        '.nav-input::placeholder { color: #94a3b8; }',
-        '.nav-input:focus {',
-        '  border-color: #38bdf8; width: 190px; background: rgba(15, 23, 42, 0.95);',
-        '  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);',
-        '}'
+        ":host { --hn-widget-bg:rgba(17,30,51,.97); --hn-widget-raised:#17283e; --hn-widget-text:#edf5ff; --hn-widget-muted:#a8bcd3; --hn-widget-accent:#8cdeef; --hn-widget-border:rgba(157,191,226,.24); color-scheme:dark; }",
+        "*, *::before, *::after { box-sizing:border-box; }",
+        "button, input { font:inherit; }",
+        "button { -webkit-tap-highlight-color:transparent; }",
+        ".heavenly-widget { display:flex;align-items:center;gap:8px;max-width:calc(100vw - 24px);padding:8px;background:var(--hn-widget-bg);border:1px solid var(--hn-widget-border);border-radius:16px;box-shadow:0 8px 26px rgba(3,10,25,.28);color:var(--hn-widget-text);font-size:13px;font-weight:500;cursor:grab;transition:background .18s,border-color .18s,box-shadow .18s;overflow:visible; }",
+        ".heavenly-widget:hover { border-color:rgba(140,222,239,.5); }",
+        ".heavenly-widget.dragging { cursor:grabbing;border-color:var(--hn-widget-accent);box-shadow:0 10px 28px rgba(3,10,25,.38); }",
+        ".heavenly-widget.minimized { width:44px!important;height:44px!important;padding:0!important;border-radius:50%!important;justify-content:center!important;background:#14243a!important;opacity:1!important;cursor:pointer!important; }",
+        ".heavenly-widget.minimized:hover { background:#203851!important;border-color:var(--hn-widget-accent); }",
+        ".heavenly-widget.minimized .widget-content { display:none!important; }",
+        ".heavenly-widget.minimized .mini-icon { display:flex!important; }",
+        ".mini-icon { display:none;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border:0;border-radius:50%;color:var(--hn-widget-accent);background:transparent;cursor:pointer;touch-action:none; }",
+        ".widget-content { display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0; }",
+        ".heavenly-widget.left-mode .widget-content { flex-direction:row-reverse; }",
+        ".drag-handle { display:flex;align-items:center;gap:6px;white-space:nowrap;color:var(--hn-widget-text);font-weight:600;padding:0 4px;min-height:40px;touch-action:none;border-radius:8px; }",
+        ".btn-close-widget,.btn-close-lens { display:inline-flex;align-items:center;justify-content:center;min-width:40px;min-height:40px;background:transparent;border:0;color:var(--hn-widget-muted);font-size:16px;cursor:pointer;border-radius:10px; }",
+        ".btn-close-widget:hover,.btn-close-lens:hover { background:rgba(181,165,237,.12);color:#edf5ff; }",
+        ".title-icon { width:18px;height:18px;fill:none;stroke:var(--hn-widget-accent);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0; }",
+        ".btn-toggle,.btn-ctrl { background:var(--hn-widget-raised);border:1px solid var(--hn-widget-border);color:var(--hn-widget-text);padding:8px 10px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;min-width:44px;min-height:44px;transition:background .16s,border-color .16s; }",
+        ".btn-toggle:hover,.btn-ctrl:hover { background:#233b56;border-color:rgba(140,222,239,.48); }",
+        ".btn-toggle .title-icon { stroke:currentColor; }",
+        ".btn-toggle.active { background:#a1ddf2;border-color:#c4edff;color:#08182b;box-shadow:inset 0 1px rgba(255,255,255,.4); }",
+        ".nav-input { min-width:80px;width:160px;max-width:100%;min-height:44px;background:#0c192c;border:1px solid var(--hn-widget-border);color:var(--hn-widget-text);padding:8px 12px;border-radius:10px;font-size:13px;outline:none; }",
+        ".nav-input::placeholder { color:var(--hn-widget-muted); }",
+        ".nav-input:focus { border-color:var(--hn-widget-accent); }",
+        "button:focus-visible,.drag-handle:focus-visible,.lens-header:focus-visible,.resize-handle:focus-visible,input:focus-visible { outline:2px solid var(--hn-widget-accent);outline-offset:3px; }",
+        "@media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important;animation:none!important;scroll-behavior:auto!important; } }"
       ].join('\n');
 
       // Helper to make a container draggable and auto-minimize with boundary clamping & expand direction
       function attachWidgetBehaviors(container, widgetElement, storageKey, defaultTop, defaultRight) {
-        var isMinimized = false;
+        // Restore in the same geometry that was saved; no expanded first-frame jump.
+        var isMinimized = true;
+        widgetElement.classList.add('minimized');
+        var initialMini = widgetElement.querySelector('.mini-icon');
+        if (initialMini) initialMini.setAttribute('aria-expanded', 'false');
         var inactivityTimer = null;
 
         function updateWidgetMode() {
@@ -2015,14 +2008,19 @@
             : { left: 0, top: 0, right: 0, bottom: 0 };
           var winW = window.innerWidth || (document.documentElement && document.documentElement.clientWidth) || 800;
           var winH = window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 600;
-          var maxLeft = Math.max(0, winW - (container.offsetWidth || 40));
-          var maxTop = Math.max(0, winH - (container.offsetHeight || 40));
+          var vv = window.visualViewport;
+          var edgeLeft = 12 + (vv ? vv.offsetLeft || 0 : 0);
+          var edgeTop = 12 + (vv ? vv.offsetTop || 0 : 0);
+          winW = vv ? vv.width + (vv.offsetLeft || 0) : winW;
+          winH = vv ? vv.height + (vv.offsetTop || 0) : winH;
+          var maxLeft = Math.max(edgeLeft, winW - (container.offsetWidth || 44) - 12);
+          var maxTop = Math.max(edgeTop, winH - (container.offsetHeight || 44) - 12);
 
           var curLeft = currentRect.left;
           var curTop = currentRect.top;
 
-          var clampedLeft = Math.max(0, Math.min(curLeft, maxLeft));
-          var clampedTop = Math.max(0, Math.min(curTop, maxTop));
+          var clampedLeft = Math.max(edgeLeft, Math.min(curLeft, maxLeft));
+          var clampedTop = Math.max(edgeTop, Math.min(curTop, maxTop));
 
           container.style.right = 'auto';
           container.style.bottom = 'auto';
@@ -2059,14 +2057,22 @@
         }
 
         // Re-clamp on window resize
-        window.addEventListener('resize', enforceBoundaries);
+        listenWindow('resize', function () { onCancel(); enforceBoundaries(); });
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener('resize', enforceBoundaries);
+          window.visualViewport.addEventListener('scroll', enforceBoundaries);
+          widgetCleanups.push(function () { window.visualViewport.removeEventListener('resize', enforceBoundaries); window.visualViewport.removeEventListener('scroll', enforceBoundaries); });
+        }
+        widgetCleanups.push(function () { clearTimeout(defCollapseTimer); clearTimeout(inactivityTimer); onCancel(); });
 
         // Auto-minimize timer (10s)
         function resetInactivityTimer() {
           if (inactivityTimer) clearTimeout(inactivityTimer);
           if (!isMinimized) {
             inactivityTimer = setTimeout(function () {
-              minimize();
+              var focused = container.shadowRoot ? container.shadowRoot.activeElement : window.document.activeElement;
+              if (isDragging || (focused && widgetElement.contains(focused))) resetInactivityTimer();
+              else minimize();
             }, 10000);
             if (inactivityTimer && typeof inactivityTimer.unref === 'function') {
               inactivityTimer.unref();
@@ -2084,6 +2090,8 @@
           isMinimized = true;
           if (widgetElement && widgetElement.classList) {
             widgetElement.classList.add('minimized');
+            var mini = widgetElement.querySelector('.mini-icon');
+            if (mini) mini.setAttribute('aria-expanded', 'false');
           }
 
           if (!isLeft) {
@@ -2091,6 +2099,7 @@
             container.style.left = (rightEdge - miniW) + 'px';
           }
           enforceBoundaries();
+          if (mini && container.shadowRoot && container.shadowRoot.activeElement && widgetElement.contains(container.shadowRoot.activeElement)) mini.focus();
         }
 
         function expand() {
@@ -2100,8 +2109,8 @@
           var rightEdge = rect.right;
           isMinimized = false;
           widgetElement.classList.remove('minimized');
-          widgetElement._justExpanded = true;
-          setTimeout(function () { widgetElement._justExpanded = false; }, 300);
+          var mini = widgetElement.querySelector('.mini-icon');
+          if (mini) mini.setAttribute('aria-expanded', 'true');
 
           if (!isLeft) {
             var expandedW = container.offsetWidth || 200;
@@ -2113,10 +2122,9 @@
 
         // Intercept capture-phase clicks immediately after expansion to prevent accidental button triggers (e.g. Home button)
         widgetElement.addEventListener('click', function (e) {
-          if (widgetElement._justExpanded) {
-            e.stopPropagation();
-            e.preventDefault();
-            widgetElement._justExpanded = false;
+          if ((hasMoved || suppressExpandClick) && e.detail !== 0) {
+            hasMoved = false; suppressExpandClick = false;
+            e.stopPropagation(); e.preventDefault();
           }
         }, true);
 
@@ -2129,8 +2137,33 @@
           });
         }
 
+        var miniButton = widgetElement.querySelector('.mini-icon');
+        var handle = widgetElement.querySelector('.drag-handle');
+        if (miniButton) {
+          miniButton.setAttribute('aria-label', (miniButton.getAttribute('title') || 'Widget').replace(' (Click to expand)', '') + ': expand controls');
+          miniButton.addEventListener('click', function () { expand(); if (handle) handle.focus(); });
+        }
+        if (handle) {
+          handle.tabIndex = 0;
+          handle.setAttribute('role', 'button');
+          handle.setAttribute('aria-label', 'Move ' + (miniButton ? miniButton.getAttribute('aria-label').split(':')[0] : 'widget') + ': use arrow keys; Escape minimizes');
+          handle.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') { event.preventDefault(); minimize(); if (miniButton) miniButton.focus(); return; }
+            var delta = event.shiftKey ? 40 : 10;
+            var directions = { ArrowLeft: [-delta, 0], ArrowRight: [delta, 0], ArrowUp: [0, -delta], ArrowDown: [0, delta] };
+            var direction = directions[event.key];
+            if (!direction) return;
+            event.preventDefault(); event.stopPropagation();
+            var rect = container.getBoundingClientRect();
+            container.style.left = rect.left + direction[0] + 'px';
+            container.style.top = rect.top + direction[1] + 'px';
+            var position = enforceBoundaries();
+            try { localStorage.setItem(storageKey, JSON.stringify(position)); } catch (_) {}
+          });
+        }
+
         // Interaction listeners to reset timer
-        ['mouseenter', 'mousemove', 'mousedown', 'touchstart'].forEach(function (evt) {
+        ['mouseenter', 'mousemove', 'mousedown', 'touchstart', 'focusin', 'input', 'keydown'].forEach(function (evt) {
           widgetElement.addEventListener(evt, function () {
             if (!isMinimized) resetInactivityTimer();
           });
@@ -2139,10 +2172,13 @@
         // Click-and-drag logic for both expanded widget and collapsed circle
         var isDragging = false;
         var hasMoved = false;
+        var suppressExpandClick = false;
         var startX = 0, startY = 0;
         var startLeft = 0, startTop = 0;
 
         var onStart = function (e) {
+          if ((e.type === 'mousedown' && e.button !== 0) || (e.touches && e.touches.length !== 1)) return;
+          hasMoved = false; suppressExpandClick = false;
           var target = e.target;
           if (!isMinimized && target && (target.tagName === 'BUTTON' || (target.closest && target.closest('button')) || target.tagName === 'INPUT')) {
             return;
@@ -2165,10 +2201,10 @@
           container.style.left = startLeft + 'px';
           container.style.top = startTop + 'px';
 
-          window.addEventListener('mousemove', onMove, { passive: false, capture: true });
-          window.addEventListener('mouseup', onEnd, { capture: true });
-          window.addEventListener('touchmove', onMove, { passive: false, capture: true });
-          window.addEventListener('touchend', onEnd, { capture: true });
+          listenWindow('mousemove', onMove, { passive: false, capture: true });
+          listenWindow('mouseup', onEnd, { capture: true });
+          listenWindow('touchmove', onMove, { passive: false, capture: true });
+          listenWindow('touchend', onEnd, { capture: true });
         };
 
         var onMove = function (e) {
@@ -2181,8 +2217,9 @@
           var dx = currentX - startX;
           var dy = currentY - startY;
 
-          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+          if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
             hasMoved = true;
+            widgetElement.classList.add('dragging');
             if (e.cancelable) e.preventDefault();
           }
 
@@ -2197,10 +2234,11 @@
 
           container.style.left = newLeft + 'px';
           container.style.top = newTop + 'px';
-          updateWidgetMode();
+          enforceBoundaries();
         };
 
         var onEnd = function (e) {
+          widgetElement.classList.remove('dragging');
           if (isDragging) {
             isDragging = false;
             try {
@@ -2210,14 +2248,24 @@
 
             if (isMinimized && !hasMoved) {
               expand();
+              suppressExpandClick = true;
             }
           }
-          window.removeEventListener('mousemove', onMove, { capture: true });
-          window.removeEventListener('mouseup', onEnd, { capture: true });
-          window.removeEventListener('touchmove', onMove, { capture: true });
-          window.removeEventListener('touchend', onEnd, { capture: true });
+          unlistenWindow('mousemove', onMove, { capture: true });
+          unlistenWindow('mouseup', onEnd, { capture: true });
+          unlistenWindow('touchmove', onMove, { capture: true });
+          unlistenWindow('touchend', onEnd, { capture: true });
         };
 
+        var onCancel = function () {
+          isDragging = false;
+          widgetElement.classList.remove('dragging');
+          unlistenWindow('mousemove', onMove, true); unlistenWindow('mouseup', onEnd, true);
+          unlistenWindow('touchmove', onMove, true); unlistenWindow('touchend', onEnd, true);
+          enforceBoundaries();
+        };
+        listenWindow('touchcancel', onCancel, true);
+        listenWindow('blur', onCancel);
         widgetElement.addEventListener('mousedown', onStart);
         widgetElement.addEventListener('touchstart', onStart, { passive: false });
 
@@ -2226,7 +2274,8 @@
       }
 
       function injectUI() {
-        if (!window.document || !window.document.body) return;
+        if (!window.document || !window.document.body || hasInjected) return;
+        hasInjected = true;
 
         var showScrollLock = settings.showScrollLock !== undefined ? settings.showScrollLock : true;
         var showMagnifier = settings.showMagnifier !== undefined ? settings.showMagnifier : true;
@@ -2260,6 +2309,14 @@
 
         var lensFrame = null;
         var mirrorNode = null;
+        var lensGestureCleanup = null;
+        widgetCleanups.push(function () { if (lensGestureCleanup) lensGestureCleanup(true); });
+        listenWindow('keydown', function (event) {
+          if (event.key === 'Escape' && lensGestureCleanup) {
+            event.preventDefault(); event.stopPropagation();
+            toggleMagnifier(false);
+          }
+        }, true);
 
         function saveLensState() {
           try {
@@ -2275,18 +2332,36 @@
 
         function updateMirrorPosition() {
           if (!lensFrame || !mirrorNode) return;
-          var centerX = lensPos.left + lensWidth / 2;
-          var centerY = lensPos.top + 14 + (lensHeight - 28) / 2;
+          // Use the rendered view, including the touch-sized header and any
+          // viewport clamp, rather than the user's preferred outer dimensions.
+          var view = lensFrame.querySelector('#lens-view');
+          var viewRect = view.getBoundingClientRect();
+          var viewWidth = viewRect.width || lensWidth;
+          var viewHeight = viewRect.height || Math.max(1, lensHeight - 44);
+          var centerX = viewRect.left + viewWidth / 2;
+          var centerY = viewRect.top + viewHeight / 2;
           var scrollX = window.scrollX || window.pageXOffset || 0;
           var scrollY = window.scrollY || window.pageYOffset || 0;
 
-          var mirrorLeft = (lensWidth / 2) - ((centerX + scrollX) * zoomLevel);
-          var mirrorTop = ((lensHeight - 28) / 2) - ((centerY + scrollY) * zoomLevel);
+          var mirrorLeft = (viewWidth / 2) - ((centerX + scrollX) * zoomLevel);
+          var mirrorTop = (viewHeight / 2) - ((centerY + scrollY) * zoomLevel);
 
           mirrorNode.style.transform = 'scale(' + zoomLevel + ')';
           mirrorNode.style.left = mirrorLeft + 'px';
           mirrorNode.style.top = mirrorTop + 'px';
         }
+
+        function clampLens() {
+          if (!lensFrame) return;
+          var width = Math.min(lensWidth, Math.max(150, (window.innerWidth || 800) - 24));
+          var height = Math.min(lensHeight, Math.max(100, (window.innerHeight || 600) - 24));
+          lensPos.left = Math.max(12, Math.min(lensPos.left, (window.innerWidth || 800) - width - 12));
+          lensPos.top = Math.max(12, Math.min(lensPos.top, (window.innerHeight || 600) - height - 12));
+          lensFrame.style.width = width + 'px'; lensFrame.style.height = height + 'px';
+          lensFrame.style.left = lensPos.left + 'px'; lensFrame.style.top = lensPos.top + 'px';
+          updateMirrorPosition();
+        }
+        listenWindow('resize', clampLens);
 
         function createLensFrame() {
           if (lensFrame || !magShadow) return;
@@ -2315,15 +2390,18 @@
           ].join('\n');
 
           magShadow.appendChild(lensFrame);
+          clampLens();
 
           var viewEl = lensFrame.querySelector('#lens-view');
+          // Host styles and mirrored controls stay inside their own read-only tree.
+          var mirrorRoot = viewEl.attachShadow ? viewEl.attachShadow({ mode: 'open' }) : viewEl;
 
           var baseEl = window.document.querySelector('base');
-          if (baseEl) viewEl.appendChild(baseEl.cloneNode(true));
+          if (baseEl) mirrorRoot.appendChild(baseEl.cloneNode(true));
 
           var styleEls = window.document.querySelectorAll('style, link[rel="stylesheet"]');
           for (var sIdx = 0; sIdx < styleEls.length; sIdx++) {
-            viewEl.appendChild(styleEls[sIdx].cloneNode(true));
+            mirrorRoot.appendChild(styleEls[sIdx].cloneNode(true));
           }
 
           var clone = window.document.body.cloneNode(true);
@@ -2345,10 +2423,13 @@
 
           mirrorNode = window.document.createElement('div');
           mirrorNode.className = 'lens-mirror';
+          mirrorNode.style.cssText = 'position:absolute;transform-origin:0 0;pointer-events:none;';
+          mirrorNode.setAttribute('aria-hidden', 'true');
+          mirrorNode.inert = true;
           mirrorNode.style.width = Math.max(window.document.documentElement.scrollWidth, window.innerWidth) + 'px';
           mirrorNode.style.height = Math.max(window.document.documentElement.scrollHeight, window.innerHeight) + 'px';
           mirrorNode.appendChild(clone);
-          viewEl.appendChild(mirrorNode);
+          mirrorRoot.appendChild(mirrorNode);
 
           updateMirrorPosition();
 
@@ -2358,12 +2439,26 @@
           });
 
           var headerEl = lensFrame.querySelector('#lens-header');
+          headerEl.tabIndex = 0;
+          headerEl.setAttribute('aria-label', 'Move magnifier lens with arrow keys. Escape closes.');
+          headerEl.addEventListener('keydown', function (event) {
+            if (event.target !== headerEl) return;
+            if (event.key === 'Escape') { event.preventDefault(); toggleMagnifier(false); return; }
+            var delta = event.shiftKey ? 40 : 10;
+            if (event.key === 'ArrowLeft') lensPos.left -= delta;
+            else if (event.key === 'ArrowRight') lensPos.left += delta;
+            else if (event.key === 'ArrowUp') lensPos.top -= delta;
+            else if (event.key === 'ArrowDown') lensPos.top += delta;
+            else return;
+            event.preventDefault(); event.stopPropagation(); clampLens(); saveLensState();
+          });
           var isDraggingLens = false;
           var startX = 0, startY = 0;
           var startLeft = 0, startTop = 0;
 
           var onLensDragStart = function (e) {
-            if (e.target.tagName === 'BUTTON') return;
+            if ((e.type === 'mousedown' && e.button !== 0) || (e.touches && e.touches.length !== 1) || e.target.tagName === 'BUTTON') return;
+            if (lensGestureCleanup) lensGestureCleanup(true);
             var touch = e.touches ? e.touches[0] : e;
             if (!touch) return;
 
@@ -2374,7 +2469,7 @@
             startTop = lensPos.top;
 
             var onMove = function (me) {
-              if (!isDraggingLens) return;
+              if (!isDraggingLens || !lensFrame) return;
               var touchMove = me.touches ? me.touches[0] : me;
               if (!touchMove) return;
 
@@ -2383,24 +2478,33 @@
               var dy = touchMove.clientY - startY;
               lensPos.left = Math.max(0, Math.min(startLeft + dx, (window.innerWidth || 800) - lensWidth));
               lensPos.top = Math.max(0, Math.min(startTop + dy, (window.innerHeight || 600) - lensHeight));
-              lensFrame.style.left = lensPos.left + 'px';
-              lensFrame.style.top = lensPos.top + 'px';
-              updateMirrorPosition();
+              clampLens();
             };
 
-            var onUp = function () {
+            var onUp = function (event) {
+              var cancelled = event === true || (event && ['touchcancel', 'blur', 'resize'].indexOf(event.type) !== -1);
               isDraggingLens = false;
-              window.removeEventListener('mousemove', onMove, true);
-              window.removeEventListener('mouseup', onUp, true);
-              window.removeEventListener('touchmove', onMove, true);
-              window.removeEventListener('touchend', onUp, true);
-              saveLensState();
+              unlistenWindow('mousemove', onMove, true);
+              unlistenWindow('mouseup', onUp, true);
+              unlistenWindow('touchmove', onMove, true);
+              unlistenWindow('touchend', onUp, true);
+              unlistenWindow('touchcancel', onUp, true);
+              unlistenWindow('blur', onUp);
+              unlistenWindow('resize', onUp);
+              lensGestureCleanup = null;
+              if (cancelled) { lensPos.left = startLeft; lensPos.top = startTop; }
+              if (lensFrame) clampLens();
+              if (!cancelled) saveLensState();
             };
+            lensGestureCleanup = onUp;
 
-            window.addEventListener('mousemove', onMove, { passive: false, capture: true });
-            window.addEventListener('mouseup', onUp, { capture: true });
-            window.addEventListener('touchmove', onMove, { passive: false, capture: true });
-            window.addEventListener('touchend', onUp, { capture: true });
+            listenWindow('mousemove', onMove, { passive: false, capture: true });
+            listenWindow('mouseup', onUp, { capture: true });
+            listenWindow('touchmove', onMove, { passive: false, capture: true });
+            listenWindow('touchend', onUp, { capture: true });
+            listenWindow('touchcancel', onUp, true);
+            listenWindow('blur', onUp);
+            listenWindow('resize', onUp);
           };
 
           headerEl.addEventListener('mousedown', onLensDragStart);
@@ -2410,6 +2514,8 @@
           for (var hIdx = 0; hIdx < handles.length; hIdx++) {
             (function (hEl) {
               var onResizeStart = function (e) {
+                if ((e.type === 'mousedown' && e.button !== 0) || (e.touches && e.touches.length !== 1)) return;
+                if (lensGestureCleanup) lensGestureCleanup(true);
                 e.stopPropagation();
                 if (e.cancelable) e.preventDefault();
                 var handleType = hEl.getAttribute('data-handle');
@@ -2424,6 +2530,7 @@
                 var startT = lensPos.top;
 
                 var onResizing = function (me) {
+                  if (!lensFrame) return;
                   var touchMove = me.touches ? me.touches[0] : me;
                   if (!touchMove) return;
                   if (me.cancelable && me.touches) me.preventDefault();
@@ -2470,18 +2577,29 @@
                   updateMirrorPosition();
                 };
 
-                var onResizeEnd = function () {
-                  window.removeEventListener('mousemove', onResizing, true);
-                  window.removeEventListener('mouseup', onResizeEnd, true);
-                  window.removeEventListener('touchmove', onResizing, true);
-                  window.removeEventListener('touchend', onResizeEnd, true);
-                  saveLensState();
+                var onResizeEnd = function (event) {
+                  var cancelled = event === true || (event && ['touchcancel', 'blur', 'resize'].indexOf(event.type) !== -1);
+                  unlistenWindow('mousemove', onResizing, true);
+                  unlistenWindow('mouseup', onResizeEnd, true);
+                  unlistenWindow('touchmove', onResizing, true);
+                  unlistenWindow('touchend', onResizeEnd, true);
+                  unlistenWindow('touchcancel', onResizeEnd, true);
+                  unlistenWindow('blur', onResizeEnd);
+                  unlistenWindow('resize', onResizeEnd);
+                  lensGestureCleanup = null;
+                  if (cancelled) { lensWidth = startW; lensHeight = startH; lensPos.left = startL; lensPos.top = startT; }
+                  if (lensFrame) clampLens();
+                  if (!cancelled) saveLensState();
                 };
+                lensGestureCleanup = onResizeEnd;
 
-                window.addEventListener('mousemove', onResizing, { passive: false, capture: true });
-                window.addEventListener('mouseup', onResizeEnd, { capture: true });
-                window.addEventListener('touchmove', onResizing, { passive: false, capture: true });
-                window.addEventListener('touchend', onResizeEnd, { capture: true });
+                listenWindow('mousemove', onResizing, { passive: false, capture: true });
+                listenWindow('mouseup', onResizeEnd, { capture: true });
+                listenWindow('touchmove', onResizing, { passive: false, capture: true });
+                listenWindow('touchend', onResizeEnd, { capture: true });
+                listenWindow('touchcancel', onResizeEnd, true);
+                listenWindow('blur', onResizeEnd);
+                listenWindow('resize', onResizeEnd);
               };
 
               hEl.addEventListener('mousedown', onResizeStart);
@@ -2491,6 +2609,7 @@
         }
 
         function destroyLensFrame() {
+          if (lensGestureCleanup) lensGestureCleanup(true);
           if (lensFrame) {
             lensFrame.remove();
             lensFrame = null;
@@ -2510,9 +2629,9 @@
             magStyle.textContent = widgetCss + [
               '.lens-frame {',
               '  position: fixed;',
-              '  border: 2px solid #38bdf8;',
+              '  border: 1px solid rgba(140,222,239,.65);',
               '  border-radius: 16px;',
-              '  box-shadow: 0 0 25px rgba(56, 189, 248, 0.4), 0 10px 30px rgba(0, 0, 0, 0.5);',
+              '  box-shadow: 0 12px 32px rgba(3,10,25,.35);',
               '  background: rgba(15, 23, 42, 0.95);',
               '  overflow: hidden;',
               '  z-index: 2147483645;',
@@ -2520,7 +2639,7 @@
               '  flex-direction: column;',
               '}',
               '.lens-header {',
-              '  height: 28px;',
+              '  min-height: 44px; touch-action:none;',
               '  background: rgba(30, 41, 59, 0.95);',
               '  border-bottom: 1px solid rgba(56, 189, 248, 0.3);',
               '  display: flex;',
@@ -2586,6 +2705,7 @@
             if (headerSpan) headerSpan.innerHTML = magnifierMarkup(false, 'Lens (' + zoomLevel.toFixed(1) + 'x)');
             updateMirrorPosition();
           }
+          saveLensState();
         }
 
         function toggleMagnifier(enable) {
@@ -2625,7 +2745,7 @@
           }
         }
 
-        window.addEventListener('scroll', function () {
+        listenWindow('scroll', function () {
           if (magEnabled) updateMirrorPosition();
         }, { passive: true });
 
@@ -2645,65 +2765,38 @@
           var dockShadow = dockContainer.attachShadow ? dockContainer.attachShadow({ mode: 'open' }) : dockContainer;
 
           var dockCss = widgetCss + [
-            '.dock-wrapper {',
-            '  position: fixed; display: flex; align-items: center; justify-content: center;',
-            '  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), bottom 0.2s ease, top 0.2s ease, left 0.2s ease, right 0.2s ease;',
-            '  pointer-events: auto; max-width: 98vw; max-height: 98vh; max-height: 98dvh;',
-          '  overscroll-behavior: none; will-change: transform;',
-            '}',
-            '.dock-bar {',
-            '  background: rgba(11, 19, 41, 0.94); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);',
-            '  border: 1px solid rgba(56, 189, 248, 0.45); border-radius: 24px;',
-            '  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(56, 189, 248, 0.35);',
-            '  padding: 10px 16px; display: flex; align-items: center; gap: 10px; color: #f8fafc;',
-            '  max-width: calc(100vw - 32px); max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow: auto;',
-          '  scrollbar-width: none; -ms-overflow-style: none; will-change: transform;',
-          '}',
-          '.btn-ctrl:focus-visible, .btn-toggle:focus-visible, .pull-tab:focus-visible {',
-          '  outline: 2px solid #38bdf8; outline-offset: 2px;',
-            '}',
-            '.pull-tab {',
-            '  background: linear-gradient(135deg, rgba(56, 189, 248, 0.95) 0%, rgba(59, 130, 246, 0.95) 100%);',
-            '  color: #030712; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50%;',
-            '  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;',
-            '  cursor: grab; box-shadow: 0 0 18px rgba(56, 189, 248, 0.7); outline: none;',
-            '  font-size: 14px; font-weight: 700; transition: transform 0.3s ease, box-shadow 0.3s ease; flex-shrink: 0;',
-            '  position: relative;',
-            '}',
-            '.pull-tab:active { cursor: grabbing; }',
-            '.pull-tab:hover { transform: scale(1.12); box-shadow: 0 0 24px rgba(56, 189, 248, 0.95); }',
-            '.pull-tab::after {',
-            '  content: ""; position: absolute; inset: -2px; border-radius: 50%;',
-            '  border: 1px dashed rgba(255, 255, 255, 0.6); pointer-events: none;',
-            '}',
-            '/* Dock Positions with Safe Insets for Mobile/iPad Browsers */',
-            '.dock-bottom { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); flex-direction: column; }',
-            '.dock-bottom.collapsed { transform: translate(-50%, calc(100% - 18px)); }',
-            '.dock-bottom .pull-tab { margin-bottom: 6px; }',
-            '.dock-top { top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); flex-direction: column-reverse; }',
-            '.dock-top.collapsed { transform: translate(-50%, calc(-100% + 18px)); }',
-            '.dock-top .pull-tab { margin-top: 6px; }',
-            '.dock-left { left: calc(12px + env(safe-area-inset-left, 0px)); top: 50%; transform: translateY(-50%); flex-direction: row-reverse; }',
-            '.dock-left .dock-bar { flex-direction: column; align-items: center; padding: 14px 10px; border-radius: 28px; gap: 12px; }',
-            '.dock-left.collapsed { transform: translate(calc(-100% + 18px), -50%); }',
-            '.dock-left .pull-tab { margin-left: 6px; }',
-            '.dock-right { right: calc(12px + env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); flex-direction: row; }',
-            '.dock-right .dock-bar { flex-direction: column; align-items: center; padding: 14px 10px; border-radius: 28px; gap: 12px; }',
-            '.dock-right.collapsed { transform: translate(calc(100% - 18px), -50%); }',
-            '.dock-right .pull-tab { margin-right: 6px; }',
-            '.dock-item { display: flex; align-items: center; gap: 8px; }',
-            '.dock-left .dock-item, .dock-right .dock-item { flex-direction: column; gap: 6px; width: 100%; align-items: center; justify-content: center; }',
-            '.dock-left .btn-ctrl, .dock-right .btn-ctrl { flex-direction: column; padding: 8px 6px; min-width: 44px; min-height: 44px; justify-content: center; border-radius: 12px; }',
-            '.dock-left .btn-ctrl span, .dock-right .btn-ctrl span { font-size: 10px; font-weight: 600; line-height: 1; }',
-            '.dock-left .btn-toggle, .dock-right .btn-toggle { padding: 6px 8px; border-radius: 12px; font-size: 11px; min-width: 44px; justify-content: center; }',
-            '.dock-left .nav-input, .dock-right .nav-input { width: 60px; font-size: 10px; padding: 5px 4px; text-align: center; }',
-            '.dock-divider { width: 1px; height: 24px; background: rgba(148, 163, 184, 0.25); flex-shrink: 0; }',
-            '.dock-left .dock-divider, .dock-right .dock-divider { width: 32px; height: 1px; background: rgba(56, 189, 248, 0.25); margin: 2px 0; }',
-            '@media (max-width: 640px) {',
-            '  .dock-bar { padding: 8px 12px; gap: 8px; border-radius: 20px; }',
-            '  .dock-bar .btn-ctrl span { display: none; }',
-            '  .dock-bar .nav-input { width: 110px; font-size: 11px; padding: 4px 8px; }',
-            '}'
+            ".dock-wrapper { position:fixed;width:max-content;display:flex;align-items:center;justify-content:center;gap:8px;pointer-events:auto;max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px); }",
+            ".dock-bar { display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;max-width:min(1280px,calc(100vw - 24px));max-height:calc(100dvh - 92px);padding:10px;background:rgba(17,30,51,.97);border:1px solid rgba(157,191,226,.28);border-radius:18px;box-shadow:0 10px 32px rgba(3,10,25,.3);color:var(--hn-widget-text);overflow:auto;scrollbar-width:thin;scrollbar-color:#526a85 transparent; }",
+            ".pull-tab { display:flex;align-items:center;justify-content:center;gap:7px;min-width:80px;min-height:44px;padding:8px 12px;color:#d8f6ff;background:#172c45;border:1px solid rgba(140,222,239,.55);border-radius:14px;cursor:grab;box-shadow:0 5px 18px rgba(3,10,25,.25);font-size:12px;font-weight:650;touch-action:none;transition:background .18s,border-color .18s; }",
+            ".pull-tab:hover { background:#24445e;border-color:#b7edff; }",
+            ".pull-tab:active { cursor:grabbing; }",
+            ".pull-tab > span:first-child { display:inline-flex;font-size:11px;transition:transform .18s; }",
+            ".dock-bottom { bottom:calc(12px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);flex-direction:column; }",
+            ".dock-top { top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);flex-direction:column-reverse; }",
+            ".dock-left { left:calc(12px + env(safe-area-inset-left,0px));top:50%;transform:translateY(-50%);flex-direction:row-reverse; }",
+            ".dock-right { right:calc(12px + env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);flex-direction:row; }",
+            ".dock-left .dock-bar,.dock-right .dock-bar { width:230px; }",
+            ".dock-left .dock-item,.dock-right .dock-item { flex:1 1 100%;justify-content:center; }",
+            ".dock-left .dock-divider,.dock-right .dock-divider { display:none; }",
+            ".dock-left .nav-input,.dock-right .nav-input { flex:1;min-width:100px;width:140px; }",
+            ".collapsed .dock-bar { display:none; }",
+            ".dock-item { display:flex;align-items:center;gap:6px;min-width:0; }",
+            ".dock-divider { width:1px;height:26px;background:var(--hn-widget-border);flex-shrink:0; }",
+            "#dock-search-input { width:180px; }",
+            "#dock-go-btn { color:#d4f5ff;border-color:rgba(140,222,239,.48);background:#203d56; }",
+            "#dock-zoom-label { min-width:30px;text-align:center;color:var(--hn-widget-accent)!important; }",
+            ".dock-drag-ghost { padding:12px 18px;background:#17283e;border:1px dashed #8cdeef;border-radius:14px;color:#edf5ff;font:600 13px system-ui;box-shadow:0 10px 24px rgba(3,10,25,.3); }",
+            "@media (max-width:1120px) { .dock-divider { display:none; } }",
+            "@media (max-width:640px) {",
+            " .dock-bar { padding:8px;gap:6px;max-width:calc(100vw - 24px);border-radius:16px; }",
+            " .dock-bar .btn-ctrl span { display:none; }",
+            " .dock-bar .btn-ctrl,.dock-bar .btn-toggle { padding:8px; }",
+            " .dock-bar .dock-item:has(.nav-input) { flex:1 1 100%;order:-1; }",
+            " .dock-bar .nav-input { flex:1;width:140px!important; }",
+            " .dock-left,.dock-right { gap:6px; }",
+            " .dock-left .dock-bar,.dock-right .dock-bar { width:min(230px,calc(100vw - 110px)); }",
+            " .dock-left .nav-input,.dock-right .nav-input { min-width:70px;width:80px!important; }",
+            "}"
           ].join('\n');
 
           var dockStyle = window.document.createElement('style');
@@ -2721,11 +2814,17 @@
           var pullBtn = window.document.createElement('button');
           pullBtn.type = 'button';
           pullBtn.className = 'pull-tab';
-          pullBtn.title = 'Toggle Dock Bar';
-          pullBtn.innerHTML = '<span>' + arrowSymbol + '</span>';
+          pullBtn.title = 'Expand Heavenly tools. Drag to an edge to reposition.';
+          pullBtn.setAttribute('aria-label', 'Expand Heavenly tools. Alt plus arrow key moves the dock.');
+          pullBtn.setAttribute('aria-expanded', 'false');
+          pullBtn.setAttribute('aria-controls', 'heavenly-dock-toolbar');
+          pullBtn.innerHTML = '<span aria-hidden="true">' + arrowSymbol + '</span><span class="dock-pull-label">Tools</span>';
 
           var dockBar = window.document.createElement('div');
           dockBar.className = 'dock-bar';
+          dockBar.id = 'heavenly-dock-toolbar';
+          dockBar.setAttribute('role', 'group');
+          dockBar.setAttribute('aria-label', 'Heavenly page tools');
 
           var items = [];
 
@@ -2742,7 +2841,7 @@
           }
 
           if (showNavSearch) {
-            items.push('<div class="dock-item"><input type="text" class="nav-input" id="dock-search-input" placeholder="Search or URL..." /><button type="button" class="btn-ctrl" id="dock-go-btn">Go</button></div>');
+            items.push('<div class="dock-item"><input type="text" class="nav-input" id="dock-search-input" aria-label="Search the web or enter a URL" placeholder="Search or URL..." /><button type="button" class="btn-ctrl" id="dock-go-btn">Go</button></div>');
           }
 
           if (showScrollLock) {
@@ -2750,10 +2849,14 @@
           }
 
           if (showMagnifier) {
-            items.push('<div class="dock-item"><button type="button" class="btn-toggle" id="dock-mag-btn" aria-label="Magnifier" aria-pressed="false">' + magnifierMarkup(false) + '</button><button type="button" class="btn-ctrl" id="dock-zoom-out">-</button><span id="dock-zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span><button type="button" class="btn-ctrl" id="dock-zoom-in">+</button></div>');
+            items.push('<div class="dock-item"><button type="button" class="btn-toggle" id="dock-mag-btn" aria-label="Magnifier" aria-pressed="false">' + magnifierMarkup(false) + '</button><button type="button" class="btn-ctrl" id="dock-zoom-out" aria-label="Zoom out">−</button><span id="dock-zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span><button type="button" class="btn-ctrl" id="dock-zoom-in" aria-label="Zoom in">+</button></div>');
           }
 
-          dockBar.innerHTML = items.join('<div class="dock-divider"></div>');
+          dockBar.innerHTML = items.join('<div class="dock-divider" aria-hidden="true"></div>');
+          var labeledButtons = dockBar.querySelectorAll('button[title]');
+          for (var labelIndex = 0; labelIndex < labeledButtons.length; labelIndex++) {
+            labeledButtons[labelIndex].setAttribute('aria-label', labeledButtons[labelIndex].getAttribute('title'));
+          }
 
           wrapper.appendChild(pullBtn);
           wrapper.appendChild(dockBar);
@@ -2766,6 +2869,7 @@
           // Handle visualViewport adjustments on iPad/mobile Chrome/Safari scrolling
           var updateDockViewportPosition = function () {
             if (!window.visualViewport) return;
+            wrapper.style.bottom = ''; wrapper.style.top = '';
             var vv = window.visualViewport;
             var offsetTop = vv.offsetTop || 0;
             var pageHeight = window.document.documentElement ? window.document.documentElement.clientHeight : window.innerHeight;
@@ -2783,6 +2887,8 @@
           if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', updateDockViewportPosition);
             window.visualViewport.addEventListener('scroll', updateDockViewportPosition);
+            widgetCleanups.push(function () { window.visualViewport.removeEventListener('resize', updateDockViewportPosition); window.visualViewport.removeEventListener('scroll', updateDockViewportPosition); });
+            updateDockViewportPosition();
           }
 
           var isCollapsed = true;
@@ -2797,6 +2903,7 @@
           var snapIndicatorEl = null;
 
           var onDockStart = function (e) {
+            if ((e.type === 'mousedown' && e.button !== 0) || (e.touches && e.touches.length !== 1)) return;
             var target = e.target;
             if (target && (target.tagName === 'INPUT' || (target.tagName === 'BUTTON' && target !== pullBtn && !pullBtn.contains(target)))) {
               return;
@@ -2809,10 +2916,10 @@
             startX = touch.clientX;
             startY = touch.clientY;
 
-            window.addEventListener('mousemove', onDockMove, { passive: false, capture: true });
-            window.addEventListener('mouseup', onDockEnd, { capture: true });
-            window.addEventListener('touchmove', onDockMove, { passive: false, capture: true });
-            window.addEventListener('touchend', onDockEnd, { capture: true });
+            listenWindow('mousemove', onDockMove, { passive: false, capture: true });
+            listenWindow('mouseup', onDockEnd, { capture: true });
+            listenWindow('touchmove', onDockMove, { passive: false, capture: true });
+            listenWindow('touchend', onDockEnd, { capture: true });
           };
 
           var onDockMove = function (e) {
@@ -2830,12 +2937,8 @@
               if (!ghostEl) {
                 ghostEl = window.document.createElement('div');
                 ghostEl.className = 'dock-drag-ghost';
-                ghostEl.style.cssText = 'position:fixed;z-index:2147483647;pointer-events:none;opacity:0.75;filter:drop-shadow(0 0 16px rgba(56, 189, 248, 0.8));transform:translate(-50%, -50%);';
-                var ghostInner = dockBar.cloneNode(true);
-                ghostInner.style.border = '2px dashed #38bdf8';
-                ghostInner.style.boxShadow = '0 0 24px rgba(56, 189, 248, 0.8)';
-                ghostInner.style.background = 'rgba(11, 19, 41, 0.9)';
-                ghostEl.appendChild(ghostInner);
+                ghostEl.style.cssText = 'position:fixed;z-index:2147483647;pointer-events:none;transform:translate(-50%,-50%);';
+                ghostEl.textContent = 'Move Heavenly tools';
                 dockShadow.appendChild(ghostEl);
               }
 
@@ -2845,7 +2948,7 @@
               if (!snapIndicatorEl) {
                 snapIndicatorEl = window.document.createElement('div');
                 snapIndicatorEl.className = 'dock-snap-indicator';
-                snapIndicatorEl.style.cssText = 'position:fixed;z-index:2147483646;pointer-events:none;background:linear-gradient(90deg, rgba(56,189,248,0.6), rgba(59,130,246,0.9), rgba(56,189,248,0.6));box-shadow:0 0 24px rgba(56,189,248,0.9);border-radius:12px;transition:all 0.15s ease-out;';
+                snapIndicatorEl.style.cssText = 'position:fixed;z-index:2147483646;pointer-events:none;background:rgba(140,222,239,.85);border-radius:12px;transition:opacity .15s ease-out;';
                 dockShadow.appendChild(snapIndicatorEl);
               }
 
@@ -2915,37 +3018,62 @@
               else if (minDist === distTop) newPos = 'top';
               else if (minDist === distBottom) newPos = 'bottom';
 
-              dockPosition = newPos;
-              wrapper.className = 'dock-wrapper dock-' + dockPosition + (isCollapsed ? ' collapsed' : '');
-
-              var arrow = '▼';
-              if (dockPosition === 'bottom') arrow = '▼';
-              else if (dockPosition === 'top') arrow = '▲';
-              else if (dockPosition === 'left') arrow = '◄';
-              else if (dockPosition === 'right') arrow = '►';
-              pullBtn.querySelector('span').textContent = arrow;
-
-              // Save to localStorage settings
-              try {
-                var s = loadHeavenlySettings(window);
-                s.dockPosition = newPos;
-                localStorage.setItem('heavenly_settings', JSON.stringify(s));
-              } catch (err) {}
+              setDockPosition(newPos);
             }
             isDraggingDock = false;
-            window.removeEventListener('mousemove', onDockMove, { capture: true });
-            window.removeEventListener('mouseup', onDockEnd, { capture: true });
-            window.removeEventListener('touchmove', onDockMove, { capture: true });
-            window.removeEventListener('touchend', onDockEnd, { capture: true });
+            unlistenWindow('mousemove', onDockMove, { capture: true });
+            unlistenWindow('mouseup', onDockEnd, { capture: true });
+            unlistenWindow('touchmove', onDockMove, { capture: true });
+            unlistenWindow('touchend', onDockEnd, { capture: true });
           };
+
+          function setDockPosition(position) {
+            dockPosition = position;
+            wrapper.className = 'dock-wrapper dock-' + dockPosition + (isCollapsed ? ' collapsed' : '');
+            wrapper.style.top = ''; wrapper.style.bottom = '';
+            var arrows = { bottom: '▼', top: '▲', left: '◄', right: '►' };
+            pullBtn.querySelector('span').textContent = arrows[position];
+            updateDockViewportPosition();
+            try {
+              var savedSettings = localStorage.getItem('heavenly_settings');
+              var raw = savedSettings === null ? {} : JSON.parse(savedSettings);
+              if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Unreadable saved settings');
+              raw.dockPosition = position;
+              localStorage.setItem('heavenly_settings', JSON.stringify(raw));
+              pullBtn.title = (isCollapsed ? 'Expand' : 'Minimize') + ' Heavenly tools. Drag to an edge to reposition.';
+            } catch (_) {
+              pullBtn.title = 'Dock moved for this page. Its position could not be saved; check browser storage in Settings.';
+            }
+          }
+          function cancelDockGesture() {
+            if (ghostEl) ghostEl.remove(); if (snapIndicatorEl) snapIndicatorEl.remove();
+            ghostEl = null; snapIndicatorEl = null; isDraggingDock = false;
+            unlistenWindow('mousemove', onDockMove, true); unlistenWindow('mouseup', onDockEnd, true);
+            unlistenWindow('touchmove', onDockMove, true); unlistenWindow('touchend', onDockEnd, true);
+          }
+          listenWindow('touchcancel', cancelDockGesture, true);
+          listenWindow('blur', cancelDockGesture);
+          listenWindow('resize', cancelDockGesture);
+          widgetCleanups.push(cancelDockGesture);
+          pullBtn.addEventListener('keydown', function (event) {
+            var positions = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'top', ArrowDown: 'bottom' };
+            if (event.altKey && positions[event.key]) { event.preventDefault(); event.stopPropagation(); setDockPosition(positions[event.key]); }
+          });
+          dockBar.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') { event.preventDefault(); pullBtn.click(); pullBtn.focus(); }
+          });
 
           pullBtn.addEventListener('mousedown', onDockStart);
           pullBtn.addEventListener('touchstart', onDockStart, { passive: false });
 
           pullBtn.addEventListener('click', function (e) {
             e.stopPropagation();
-            if (hasMovedDock) return;
+            if (hasMovedDock && e.detail !== 0) { hasMovedDock = false; return; }
+            hasMovedDock = false;
             isCollapsed = !isCollapsed;
+            pullBtn.setAttribute('aria-expanded', String(!isCollapsed));
+            pullBtn.setAttribute('aria-label', (isCollapsed ? 'Expand' : 'Minimize') + ' Heavenly tools. Alt plus arrow key moves the dock.');
+            pullBtn.title = (isCollapsed ? 'Expand' : 'Minimize') + ' Heavenly tools. Drag to an edge to reposition.';
             if (isCollapsed) {
               wrapper.classList.add('collapsed');
               pullBtn.querySelector('span').style.transform = 'rotate(180deg)';
@@ -3011,8 +3139,7 @@
             };
             if (goBtn) goBtn.addEventListener('click', function (e) { e.stopPropagation(); handleNav(); });
             if (searchInput) searchInput.addEventListener('keydown', function (e) {
-              e.stopPropagation();
-              if (e.key === 'Enter') handleNav();
+              if (e.key === 'Enter') { e.stopPropagation(); handleNav(); }
             });
           }
 
@@ -3078,9 +3205,9 @@
           var lockWidget = window.document.createElement('div');
           lockWidget.className = 'heavenly-widget';
           lockWidget.innerHTML = [
-            '<div class="mini-icon" title="Scroll Lock (Click to expand)">',
+            '<button type="button" class="mini-icon" title="Scroll Lock (Click to expand)">',
             '  <svg class="title-icon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18M3 12h18"></path><circle cx="12" cy="12" r="9"></circle></svg>',
-            '</div>',
+            '</button>',
             '<div class="widget-content">',
             '  <div class="drag-handle" title="Click and drag to move">',
             '    <svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 0 0 18"></path><path d="M3 12h18"></path></svg>',
@@ -3110,9 +3237,9 @@
           var magWidget = window.document.createElement('div');
           magWidget.className = 'heavenly-widget';
           magWidget.innerHTML = [
-            '<div class="mini-icon" title="Magnifier (Click to expand)">',
+            '<button type="button" class="mini-icon" title="Magnifier (Click to expand)">',
             '  <svg class="title-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
-            '</div>',
+            '</button>',
             '<div class="widget-content">',
             '  <div class="drag-handle" title="Click and drag to move">',
             '    <svg class="title-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
@@ -3170,6 +3297,8 @@
               updateMirrorPosition();
               saveLensState();
             }
+            clampLens();
+            saveLensState();
           });
         }
 
@@ -3182,23 +3311,16 @@
           var navShadow = navContainer.attachShadow ? navContainer.attachShadow({ mode: 'open' }) : navContainer;
 
           var navStyle = window.document.createElement('style');
-          navStyle.textContent = widgetCss + [
-            '.nav-input {',
-            '  background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(148, 163, 184, 0.3);',
-            '  color: #f8fafc; padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 500;',
-            '  outline: none; width: 140px; transition: border-color 0.2s, width 0.2s;',
-            '}',
-            '.nav-input:focus { border-color: #38bdf8; width: 180px; background: rgba(15, 23, 42, 0.95); }'
-          ].join('\n');
+          navStyle.textContent = widgetCss;
 
           var navWidget = window.document.createElement('div');
           navWidget.className = 'heavenly-widget';
 
-          var navHtml = ['<div class="mini-icon" title="Navigation (Click to expand)"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 12h18M12 3l9 9-9 9"></path></svg></div>', '<div class="widget-content">'];
+          var navHtml = ['<button type="button" class="mini-icon" title="Navigation (Click to expand)"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 12h18M12 3l9 9-9 9"></path></svg></button>', '<div class="widget-content">'];
           navHtml.push('<div class="drag-handle" title="Click and drag to move"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg></div>');
 
           if (showNavSearch) {
-            navHtml.push('<input type="text" class="nav-input" id="nav-search-input" placeholder="Search or URL..." />');
+            navHtml.push('<input type="text" class="nav-input" id="nav-search-input" aria-label="Search the web or enter a URL" placeholder="Search or URL..." />');
             navHtml.push('<button type="button" class="btn-ctrl" id="nav-go-btn">Go</button>');
           }
 
@@ -3291,7 +3413,7 @@
         injectUI();
       } else if (window.document) {
         window.document.addEventListener('DOMContentLoaded', injectUI);
-        window.addEventListener('load', injectUI);
+        listenWindow('load', injectUI);
       }
     } catch (err) {
       console.error('Error initializing Heavenly widgets:', err);
@@ -4195,8 +4317,8 @@
     // Privacy handlers stay attached while paused so master changes can resume
     // existing cloaking and panic preferences without installing another handler.
     initHeavenlyCloakAndPanic(window, settings, config);
+    initHeavenlyWidgets(window, settings, config);
     if (!settings.disableAllWidgets && !settings.disableAllFeatures) {
-      initHeavenlyWidgets(window, settings, config);
       initManualIconPickerWidget(config, window, settings);
       initNewgroundsPagination(config, window, settings);
     }

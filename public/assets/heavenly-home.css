@@ -355,3 +355,44 @@
 @media (forced-colors: active) {
   .qs-homepage .brand-title-group h1 { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
 }
+
+/* Phase 4 + 5: retain the established composition; give shared details a celestial finish. */
+.qs-homepage {
+  --home-surface: var(--hn-surface);
+  --home-muted: var(--hn-muted);
+  --home-accent: var(--hn-accent);
+  --home-ease: var(--hn-ease);
+}
+.qs-homepage body { background: radial-gradient(ellipse at 48% 0, #142a402e, transparent 60%), var(--hn-bg); }
+.qs-homepage .container { border-color: #354b66; background: linear-gradient(155deg, #14243a80, transparent 48%), var(--hn-surface); }
+.qs-homepage .brand-title-group h1 { background: var(--hn-brand-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.qs-homepage .brand-logo-img { filter: drop-shadow(0 2px 7px #8fdef326); }
+.qs-homepage #search-go-btn { color: #081c2c; background: linear-gradient(125deg, #a7e7f2, #8dc8f3); border: 1px solid #bae9f0; border-radius: 12px; font-weight: 700; }
+.qs-homepage #search-go-btn:hover { background: linear-gradient(125deg, #c3f1f8, #a4d6fb); }
+.qs-homepage .layout-toolbar { min-height: 44px; }
+.qs-homepage .layout-options { margin-left: auto; }
+.layout-resize-tip { border-top: 1px solid var(--hn-border); margin-top: 8px; padding-top: 10px; color: var(--hn-muted); font-size: 13px; line-height: 1.5; }
+.qs-homepage .heavenly-about { text-align: left; }
+.about-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.about-heading h2 { margin: 0; font: 600 16px/1.4 var(--hn-heading); color: #deebfa; letter-spacing: -.015em; }
+.about-heading > svg { width: 24px; height: 24px; fill: none; stroke: #a4cfeb; stroke-width: 1.4; opacity: .8; }
+.qs-homepage .heavenly-about > p { margin-bottom: 8px; max-width: 68ch; }
+.about-details { margin-top: 8px; }
+.about-details summary { display: flex; align-items: center; gap: 8px; width: fit-content; min-height: 44px; padding: 6px 0; color: #abd9ef; cursor: pointer; font-size: 14px; list-style: none; border-radius: 5px; }
+.about-details summary::-webkit-details-marker { display: none; }
+.about-details summary svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; transition: transform var(--hn-duration) var(--hn-ease); }
+.about-details[open] summary svg { transform: rotate(180deg); }
+.about-details summary:hover { color: #d9f4ff; }
+.about-details summary:focus-visible { outline: var(--hn-focus); outline-offset: 3px; }
+.about-details ul { display: grid; gap: 10px; list-style: none; margin: 6px 0 14px; padding: 0; color: var(--hn-muted); font-size: 14px; line-height: 1.6; max-width: 68ch; }
+.about-details li strong { color: #d3e3f5; font-weight: 500; }
+.qs-homepage .about-details .about-backup-note { padding: 12px 0 4px; margin: 0; border-top: 1px solid var(--hn-border); font-size: 13px; }
+.about-create { text-align: center; margin-top: 12px; }
+.about-create .add-category-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+.qs-homepage .footer { border-color: var(--hn-border); }
+@media (forced-colors: active) { .qs-homepage .brand-title-group h1 { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; } .qs-homepage #search-go-btn { background: ButtonFace; color: ButtonText; border-color: ButtonText; } }
+
+@media (max-width: 600px) {
+  .qs-homepage #layout-options-trigger { width: 44px; padding: 10px; }
+  .qs-homepage #layout-options-trigger > span { display: none; }
+}

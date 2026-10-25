@@ -5,7 +5,7 @@
   else root.HeavenlyLayout = factory(root);
 })(typeof window !== 'undefined' ? window : this, function (root) {
   'use strict';
-  var KEY = 'heavenly_home_layout_v1', MIN = 240, MAX = 400, CENTER = 440, RAIL = 44, GAP = 16;
+  var KEY = 'heavenly_home_layout_v1', MIN = 240, MAX = 400, CENTER = 440, RAIL = 44, GAP = 16, CATEGORY_MIN = 152, CATEGORY_MAX = 208;
   var sides = ['left', 'right'];
   function defaults() { return { version: 1, priority: 'left', left: { width: 256, collapsed: false, compactOpen: false }, right: { width: 256, collapsed: false, compactOpen: false }, categoryCollapsed: {} }; }
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
@@ -30,21 +30,25 @@
     preferences = normalize(preferences);
     return Object.keys(preferences.categoryCollapsed).length > 0 || sides.some(function (side) { return preferences[side].width !== 256 || preferences[side].collapsed || preferences[side].compactOpen; });
   }
-  function calculate(available, preferences, priority, eligible) {
+  function calculate(available, preferences, priority, eligible, categoryWidths) {
     preferences = normalize(preferences);
     eligible = eligible || { left: true, right: true };
     var count = sides.filter(function (side) { return eligible[side] !== false; }).length;
     var compact = count > 0 && available < CENTER + MIN + (count === 2 ? RAIL : 0) + GAP * count;
     var result = { compact: compact, left: {}, right: {} };
-    sides.forEach(function (side) { var empty = eligible[side] === false; result[side] = { open: !empty && !preferences[side].collapsed && !compact, width: empty ? 0 : preferences[side].width, empty: empty }; });
+    sides.forEach(function (side) {
+      var empty = eligible[side] === false;
+      var categoryCompact = !empty && categoryWidths && typeof categoryWidths[side] === 'number' && isFinite(categoryWidths[side]) && categoryWidths[side] > 0;
+      result[side] = { open: !empty && !preferences[side].collapsed && !compact, width: empty ? 0 : categoryCompact ? clamp(categoryWidths[side], CATEGORY_MIN, CATEGORY_MAX) : preferences[side].width, empty: empty, categoryCompact: !!categoryCompact };
+    });
     if (compact) return result;
     function total() { return sides.reduce(function (sum, side) { return sum + (result[side].empty ? 0 : result[side].open ? result[side].width : RAIL); }, CENTER + GAP * count); }
     // Reduce surplus width before hiding useful content. Prefer the most recently opened panel.
     var order = (priority || preferences.priority) === 'right' ? ['left', 'right'] : ['right', 'left'];
-    order.forEach(function (side) { if (result[side].open) result[side].width -= Math.min(result[side].width - MIN, Math.max(0, total() - available)); });
+    order.forEach(function (side) { if (result[side].open && !result[side].categoryCompact) result[side].width -= Math.min(result[side].width - MIN, Math.max(0, total() - available)); });
     order.forEach(function (side) { if (total() > available && result[side].open) result[side].open = false; });
     order.slice().reverse().forEach(function (side) {
-      if (result[side].open) result[side].width += Math.min(preferences[side].width - result[side].width, Math.max(0, available - total()));
+      if (result[side].open && !result[side].categoryCompact) result[side].width += Math.min(preferences[side].width - result[side].width, Math.max(0, available - total()));
     });
     return result;
   }
@@ -80,7 +84,7 @@
       // Keep the current footprint while the shared height animation closes.
       // A reversal retires that close's completion before it can compact the card.
       if (!collapsed) card.classList.remove('is-category-collapsed');
-      if (animate && root.HeavenlyMotion) root.HeavenlyMotion.height(body, !collapsed, null, function () { card.classList.toggle('is-category-collapsed', collapsed); });
+      if (animate && root.HeavenlyMotion) root.HeavenlyMotion.height(body, !collapsed, null, function () { card.classList.toggle('is-category-collapsed', collapsed); apply(); });
       else { if (root.HeavenlyMotion) root.HeavenlyMotion.cancel(body, false); body.hidden = collapsed; card.classList.toggle('is-category-collapsed', collapsed); }
     }
     function bindCategories() {
@@ -96,7 +100,7 @@
               var id = card.dataset.categoryId;
               if (preferences.categoryCollapsed[id] === true) delete preferences.categoryCollapsed[id];
               else Object.defineProperty(preferences.categoryCollapsed, id, { value: true, enumerable: true, configurable: true, writable: true });
-              save(); categoryState(card, true); syncReset();
+              save(); categoryState(card, true); schedule(); syncReset();
               announce((preferences.categoryCollapsed[id] === true ? 'Collapsed ' : 'Expanded ') + card.dataset.categoryTitle + '.');
             });
           }
@@ -109,14 +113,35 @@
     function syncReset() {
       if (resetButton) { resetButton.disabled = !customized(preferences); resetButton.title = resetButton.disabled ? 'Layout already uses its defaults' : 'Restore panel widths and panel/category collapse states'; }
     }
+    // Measure labels independently of the grid's current width. Measuring a card's
+    // clientWidth here would feed the shrinking track back into its own next size.
+    var labelCanvas = doc.createElement('canvas'), labelContext = labelCanvas.getContext('2d');
+    function categoryWidth(side) {
+      var cards = Array.from(doc.getElementById(side + '-column').querySelectorAll('.section-card[data-category-id]'));
+      if (!cards.length || !cards.every(function (card) { return preferences.categoryCollapsed[card.dataset.categoryId] === true && card.classList.contains('is-category-collapsed'); })) return 0;
+      var width = CATEGORY_MIN;
+      cards.forEach(function (card) {
+        var title = card.querySelector('.category-title'), grip = card.querySelector('.section-header .drag-dots-handle'), button = card.querySelector('.category-collapse-toggle');
+        var style = root.getComputedStyle(title), frame = root.getComputedStyle(card);
+        var labelWidth = (card.dataset.categoryTitle || title.textContent).length * 8;
+        if (labelContext) { labelContext.font = style.font; labelWidth = labelContext.measureText(card.dataset.categoryTitle || title.textContent).width; }
+        var controls = (grip ? parseFloat(root.getComputedStyle(grip).width) || 44 : 0) + (button ? parseFloat(root.getComputedStyle(button).width) || 44 : 0);
+        width = Math.max(width, Math.ceil(labelWidth + controls + parseFloat(frame.paddingLeft) + parseFloat(frame.paddingRight) + 8));
+      });
+      return clamp(width, CATEGORY_MIN, CATEGORY_MAX);
+    }
     function apply() {
       pendingFrame = 0;
       var width = layout.clientWidth;
-      var eligible = {};
-      sides.forEach(function (side) { eligible[side] = !!doc.getElementById(side + '-column').querySelector('.section-card[data-category-id]'); });
-      current = calculate(width, preferences, priority, eligible);
+      bindCategories();
+      var eligible = {}, categoryWidths = {};
+      sides.forEach(function (side) {
+        eligible[side] = !!doc.getElementById(side + '-column').querySelector('.section-card[data-category-id]');
+        categoryWidths[side] = categoryWidth(side);
+      });
+      current = calculate(width, preferences, priority, eligible, categoryWidths);
       layout.classList.toggle('layout-compact', current.compact);
-      bindCategories(); syncReset();
+      syncReset();
       sides.forEach(function (side) {
         var state = current[side], shell = panel(side);
         var focused = doc.activeElement, ownedFocus = shell.contains(focused);
@@ -124,7 +149,8 @@
         shell.classList.toggle('is-empty', state.empty);
         layout.classList.toggle('has-empty-' + side, state.empty);
         shell.classList.toggle('is-collapsed', !state.open);
-        shell.dataset.collapse = state.empty ? 'empty' : !state.open ? (preferences[side].collapsed ? 'manual' : 'automatic') : 'none';
+        shell.classList.toggle('is-category-compact', state.open && !current.compact && state.categoryCompact);
+        shell.dataset.collapse = state.empty ? 'empty' : !state.open ? (preferences[side].collapsed ? 'manual' : 'automatic') : !current.compact && state.categoryCompact ? 'categories' : 'none';
         layout.style.setProperty('--' + side + '-track', (state.empty ? 0 : state.open ? state.width : RAIL) + 'px');
         var column = doc.getElementById(side + '-column');
         column.inert = !state.open;
@@ -137,7 +163,9 @@
           button.setAttribute('aria-label', (state.open ? 'Collapse ' : 'Expand ') + side + ' bookmarks');
         });
         var handle = separator(side);
-        handle.hidden = !state.open || current.compact;
+        handle.hidden = !state.open || current.compact || state.categoryCompact;
+        handle.setAttribute('aria-disabled', String(handle.hidden));
+        handle.tabIndex = handle.hidden ? -1 : 0;
         handle.setAttribute('aria-valuenow', String(Math.round(state.width)));
         handle.setAttribute('aria-valuemax', String(maxWidth(side)));
         handle.setAttribute('aria-valuetext', Math.round(state.width) + ' pixels');
@@ -192,7 +220,7 @@
         if (resize && event.touches.length === 1 && event.cancelable) event.preventDefault();
       }, { passive: false });
       handle.addEventListener('pointerdown', function (event) {
-        if (event.button !== 0 || event.isPrimary === false || !current[side].open || current.compact) return;
+        if (event.button !== 0 || event.isPrimary === false || !current[side].open || current.compact || current[side].categoryCompact) return;
         if (root.HeavenlyGestures && !root.HeavenlyGestures.acquire('sidebar-resize', cancelResize)) return;
         event.preventDefault(); event.stopPropagation();
         resize = { side: side, id: event.pointerId, x: event.clientX, start: current[side].width, saved: preferences[side].width, handle: handle };
@@ -214,6 +242,7 @@
       handle.addEventListener('pointercancel', cancelResize);
       handle.addEventListener('lostpointercapture', function () { if (resize) cancelResize(); });
       handle.addEventListener('keydown', function (event) {
+        if (!current[side].open || current.compact || current[side].categoryCompact) return;
         if (root.HeavenlyGestures && root.HeavenlyGestures.owner) return;
         var direction = side === 'left' ? 1 : -1, next = current[side].width;
         if (event.key === 'ArrowLeft') next -= (event.shiftKey ? 32 : 16) * direction;
@@ -257,6 +286,7 @@
     doc.addEventListener('pointerdown', function (event) { if (resize && event.pointerId !== resize.id) cancelResize(); }, true);
     root.addEventListener('storage', function (event) { if (event.key === KEY) { cancelResize(); try { preferences = normalize(JSON.parse(event.newValue)); } catch (e) { preferences = defaults(); } priority = preferences.priority; apply(); } });
     apply();
+    if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(schedule);
     layout.classList.add('layout-grip-intro');
     root.setTimeout(function () { layout.classList.remove('layout-grip-intro'); }, 2600);
     api.getState = function () { return { preferences: normalize(preferences), actual: current }; };

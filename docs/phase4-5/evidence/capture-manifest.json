@@ -1,0 +1,293 @@
+{
+  "baseline": "f870d509569f241a23090c52c7b4c0b5696fc69b",
+  "date": "2026-10-25",
+  "screenshots": [
+    {
+      "id": "before-home-desktop",
+      "label": "Before · Desktop homepage",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 127051
+    },
+    {
+      "id": "after-home-desktop",
+      "label": "After · Desktop homepage",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 293271
+    },
+    {
+      "id": "before-home-phone",
+      "label": "Before · Phone homepage",
+      "width": 390,
+      "height": 844,
+      "bytes": 55439
+    },
+    {
+      "id": "after-home-phone",
+      "label": "After · Phone homepage",
+      "width": 390,
+      "height": 844,
+      "bytes": 85828
+    },
+    {
+      "id": "before-compact-rails",
+      "label": "Before · All categories collapsed",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 95696
+    },
+    {
+      "id": "after-compact-rails",
+      "label": "After · All categories collapsed",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 294214
+    },
+    {
+      "id": "after-rail-mixed",
+      "label": "One category expanded, one collapsed",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 272748
+    },
+    {
+      "id": "rail-transition-0",
+      "label": "Before the final category closes",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 272597
+    },
+    {
+      "id": "rail-transition-middle",
+      "label": "During space reclamation",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 271701
+    },
+    {
+      "id": "rail-transition-settled",
+      "label": "Settled compact rail",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 270579
+    },
+    {
+      "id": "before-settings-desktop",
+      "label": "Before · Desktop Settings",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 463367
+    },
+    {
+      "id": "after-settings-desktop",
+      "label": "After · Desktop Settings",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 320854
+    },
+    {
+      "id": "before-settings-phone",
+      "label": "Before · Phone Settings",
+      "width": 390,
+      "height": 844,
+      "bytes": 113807
+    },
+    {
+      "id": "after-settings-phone",
+      "label": "After · Phone Settings",
+      "width": 390,
+      "height": 844,
+      "bytes": 95777
+    },
+    {
+      "id": "after-settings-search",
+      "label": "Actual setting search",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 319839
+    },
+    {
+      "id": "after-settings-collapsed",
+      "label": "Collapsed groups",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 248402
+    },
+    {
+      "id": "after-settings-tablet",
+      "label": "Tablet Settings",
+      "width": 820,
+      "height": 1180,
+      "bytes": 145668
+    },
+    {
+      "id": "before-about",
+      "label": "Before · About Heavenly (optional tips expanded after)",
+      "width": 782,
+      "height": 188,
+      "bytes": 20117
+    },
+    {
+      "id": "after-about",
+      "label": "After · About Heavenly (optional tips expanded after)",
+      "width": 782,
+      "height": 376,
+      "bytes": 61117
+    },
+    {
+      "id": "before-loader",
+      "label": "Before · Shared celestial loader",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 904826
+    },
+    {
+      "id": "after-loader",
+      "label": "After · Shared celestial loader",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 811889
+    },
+    {
+      "id": "after-loader-reduced",
+      "label": "Reduced-motion loading state",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 812102
+    },
+    {
+      "id": "before-viewer-desktop",
+      "label": "Before · Desktop HTML Viewer",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 335625
+    },
+    {
+      "id": "after-viewer-desktop",
+      "label": "After · Desktop HTML Viewer",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 272703
+    },
+    {
+      "id": "before-viewer-phone",
+      "label": "Before · Phone HTML Viewer",
+      "width": 390,
+      "height": 844,
+      "bytes": 127441
+    },
+    {
+      "id": "after-viewer-phone",
+      "label": "After · Phone HTML Viewer",
+      "width": 390,
+      "height": 844,
+      "bytes": 105070
+    },
+    {
+      "id": "after-viewer-editor",
+      "label": "Full Editor",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 157136
+    },
+    {
+      "id": "after-viewer-preview",
+      "label": "Full Preview",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 151038
+    },
+    {
+      "id": "after-viewer-error",
+      "label": "Runtime feedback",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 176453
+    },
+    {
+      "id": "after-viewer-tablet",
+      "label": "Tablet workspace",
+      "width": 820,
+      "height": 1180,
+      "bytes": 222086
+    },
+    {
+      "id": "before-widgets-dock",
+      "label": "Before · Expanded dock",
+      "width": 1440,
+      "height": 900,
+      "bytes": 66549
+    },
+    {
+      "id": "after-widgets-dock",
+      "label": "After · Expanded dock",
+      "width": 1440,
+      "height": 900,
+      "bytes": 54837
+    },
+    {
+      "id": "before-widgets-collapsed",
+      "label": "Before · Collapsed dock",
+      "width": 1440,
+      "height": 900,
+      "bytes": 38330
+    },
+    {
+      "id": "after-widgets-collapsed",
+      "label": "After · Collapsed dock",
+      "width": 1440,
+      "height": 900,
+      "bytes": 35934
+    },
+    {
+      "id": "before-widgets-floating",
+      "label": "Before · Floating tools",
+      "width": 1440,
+      "height": 900,
+      "bytes": 43964
+    },
+    {
+      "id": "after-widgets-floating",
+      "label": "After · Floating tools",
+      "width": 390,
+      "height": 844,
+      "bytes": 22219
+    },
+    {
+      "id": "after-widgets-mobile",
+      "label": "Mobile positioning",
+      "width": 390,
+      "height": 844,
+      "bytes": 44834
+    },
+    {
+      "id": "after-widgets-active",
+      "label": "Active widget states",
+      "width": 1440,
+      "height": 900,
+      "bytes": 56873
+    },
+    {
+      "id": "after-widgets-floating-expanded",
+      "label": "Expanded floating tools",
+      "width": 1440,
+      "height": 900,
+      "bytes": 51770
+    },
+    {
+      "id": "after-widgets-gesture-during",
+      "label": "Real touch drag in progress",
+      "width": 390,
+      "height": 844,
+      "bytes": 29632
+    },
+    {
+      "id": "after-widgets-gesture-cancelled",
+      "label": "Cancelled gesture cleaned up",
+      "width": 390,
+      "height": 844,
+      "bytes": 25385
+    }
+  ]
+}

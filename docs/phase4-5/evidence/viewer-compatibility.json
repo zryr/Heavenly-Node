@@ -1,0 +1,39 @@
+{
+  "executed": "2026-10-25T21:26:34.398Z",
+  "physicalDevices": [],
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "External CSS, JavaScript and image resources render in an ordinary practice project",
+        "User-submitted forms and normal links navigate inside the sandbox and retain parent DOM isolation",
+        "Observable blocked plugin content produces policy feedback without relaxing sandbox permissions",
+        "Explicit VUS external app user-click opens an openerless popup with opaque storage isolation retained after navigation; hub cannot read shell storage or DOM"
+      ],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "External CSS, JavaScript and image resources render in an ordinary practice project",
+        "User-submitted forms and normal links navigate inside the sandbox and retain parent DOM isolation",
+        "Observable blocked plugin content produces policy feedback without relaxing sandbox permissions",
+        "Explicit VUS external app user-click opens an openerless popup with opaque storage isolation retained after navigation; hub cannot read shell storage or DOM"
+      ],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "External CSS, JavaScript and image resources render in an ordinary practice project",
+        "User-submitted forms and normal links navigate inside the sandbox and retain parent DOM isolation",
+        "Observable blocked plugin content produces policy feedback without relaxing sandbox permissions",
+        "Explicit VUS external app user-click opens an openerless popup with opaque storage isolation retained after navigation; hub cannot read shell storage or DOM"
+      ],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

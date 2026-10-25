@@ -2,6 +2,7 @@
 const assert = require('node:assert/strict');
 const playwright = require('playwright');
 const app = require('../../app');
+const { revealSettingsControl } = require('./settings_test_helpers.cjs');
 const model = require('../../public/assets/quick-settings-model');
 const engine = process.env.HEAVENLY_BROWSER || 'chromium';
 let browser, server, checks = 0;
@@ -66,7 +67,7 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   pass('Select All retains saved unavailable/custom entries; Deselect All preserves the existing empty-pool fallback and never resets manual selection');
 
   await open(); await page.locator('#qs-context-pool summary').click(); await chip('google').click();
-  await other.bringToFront(); await other.locator('#pool-select-all-btn').click(); await other.locator('label.switch-toggle:has(#set-auto-cloak)').click();
+  await other.bringToFront(); await revealSettingsControl(other, '#pool-select-all-btn'); await other.locator('#pool-select-all-btn').click(); await other.locator('label.switch-toggle:has(#set-auto-cloak)').click();
   await page.bringToFront(); await page.waitForFunction(() => document.getElementById('qs-context-save').disabled);
   assert.equal(await chip('google').getAttribute('aria-pressed'), 'true'); assert.equal(await chip('custom').getAttribute('aria-pressed'), 'false'); assert(await page.locator('#qs-config-autoCloak').isChecked());
   await page.locator('#qs-context-keep').click(); await save(); assert.deepEqual((await saved()).randomPool, ['google']); assert.equal((await saved()).autoCloak, true);

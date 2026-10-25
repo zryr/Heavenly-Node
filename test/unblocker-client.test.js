@@ -270,6 +270,10 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       const mockElement = function (tag) {
         this.tagName = tag.toUpperCase();
         this.style = {};
+        this.attributes = {};
+        this.setAttribute = (name, value) => { this.attributes[name] = String(value); };
+        this.getAttribute = name => this.attributes[name] || null;
+        this.querySelectorAll = () => [];
         this.children = [];
         this.attachShadow = () => this;
         this.appendChild = (child) => this.children.push(child);
@@ -334,6 +338,10 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       const mockElement = function (tag) {
         this.tagName = tag.toUpperCase();
         this.style = {};
+        this.attributes = {};
+        this.setAttribute = (name, value) => { this.attributes[name] = String(value); };
+        this.getAttribute = name => this.attributes[name] || null;
+        this.querySelectorAll = () => [];
         this.children = [];
         this.attachShadow = () => this;
         this.appendChild = (child) => this.children.push(child);
@@ -411,6 +419,7 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
         location: { href: 'http://localhost/proxy/https://example.com', origin: 'http://localhost' },
         document: { title: 'Original page', readyState, hidden: false, addEventListener(type, listener) { (listeners['document:' + type] || (listeners['document:' + type] = [])).push(listener); }, getElementsByTagName: () => [], querySelectorAll: () => [], getElementById: () => null, documentElement: { addEventListener() {} } },
         addEventListener(type, listener) { (listeners[type] || (listeners[type] = [])).push(listener); },
+        removeEventListener(type, listener) { listeners[type] = (listeners[type] || []).filter(item => item !== listener); },
         localStorage: { getItem(key) { return key === 'heavenly_settings' ? JSON.stringify(saved) : null; } }
       };
       win.top = win;
@@ -467,6 +476,10 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       const mockElement = function (tag) {
         this.tagName = tag.toUpperCase();
         this.style = {};
+        this.attributes = {};
+        this.setAttribute = (name, value) => { this.attributes[name] = String(value); };
+        this.getAttribute = name => this.attributes[name] || null;
+        this.querySelectorAll = () => [];
         this.children = [];
         this.elementListeners = {};
         this.querySelector = (sel) => {
@@ -638,6 +651,10 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
         const mockElement = function (tag) {
           this.tagName = tag.toUpperCase();
           this.style = {};
+        this.attributes = {};
+        this.setAttribute = (name, value) => { this.attributes[name] = String(value); };
+        this.getAttribute = name => this.attributes[name] || null;
+        this.querySelectorAll = () => [];
           this.children = [];
           this.elementListeners = {};
           this.classList = {
@@ -751,6 +768,10 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
         const mockElement = function (tag) {
           this.tagName = tag.toUpperCase();
           this.style = {};
+        this.attributes = {};
+        this.setAttribute = (name, value) => { this.attributes[name] = String(value); };
+        this.getAttribute = name => this.attributes[name] || null;
+        this.querySelectorAll = () => [];
           this.children = [];
           this.elementListeners = {};
           this.classList = {
@@ -866,6 +887,10 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
         const mockElement = function (tag) {
           this.tagName = tag.toUpperCase();
           this.style = {};
+        this.attributes = {};
+        this.setAttribute = (name, value) => { this.attributes[name] = String(value); };
+        this.getAttribute = name => this.attributes[name] || null;
+        this.querySelectorAll = () => [];
           this.children = [];
           this.elementListeners = {};
           this.classList = {
