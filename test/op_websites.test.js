@@ -26,7 +26,10 @@ describe("OP Websites Category, Bookmarks & Advice Modals", function () {
     assert.strictEqual(indexHtml.includes(".side-column .distrosea-btn span"), true, "index.html should contain responsive side column CSS for Distrosea button");
   });
 
-  it("should contain UBGDir credit in index.html footer", function () {
-    assert.strictEqual(indexHtml.includes('Credits to <a href="https://0800webdev.github.io/UBGdir/"'), true, "index.html footer should credit UBGDir");
+  it("removes the optional UBGDir product credit while preserving authorship and license notices", function () {
+    assert.strictEqual(indexHtml.includes('Credits to <a href="https://0800webdev.github.io/UBGdir/"'), false);
+    assert(indexHtml.includes('Originally created by <a href="http://www.nfriedly.com/"'));
+    assert.equal(require('../package.json').license, 'AGPL-3.0');
+    assert(fs.readFileSync('./README.md', 'utf8').includes('GNU Affero General Public License'));
   });
 });

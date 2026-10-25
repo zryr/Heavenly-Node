@@ -1,0 +1,263 @@
+{
+  "verified": "2026-10-25T01:36:15.690Z",
+  "report": "comparison.html",
+  "openedVia": "local HTTP because this executor Chromium policy blocks file URLs",
+  "images": [
+    {
+      "id": "games-before",
+      "loaded": true,
+      "width": 1408,
+      "height": 568
+    },
+    {
+      "id": "games-after",
+      "loaded": true,
+      "width": 1408,
+      "height": 608
+    },
+    {
+      "id": "bunny-before-gamebois",
+      "loaded": true,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "id": "newgrounds-before",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "newgrounds-after",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "newgrounds-popup-before",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "newgrounds-popup-after",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "picks-coming-soon",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "hq-overview",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "ranking-editor",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "ranking-preview",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "picks-editor",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "review-export",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "restore-section",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "restore-all",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "bookmark-update",
+      "loaded": true,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "subsection-icons",
+      "loaded": true,
+      "width": 1408,
+      "height": 490
+    },
+    {
+      "id": "tablet-hq",
+      "loaded": true,
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "id": "tablet-picks",
+      "loaded": true,
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "id": "phone-hq",
+      "loaded": true,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "id": "phone-picks",
+      "loaded": true,
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "localLinks": [
+    "#collection",
+    "#workshop",
+    "#responsive",
+    "#recording",
+    "#verification",
+    "official-catalog.md",
+    "developer-hq.md",
+    "jules-review.md"
+  ],
+  "downloads": [
+    {
+      "id": "games-before",
+      "filename": "heavenly-phase3-games-before.png",
+      "identical": true
+    },
+    {
+      "id": "newgrounds-before",
+      "filename": "heavenly-phase3-newgrounds-before.png",
+      "identical": true
+    },
+    {
+      "id": "newgrounds-popup-before",
+      "filename": "heavenly-phase3-newgrounds-popup-before.png",
+      "identical": true
+    },
+    {
+      "id": "games-after",
+      "filename": "heavenly-phase3-games-after.png",
+      "identical": true
+    },
+    {
+      "id": "bunny-before-gamebois",
+      "filename": "heavenly-phase3-bunny-before-gamebois.png",
+      "identical": true
+    },
+    {
+      "id": "newgrounds-after",
+      "filename": "heavenly-phase3-newgrounds-after.png",
+      "identical": true
+    },
+    {
+      "id": "newgrounds-popup-after",
+      "filename": "heavenly-phase3-newgrounds-popup-after.png",
+      "identical": true
+    },
+    {
+      "id": "picks-coming-soon",
+      "filename": "heavenly-phase3-picks-coming-soon.png",
+      "identical": true
+    },
+    {
+      "id": "subsection-icons",
+      "filename": "heavenly-phase3-subsection-icons.png",
+      "identical": true
+    },
+    {
+      "id": "hq-overview",
+      "filename": "heavenly-phase3-hq-overview.png",
+      "identical": true
+    },
+    {
+      "id": "ranking-editor",
+      "filename": "heavenly-phase3-ranking-editor.png",
+      "identical": true
+    },
+    {
+      "id": "ranking-preview",
+      "filename": "heavenly-phase3-ranking-preview.png",
+      "identical": true
+    },
+    {
+      "id": "picks-editor",
+      "filename": "heavenly-phase3-picks-editor.png",
+      "identical": true
+    },
+    {
+      "id": "review-export",
+      "filename": "heavenly-phase3-review-export.png",
+      "identical": true
+    },
+    {
+      "id": "restore-section",
+      "filename": "heavenly-phase3-restore-section.png",
+      "identical": true
+    },
+    {
+      "id": "restore-all",
+      "filename": "heavenly-phase3-restore-all.png",
+      "identical": true
+    },
+    {
+      "id": "bookmark-update",
+      "filename": "heavenly-phase3-bookmark-update.png",
+      "identical": true
+    },
+    {
+      "id": "tablet-hq",
+      "filename": "heavenly-phase3-tablet-hq.png",
+      "identical": true
+    },
+    {
+      "id": "tablet-picks",
+      "filename": "heavenly-phase3-tablet-picks.png",
+      "identical": true
+    },
+    {
+      "id": "phone-hq",
+      "filename": "heavenly-phase3-phone-hq.png",
+      "identical": true
+    },
+    {
+      "id": "phone-picks",
+      "filename": "heavenly-phase3-phone-picks.png",
+      "identical": true
+    }
+  ],
+  "phone": {
+    "width": 390,
+    "height": 844,
+    "horizontalOverflow": false,
+    "keyboardDismissal": "Escape restores trigger focus"
+  },
+  "video": {
+    "readyState": 4,
+    "duration": 4.08,
+    "playedTo": 0.392884
+  },
+  "viewer": "All screenshots open at original pixel width, download byte-identical PNGs, and close with Escape",
+  "externalResources": 0
+}

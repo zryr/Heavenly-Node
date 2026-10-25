@@ -151,6 +151,8 @@
     // Catalog identity also covers older presets with builtIn:false.
     var officialEntries = new Map();
     visit(defaults || {}, function (entry) { officialEntries.set(entry.id, entry); });
+    // Older share/import payloads may still carry the shipped non-builtIn alias.
+    if (officialEntries.has('bm_ng')) officialEntries.set('bm_user_ng', officialEntries.get('bm_ng'));
     function project(entry, categoryId, defaultParent, fromOfficial) {
       if (!entry || entry.hidden) return [];
       var known = officialEntries.get(entry.id);
@@ -180,6 +182,9 @@
     var selected = new WeakSet();
     if (includeNotes === true) visit(payload, function (entry) { selected.add(entry); });
     return JSON.parse(JSON.stringify(payload, function (key, value) {
+      // Private update decisions and migration recovery archives never belong in
+      // public share codes, even when a caller supplies a complete backup.
+      if (key === '_catalog') return undefined;
       if (key === 'mirrorPreferences') return undefined;
       if (key === 'personalNote') return includeNotes === true && selected.has(this) && typeof value === 'string' ? value.slice(0, 4000) : undefined;
       return value;

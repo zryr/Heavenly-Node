@@ -18,13 +18,22 @@
   <script src="/assets/heavenly-bookmarks.js"></script>
   <script src="/assets/heavenly-bookmark-view.js"></script>
   <link rel="stylesheet" href="/assets/heavenly-bookmark-view.css">
+  <script src="/assets/heavenly-official-order.js"></script>
   <script src="/assets/heavenly-catalog.js"></script>
+  <script src="/assets/heavenly-dev-hq-model.js"></script>
+  <script src="/assets/heavenly-dev-hq.js"></script>
+  <link rel="stylesheet" href="/assets/heavenly-dev-hq.css">
   <script src="/assets/heavenly-catalog-ui.js"></script>
   <link rel="stylesheet" href="/assets/heavenly-catalog.css">
   <script src="/assets/heavenly-drag.js"></script>
   <script src="/assets/heavenly-motion.js"></script>
   <script src="/assets/heavenly-dialogs.js"></script>
   <script src="/assets/heavenly-mirror-menu.js"></script>
+  <script src="/assets/heavenly-collection-dialog.js"></script>
+  <script src="/assets/heavenly-picks.js"></script>
+  <script src="/assets/heavenly-picks-ui.js"></script>
+  <script src="/assets/heavenly-restore-ui.js"></script>
+  <link rel="stylesheet" href="/assets/heavenly-collection.css">
   <link rel="stylesheet" href="/assets/quick-settings.css">
   <script src="/assets/cloak-pool.js"></script>
   <script src="/assets/quick-settings-model.js"></script>
@@ -2691,7 +2700,7 @@
       </div>
 
       <div class="footer">
-        <p>Originally created by <a href="http://www.nfriedly.com/" target="_blank" rel="noopener">Nathan Friedly</a> &bull; Improved by <strong>Syshi</strong> &bull; Credits to <a href="https://0800webdev.github.io/UBGdir/" target="_blank" rel="noopener">UBGDir</a></p>
+        <p>Originally created by <a href="http://www.nfriedly.com/" target="_blank" rel="noopener">Nathan Friedly</a> &bull; Improved by <strong>Syshi</strong></p>
       </div>
 
     </main>
@@ -2738,6 +2747,7 @@
       <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
       <span>Delete</span>
     </button>
+    <button id="bar-restore-order" type="button" class="heavenly-restore-trigger" hidden>Restore this section’s official order</button>
     <button id="bar-close" type="button" class="bar-btn bar-btn-close" aria-label="Close reorder bar">✕ Close</button>
   </div>
 
@@ -2760,6 +2770,14 @@
         <button id="tab-add-cat" type="button" role="tab" aria-selected="false" aria-controls="form-add-cat" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">Add Category</button>
         <button id="tab-add-subsec" type="button" role="tab" aria-selected="false" aria-controls="form-add-subsec" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">Add Sub-Section</button>
       </div>
+
+      <details class="heavenly-saved-links">
+        <summary>Official ordering</summary>
+        <div>
+          <p>Restore accepted default ordering while keeping your personal content and preferences.</p>
+          <button id="restore-all-official-order" class="heavenly-restore-trigger" type="button">Restore All Official Ordering</button>
+        </div>
+      </details>
 
       <!-- Add Bookmark Form -->
       <form id="form-add-bm" style="display: flex; flex-direction: column; gap: 12px;">
@@ -2872,6 +2890,7 @@
           <p class="management-hint">Hold a handle to drag, or use the arrow buttons. Changes apply when you save.</p>
           <div id="cat-sections-list" class="section-order-list" role="list" aria-label="Section order"></div>
           <p id="cat-sections-status" class="management-hint" role="status" aria-live="polite"></p>
+          <button id="cat-restore-official-order" type="button" class="heavenly-restore-trigger">Restore This Section’s Official Order</button>
         </div>
         <div style="display: flex; gap: 10px;">
           <button id="cat-edit-cancel" type="button" class="bar-btn bar-btn-close" hidden>Cancel</button>
@@ -2959,13 +2978,13 @@
         <button id="close-share-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
 
-      <div style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
-        <button id="tab-share-create" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(129, 140, 248, 0.2); border: 1px solid rgba(129, 140, 248, 0.4); color: #818cf8; font-weight: 600; cursor: pointer;">1. Pick & Share</button>
-        <button id="tab-share-redeem" type="button" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">2. Enter Code / Link</button>
+      <div role="tablist" aria-label="Share options" style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
+        <button id="tab-share-create" type="button" role="tab" aria-selected="true" aria-controls="share-view-create" tabindex="0" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(129, 140, 248, 0.2); border: 1px solid rgba(129, 140, 248, 0.4); color: #818cf8; font-weight: 600; cursor: pointer;">1. Pick & Share</button>
+        <button id="tab-share-redeem" type="button" role="tab" aria-selected="false" aria-controls="share-view-redeem" tabindex="-1" style="flex:1; padding: 8px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-weight: 600; cursor: pointer;">2. Enter Code / Link</button>
       </div>
 
       <!-- Create Share Code Tab -->
-      <div id="share-view-create" style="display: flex; flex-direction: column; gap: 12px;">
+      <div id="share-view-create" role="tabpanel" aria-labelledby="tab-share-create" style="display: flex; flex-direction: column; gap: 12px;">
         <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Select which bookmarks or categories you want to share:</p>
 
         <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(148,163,184,0.15); padding-bottom: 6px;">
@@ -2993,7 +3012,7 @@
       </div>
 
       <!-- Redeem Share Code Tab -->
-      <div id="share-view-redeem" style="display: none; flex-direction: column; gap: 12px;">
+      <div id="share-view-redeem" role="tabpanel" aria-labelledby="tab-share-redeem" hidden style="display: none; flex-direction: column; gap: 12px;">
         <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Paste a share code or share link received from a friend:</p>
         <input type="text" id="share-code-input" placeholder="Paste share code or link here..." style="padding: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(129, 140, 248, 0.4); border-radius: 12px; color: #ffffff; font-size: 0.88rem; font-family: monospace;" />
 
@@ -3243,84 +3262,16 @@
     </div>
   </div>
 
-  <!-- Secret Jules Developer QA Panel Modal -->
-  <div id="jules-dev-modal" class="modal-backdrop">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="jules-dev-modal-title" style="max-width: 520px; border-color: rgba(56, 189, 248, 0.5);">
-      <div class="modal-header">
-        <div class="modal-header-left">
-          <div class="modal-icon-badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(168, 85, 247, 0.25) 100%); border-color: rgba(56, 189, 248, 0.5);">
-            <svg style="width:20px;height:20px;fill:none;stroke:#38bdf8;stroke-width:2.2;" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-          </div>
-          <span class="modal-title" id="jules-dev-modal-title">Developer QA Panel</span>
-        </div>
-        <button id="close-jules-dev-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
-      </div>
-
-      <div style="font-size: 0.85rem; color: #94a3b8; line-height: 1.5; margin-bottom: 4px;">
-        Secret QA environment for testing Heavenly UI features, animations, and storage states.
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <!-- Visual & Animation Tools -->
-        <div style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
-          <div style="font-size: 0.82rem; font-weight: 700; color: #7dd3fc; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
-            <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
-            <span>Visual & Animation Testing</span>
-          </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button id="jules-preview-loading-btn" type="button" class="btn-ethereal" style="font-size: 0.82rem; padding: 8px 14px; flex: 1;">
-              <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-              <span>Preview Loading Screen</span>
-            </button>
-            <button id="jules-preview-error-btn" type="button" class="btn-ethereal" style="font-size: 0.82rem; padding: 8px 14px; flex: 1; color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.12);">
-              <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-              <span>Preview Custom Error Page</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Cloaking & State Testing -->
-        <div style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
-          <div style="font-size: 0.82rem; font-weight: 700; color: #a5b4fc; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
-            <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            <span>Cloaking & Tab State</span>
-          </div>
-          <div id="jules-cloaking-info" style="font-size: 0.82rem; color: #e2e8f0; font-family: monospace; background: rgba(15, 23, 42, 0.6); padding: 8px; border-radius: 8px; border: 1px solid rgba(148, 163, 184, 0.15);">
-            Checking state...
-          </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button id="jules-toggle-cloak-btn" type="button" class="btn-ethereal" style="font-size: 0.82rem; padding: 8px 14px; flex: 1;">
-              <span>Toggle Persistent Cloak</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Storage & Utilities -->
-        <div style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
-          <div style="font-size: 0.82rem; font-weight: 700; color: #fca5a5; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
-            <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-            <span>Storage & Utilities</span>
-          </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button id="jules-clear-storage-btn" type="button" class="btn-ethereal" style="font-size: 0.82rem; padding: 8px 14px; flex: 1; color: #ef4444; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.12);">
-              <span>Clear Local Storage</span>
-            </button>
-            <button id="jules-reset-bookmarks-btn" type="button" class="btn-ethereal" style="font-size: 0.82rem; padding: 8px 14px; flex: 1;">
-              <span>Reset Default Bookmarks</span>
-            </button>
-          </div>
-        </div>
-      </div>
+  <!-- Local developer tools: the command is a shortcut, never authentication. -->
+  <div id="codex-dev-modal" class="modal-backdrop" aria-hidden="true" inert>
+    <div class="modal-card hq-card" role="dialog" aria-modal="true" aria-labelledby="codex-dev-title">
+      <header class="hq-header"><div><span class="hq-eyebrow">Heavenly · Local workshop</span><h2 id="codex-dev-title">Codex Developer HQ</h2><p class="hq-description">Shape the official collection, try the interface, and prepare changes for review. Drafts stay in this browser until you export them.</p></div><button type="button" id="codex-close" class="hq-close" aria-label="Close Developer HQ">×</button></header>
+      <div class="hq-tabs" role="tablist" aria-label="Developer tools"><button id="hq-tab-overview" role="tab" aria-selected="true" aria-controls="hq-overview" data-hq-tab="overview">Start here</button><button id="hq-tab-qa" role="tab" aria-selected="false" aria-controls="hq-qa" tabindex="-1" data-hq-tab="qa">QA tools</button><button id="hq-tab-rankings" role="tab" aria-selected="false" aria-controls="hq-rankings" tabindex="-1" data-hq-tab="rankings">Official rankings</button><button id="hq-tab-picks" role="tab" aria-selected="false" aria-controls="hq-picks" tabindex="-1" data-hq-tab="picks">Heavenly Picks</button><button id="hq-tab-changes" role="tab" aria-selected="false" aria-controls="hq-changes" tabindex="-1" data-hq-tab="changes">Review & export</button></div>
+      <div class="hq-content"><div id="hq-confirm" class="hq-confirm" hidden></div><section id="hq-overview" class="hq-panel" role="tabpanel" aria-labelledby="hq-tab-overview"><div class="hq-grid"><div><h3>A thoughtful place to make changes.</h3><p class="hq-note">Official defaults shape new collections. They are separate from your personal bookmarks and sorting. Existing visitors keep their arrangements when a catalog update is accepted.</p><ol class="hq-workflow"><li>Edit rankings or draft your Newgrounds recommendations.</li><li>Preview the result and validate stable identities and destinations.</li><li>Export the source file, review it in GitHub, and publish through an approved PR.</li></ol><button type="button" class="hq-primary" data-hq-go="rankings">Arrange official defaults →</button></div><aside class="hq-surface"><span class="hq-eyebrow">Browser workspace</span><h3 style="margin-top:12px">Local by design</h3><p class="hq-note">The <code>codex</code> command is a shortcut, not an administrator sign-in. This workshop has no publishing endpoint or GitHub credentials.</p><p id="hq-version" class="hq-stable"></p><p id="hq-draft-count" class="hq-note"></p><button type="button" data-hq-go="qa">Open QA tools</button></aside></div></section><section id="hq-qa" class="hq-panel" role="tabpanel" aria-labelledby="hq-tab-qa" hidden></section><section id="hq-rankings" class="hq-panel" role="tabpanel" aria-labelledby="hq-tab-rankings" hidden></section><section id="hq-picks" class="hq-panel" role="tabpanel" aria-labelledby="hq-tab-picks" hidden></section><section id="hq-changes" class="hq-panel" role="tabpanel" aria-labelledby="hq-tab-changes" hidden></section></div>
+      <div id="hq-status" class="hq-status" role="status" aria-live="polite">Ready. Your personal collection stays separate.</div>
     </div>
   </div>
-
-  <!-- Exit Preview Overlay Button (Hidden by default) -->
-  <div id="jules-preview-exit-container" style="display: none; position: fixed; top: 24px; right: 24px; z-index: 10000;">
-    <button id="jules-exit-preview-btn" type="button" class="modal-submit-btn" style="padding: 10px 20px; font-size: 0.9rem; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #ffffff; box-shadow: 0 4px 20px rgba(239, 68, 68, 0.5); cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
-      <svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      <span>Exit Loading Preview</span>
-    </button>
-  </div>
+  <div id="codex-preview-exit" class="hq-loading-exit"><button id="codex-exit-preview" type="button">Return to Developer HQ</button></div>
 
   <!-- Distrosea Info Modal -->
   <div id="distrosea-info-modal" class="modal-backdrop">
@@ -3502,8 +3453,8 @@
       var url = $('url').value.trim();
       if (!url) return false;
 
-      if (url.toLowerCase() === 'jules') {
-        openJulesDevModal();
+      if (url.toLowerCase() === 'codex') {
+        openCodexDevModal();
         return false;
       }
 
@@ -3999,7 +3950,7 @@
           var syshiModal = $('syshis-notes-modal');
           var opNotesModal = $('op-websites-notes-modal');
           var distroseaModal = $('distrosea-info-modal');
-          var julesDevModal = $('jules-dev-modal');
+          var codexDevModal = $('codex-dev-modal');
           var builtinModal = $('builtin-test-modal');
           var emoeModal = $('everythingmoe-modal');
           var reorderBar = $('reorder-bar');
@@ -4010,8 +3961,8 @@
             closeBookmarkPopup('special-links-modal');
           } else if ($('share-modal').classList.contains('active')) {
             closeShareModal();
-          } else if (julesDevModal && julesDevModal.classList.contains('active')) {
-            closeJulesDevModal();
+          } else if (codexDevModal && codexDevModal.classList.contains('active')) {
+            HeavenlyDevHQ.close();
           } else if (opNotesModal && opNotesModal.classList.contains('active')) {
             closeOpWebsitesNotesModal();
           } else if (distroseaModal && distroseaModal.classList.contains('active')) {
@@ -4332,6 +4283,7 @@
       var sideBtn = $('bar-move-side');
       var editBtn = $('bar-edit');
       var moveCatBtn = $('bar-move-cat');
+      var restoreBtn = $('bar-restore-order');
 
       if (info) info.textContent = item.title;
       if (sideBtn) {
@@ -4342,6 +4294,10 @@
       }
       if (moveCatBtn) {
         moveCatBtn.style.display = item.type === 'bookmark' ? 'inline-flex' : 'none';
+      }
+      if (restoreBtn) {
+        restoreBtn.hidden = item.type !== 'category';
+        restoreBtn.onclick = function () { HeavenlyRestoreUI.open({ categoryId:item.id }); };
       }
       if (bar) bar.classList.add('active');
     }
@@ -4435,8 +4391,15 @@
         row.dataset.sectionId = id;
         var name = document.createElement('span');
         name.className = 'section-order-name';
-        name.textContent = section.title;
+        var sectionIcon = categoryDragIcon(section.icon);
+        if (sectionIcon) { sectionIcon.className = 'subsection-preset-icon'; sectionIcon.setAttribute('aria-hidden', 'true'); name.appendChild(sectionIcon); }
+        name.appendChild(document.createTextNode(section.title));
         row.appendChild(name);
+        if (section.builtIn) {
+          var restore = HeavenlyRestoreUI.button({ categoryId:cat.id, subSectionId:section.id }, 'Restore order');
+          restore.setAttribute('aria-label', 'Restore official order in ' + section.title);
+          row.appendChild(restore);
+        }
         function step(delta) {
           var target = categorySectionDraft[index + delta];
           if (!target) return;
@@ -4520,6 +4483,7 @@
       $('cat-submit-btn').textContent = 'Save Changes';
       $('cat-edit-cancel').hidden = false;
       $('cat-sections-editor').hidden = false;
+      $('cat-restore-official-order').onclick = function () { HeavenlyRestoreUI.open({ categoryId:cat.id }); };
       categorySectionDraft = cat.subSections.map(function (s) { return s.id; });
       renderCategorySectionOrder();
     }
@@ -5783,9 +5747,9 @@
 
           var subIconSvg = '';
           if (subSec.icon) {
-            var foundIcon = PRESET_LUCIDE_ICONS.find(function (i) { return i.id === subSec.icon; });
+            var foundIcon = PRESET_LUCIDE_ICONS.find(function (i) { return i.id === subSec.icon || 'preset:' + i.id === subSec.icon; });
             if (foundIcon) {
-              subIconSvg = '<div style="width:12px;height:12px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">' + foundIcon.svg + '</div>';
+              subIconSvg = '<span class="subsection-preset-icon" aria-hidden="true" data-icon="' + foundIcon.id + '">' + foundIcon.svg + '</span>';
             }
           }
           if (!subIconSvg) {
@@ -6400,115 +6364,32 @@
       restoreLastFocus();
     }
 
-    // --- Secret Jules Developer QA Panel ---
-    function openJulesDevModal() {
-      if (document.activeElement) lastFocusedElement = document.activeElement;
-      var modal = $('jules-dev-modal');
-      if (!modal) return;
-
-      updateJulesCloakingInfo();
-      HeavenlyDialogs.open(modal);
-      setTimeout(function () {
-        var btn = $('close-jules-dev-modal-btn');
-        if (btn) btn.focus();
-      }, 50);
-    }
-
-    function closeJulesDevModal() {
-      var modal = $('jules-dev-modal');
-      if (modal) HeavenlyDialogs.close(modal);
-      restoreLastFocus();
-    }
-
-    function updateJulesCloakingInfo() {
-      var info = $('jules-cloaking-info');
-      if (!info) return;
-      var settings = loadSettings();
-      info.textContent = 'Auto-Cloak: ' + (settings.autoCloak ? 'ON' : 'OFF') +
-                         ' | Persistent: ' + (settings.persistentCloak ? 'ON' : 'OFF') +
-                         ' | Preset: ' + settings.selectedPreset;
-    }
-
-    function previewLoadingScreen() {
-      closeJulesDevModal();
-      var loader = $('heavenly-loading-screen');
-      var exitContainer = $('jules-preview-exit-container');
-      if (loader) {
-        loader.classList.remove('fade-out');
-        loader.style.display = 'flex';
-      }
-      if (exitContainer) {
-        exitContainer.style.display = 'block';
-      }
-    }
-
-    function exitLoadingPreview() {
-      hideLoadingScreen();
-      var exitContainer = $('jules-preview-exit-container');
-      if (exitContainer) {
-        exitContainer.style.display = 'none';
-      }
-      openJulesDevModal();
-    }
-
-    function initJulesDevModal() {
-      var closeBtn = $('close-jules-dev-modal-btn');
-      if (closeBtn) closeBtn.onclick = closeJulesDevModal;
-
-      var previewLoadingBtn = $('jules-preview-loading-btn');
-      if (previewLoadingBtn) previewLoadingBtn.onclick = previewLoadingScreen;
-
-      var exitPreviewBtn = $('jules-exit-preview-btn');
-      if (exitPreviewBtn) exitPreviewBtn.onclick = exitLoadingPreview;
-
-      var previewErrorBtn = $('jules-preview-error-btn');
-      if (previewErrorBtn) {
-        previewErrorBtn.onclick = function () {
-          closeJulesDevModal();
-          showLoadingScreen();
-          window.location.href = '/proxy/https://httpstat.us/500';
-        };
-      }
-
-      var toggleCloakBtn = $('jules-toggle-cloak-btn');
-      if (toggleCloakBtn) {
-        toggleCloakBtn.onclick = function () {
-          var settings = loadSettings();
-          settings.persistentCloak = !settings.persistentCloak;
-          try {
-            localStorage.setItem('heavenly_settings', JSON.stringify(settings));
-          } catch (e) {}
-          syncLandingCloak();
-          updateJulesCloakingInfo();
-        };
-      }
-
-      var clearStorageBtn = $('jules-clear-storage-btn');
-      if (clearStorageBtn) {
-        clearStorageBtn.onclick = function () {
-          if (confirm('Are you sure you want to clear localStorage and sessionStorage?')) {
-            localStorage.clear();
-            sessionStorage.clear();
-            updateJulesCloakingInfo();
-            renderBookmarksUI();
-            alert('Storage cleared successfully!');
-          }
-        };
-      }
-
-      var resetBookmarksBtn = $('jules-reset-bookmarks-btn');
-      if (resetBookmarksBtn) {
-        resetBookmarksBtn.onclick = function () {
-          if (confirm('Are you sure you want to reset bookmarks to defaults?')) {
-            try {
-              localStorage.removeItem('heavenly_bookmarks');
-              localStorage.removeItem('heavenly_broken_links');
-            } catch (e) {}
-            renderBookmarksUI();
-            alert('Bookmarks reset to defaults!');
-          }
-        };
-      }
+    // Local, reviewable developer tools. The command is not authentication.
+    function openCodexDevModal() { HeavenlyDevHQ.open(); }
+    function initCodexDevHQ() {
+      HeavenlyDevHQ.init({
+        cloakInfo: function () { var s=loadSettings(); return 'Auto-cloak: '+(s.autoCloak?'on':'off')+' · Persistent: '+(s.persistentCloak?'on':'off')+' · Preset: '+s.selectedPreset; },
+        toggleCloak: function () { var s=loadSettings(); s.persistentCloak=!s.persistentCloak; localStorage.setItem('heavenly_settings',JSON.stringify(s)); syncLandingCloak(); },
+        loading: function () { HeavenlyDevHQ.close(); var loader=$('heavenly-loading-screen'); if(loader){loader.classList.remove('fade-out');loader.style.display='flex';} $('codex-preview-exit').style.display='block'; $('codex-exit-preview').focus(); },
+        cleanup: function () { hideLoadingScreen(); $('codex-preview-exit').style.display='none'; },
+        error: function () { var opened=window.open('/proxy/https://httpstat.us/500','_blank','noopener'); return opened; },
+        clearTemporary: function () { localStorage.removeItem('heavenly_history'); sessionStorage.removeItem('heavenly_session_preset'); },
+        resetBookmarks: function () {
+          var raw=localStorage.getItem('heavenly_bookmarks');
+          if(localStorage.getItem('heavenly_dev_hq_bookmark_recovery'))throw new Error('A QA recovery copy already exists. Restore it before starting another reset test.');
+          if(!raw) throw new Error('No saved test collection exists to reset.');
+          localStorage.setItem('heavenly_dev_hq_bookmark_recovery',JSON.stringify({schema:1,savedAt:new Date().toISOString(),bookmarks:JSON.parse(raw)}));
+          localStorage.setItem('heavenly_bookmarks',JSON.stringify(HeavenlyCatalog.fresh())); renderBookmarksUI();
+        },
+        restoreBookmarks: function () {
+          var saved=JSON.parse(localStorage.getItem('heavenly_dev_hq_bookmark_recovery')||'null');
+          if(!saved||saved.schema!==1||!saved.bookmarks)throw new Error('No QA recovery copy is available.');
+          HeavenlyCatalog.validate(saved.bookmarks);localStorage.setItem('heavenly_bookmarks',JSON.stringify(saved.bookmarks)); localStorage.removeItem('heavenly_dev_hq_bookmark_recovery'); renderBookmarksUI();
+        },
+        refreshStorage: function () { syncLandingCloak(); renderBookmarksUI(); },
+        hasRecovery: function () { return !!localStorage.getItem('heavenly_dev_hq_bookmark_recovery'); }
+      });
+      $('codex-exit-preview').onclick=function(){hideLoadingScreen();$('codex-preview-exit').style.display='none';HeavenlyDevHQ.open('qa');};
     }
 
     function openOpWebsitesNotesModal() {
@@ -6824,6 +6705,12 @@
       }
 
       if (targetBm) pendingBuiltinUrls.targetBmId = targetBm.id;
+      // Presentation follows the canonical capability, never a shared URL: a
+      // visitor's unrelated bookmark remains a normal mirror-capable bookmark.
+      var streamlinedNewgrounds = !!targetBm && targetBm.id === 'bm_ng';
+      if (targetBm && targetBm.id === 'bm_dancing_bunny' && descEl && !customDesc) {
+        descEl.textContent = 'This destination opens a launcher. If your browser blocks its automatic window, select “click here” on the destination page.';
+      }
       bindQuickSaveSetting('builtin', targetBm);
       setBookmarkLaunchHeader('builtin-test-modal', title || rawUrl, rawUrl, targetBm);
       var noteBookmark = HeavenlyNavigation.findBookmarkByUrl(data, rawUrl) || targetBm;
@@ -7348,10 +7235,57 @@
 
         var builtinSvg = '<svg style="width:13px;height:13px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>';
 
-        var availableSection = createMirrorSection('Available Mirrors', builtinSvg, mirrorState.available, true, true);
-        availableSection.className = 'available-mirror-list';
-        altContainer.appendChild(availableSection);
-        if (mirrorState.broken.length) {
+        if (streamlinedNewgrounds) {
+          var picksButton = document.createElement('button'); picksButton.type = 'button'; picksButton.className = 'heavenly-picks-entry';
+          var hasPublishedPicks = HeavenlyPicksUI.publicItems(HeavenlyPicks.items).length > 0;
+          picksButton.innerHTML = HeavenlyIcons.svg('preset:sparkles', '22px') + '<span class="heavenly-picks-entry-copy">Heavenly Picks<small>' + (hasPublishedPicks ? 'Explore our Newgrounds collection' : 'Our Newgrounds collection · Coming Soon') + '</small></span><svg class="heavenly-picks-entry-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
+          picksButton.onclick = function () { HeavenlyPicksUI.open(); };
+          altContainer.appendChild(picksButton);
+          var migration = data._catalog && data._catalog.migrations && data._catalog.migrations.newgrounds;
+          var originals = migration && migration.originals;
+          if ((targetBm.subBookmarks || []).length || originals || mirrorState.broken.length) {
+            var recovery = document.createElement('details'); recovery.className = 'heavenly-saved-links';
+            recovery.open = expandedMirrors.indexOf('Saved links & recovery') !== -1;
+            recovery.dataset.mirrorSection = 'Saved links & recovery';
+            var recoverySummary = document.createElement('summary'); recoverySummary.textContent = 'Saved links & recovery';
+            var recoveryBody = document.createElement('div');
+            var recoveryNote = document.createElement('p'); recoveryNote.textContent = 'Your saved Newgrounds links and choices are kept here. Manage them without changing the official collection.';
+            recoveryBody.appendChild(recoveryNote);
+            var manageLinks = document.createElement('button'); manageLinks.type = 'button'; manageLinks.className = 'heavenly-collection-button'; manageLinks.textContent = 'Manage saved links';
+            manageLinks.onclick = function () { closeBuiltinTestModal(); openAddModal('bookmark', targetBm.categoryId, targetBm.id); };
+            recoveryBody.appendChild(manageLinks);
+            if (mirrorState.available.length) {
+              var savedDestinations = createMirrorSection('Saved destinations', builtinSvg, mirrorState.available, false, true);
+              savedDestinations.className = 'available-mirror-list'; recoveryBody.appendChild(savedDestinations);
+            }
+            if (mirrorState.broken.length) {
+              var savedBroken = createMirrorSection('Saved broken destinations', builtinSvg, mirrorState.broken, false, true);
+              recoveryBody.appendChild(savedBroken);
+            }
+            if (originals) {
+              var downloadRecovery = document.createElement('button'); downloadRecovery.type = 'button'; downloadRecovery.className = 'heavenly-collection-button'; downloadRecovery.textContent = 'Download pre-consolidation data';
+              var recoveryStatus = document.createElement('p'); recoveryStatus.setAttribute('role','status');
+              downloadRecovery.onclick = function () {
+                try {
+                  var latest = loadBookmarkData();
+                  var archive = latest._catalog && latest._catalog.migrations && latest._catalog.migrations.newgrounds;
+                  var payload = { schema:1, exportedAt:new Date().toISOString(), purpose:'Private Newgrounds migration recovery', migration:archive, currentBookmark:HeavenlyBookmarks.findEntry(latest, 'bm_ng') };
+                  var blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+                  var href = URL.createObjectURL(blob), link = document.createElement('a'); link.href = href; link.download = 'heavenly-newgrounds-recovery.json'; document.body.appendChild(link); link.click(); link.remove();
+                  setTimeout(function () { URL.revokeObjectURL(href); }, 1500);
+                  recoveryStatus.textContent = 'Private recovery data downloaded. Keep this file safe; it may contain your notes and custom links.';
+                } catch (error) { recoveryStatus.textContent = 'Recovery data could not be downloaded. Your saved collection has not changed.'; }
+              };
+              recoveryBody.append(downloadRecovery, recoveryStatus);
+            }
+            recovery.append(recoverySummary, recoveryBody); altContainer.appendChild(recovery);
+          }
+        } else {
+          var availableSection = createMirrorSection('Available Mirrors', builtinSvg, mirrorState.available, true, true);
+          availableSection.className = 'available-mirror-list';
+          altContainer.appendChild(availableSection);
+        }
+        if (!streamlinedNewgrounds && mirrorState.broken.length) {
           var brokenSection = document.createElement('details'); brokenSection.className = 'broken-mirrors'; brokenSection.dataset.mirrorSection = 'Broken';
           brokenSection.open = expandedMirrors.indexOf('Broken') !== -1;
           var brokenToggle = document.createElement('summary'); brokenToggle.className = 'broken-mirrors-toggle'; brokenToggle.textContent = 'Broken (' + mirrorState.broken.length + ')';
@@ -7615,6 +7549,14 @@
       var viewCreate = $('share-view-create');
       var viewRedeem = $('share-view-redeem');
 
+      var redeem = tab === 'redeem';
+      tabCreate.setAttribute('aria-selected', String(!redeem));
+      tabRedeem.setAttribute('aria-selected', String(redeem));
+      tabCreate.tabIndex = redeem ? -1 : 0;
+      tabRedeem.tabIndex = redeem ? 0 : -1;
+      viewCreate.hidden = redeem; viewCreate.inert = redeem;
+      viewRedeem.hidden = !redeem; viewRedeem.inert = !redeem;
+
       if (tab === 'redeem') {
         tabCreate.style.background = 'rgba(30, 41, 59, 0.6)';
         tabCreate.style.color = '#94a3b8';
@@ -7638,6 +7580,19 @@
       var tabRedeem = $('tab-share-redeem');
       if (tabCreate) tabCreate.onclick = function () { switchShareTab('create'); };
       if (tabRedeem) tabRedeem.onclick = function () { switchShareTab('redeem'); };
+      [tabCreate, tabRedeem].forEach(function (button) {
+        if (!button) return;
+        button.onkeydown = function (event) {
+          var target;
+          if (event.key === 'Home') target = tabCreate;
+          else if (event.key === 'End') target = tabRedeem;
+          else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') target = button === tabCreate ? tabRedeem : tabCreate;
+          else return;
+          event.preventDefault(); switchShareTab(target === tabRedeem ? 'redeem' : 'create');
+          target.focus({ preventScroll: true });
+        };
+      });
+
 
       var selectAllBtn = $('share-select-all-btn');
       var deselectAllBtn = $('share-deselect-all-btn');
@@ -7908,6 +7863,13 @@
 
     function initBookmarksManager() {
       initBookmarkLaunchPopups();
+      HeavenlyPicksUI.configure({ launch:function (url, mode) { return openTargetUrlWithSetting(mode === 'proxy' ? location.origin + '/proxy/' + url : url); } });
+      HeavenlyRestoreUI.configure({ data:loadBookmarkData, storage:localStorage, returnFocus:function () { return $('add-modal').classList.contains('active') ? $('cat-edit-id').value ? $('cat-restore-official-order') : $('restore-all-official-order') : $('open-add-modal-btn'); }, onRestore:function () {
+        renderBookmarksUI();
+        var editing = loadBookmarkData().categories.find(function (entry) { return entry.id === $('cat-edit-id').value; });
+        if (editing) { categorySectionDraft = (editing.subSections || []).map(function (section) { return section.id; }); renderCategorySectionOrder(); }
+      }});
+      $('restore-all-official-order').onclick = function () { HeavenlyRestoreUI.open({}); };
       $('cat-edit-cancel').onclick = closeAddModal;
       renderBookmarksUI();
 
@@ -8569,7 +8531,7 @@
       initQuickSettingsTray();
       initBookmarksManager();
       initShareBookmarkHandlers();
-      initJulesDevModal();
+      initCodexDevHQ();
       syncSearchFormUI();
 
       var newTabBtn = $('search-newtab-btn');

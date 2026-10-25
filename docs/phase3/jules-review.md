@@ -1,0 +1,22 @@
+# Jules GitHub contribution review
+
+Only GitHub contributions were inspected. No Google Jules workspace, session, task, prompt or schedule was opened or changed. The open-PR list and branch collection were checked before implementation and refreshed again on October 25, 2026 before final delivery. They still contain PRs #187, #192, #193, #194 and #195; no new Jules PR, changed candidate head, open Sentinel contribution or independent development branch appeared. The new Phase 3 branch is our own stacked work. Main remains `013cd07` and no source PR was merged.
+
+| Source | Improvement | Decision | Reason | Verification |
+| --- | --- | --- | --- | --- |
+| [#187, Bolt](https://github.com/zryr/Heavenly-Node/pull/187) | Direct content-type comparisons in `scriptSafePrefixer` | Integrated | Equivalent guard for the three supported HTML MIME types; streaming and namespace repair remain intact. The old array was a module constant, so this is not a per-request allocation fix. | Existing script-safe prefixer tests, full unit suite and the recorded local guard microbenchmark. |
+| [#194, Bolt](https://github.com/zryr/Heavenly-Node/pull/194) | Canonical bookmark identity reuse and URL fast paths | Integrated, selectively adapted | `remoteUrl` already returns a canonical href. Reuse it for ordinary bookmarks and only reparse the known Coolmath alias. | 2,500 generated before/after identity comparisons; navigation/history tests; explicit parse-count and URL compatibility regressions. |
+| [#194, Bolt](https://github.com/zryr/Heavenly-Node/pull/194) | Raw case-sensitive hostname substring guard in `isCoolmathUrl` | Rejected | Rejects valid uppercase/encoded hosts and URL objects. Preserve the existing parsed-hostname check, including protection against hostname suffix lookalikes. | Uppercase, percent-encoded host, URL object and lookalike-host regression cases. |
+| [#195, Palette](https://github.com/zryr/Heavenly-Node/pull/195) | Share Bookmarks modal tab semantics | Integrated, adapted | Retain roles and relationships; add matching keyboard behavior, roving focus and inactive-panel isolation so the semantics describe working tabs. | Real Arrow/Home/End, Escape, draft-retention, no-navigation and unchanged-storage checks in Chromium, Firefox and WebKit. |
+| [#192, Palette](https://github.com/zryr/Heavenly-Node/pull/192) | HTML Viewer Ctrl/Cmd+Enter execution | Already Included | Merged [#188](https://github.com/zryr/Heavenly-Node/pull/188) already provides execution and status announcements. Do not add a duplicate handler or regress the current status behavior. | Compared actual source and both diffs. |
+| [#192, Palette](https://github.com/zryr/Heavenly-Node/pull/192) | Additional editor button hint | Deferred | Small useful copy enhancement belongs with the requested future HTML Viewer overhaul; Phase 3 does not redesign that page. | Source/diff review; no implementation claim. |
+| [#189, Bolt](https://github.com/zryr/Heavenly-Node/pull/189), closed | Namespace repair cache | Already Included | Substantive fast-path/cache behavior is present through merged [#191](https://github.com/zryr/Heavenly-Node/pull/191). Do not import duplicate code or agent journals. | Source comparison and prefixer regressions. |
+| [#190, Palette](https://github.com/zryr/Heavenly-Node/pull/190), merged | Icon-source tab accessibility | Already Included | Existing icon chooser semantics remain in the baseline. | Inspected current implementation and merged changes. |
+
+Attribution is retained here and in the implementation commit. Changes were selected from the actual diffs rather than blindly merging Jules branches. None of these source PRs was merged or closed.
+
+## Measured scope
+
+`test/jules_navigation_optimizations.test.js` protects canonical destinations, exact SVG URLs, alias compatibility and the common one-parse path. `test/browser/jules_share_tabs.cjs` exercises actual browser keyboard input and writes [engine results](evidence/jules-share-browser-results.json).
+
+[The local benchmark record](evidence/jules-local-benchmark.json) contains seven alternating 150,000-call navigation samples on Node v24.19.0: median 719.83 ms before and 624.78 ms after. All 2,500 generated identity cases matched. Browser work ran concurrently and timings varied; these are function microbenchmarks, not network throughput, whole-page performance or physical-device speed claims. The isolated MIME guard comparison also returned identical counts. No performance dependency was added.

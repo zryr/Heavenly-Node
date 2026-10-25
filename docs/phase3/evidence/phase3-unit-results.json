@@ -1,0 +1,9 @@
+{
+  "command": "npm test",
+  "scope": "Combined Phase1+2 refinements and Phase3 repository",
+  "passing": 519,
+  "failing": 0,
+  "reportedDuration": "7 seconds",
+  "sourceLog": "phase3-unit.txt",
+  "officialOrderGenerator": "node scripts/build-official-order.cjs --check passed"
+}

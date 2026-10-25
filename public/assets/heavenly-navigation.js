@@ -34,9 +34,9 @@
     if (typeof value !== 'string' || !value.trim()) return '';
     prefix = prefix || '/proxy/';
     value = value.trim();
-    if (value.indexOf(prefix) === 0) value = value.slice(prefix.length);
-    else if (origin && value.indexOf(origin + prefix) === 0) value = value.slice((origin + prefix).length);
-    value = value.replace(/^(https?:\/)([^/])/i, '$1/$2');
+    if (value.startsWith(prefix)) value = value.slice(prefix.length);
+    else if (origin && value.startsWith(origin + prefix)) value = value.slice((origin + prefix).length);
+    if (!value.startsWith('http://') && !value.startsWith('https://')) value = value.replace(/^(https?:\/)([^/])/i, '$1/$2');
     try {
       var parsed = new URL(value);
       if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
@@ -50,7 +50,7 @@
     var path = loc._rawpathname !== undefined ? loc._rawpathname : loc.pathname;
     var search = loc._rawsearch !== undefined ? loc._rawsearch : loc.search;
     var hash = loc._rawhash !== undefined ? loc._rawhash : loc.hash;
-    if (path && path.indexOf(prefix) === 0) return remoteUrl(path + (search || '') + (hash || ''), '', prefix);
+    if (path && path.startsWith(prefix)) return remoteUrl(path + (search || '') + (hash || ''), '', prefix);
     return remoteUrl(config && String(config.url || ''), config && config.proxyOrigin, prefix);
   }
 
@@ -67,9 +67,14 @@
     value = remoteUrl(value);
     if (!value && typeof input === 'string' && /^[\w-]+(?:\.[\w-]+)+(?:[/:?#]|$)/.test(input.trim())) value = remoteUrl('https://' + input.trim());
     if (!value) return '';
-    var url = new URL(value);
-    if (isCoolmathUrl(value)) { url.hostname = 'www.coolmathgames.com'; url.protocol = 'https:'; }
-    return url.href;
+    // remoteUrl already returns the canonical href. Only the known hostname
+    // alias needs another parse; retain isCoolmathUrl's case/URL-object semantics.
+    if (value.indexOf('coolmathgames.com') !== -1 && isCoolmathUrl(value)) {
+      var url = new URL(value);
+      url.hostname = 'www.coolmathgames.com'; url.protocol = 'https:';
+      return url.href;
+    }
+    return value;
   }
 
   function findBookmarkByUrl(data, value) {

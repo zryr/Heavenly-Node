@@ -1,0 +1,272 @@
+{
+  "captured": "2026-10-25T01:34:21.540Z",
+  "physicalDevices": [],
+  "network": "Only local application requests; external and proxy requests blocked.",
+  "captures": [
+    {
+      "id": "games-before",
+      "title": "Games before the additions",
+      "note": "Actual expanded pre-Phase3 Games with the two original Newgrounds records.",
+      "file": "phase3-games-before.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "newgrounds-before",
+      "title": "Newgrounds before consolidation",
+      "note": "Actual pre-Phase3 unified search shows the two original official/default identities.",
+      "file": "phase3-newgrounds-before.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "newgrounds-popup-before",
+      "title": "Newgrounds popup before consolidation",
+      "note": "Actual pre-Phase3 Syshi popup, including the generic mirror controls.",
+      "file": "phase3-newgrounds-popup-before.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "games-after",
+      "title": "Games after the additions",
+      "note": "Fresh expanded collection: History Minds and Dancing Bunny are installed; Newgrounds has one official identity.",
+      "file": "phase3-games-after.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "bunny-before-gamebois",
+      "title": "Dancing Bunny directly above Gamebois",
+      "note": "Fresh default order in a 390-pixel single-column layout, asserted from adjacent real bookmark rows. The exact SVG destination remains intact.",
+      "file": "phase3-bunny-before-gamebois.png",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "id": "newgrounds-after",
+      "title": "One official Newgrounds result",
+      "note": "Fresh collection search returns one official Newgrounds bookmark.",
+      "file": "phase3-newgrounds-after.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "newgrounds-popup-after",
+      "title": "Newgrounds without unnecessary mirror controls",
+      "note": "The normal popup contains Heavenly Picks and the existing launch options.",
+      "file": "phase3-newgrounds-popup-after.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "picks-coming-soon",
+      "title": "Heavenly Picks · Coming Soon",
+      "note": "The published collection is empty. No recommendation fixtures are shown as published content.",
+      "file": "phase3-picks-coming-soon.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "subsection-icons",
+      "title": "Browser/Games and Docs/Games icons",
+      "note": "Real globe and document SVGs in the built-in OP Websites subsection headers.",
+      "file": "phase3-subsection-icons.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "hq-overview",
+      "title": "Codex Developer HQ",
+      "note": "The codex command opens a local draft and QA workspace; publishing stays in GitHub.",
+      "file": "phase3-hq-overview.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "ranking-editor",
+      "title": "Official ranking editor",
+      "note": "Actual local draft: Gamebois moved to the top. Personal bookmark storage remains unchanged.",
+      "file": "phase3-ranking-editor.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "ranking-preview",
+      "title": "Official layout preview",
+      "note": "Exact draft preview highlights changed default positions. This is a local draft, not a published ranking.",
+      "file": "phase3-ranking-preview.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "picks-editor",
+      "title": "Heavenly Picks developer editor",
+      "note": "An explicitly labeled, disabled local fixture demonstrates the real editor. Public recommendations remain empty.",
+      "file": "phase3-picks-editor.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "review-export",
+      "title": "Reviewed source exports",
+      "note": "The local workshop exports repository-compatible sources after validation and review.",
+      "file": "phase3-review-export.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "restore-section",
+      "title": "Restore this section’s official order",
+      "note": "Confirmation is scoped to Games / Built-In. Cancel is initially focused.",
+      "file": "phase3-restore-section.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "restore-all",
+      "title": "Restore all official ordering",
+      "note": "Global ordering confirmation explicitly preserves personal content and preferences.",
+      "file": "phase3-restore-all.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "bookmark-update",
+      "title": "Existing collection · official update review",
+      "note": "Real pre-Phase3 saved collection offers the optional additions through Apply Update, Maybe Later and Skip This Version.",
+      "file": "phase3-bookmark-update.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "tablet-hq",
+      "title": "Tablet · official rankings",
+      "note": "820 × 1180 Chromium viewport with emulated touch/mobile flags. No physical iPad was tested.",
+      "file": "phase3-tablet-hq.png",
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "id": "tablet-picks",
+      "title": "Tablet · Heavenly Picks",
+      "note": "Actual Coming Soon panel in an emulated tablet viewport.",
+      "file": "phase3-tablet-picks.png",
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "id": "phone-hq",
+      "title": "Phone · recommendation drafts",
+      "note": "390 × 844 Chromium viewport with touch emulation. Draft forms remain scrollable.",
+      "file": "phase3-phone-hq.png",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "id": "phone-picks",
+      "title": "Phone · Heavenly Picks",
+      "note": "Narrow Coming Soon panel with a visible return action.",
+      "file": "phase3-phone-picks.png",
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "codex command and keyboard focus trap",
+        "arrow-key tab navigation and safe QA cancellation",
+        "keyboard ranking move and real preview keep personal storage unchanged",
+        "reviewed repository source download decodes",
+        "Chromebook, tablet and narrow phone widths avoid horizontal overflow",
+        "empty Picks, nested modal return and focus restoration at narrow width"
+      ],
+      "errors": [],
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768
+        },
+        {
+          "width": 820,
+          "height": 1180
+        },
+        {
+          "width": 390,
+          "height": 844
+        }
+      ],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "codex command and keyboard focus trap",
+        "arrow-key tab navigation and safe QA cancellation",
+        "keyboard ranking move and real preview keep personal storage unchanged",
+        "reviewed repository source download decodes",
+        "Chromebook, tablet and narrow phone widths avoid horizontal overflow",
+        "empty Picks, nested modal return and focus restoration at narrow width"
+      ],
+      "errors": [],
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768
+        },
+        {
+          "width": 820,
+          "height": 1180
+        },
+        {
+          "width": 390,
+          "height": 844
+        }
+      ],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "codex command and keyboard focus trap",
+        "arrow-key tab navigation and safe QA cancellation",
+        "keyboard ranking move and real preview keep personal storage unchanged",
+        "reviewed repository source download decodes",
+        "Chromebook, tablet and narrow phone widths avoid horizontal overflow",
+        "empty Picks, nested modal return and focus restoration at narrow width"
+      ],
+      "errors": [],
+      "viewports": [
+        {
+          "width": 1366,
+          "height": 768
+        },
+        {
+          "width": 820,
+          "height": 1180
+        },
+        {
+          "width": 390,
+          "height": 844
+        }
+      ],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ],
+  "baseline": {
+    "source": "/workspace/Heavenly-Node",
+    "head": "68a6d40e6aa9c585904ba5498476559326bb4d1c",
+    "publicSHA256": "30fe1bd5d57d941ac0522c7f7b82499128a1f024c170b6262e36eedf0aa24dd6",
+    "description": "Immutable archive of the final Phase1+2 commit public application before Phase3. No mock UI or reconstructed screenshots.",
+    "catalogVersion": "2026.10.23.1"
+  },
+  "captureBrowser": "Chromium 154.0.8037.57",
+  "catalogVersion": "2026.10.24.1",
+  "recording": "phase3-workshop-and-picks.webm",
+  "smokeCaptured": "2026-10-25T01:35:04.577Z"
+}

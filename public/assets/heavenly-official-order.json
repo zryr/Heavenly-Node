@@ -1,0 +1,916 @@
+{
+  "schema": 1,
+  "catalogVersion": "2026.10.24.1",
+  "categories": [
+    {
+      "id": "cat_movies",
+      "side": "left",
+      "order": 0,
+      "subSections": [
+        {
+          "id": "builtin",
+          "order": 0
+        },
+        {
+          "id": "naenae",
+          "order": 1
+        },
+        {
+          "id": "user",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "id": "cat_anime",
+      "side": "right",
+      "order": 0,
+      "subSections": [
+        {
+          "id": "builtin",
+          "order": 0
+        },
+        {
+          "id": "user",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "id": "cat_games",
+      "side": "bottom",
+      "order": 0,
+      "subSections": [
+        {
+          "id": "builtin",
+          "order": 0
+        },
+        {
+          "id": "user",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "id": "cat_op_websites",
+      "side": "bottom",
+      "order": 1,
+      "subSections": [
+        {
+          "id": "browser_games",
+          "order": 0
+        },
+        {
+          "id": "docs_games",
+          "order": 1
+        },
+        {
+          "id": "user",
+          "order": 2
+        }
+      ]
+    }
+  ],
+  "bookmarks": [
+    {
+      "id": "bm_everythingmoe",
+      "parentId": null,
+      "categoryId": "cat_anime",
+      "subSectionId": "builtin",
+      "order": 0
+    },
+    {
+      "id": "bm_fmhy_anime",
+      "parentId": null,
+      "categoryId": "cat_anime",
+      "subSectionId": "builtin",
+      "order": 1
+    },
+    {
+      "id": "bm_anisnatch",
+      "parentId": null,
+      "categoryId": "cat_anime",
+      "subSectionId": "builtin",
+      "order": 2
+    },
+    {
+      "id": "bm_miruro",
+      "parentId": null,
+      "categoryId": "cat_anime",
+      "subSectionId": "builtin",
+      "order": 3
+    },
+    {
+      "id": "bm_aniclover",
+      "parentId": null,
+      "categoryId": "cat_anime",
+      "subSectionId": "builtin",
+      "order": 4
+    },
+    {
+      "id": "bm_anidb",
+      "parentId": null,
+      "categoryId": "cat_anime",
+      "subSectionId": "builtin",
+      "order": 5
+    },
+    {
+      "id": "bm_movish_anime",
+      "parentId": null,
+      "categoryId": "cat_anime",
+      "subSectionId": "builtin",
+      "order": 6
+    },
+    {
+      "id": "sub_movish_latestmovies_anime",
+      "parentId": "bm_movish_anime",
+      "categoryId": "cat_anime",
+      "subSectionId": "builtin",
+      "order": 0
+    },
+    {
+      "id": "bm_fmhy_movies",
+      "parentId": null,
+      "categoryId": "cat_movies",
+      "subSectionId": "builtin",
+      "order": 0
+    },
+    {
+      "id": "bm_streamopro",
+      "parentId": null,
+      "categoryId": "cat_movies",
+      "subSectionId": "builtin",
+      "order": 1
+    },
+    {
+      "id": "bm_movish_movies",
+      "parentId": null,
+      "categoryId": "cat_movies",
+      "subSectionId": "builtin",
+      "order": 2
+    },
+    {
+      "id": "sub_movish_latestmovies_movies",
+      "parentId": "bm_movish_movies",
+      "categoryId": "cat_movies",
+      "subSectionId": "builtin",
+      "order": 0
+    },
+    {
+      "id": "bm_7movies",
+      "parentId": null,
+      "categoryId": "cat_movies",
+      "subSectionId": "builtin",
+      "order": 3
+    },
+    {
+      "id": "bm_rivestream",
+      "parentId": null,
+      "categoryId": "cat_movies",
+      "subSectionId": "builtin",
+      "order": 4
+    },
+    {
+      "id": "bm_zig_and_sharko",
+      "parentId": null,
+      "categoryId": "cat_movies",
+      "subSectionId": "naenae",
+      "order": 0
+    },
+    {
+      "id": "bm_larva",
+      "parentId": null,
+      "categoryId": "cat_movies",
+      "subSectionId": "naenae",
+      "order": 1
+    },
+    {
+      "id": "bm_spongebob",
+      "parentId": null,
+      "categoryId": "cat_movies",
+      "subSectionId": "naenae",
+      "order": 2
+    },
+    {
+      "id": "bm_individual_games",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 0
+    },
+    {
+      "id": "sub_slopeplus",
+      "parentId": "bm_individual_games",
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 0
+    },
+    {
+      "id": "sub_whatbeatsrock",
+      "parentId": "bm_individual_games",
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 1
+    },
+    {
+      "id": "sub_fnf",
+      "parentId": "bm_individual_games",
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 2
+    },
+    {
+      "id": "sub_geometrydash",
+      "parentId": "bm_individual_games",
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 3
+    },
+    {
+      "id": "bm_ng",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 1
+    },
+    {
+      "id": "bm_sitesdotcom",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 2
+    },
+    {
+      "id": "bm_grind1",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 3
+    },
+    {
+      "id": "bm_gn_math",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 4
+    },
+    {
+      "id": "bm_history_minds",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 5
+    },
+    {
+      "id": "bm_dancing_bunny",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 6
+    },
+    {
+      "id": "bm_gamebois",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 7
+    },
+    {
+      "id": "bm_ubg98",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 8
+    },
+    {
+      "id": "bm_cpsgames",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 9
+    },
+    {
+      "id": "bm_ubgames",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 10
+    },
+    {
+      "id": "bm_unbleeked",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 11
+    },
+    {
+      "id": "bm_duckmath",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 12
+    },
+    {
+      "id": "sub_duckmath_a1",
+      "parentId": "bm_duckmath",
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 0
+    },
+    {
+      "id": "bm_emubrowser",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 13
+    },
+    {
+      "id": "bm_gras2027",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 14
+    },
+    {
+      "id": "bm_funkymods",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 15
+    },
+    {
+      "id": "bm_myretrogames",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 16
+    },
+    {
+      "id": "bm_mgalternative",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 17
+    },
+    {
+      "id": "bm_masonsunblockedgames",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 18
+    },
+    {
+      "id": "bm_geometryspot",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 19
+    },
+    {
+      "id": "bm_outredgames",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 20
+    },
+    {
+      "id": "bm_interdimensional_lite",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 21
+    },
+    {
+      "id": "bm_3hk0lite",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 22
+    },
+    {
+      "id": "bm_bloxcraftstudios",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 23
+    },
+    {
+      "id": "sub_bloxcraft_5kh0",
+      "parentId": "bm_bloxcraftstudios",
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 0
+    },
+    {
+      "id": "sub_bloxcraft_fastly",
+      "parentId": "bm_bloxcraftstudios",
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 1
+    },
+    {
+      "id": "bm_coolmath",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 24
+    },
+    {
+      "id": "bm_aether",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 0
+    },
+    {
+      "id": "sub_aether_1",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 0
+    },
+    {
+      "id": "sub_aether_2",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 1
+    },
+    {
+      "id": "sub_aether_3",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 2
+    },
+    {
+      "id": "sub_aether_4",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 3
+    },
+    {
+      "id": "sub_aether_5",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 4
+    },
+    {
+      "id": "sub_aether_6",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 5
+    },
+    {
+      "id": "sub_aether_7",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 6
+    },
+    {
+      "id": "sub_aether_8",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 7
+    },
+    {
+      "id": "sub_aether_9",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 8
+    },
+    {
+      "id": "sub_aether_10",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 9
+    },
+    {
+      "id": "sub_aether_11",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 10
+    },
+    {
+      "id": "sub_aether_12",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 11
+    },
+    {
+      "id": "sub_aether_13",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 12
+    },
+    {
+      "id": "sub_aether_14",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 13
+    },
+    {
+      "id": "sub_aether_15",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 14
+    },
+    {
+      "id": "sub_aether_16",
+      "parentId": "bm_aether",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 15
+    },
+    {
+      "id": "bm_korona",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 1
+    },
+    {
+      "id": "bm_nexus",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 2
+    },
+    {
+      "id": "bm_flux",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 3
+    },
+    {
+      "id": "bm_opium",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 4
+    },
+    {
+      "id": "sub_opium_1",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 0
+    },
+    {
+      "id": "sub_opium_2",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 1
+    },
+    {
+      "id": "sub_opium_3",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 2
+    },
+    {
+      "id": "sub_opium_4",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 3
+    },
+    {
+      "id": "sub_opium_5",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 4
+    },
+    {
+      "id": "sub_opium_6",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 5
+    },
+    {
+      "id": "sub_opium_7",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 6
+    },
+    {
+      "id": "sub_opium_8",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 7
+    },
+    {
+      "id": "sub_opium_9",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 8
+    },
+    {
+      "id": "sub_opium_10",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 9
+    },
+    {
+      "id": "sub_opium_11",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 10
+    },
+    {
+      "id": "sub_opium_12",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 11
+    },
+    {
+      "id": "sub_opium_13",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 12
+    },
+    {
+      "id": "sub_opium_14",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 13
+    },
+    {
+      "id": "sub_opium_15",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 14
+    },
+    {
+      "id": "sub_opium_16",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 15
+    },
+    {
+      "id": "sub_opium_17",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 16
+    },
+    {
+      "id": "sub_opium_18",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 17
+    },
+    {
+      "id": "sub_opium_19",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 18
+    },
+    {
+      "id": "sub_opium_20",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 19
+    },
+    {
+      "id": "sub_opium_21",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 20
+    },
+    {
+      "id": "sub_opium_22",
+      "parentId": "bm_opium",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 21
+    },
+    {
+      "id": "bm_polaris",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 5
+    },
+    {
+      "id": "sub_polaris_1",
+      "parentId": "bm_polaris",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 0
+    },
+    {
+      "id": "sub_polaris_2",
+      "parentId": "bm_polaris",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 1
+    },
+    {
+      "id": "sub_polaris_3",
+      "parentId": "bm_polaris",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 2
+    },
+    {
+      "id": "sub_polaris_4",
+      "parentId": "bm_polaris",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 3
+    },
+    {
+      "id": "sub_polaris_5",
+      "parentId": "bm_polaris",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 4
+    },
+    {
+      "id": "sub_polaris_6",
+      "parentId": "bm_polaris",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 5
+    },
+    {
+      "id": "sub_polaris_7",
+      "parentId": "bm_polaris",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 6
+    },
+    {
+      "id": "sub_polaris_8",
+      "parentId": "bm_polaris",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 7
+    },
+    {
+      "id": "bm_arctic",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 6
+    },
+    {
+      "id": "sub_arctic_1",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 0
+    },
+    {
+      "id": "sub_arctic_2",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 1
+    },
+    {
+      "id": "sub_arctic_3",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 2
+    },
+    {
+      "id": "sub_arctic_4",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 3
+    },
+    {
+      "id": "sub_arctic_5",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 4
+    },
+    {
+      "id": "sub_arctic_6",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 5
+    },
+    {
+      "id": "sub_arctic_7",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 6
+    },
+    {
+      "id": "sub_arctic_8",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 7
+    },
+    {
+      "id": "sub_arctic_9",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 8
+    },
+    {
+      "id": "sub_arctic_10",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 9
+    },
+    {
+      "id": "sub_arctic_11",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 10
+    },
+    {
+      "id": "bm_pgis2",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 7
+    },
+    {
+      "id": "bm_ubgdir",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "docs_games",
+      "order": 0
+    },
+    {
+      "id": "bm_the_wagon",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "docs_games",
+      "order": 1
+    },
+    {
+      "id": "bm_ultimate_doc_of_docs",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "docs_games",
+      "order": 2
+    },
+    {
+      "id": "sub_udod_google_doc",
+      "parentId": "bm_ultimate_doc_of_docs",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "docs_games",
+      "order": 0
+    },
+    {
+      "id": "bm_project_19",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "docs_games",
+      "order": 3
+    },
+    {
+      "id": "bm_project_idk",
+      "parentId": null,
+      "categoryId": "cat_op_websites",
+      "subSectionId": "docs_games",
+      "order": 4
+    }
+  ]
+}

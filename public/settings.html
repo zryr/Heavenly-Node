@@ -7,12 +7,16 @@
   <script src="/assets/heavenly-bookmarks.js"></script>
   <script src="/assets/heavenly-bookmark-view.js"></script>
   <link rel="stylesheet" href="/assets/heavenly-bookmark-view.css">
+  <script src="/assets/heavenly-official-order.js"></script>
   <script src="/assets/heavenly-catalog.js"></script>
   <script src="/assets/heavenly-catalog-ui.js"></script>
   <link rel="stylesheet" href="/assets/heavenly-catalog.css">
   <script src="/assets/heavenly-drag.js"></script>
   <script src="/assets/heavenly-motion.js"></script>
   <script src="/assets/heavenly-dialogs.js"></script>
+  <script src="/assets/heavenly-collection-dialog.js"></script>
+  <script src="/assets/heavenly-restore-ui.js"></script>
+  <link rel="stylesheet" href="/assets/heavenly-collection.css">
   <link rel="stylesheet" href="/assets/quick-settings.css">
   <script src="/assets/cloak-pool.js"></script>
   <script src="/assets/quick-settings-model.js"></script>
@@ -1433,12 +1437,20 @@
 
       var data = loadBookmarkData();
 
+      HeavenlyRestoreUI.configure({ data:loadBookmarkData, storage:localStorage, onRestore:renderBookmarkManager, returnFocus:function () { return $('settings-official-order-summary'); } });
+      var ordering = document.createElement('details'); ordering.className = 'heavenly-saved-links';
+      var orderingSummary = document.createElement('summary'); orderingSummary.id = 'settings-official-order-summary'; orderingSummary.textContent = 'Official ordering';
+      var orderingBody = document.createElement('div');
+      var restoreAll = HeavenlyRestoreUI.button({}, 'Restore All Official Ordering'); restoreAll.id = 'settings-restore-all-order';
+      orderingBody.appendChild(restoreAll); ordering.append(orderingSummary, orderingBody); container.appendChild(ordering);
+
       // Render collapsible accordion sections per Category
       data.categories.forEach(function (cat) {
         var catBms = data.bookmarks.filter(function (b) { return b.categoryId === cat.id; });
 
         var details = document.createElement('details');
         details.className = 'bm-mgr-section';
+        details.dataset.categoryId = cat.id;
         details.style.cssText = 'background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; margin-bottom: 10px; overflow: hidden;';
         details.open = false;
 
@@ -1485,6 +1497,11 @@
         body.style.cssText = 'padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid rgba(148, 163, 184, 0.15);';
 
         var childInputs = [];
+        if (cat.builtIn) {
+          var restoreSection = HeavenlyRestoreUI.button({ categoryId:cat.id }, 'Restore This Section’s Official Order');
+          restoreSection.setAttribute('aria-label', 'Restore official order in ' + cat.title);
+          body.appendChild(restoreSection);
+        }
 
         if (catBms.length === 0) {
           var emptyMsg = document.createElement('div');

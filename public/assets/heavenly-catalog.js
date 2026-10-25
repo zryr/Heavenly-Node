@@ -1,8 +1,8 @@
 /* One canonical built-in catalog and review engine for all bookmark readers. */
 (function(root,factory){
-  if(typeof module==='object' && module.exports) module.exports=factory(require('./heavenly-navigation'));
-  else root.HeavenlyCatalog=factory(root.HeavenlyNavigation);
-}(typeof self!=='undefined'?self:this,function(navigation){
+  if(typeof module==='object' && module.exports) module.exports=factory(require('./heavenly-navigation'),require('./heavenly-official-order'));
+  else root.HeavenlyCatalog=factory(root.HeavenlyNavigation,root.HeavenlyOfficialOrder);
+}(typeof self!=='undefined'?self:this,function(navigation,officialOrder){
   'use strict';
   var defaults = {
   "categories": [
@@ -338,7 +338,7 @@
     {
       "id": "bm_ng",
       "categoryId": "cat_games",
-      "title": "Newgrounds: Syshi",
+      "title": "Newgrounds",
       "url": "https://newgrounds.com",
       "type": "folder_bookmark",
       "icon": "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64",
@@ -384,15 +384,29 @@
       "subBookmarks": []
     },
     {
-      "id": "bm_user_ng",
+      "id": "bm_history_minds",
       "categoryId": "cat_games",
-      "title": "Newgrounds",
-      "url": "https://newgrounds.com",
-      "type": "folder_bookmark",
-      "icon": "https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64",
-      "builtIn": false,
+      "subSectionId": "builtin",
+      "title": "History Minds",
+      "url": "https://historyminds.com/activities",
+      "type": "bookmark",
+      "icon": "preset:globe",
+      "builtIn": true,
       "hidden": false,
-      "order": 99,
+      "order": 5,
+      "subBookmarks": []
+    },
+    {
+      "id": "bm_dancing_bunny",
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "title": "Dancing Bunny",
+      "url": "https://cdn.jsdelivr.net/gh/ltorl/dancing-bunny/index.svg",
+      "type": "bookmark",
+      "icon": "preset:sparkles",
+      "builtIn": true,
+      "hidden": false,
+      "order": 6,
       "subBookmarks": []
     },
     {
@@ -1162,18 +1176,81 @@
   // Resolve historical omitted placement once in the canonical source.
   defaults.bookmarks.forEach(function(item){if(!item.subSectionId)item.subSectionId=item.builtIn?'builtin':'user';});
 
-  // Versions describe catalog content only. Diffing stable records verifies each release.
-  var release = { version: '2026.10.23.1', date: '2026-10-23', summary: 'The current Heavenly bookmark collection.', data: defaults };
+  // The small reviewed order manifest is the editor's repository-compatible source.
+  // Content stays here; generated bridge changes default layout only, never saved data.
+  applyOfficialOrder(defaults, officialOrder);
+  var release = { version: officialOrder.catalogVersion, date: '2026-10-24', summary: 'History Minds and Dancing Bunny join Games. Newgrounds is consolidated safely, and reviewed official ordering is available separately from your personal layout.', data: defaults };
   var key = 'heavenly_bookmarks';
-  var fields = ['title', 'url', 'icon', 'type', 'categoryId', 'subSectionId', 'side', 'defaultCollapsed', 'disableQuickSaveWidget', 'mirrorEligible'];
-  var personal = ['categoryId', 'subSectionId', 'side', 'disableQuickSaveWidget'];
+  var fields = ['title', 'url', 'icon', 'type', 'categoryId', 'subSectionId', 'side', 'defaultCollapsed', 'disableQuickSaveWidget', 'mirrorEligible', 'order'];
+  var personal = ['categoryId', 'subSectionId', 'side', 'disableQuickSaveWidget', 'order'];
   function clone(value) { return JSON.parse(JSON.stringify(value)); }
   function equal(a, b) { return JSON.stringify(a) === JSON.stringify(b); }
+  function applyOfficialOrder(data, manifest) {
+    function fail() { throw new Error('The reviewed official ordering is invalid. Rebuild its bridge before publishing.'); }
+    if (!manifest || manifest.schema !== 1 || typeof manifest.catalogVersion !== 'string' || !manifest.catalogVersion || !Array.isArray(manifest.categories) || !Array.isArray(manifest.bookmarks)) fail();
+    var original = records(data), seen = Object.create(null), slots = Object.create(null), entries = Object.create(null), layout = Object.create(null);
+    function order(value, group) {
+      if (!Number.isSafeInteger(value) || value < 0 || slots[group + ':' + value]) fail();
+      slots[group + ':' + value] = true;
+    }
+    function identity(key) { if (!original[key] || seen[key]) fail(); seen[key] = true; }
+    manifest.categories.forEach(function (cat) {
+      identity('category:' + cat.id);
+      if (['left', 'right', 'bottom'].indexOf(cat.side) === -1 || !Array.isArray(cat.subSections)) fail();
+      order(cat.order, 'side:' + cat.side);
+      cat.subSections.forEach(function (section) { identity('section:' + cat.id + ':' + section.id); order(section.order, 'sections:' + cat.id); });
+    });
+    function collect(items) { items.forEach(function (item) { entries[item.id] = item; collect(item.subBookmarks || []); }); }
+    collect(data.bookmarks);
+    manifest.bookmarks.forEach(function (item) {
+      identity('bookmark:' + item.id);
+      if (item.parentId !== null && typeof item.parentId !== 'string') fail();
+      // The workshop supports ranking nested links within their existing folder.
+      // Validate that same boundary here before a candidate bridge can redefine
+      // the model's expected tree during repository generation.
+      if (original['bookmark:' + item.id].parent !== item.parentId) fail();
+      if (!seen['category:' + item.categoryId] || !seen['section:' + item.categoryId + ':' + item.subSectionId]) fail();
+      var parent = item.parentId && entries[item.parentId];
+      if (item.parentId && (!parent || parent.id === item.id || !((parent.type === 'folder' || parent.type === 'folder_bookmark') || (parent.subBookmarks || []).length))) fail();
+      order(item.order, item.parentId ? 'children:' + item.parentId : 'bookmarks:' + item.categoryId + ':' + item.subSectionId);
+      layout[item.id] = item;
+    });
+    if (Object.keys(seen).length !== Object.keys(original).length) fail();
+    manifest.bookmarks.forEach(function (item) {
+      var visited = {}, current = item;
+      while (current.parentId) {
+        if (visited[current.id] || !layout[current.parentId]) fail();
+        visited[current.id] = true;
+        var ancestor = layout[current.parentId];
+        if (current.categoryId !== ancestor.categoryId || current.subSectionId !== ancestor.subSectionId) fail();
+        current = ancestor;
+      }
+    });
+    manifest.categories.forEach(function (cat) {
+      var target = data.categories.find(function (c) { return c.id === cat.id; });
+      target.side = cat.side; target.order = cat.order;
+      cat.subSections.forEach(function (section) { target.subSections.find(function (s) { return s.id === section.id; }).order = section.order; });
+      target.subSections.sort(function (a, b) { return a.order - b.order; });
+    });
+    Object.keys(entries).forEach(function (id) { entries[id].subBookmarks = []; });
+    data.bookmarks = [];
+    manifest.bookmarks.slice().sort(function (a, b) { return a.order - b.order; }).forEach(function (item) {
+      var target = entries[item.id]; target.order = item.order;
+      if (item.parentId) {
+        delete target.categoryId; delete target.subSectionId;
+        entries[item.parentId].subBookmarks.push(target);
+      } else {
+        target.categoryId = item.categoryId; target.subSectionId = item.subSectionId;
+        data.bookmarks.push(target);
+      }
+    });
+    return data;
+  }
   function validate(data, allowLegacy) {
     if (!data || !Array.isArray(data.categories) || !Array.isArray(data.bookmarks)) throw new Error('The saved bookmark collection is invalid. Export a backup before repairing it.');
     var ids = Object.create(null);
     function id(value, prefix) {
-      if (!value || typeof value.id !== 'string' || !value.id || ids[prefix + value.id]) throw new Error('The bookmark collection contains missing or duplicate identities.');
+      if (!value || typeof value !== 'object' || Array.isArray(value) || typeof value.id !== 'string' || !value.id || ids[prefix + value.id]) throw new Error('The bookmark collection contains missing or duplicate identities.');
       ids[prefix + value.id] = true;
     }
     data.categories.forEach(function (cat) {
@@ -1261,11 +1338,111 @@
     navigation.migrateBookmarkIcons(data);
     return data;
   }
+  // Identity-specific compatibility repair. This must run even after Skip, but it
+  // must never add optional catalog content or deduplicate a visitor's URLs.
+  function consolidateNewgrounds(data, meta, bundled) {
+    if (!records(bundled.data)['bookmark:bm_ng']) return;
+    var oldKey = 'bookmark:bm_user_ng', canonicalKey = 'bookmark:bm_ng';
+    var normal = findItem(data, oldKey), canonical = findItem(data, canonicalKey);
+    if (!normal && !canonical) return;
+    function knownTitle(value) { return value === 'Newgrounds' || value === 'Newgrounds: Syshi'; }
+    function legacyDefault(item, field) {
+      var legacy = { categoryId:'cat_games', subSectionId:item.id === 'bm_user_ng' ? 'user' : 'builtin', order:item.id === 'bm_user_ng' ? 99 : 1,
+        title:item.id === 'bm_user_ng' ? 'Newgrounds' : 'Newgrounds: Syshi', url:'https://newgrounds.com', type:'folder_bookmark',
+        icon:'https://www.google.com/s2/favicons?domain=newgrounds.com&sz=64', hidden:false };
+      return item[field] === undefined || equal(item[field], legacy[field]) || field === 'title' && knownTitle(item[field]);
+    }
+    // Missing subsection metadata on very old normal records means Your Bookmarks.
+    // compatible() cannot infer this after we promote its identity.
+    if (normal && !normal.subSectionId) normal.subSectionId = 'user';
+    if (normal) {
+      meta.migrations = meta.migrations && typeof meta.migrations === 'object' && !Array.isArray(meta.migrations) ? meta.migrations : {};
+      var migration = meta.migrations.newgrounds;
+      if (!migration || migration.schema !== 1 || !Array.isArray(migration.originals)) migration = meta.migrations.newgrounds = { schema:1, canonicalId:'bm_ng', retiredId:'bm_user_ng', originals:[], conflicts:[] };
+      // Full original records make conflicting icons, launch choices and long notes
+      // recoverable from the local popup and private backup, without public sharing.
+      [canonical, normal].filter(Boolean).forEach(function (item) {
+        var original = clone(item), fingerprint = stamp(original);
+        if (!migration.originals.some(function (saved) { return saved.fingerprint === fingerprint && equal(saved.record, original); })) migration.originals.push({ fingerprint:fingerprint, record:original });
+      });
+      if (!canonical) {
+        canonical = normal; canonical.id = 'bm_ng';
+      } else {
+        function conflict(field) {
+          if (migration.conflicts.indexOf(field) === -1) migration.conflicts.push(field);
+        }
+        var canonicalMoved = !legacyDefault(canonical, 'categoryId') || !legacyDefault(canonical, 'subSectionId');
+        var normalMoved = !legacyDefault(normal, 'categoryId') || !legacyDefault(normal, 'subSectionId');
+        if (!canonicalMoved && normalMoved) {
+          canonical.categoryId = normal.categoryId; canonical.subSectionId = normal.subSectionId; canonical.order = normal.order;
+        } else if (!canonicalMoved && !normalMoved && legacyDefault(canonical, 'order') && !legacyDefault(normal, 'order')) {
+          canonical.categoryId = normal.categoryId; canonical.subSectionId = normal.subSectionId; canonical.order = normal.order;
+        } else if ((canonicalMoved || !legacyDefault(canonical, 'order')) && (normalMoved || !legacyDefault(normal, 'order')) &&
+            (!equal(canonical.categoryId, normal.categoryId) || !equal(canonical.subSectionId, normal.subSectionId) || !equal(canonical.order, normal.order))) conflict('position');
+        canonical.hidden = !!(canonical.hidden || normal.hidden);
+        var aNote = typeof canonical.personalNote === 'string' ? canonical.personalNote : '', bNote = typeof normal.personalNote === 'string' ? normal.personalNote : '';
+        if (bNote && bNote !== aNote) canonical.personalNote = aNote ? aNote + '\n\n— Saved from Newgrounds —\n' + bNote : bNote;
+        Object.keys(normal).forEach(function (field) {
+          if (['id','builtIn','hidden','personalNote','subBookmarks','mirrorPreferences','categoryId','subSectionId','order','__proto__','constructor','prototype'].indexOf(field) !== -1) return;
+          if (canonical[field] === undefined || legacyDefault(canonical, field) && !legacyDefault(normal, field)) canonical[field] = clone(normal[field]);
+          else if (!legacyDefault(normal, field) && !equal(canonical[field], normal[field])) conflict(field);
+        });
+        function locate(items, target) {
+          for (var i = 0; i < items.length; i++) {
+            if (items[i] === target) return { items:items, index:i };
+            var found = locate(items[i].subBookmarks || [], target);
+            if (found) return found;
+          }
+          return null;
+        }
+        // A visitor can nest either legacy identity inside the other. Detach
+        // before merging their children so no canonical record is removed with
+        // its ancestor, and no self-referencing tree can be created.
+        var nestedCanonical = locate(normal.subBookmarks || [], canonical);
+        var normalLocation = locate(data.bookmarks, normal);
+        if (nestedCanonical) {
+          nestedCanonical.items.splice(nestedCanonical.index, 1);
+          normalLocation.items[normalLocation.index] = canonical;
+          ['categoryId','subSectionId','order'].forEach(function (field) {
+            if (normal[field] !== undefined) canonical[field] = clone(normal[field]);
+          });
+          conflict('nestedPlacement');
+        } else normalLocation.items.splice(normalLocation.index, 1);
+        canonical.subBookmarks = (canonical.subBookmarks || []).concat(normal.subBookmarks || []);
+        var aPrefs = canonical.mirrorPreferences, bPrefs = normal.mirrorPreferences;
+        if (bPrefs && typeof bPrefs === 'object' && !Array.isArray(bPrefs)) {
+          if (!aPrefs || typeof aPrefs !== 'object' || Array.isArray(aPrefs)) canonical.mirrorPreferences = clone(bPrefs);
+          else {
+            Object.keys(bPrefs).forEach(function (field) {
+              if (field === 'order' && Array.isArray(bPrefs.order)) {
+                aPrefs.order = (Array.isArray(aPrefs.order) ? aPrefs.order : []).concat(bPrefs.order).filter(function (id, index, all) { return all.indexOf(id) === index; });
+              } else if (aPrefs[field] === undefined) aPrefs[field] = clone(bPrefs[field]);
+              else if (!equal(aPrefs[field], bPrefs[field])) conflict('mirrorPreferences.' + field);
+            });
+          }
+        }
+      }
+      delete meta.base[oldKey]; delete meta.accepted[oldKey];
+      meta.installed = meta.installed.filter(function (key) { return key !== oldKey; });
+      meta.tombstones[oldKey] = true;
+      migration.conflicts.forEach(function (field) {
+        if (!(meta.conflicts || []).some(function (c) { return c.key === canonicalKey && c.field === field && c.migration === 'newgrounds'; })) {
+          if (!Array.isArray(meta.conflicts)) meta.conflicts = [];
+          meta.conflicts.push({ key:canonicalKey, title:'Newgrounds', field:field, migration:'newgrounds', message:field === 'nestedPlacement' ? 'Moved Newgrounds into its retired containing bookmark’s slot to preserve every saved link; both originals remain available in Saved links & recovery.' : 'Kept the existing ' + field + '; both originals remain available in Saved links & recovery.' });
+        }
+      });
+    }
+    if (knownTitle(canonical.title)) canonical.title = 'Newgrounds';
+    canonical.builtIn = true;
+    return data;
+  }
   function prepare(data, bundled) {
     bundled = bundled || release; validate(bundled.data); validate(data, true);
     migrateLegacyIds(data, bundled); validate(data);
     compatible(data, bundled);
-    var meta = metadata(data, bundled), present = records(data);
+    var meta = metadata(data, bundled);
+    consolidateNewgrounds(data, meta, bundled);
+    var present = records(data);
     meta.installed.forEach(function (identity) { if (!present[identity]) meta.tombstones[identity] = true; });
     return data;
   }
@@ -1283,6 +1460,11 @@
       var before = meta.base[identity], after = next[identity];
       if (equal(signature(before), signature(after))) return;
       var change = { key:identity, kind:after ? before ? 'updated' : 'added' : 'removed', before:before || null, after:after || null };
+      if (before && after) {
+        var oldContent = signature(before), newContent = signature(after);
+        ['parent','order','side','categoryId','subSectionId'].forEach(function (field) { delete oldContent[field]; delete newContent[field]; });
+        change.layoutOnly = equal(oldContent, newContent);
+      }
       change.id = identity + ':' + stamp([signature(before), signature(after)]);
       if (meta.tombstones[identity]) return;
       changes.push(change);
@@ -1304,18 +1486,24 @@
   }
   function appendOrder(items, match) { return items.reduce(function (max, item) { return match(item) ? Math.max(max, Number(item.order) || 0) : max; }, -1) + 1; }
   function findItem(data, identity) {
-    var rec = records(data)[identity];
-    if (!rec) return null;
-    if (rec.kind === 'category') return data.categories.find(function (c) { return c.id === rec.value.id; });
-    if (rec.kind === 'section') return data.categories.find(function (c) { return c.id === rec.parent; }).subSections.find(function (s) { return s.id === rec.value.id; });
-    function find(items) { for (var i=0;i<items.length;i++) { if (items[i].id === rec.value.id) return items[i]; var child=find(items[i].subBookmarks || []); if(child)return child; } return null; }
+    if (identity.indexOf('category:') === 0) return data.categories.find(function (c) { return 'category:' + c.id === identity; }) || null;
+    if (identity.indexOf('section:') === 0) {
+      for (var index = 0; index < data.categories.length; index++) {
+        var category = data.categories[index], section = (category.subSections || []).find(function (s) { return 'section:' + category.id + ':' + s.id === identity; });
+        if (section) return section;
+      }
+      return null;
+    }
+    if (identity.indexOf('bookmark:') !== 0) return null;
+    var id = identity.slice('bookmark:'.length);
+    function find(items) { for (var i=0;i<items.length;i++) { if (items[i].id === id) return items[i]; var child=find(items[i].subBookmarks || []); if(child)return child; } return null; }
     return find(data.bookmarks);
   }
   function merge(data, bundled, decision) {
     bundled = bundled || release; data = prepare(clone(data), bundled);
     var review = pending(data, bundled), meta = data._catalog, next = records(bundled.data);
     if (!review.changes.length) return data;
-    meta.conflicts = [];
+    meta.conflicts = (meta.conflicts || []).filter(function (conflict) { return !!conflict.migration; });
     review.changes.forEach(function (change) {
       var record = change.after || change.before, item = findItem(data, change.key);
       meta.decisions[change.id] = decision;
@@ -1352,7 +1540,7 @@
           if (item[field] === undefined || equal(item[field], previous && previous.value[field])) {
             if (field === 'url' && item.url && item.url !== record.value.url) item.catalogPreviousUrls = (item.catalogPreviousUrls || []).concat([item.url]).filter(function(url,index,all){return all.indexOf(url)===index;});
             if (record.value[field] === undefined) delete item[field]; else item[field] = clone(record.value[field]);
-          } else meta.conflicts.push({key:change.key, title:item.title, field:field, message:'Kept your customized ' + field + '.'});
+          } else if (!equal(item[field], record.value[field])) meta.conflicts.push({key:change.key, title:item.title, field:field, message:'Kept your customized ' + field + '.'});
         });
         delete item.catalogRetired;
       }
@@ -1404,5 +1592,80 @@
     return data;
   }
 
-  return { defaults:defaults, release:release, fresh:fresh, load:load, prepare:prepare, pending:pending, merge:merge, commit:commit, validate:validate, imported:imported, records:records };
+  function restoration(data, scope, bundled) {
+    bundled = bundled || release;
+    data = prepare(clone(data), bundled); scope = scope || {};
+    if (!scope || typeof scope !== 'object' || Array.isArray(scope) || Object.keys(scope).some(function (field) { return field !== 'categoryId' && field !== 'subSectionId'; }) ||
+        scope.categoryId !== undefined && typeof scope.categoryId !== 'string' || scope.subSectionId !== undefined && (typeof scope.subSectionId !== 'string' || !scope.categoryId)) throw new Error('Choose a valid official-order scope.');
+    var category = scope.categoryId && data.categories.find(function (c) { return c.id === scope.categoryId; });
+    if (scope.categoryId && !category || scope.subSectionId && !(category.subSections || []).some(function (s) { return s.id === scope.subSectionId; })) throw new Error('This bookmark section no longer exists.');
+    var accepted = data._catalog.accepted, current = records(data), changes = [], eligibleBookmarks = Object.create(null);
+    var fingerprint = stamp([scope, data]);
+    function change(key, item, patch) {
+      var before = {}, after = {};
+      Object.keys(patch).forEach(function (field) { if (!equal(item[field], patch[field])) { before[field] = item[field]; after[field] = patch[field]; item[field] = patch[field]; } });
+      if (Object.keys(after).length) changes.push({ key:key, title:item.title || item.id, before:before, after:after });
+    }
+    Object.keys(accepted).forEach(function (key) {
+      var official = accepted[key], saved = current[key];
+      if (!saved || data._catalog.tombstones[key]) return;
+      var item = findItem(data, key), value = official.value;
+      if (official.kind === 'category') {
+        if (!scope.categoryId) { var patch = {}; if (typeof value.side === 'string') patch.side = value.side; if (typeof value.order === 'number') patch.order = value.order; change(key, item, patch); }
+      } else if (official.kind === 'bookmark') {
+        // Restore relative order in an existing destination. Moving a built-in to
+        // another category/folder remains a personal decision, including globally.
+        if (saved.parent !== official.parent) return;
+        var top = saved, target = official;
+        while (top.parent && current['bookmark:' + top.parent] && accepted['bookmark:' + target.parent]) { top = current['bookmark:' + top.parent]; target = accepted['bookmark:' + target.parent]; }
+        if (top.parent || target.parent || top.value.categoryId !== target.value.categoryId || top.value.subSectionId !== target.value.subSectionId) return;
+        if (scope.categoryId && top.value.categoryId !== scope.categoryId || scope.subSectionId && top.value.subSectionId !== scope.subSectionId) return;
+        eligibleBookmarks[key] = true;
+        if (typeof value.order === 'number' && Number.isFinite(value.order)) change(key, item, { order:value.order });
+      }
+    });
+    data.categories.forEach(function (cat) {
+      if (scope.subSectionId || scope.categoryId && scope.categoryId !== cat.id) return;
+      var sections = cat.subSections || [], eligible = sections.filter(function (section) { return !!accepted['section:' + cat.id + ':' + section.id] && !data._catalog.tombstones['section:' + cat.id + ':' + section.id]; });
+      var acceptedKeys = Object.keys(accepted);
+      var sorted = eligible.slice().sort(function (a, b) {
+        var ak = 'section:' + cat.id + ':' + a.id, bk = 'section:' + cat.id + ':' + b.id;
+        var av = accepted[ak].value.order, bv = accepted[bk].value.order;
+        return (typeof av === 'number' ? av : acceptedKeys.indexOf(ak)) - (typeof bv === 'number' ? bv : acceptedKeys.indexOf(bk));
+      }), index = 0, before = sections.map(function (s) { return s.id; });
+      cat.subSections = sections.map(function (section) { return eligible.indexOf(section) === -1 ? section : sorted[index++]; });
+      if (!equal(before, cat.subSections.map(function (s) { return s.id; }))) changes.push({ key:'sections:' + cat.id, title:cat.title + ' sections', before:{ sectionIds:before }, after:{ sectionIds:cat.subSections.map(function (s) { return s.id; }) } });
+      eligible.forEach(function (section) { var key = 'section:' + cat.id + ':' + section.id, value = accepted[key].value; if (typeof value.order === 'number') change(key, section, { order:value.order }); });
+    });
+    // Some historical nested renderers follow array position, while newer views
+    // use order. Reorder only official slots and leave every personal child intact.
+    function nested(items) {
+      items.forEach(function (parent) {
+        if (!Array.isArray(parent.subBookmarks)) return;
+        var children = parent.subBookmarks || [], before = children.map(function (child) { return child.id; });
+        var eligible = children.filter(function (child) { var key = 'bookmark:' + child.id; return eligibleBookmarks[key] && accepted[key] && accepted[key].parent === parent.id && typeof accepted[key].value.order === 'number'; });
+        var sorted = eligible.slice().sort(function (a, b) { return a.order - b.order; }), i = 0;
+        parent.subBookmarks = children.map(function (child) { return eligible.indexOf(child) === -1 ? child : sorted[i++]; });
+        if (!equal(before, parent.subBookmarks.map(function (child) { return child.id; }))) changes.push({ key:'children:' + parent.id, title:parent.title + ' links', before:{ childIds:before }, after:{ childIds:parent.subBookmarks.map(function (child) { return child.id; }) } });
+        nested(parent.subBookmarks);
+      });
+    }
+    nested(data.bookmarks);
+    return { data:data, scope:clone(scope), count:changes.length, changes:changes, fingerprint:fingerprint };
+  }
+  function previewRestore(data, scope, bundled) {
+    var result = restoration(data, scope, bundled); delete result.data; return result;
+  }
+  function restoreOrder(data, scope, bundled) { return restoration(data, scope, bundled).data; }
+  function commitRestore(storage, scope, expected, bundled) {
+    var raw = storage.getItem(key);
+    if (raw === null) throw new Error('The collection changed. Reopen Restore Official Order.');
+    var result = restoration(JSON.parse(raw), scope, bundled);
+    if (expected && expected !== result.fingerprint) throw new Error('Your bookmarks changed. Review the official-order preview again.');
+    storage.setItem(key, JSON.stringify(result.data));
+    return result.data;
+  }
+
+  return { defaults:defaults, release:release, fresh:fresh, load:load, prepare:prepare, pending:pending, merge:merge, commit:commit, validate:validate, imported:imported, records:records,
+    previewRestore:previewRestore, restoreOrder:restoreOrder, commitRestore:commitRestore, applyOfficialOrder:applyOfficialOrder };
 }));

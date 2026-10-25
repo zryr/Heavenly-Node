@@ -1,0 +1,53 @@
+{
+  "executed": "2026-10-25T01:21:58.016Z",
+  "physicalDevices": [],
+  "destination": "https://cdn.jsdelivr.net/gh/ltorl/dancing-bunny/index.svg",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "version": "154.0.8037.57",
+      "httpStatus": 200,
+      "contentType": "image/svg+xml",
+      "finalURL": "https://cdn.jsdelivr.net/gh/ltorl/dancing-bunny/index.svg",
+      "initialPages": 1,
+      "buttonCount": 1,
+      "documentRoot": {
+        "name": "svg",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "contentType": "image/svg+xml"
+      },
+      "afterManualClickPages": 2,
+      "openURLs": [
+        "about:blank",
+        "about:blank"
+      ],
+      "status": "observed"
+    },
+    {
+      "engine": "firefox",
+      "version": "153.0",
+      "status": "blocked-or-unavailable",
+      "failure": "page.goto: SEC_ERROR_UNKNOWN_ISSUER\nCall log:\n\u001b[2m  - navigating to \"https://cdn.jsdelivr.net/gh/ltorl/dancing-bunny/index.svg\", waiting until \"domcontentloaded\"\u001b[22m\n"
+    },
+    {
+      "engine": "webkit",
+      "version": "26.5",
+      "httpStatus": 200,
+      "contentType": "image/svg+xml",
+      "finalURL": "https://cdn.jsdelivr.net/gh/ltorl/dancing-bunny/index.svg",
+      "initialPages": 1,
+      "buttonCount": 1,
+      "documentRoot": {
+        "name": "svg",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "contentType": "image/svg+xml"
+      },
+      "afterManualClickPages": 2,
+      "openURLs": [
+        "about:blank",
+        "about:blank"
+      ],
+      "status": "observed"
+    }
+  ]
+}
