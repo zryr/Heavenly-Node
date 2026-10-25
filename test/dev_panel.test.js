@@ -29,31 +29,41 @@ describe("Developer QA Panel, Loading Screen Redesign & Touch Drop Indicators", 
   });
 
   describe("Shared Heavenly Loading Screen", function () {
-    it("uses the same accessible winged mark and shimmer on home and Settings", function () {
+    it("uses the same accessible celestial mark and shimmer on home and Settings", function () {
       const settingsHtml = fs.readFileSync(path.join(__dirname, '../public/settings.html'), 'utf8');
-      const overlay = html => html.slice(html.indexOf('<div id="heavenly-loading-screen"'), html.indexOf('<div class="glow-orb glow-orb-1"'))
-        .replace(/Entering Heavenly\.\.\.|Initializing Heavenly\.\.\./g, 'Loading Heavenly...').replace(/\s+/g, ' ').trim();
+      function overlay(html) {
+        const source = html.slice(html.indexOf('<div id="heavenly-loading-screen"'));
+        let depth = 0;
+        for (const match of source.matchAll(/<\/?div\b[^>]*>/g)) {
+          depth += match[0].startsWith('</') ? -1 : 1;
+          if (!depth) return source.slice(0, match.index + match[0].length)
+            .replace(/Entering Heavenly\.\.\.|Initializing Heavenly\.\.\./g, 'Loading Heavenly...').replace(/\s+/g, ' ').trim();
+        }
+        throw new Error('Loader markup is incomplete');
+      }
       assert.strictEqual(overlay(indexHtml), overlay(settingsHtml), 'Both routes share the same loader structure, with route-specific status copy');
       for (const html of [indexHtml, settingsHtml]) {
         assert(html.includes('href="/assets/heavenly-loading.css"'), 'Both routes load the shared stylesheet');
+        assert(html.includes('src="/assets/heavenly-loading.js"'), 'Both routes share readiness and fallback behavior');
         assert(!html.includes('.loading-overlay {'), 'Loader styling is defined once');
         assert(html.includes('class="loading-overlay" role="status" aria-live="polite"'));
-        assert(html.includes('loading-wings-wrapper') && html.includes('loading-wing-right'));
+        assert(html.includes('loading-logo-img') && !html.includes('loading-wings-wrapper'));
         assert(html.includes('loading-shimmer-line'));
+        assert(!html.includes('setTimeout(hideLoadingScreen, 300)'), 'Readiness has no artificial wait');
       }
     });
 
-    it("settles the mark once, preserves wing mirroring and keeps prompt dismissal", function () {
+    it("keeps the mark still, limits repeated motion and supplies a bounded fallback", function () {
       const css = fs.readFileSync(path.join(__dirname, '../public/assets/heavenly-loading.css'), 'utf8');
       assert(indexHtml.includes('Entering Heavenly...'), 'The homepage keeps its existing welcome copy');
       const loopingLines = css.split('\n').filter(line => /animation:.*infinite/.test(line));
       assert.strictEqual(loopingLines.length, 1, 'Only the indeterminate waiting indicator repeats');
       assert(loopingLines[0].includes('heavenly-loading-shimmer'));
-      const rightWing = css.match(/@keyframes heavenly-loading-wing-right \{([^\n]+)\}/)[1];
-      assert.strictEqual((rightWing.match(/scaleX\(-1\)/g) || []).length, 2, 'Both resting and moving keyframes retain the mirrored wing');
-      assert(css.includes('heavenly-loading-dismiss 500ms'), 'Dismissal retains the existing fade duration');
+      assert(!/animation:[^;]*heavenly-loading-(?:wing|mark)/.test(css), 'The emblem does not flap or pulse');
+      assert(css.includes('heavenly-loading-dismiss 220ms'), 'Dismissal is prompt and independent of the shimmer');
+      assert(css.includes('heavenly-loading-failsafe 0s 4s'), 'Failed JavaScript cannot strand a blocking overlay');
       assert(css.includes('@media (prefers-reduced-motion: reduce)'));
-      assert(css.includes('.loading-overlay *, .loading-overlay.fade-out { animation: none; }'));
+      assert(css.includes('.loading-overlay * { animation: none; }'));
     });
   });
 

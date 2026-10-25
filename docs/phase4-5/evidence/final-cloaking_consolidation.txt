@@ -1,0 +1,14 @@
+PASS visible legacy shortcut migrates in place; one pill toggles Auto while accurately showing independent Persistent state
+PASS redundant Settings Configure action is removed while full Persistent, preset and randomization controls remain
+PASS behavior/identity/pool edits stay staged, custom preview works and Cancel preserves every saved field
+PASS pool is editable while randomization is off; enabling reuses existing session rules and synchronizes Settings without changing manual identity or cloak modes
+PASS manual presets are remembered during randomization and return when it is disabled; the pool remains unchanged
+PASS Select All retains saved unavailable/custom entries; Deselect All preserves the existing empty-pool fallback and never resets manual selection
+PASS array conflicts retain pool drafts, adopt untouched external toggles and require explicit Keep or Load
+PASS phone expanded pool uses native scrolling, fits the viewport and keeps footer/keyboard navigation usable
+PASS iPad portrait expanded pool uses native scrolling, fits the viewport and keeps footer/keyboard navigation usable
+PASS iPad landscape expanded pool uses native scrolling, fits the viewport and keeps footer/keyboard navigation usable
+PASS Chromebook expanded pool uses native scrolling, fits the viewport and keeps footer/keyboard navigation usable
+PASS desktop expanded pool uses native scrolling, fits the viewport and keeps footer/keyboard navigation usable
+PASS reload, reduced motion, preserved customization/data and browser scripts remain reliable
+13 cloaking consolidation checks passed in chromium

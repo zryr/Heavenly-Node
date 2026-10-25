@@ -1,0 +1,20 @@
+PASS chromium: homepage dismisses during initialization without a 300ms hold or waiting for a delayed decorative image
+PASS chromium: interrupted dismiss/show cannot hide the current loader, and loader changes preserve focus
+PASS chromium: HQ has no visible shortcut/search result; intentional codex submission through Go and Enter opens it without changing bookmarks
+PASS chromium: reduced motion stops the shimmer, dismissal is immediate, and an interrupted initialization has a bounded fallback
+PASS chromium: Settings shares immediate readiness dismissal and introduces no HQ launch control
+PASS chromium: a deliberately throwing page initializer cannot leave a blocking overlay
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox: homepage dismisses during initialization without a 300ms hold or waiting for a delayed decorative image
+PASS firefox: interrupted dismiss/show cannot hide the current loader, and loader changes preserve focus
+PASS firefox: HQ has no visible shortcut/search result; intentional codex submission through Go and Enter opens it without changing bookmarks
+PASS firefox: reduced motion stops the shimmer, dismissal is immediate, and an interrupted initialization has a bounded fallback
+PASS firefox: Settings shares immediate readiness dismissal and introduces no HQ launch control
+PASS firefox: a deliberately throwing page initializer cannot leave a blocking overlay
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit: homepage dismisses during initialization without a 300ms hold or waiting for a delayed decorative image
+PASS webkit: interrupted dismiss/show cannot hide the current loader, and loader changes preserve focus
+PASS webkit: HQ has no visible shortcut/search result; intentional codex submission through Go and Enter opens it without changing bookmarks
+PASS webkit: reduced motion stops the shimmer, dismissal is immediate, and an interrupted initialization has a bounded fallback
+PASS webkit: Settings shares immediate readiness dismissal and introduces no HQ launch control
+PASS webkit: a deliberately throwing page initializer cannot leave a blocking overlay

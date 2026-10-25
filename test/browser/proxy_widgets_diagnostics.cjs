@@ -59,6 +59,7 @@ const pass = msg => { checks++; console.log('PASS ' + msg); };
   assert.equal(page.url(), proxied('/video')); assert.equal(await page.evaluate(() => window.routerValidated), '/proxy/' + remote + '/video');
   pass('collapsed document path is repaired with replaceState before framework scripts execute');
 
+  await expandDock(page);
   await page.waitForSelector('#dock-bm-btn');
   page.on('dialog', dialog => dialog.accept());
   const categories = [{ id: 'movies', title: 'Movies/Shows', subSections: [{ id: 'saved', title: 'Saved' }] }, { id: 'games', title: 'Games' }];

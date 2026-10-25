@@ -1,0 +1,2155 @@
+{
+  "executed": "2026-10-25T16:15:52.664Z",
+  "physicalDevices": [],
+  "touchScope": "Continuous gestures use the separate Chromium CDP suite; WebKit here is Linux engine emulation.",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "keyboard Layout options closes to its trigger; reset is disabled at defaults; search preserves all four panel states",
+        "six required viewport sizes retain the same category DOM and usable center controls; 12 resize paint frames stay within the viewport; keyboard resize remains functional",
+        "rapid Show More/category reversal preserve focus/final state; independent collapsed rail headers support real vertical mouse reorder; stable IDs survive move/reload; empty side has no track/control",
+        "Reset layout only restores widths and panel/category collapse; bookmark placement, notes, Show More and Settings data remain intact",
+        "legacy fixed counts remain Custom; Settings Auto/Custom/section overrides work; Auto bottom counts follow actual measured rows across five widths"
+      ],
+      "viewports": [
+        {
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "frames": [],
+          "scrollWidth": 1440,
+          "innerWidth": 1440,
+          "center": {
+            "x": 288,
+            "right": 1152,
+            "width": 864
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 329,
+              "right": 1111,
+              "width": 782,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 329,
+              "right": 943.453125,
+              "width": 614.453125,
+              "height": 48
+            },
+            {
+              "id": "search-go-btn",
+              "x": 951.453125,
+              "right": 1015.671875,
+              "width": 64.21875,
+              "height": 48
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 1023.671875,
+              "right": 1111,
+              "width": 87.328125,
+              "height": 48
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "wide",
+          "width": 1920,
+          "height": 1080,
+          "frames": [
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            }
+          ],
+          "scrollWidth": 1920,
+          "innerWidth": 1920,
+          "center": {
+            "x": 464,
+            "right": 1456,
+            "width": 992
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 505,
+              "right": 1415,
+              "width": 910,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 505,
+              "right": 1247.453125,
+              "width": 742.453125,
+              "height": 48
+            },
+            {
+              "id": "search-go-btn",
+              "x": 1255.453125,
+              "right": 1319.671875,
+              "width": 64.21875,
+              "height": 48
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 1327.671875,
+              "right": 1415,
+              "width": 87.328125,
+              "height": 48
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "ipad-portrait",
+          "width": 820,
+          "height": 1180,
+          "frames": [
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            }
+          ],
+          "scrollWidth": 820,
+          "innerWidth": 820,
+          "center": {
+            "x": 288,
+            "right": 744,
+            "width": 456
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 313.59375,
+              "right": 718.40625,
+              "width": 404.8125,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 313.59375,
+              "right": 550.859375,
+              "width": 237.265625,
+              "height": 48
+            },
+            {
+              "id": "search-go-btn",
+              "x": 558.859375,
+              "right": 623.078125,
+              "width": 64.21875,
+              "height": 48
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 631.078125,
+              "right": 718.40625,
+              "width": 87.328125,
+              "height": 48
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": false,
+                "width": 240,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "ipad-landscape",
+          "width": 1180,
+          "height": 820,
+          "frames": [
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            }
+          ],
+          "scrollWidth": 1180,
+          "innerWidth": 1180,
+          "center": {
+            "x": 288,
+            "right": 892,
+            "width": 604
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 324.390625,
+              "right": 855.609375,
+              "width": 531.21875,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 324.390625,
+              "right": 688.0625,
+              "width": 363.671875,
+              "height": 48
+            },
+            {
+              "id": "search-go-btn",
+              "x": 696.0625,
+              "right": 760.28125,
+              "width": 64.21875,
+              "height": 48
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 768.28125,
+              "right": 855.609375,
+              "width": 87.328125,
+              "height": 48
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "phone-small",
+          "width": 320,
+          "height": 740,
+          "frames": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            }
+          ],
+          "scrollWidth": 320,
+          "innerWidth": 320,
+          "center": {
+            "x": 12,
+            "right": 308,
+            "width": 296
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 29,
+              "right": 291,
+              "width": 262,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 29,
+              "right": 291,
+              "width": 262,
+              "height": 48
+            },
+            {
+              "id": "search-go-btn",
+              "x": 29,
+              "right": 165.09375,
+              "width": 136.09375,
+              "height": 48
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 173.09375,
+              "right": 291,
+              "width": 117.90625,
+              "height": 48
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": true,
+              "left": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "frames": [
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            }
+          ],
+          "scrollWidth": 390,
+          "innerWidth": 390,
+          "center": {
+            "x": 12,
+            "right": 378,
+            "width": 366
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 29,
+              "right": 361,
+              "width": 332,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 29,
+              "right": 361,
+              "width": 332,
+              "height": 48
+            },
+            {
+              "id": "search-go-btn",
+              "x": 29,
+              "right": 213,
+              "width": 184,
+              "height": 48
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 221,
+              "right": 361,
+              "width": 140,
+              "height": 48
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": true,
+              "left": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "keyboard Layout options closes to its trigger; reset is disabled at defaults; search preserves all four panel states",
+        "six required viewport sizes retain the same category DOM and usable center controls; 12 resize paint frames stay within the viewport; keyboard resize remains functional",
+        "rapid Show More/category reversal preserve focus/final state; independent collapsed rail headers support real vertical mouse reorder; stable IDs survive move/reload; empty side has no track/control",
+        "Reset layout only restores widths and panel/category collapse; bookmark placement, notes, Show More and Settings data remain intact",
+        "legacy fixed counts remain Custom; Settings Auto/Custom/section overrides work; Auto bottom counts follow actual measured rows across five widths"
+      ],
+      "viewports": [
+        {
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "frames": [],
+          "scrollWidth": 1440,
+          "innerWidth": 1440,
+          "center": {
+            "x": 288,
+            "right": 1152,
+            "width": 864
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 329,
+              "right": 1111,
+              "width": 782,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 329,
+              "right": 945.4666748046875,
+              "width": 616.4666748046875,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 953.4666748046875,
+              "right": 1016.9666748046875,
+              "width": 63.5,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 1024.9666748046875,
+              "right": 1111.000015258789,
+              "width": 86.03334045410156,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "wide",
+          "width": 1920,
+          "height": 1080,
+          "frames": [
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            }
+          ],
+          "scrollWidth": 1920,
+          "innerWidth": 1920,
+          "center": {
+            "x": 464,
+            "right": 1456,
+            "width": 992
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 505,
+              "right": 1415,
+              "width": 910,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 505,
+              "right": 1249.4666748046875,
+              "width": 744.4666748046875,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 1257.4666748046875,
+              "right": 1320.9666748046875,
+              "width": 63.5,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 1328.9666748046875,
+              "right": 1415.000015258789,
+              "width": 86.03334045410156,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "ipad-portrait",
+          "width": 820,
+          "height": 1180,
+          "frames": [
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            }
+          ],
+          "scrollWidth": 820,
+          "innerWidth": 820,
+          "center": {
+            "x": 288,
+            "right": 744,
+            "width": 456
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 313.6000061035156,
+              "right": 718.3999938964844,
+              "width": 404.79998779296875,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 313.6000061035156,
+              "right": 552.8666687011719,
+              "width": 239.26666259765625,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 560.86669921875,
+              "right": 624.36669921875,
+              "width": 63.5,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 632.36669921875,
+              "right": 718.4000244140625,
+              "width": 86.0333251953125,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": false,
+                "width": 240,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "ipad-landscape",
+          "width": 1180,
+          "height": 820,
+          "frames": [
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            }
+          ],
+          "scrollWidth": 1180,
+          "innerWidth": 1180,
+          "center": {
+            "x": 288,
+            "right": 892,
+            "width": 604
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 324.3999938964844,
+              "right": 855.6000061035156,
+              "width": 531.2000122070312,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 324.3999938964844,
+              "right": 690.0666809082031,
+              "width": 365.66668701171875,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 698.066650390625,
+              "right": 761.566650390625,
+              "width": 63.5,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 769.566650390625,
+              "right": 855.5999908447266,
+              "width": 86.03334045410156,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "phone-small",
+          "width": 320,
+          "height": 740,
+          "frames": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            }
+          ],
+          "scrollWidth": 320,
+          "innerWidth": 320,
+          "center": {
+            "x": 12,
+            "right": 308,
+            "width": 296
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 29,
+              "right": 291,
+              "width": 262,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 29,
+              "right": 291,
+              "width": 262,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 29,
+              "right": 165.0833282470703,
+              "width": 136.0833282470703,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 173.0833282470703,
+              "right": 291,
+              "width": 117.91667175292969,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": true,
+              "left": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "frames": [
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            }
+          ],
+          "scrollWidth": 390,
+          "innerWidth": 390,
+          "center": {
+            "x": 12,
+            "right": 378,
+            "width": 366
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 29,
+              "right": 361,
+              "width": 332,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 29,
+              "right": 361,
+              "width": 332,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 29,
+              "right": 213,
+              "width": 184,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 221,
+              "right": 361,
+              "width": 140,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": true,
+              "left": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "keyboard Layout options closes to its trigger; reset is disabled at defaults; search preserves all four panel states",
+        "six required viewport sizes retain the same category DOM and usable center controls; 12 resize paint frames stay within the viewport; keyboard resize remains functional",
+        "rapid Show More/category reversal preserve focus/final state; independent collapsed rail headers support real vertical mouse reorder; stable IDs survive move/reload; empty side has no track/control",
+        "Reset layout only restores widths and panel/category collapse; bookmark placement, notes, Show More and Settings data remain intact",
+        "legacy fixed counts remain Custom; Settings Auto/Custom/section overrides work; Auto bottom counts follow actual measured rows across five widths"
+      ],
+      "viewports": [
+        {
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "frames": [],
+          "scrollWidth": 1440,
+          "innerWidth": 1440,
+          "center": {
+            "x": 288,
+            "right": 1152,
+            "width": 864
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 329,
+              "right": 1111,
+              "width": 782,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 329,
+              "right": 945.109375,
+              "width": 616.109375,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 953.109375,
+              "right": 1016.609375,
+              "width": 63.5,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 1024.609375,
+              "right": 1111,
+              "width": 86.390625,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "wide",
+          "width": 1920,
+          "height": 1080,
+          "frames": [
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            },
+            {
+              "width": 1920,
+              "scrollWidth": 1920
+            }
+          ],
+          "scrollWidth": 1920,
+          "innerWidth": 1920,
+          "center": {
+            "x": 464,
+            "right": 1456,
+            "width": 992
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 505,
+              "right": 1415,
+              "width": 910,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 505,
+              "right": 1249.109375,
+              "width": 744.109375,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 1257.109375,
+              "right": 1320.609375,
+              "width": 63.5,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 1328.609375,
+              "right": 1415,
+              "width": 86.390625,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "ipad-portrait",
+          "width": 820,
+          "height": 1180,
+          "frames": [
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            },
+            {
+              "width": 820,
+              "scrollWidth": 820
+            }
+          ],
+          "scrollWidth": 820,
+          "innerWidth": 820,
+          "center": {
+            "x": 288,
+            "right": 744,
+            "width": 456
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 313.59375,
+              "right": 718.40625,
+              "width": 404.8125,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 313.59375,
+              "right": 552.515625,
+              "width": 238.921875,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 560.515625,
+              "right": 624.015625,
+              "width": 63.5,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 632.015625,
+              "right": 718.40625,
+              "width": 86.390625,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": false,
+                "width": 240,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "ipad-landscape",
+          "width": 1180,
+          "height": 820,
+          "frames": [
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            },
+            {
+              "width": 1180,
+              "scrollWidth": 1180
+            }
+          ],
+          "scrollWidth": 1180,
+          "innerWidth": 1180,
+          "center": {
+            "x": 288,
+            "right": 892,
+            "width": 604
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 324.390625,
+              "right": 855.609375,
+              "width": 531.21875,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 324.390625,
+              "right": 689.71875,
+              "width": 365.328125,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 697.71875,
+              "right": 761.21875,
+              "width": 63.5,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 769.21875,
+              "right": 855.609375,
+              "width": 86.390625,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": false,
+              "left": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": true,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "phone-small",
+          "width": 320,
+          "height": 740,
+          "frames": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "scrollWidth": 320
+            }
+          ],
+          "scrollWidth": 320,
+          "innerWidth": 320,
+          "center": {
+            "x": 12,
+            "right": 308,
+            "width": 296
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 29,
+              "right": 291,
+              "width": 262,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 29,
+              "right": 291,
+              "width": 262,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 29,
+              "right": 164.375,
+              "width": 135.375,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 172.375,
+              "right": 291,
+              "width": 118.625,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": true,
+              "left": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        },
+        {
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "frames": [
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            }
+          ],
+          "scrollWidth": 390,
+          "innerWidth": 390,
+          "center": {
+            "x": 12,
+            "right": 378,
+            "width": 366
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 29,
+              "right": 361,
+              "width": 332,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 29,
+              "right": 361,
+              "width": 332,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 29,
+              "right": 213,
+              "width": 184,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 221,
+              "right": 361,
+              "width": 140,
+              "height": 49
+            }
+          ],
+          "sameCategory": true,
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {}
+            },
+            "actual": {
+              "compact": true,
+              "left": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

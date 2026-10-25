@@ -1,0 +1,13 @@
+PASS a quick handle tap invokes its existing management action exactly once
+PASS slow finger strokes reorder a bookmark to the displayed insertion destination
+PASS built-in bookmarks move between subsections without changing launch preferences
+PASS touch dragging moves a personal bookmark across categories and columns
+PASS cross-category drop and order survive reload
+PASS early release/movement, cancel, multitouch, blur, resize, removed sources, rerender and invalid drops clean up without saving
+PASS sidebar gesture ownership excludes bookmark pickup
+PASS ordinary bookmark-body touch scrolling remains native
+PASS subsection handle touch reorder is saved by its management interface and survives reload
+PASS keyboard subsection ordering remains available
+PASS category touch pickup moves a section between supported columns
+PASS hybrid mouse dragging still persists ordering without extra navigation or page errors
+12 real-input gesture checks passed (Chromium emulation; no physical iPad claim)

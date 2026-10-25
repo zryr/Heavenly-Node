@@ -1,0 +1,60 @@
+{
+  "executed": "2026-10-25T16:15:52.338442+00:00",
+  "physicalDevices": [],
+  "jobs": [
+    {
+      "name": "refinement-matrix",
+      "command": "node test/browser/refinement_cross_browser.cjs",
+      "exitCode": 0,
+      "log": "final-refinement-matrix.txt"
+    },
+    {
+      "name": "homepage-matrix",
+      "command": "node test/browser/homepage_cross_browser.cjs",
+      "exitCode": 0,
+      "log": "final-homepage-matrix.txt"
+    },
+    {
+      "name": "search-limits-chromium",
+      "command": "node test/browser/homepage_search_limits.cjs",
+      "exitCode": 0,
+      "log": "final-search-limits-chromium.txt"
+    },
+    {
+      "name": "search-limits-firefox",
+      "command": "node test/browser/homepage_search_limits.cjs",
+      "exitCode": 0,
+      "log": "final-search-limits-firefox.txt"
+    },
+    {
+      "name": "search-limits-webkit",
+      "command": "node test/browser/homepage_search_limits.cjs",
+      "exitCode": 0,
+      "log": "final-search-limits-webkit.txt"
+    },
+    {
+      "name": "touch-drag",
+      "command": "node test/browser/homepage_touch_drag.cjs",
+      "exitCode": 0,
+      "log": "final-touch-drag.txt"
+    },
+    {
+      "name": "drag-interruption",
+      "command": "node test/browser/homepage_drag_interruption.cjs",
+      "exitCode": 0,
+      "log": "final-drag-interruption.txt"
+    },
+    {
+      "name": "layout-touch",
+      "command": "node test/browser/homepage_layout_touch.cjs",
+      "exitCode": 0,
+      "log": "final-layout-touch.txt"
+    },
+    {
+      "name": "celestial-integration",
+      "command": "node test/browser/celestial_integration.cjs",
+      "exitCode": 0,
+      "log": "final-celestial-integration.txt"
+    }
+  ]
+}

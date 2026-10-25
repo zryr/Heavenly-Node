@@ -1,0 +1,75 @@
+'use strict';
+// Smoke the reviewed deployment. The optional URL file may contain temporary
+// access parameters; neither it nor those parameters are written to evidence.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const { chromium } = require('playwright');
+const raw = process.env.HEAVENLY_PREVIEW_URL || fs.readFileSync(process.argv[2], 'utf8').trim();
+const target = new URL(raw);
+assert.equal(target.protocol, 'https:');
+const result = {origin: target.origin, physicalDevices: [], checks: [], errors: []};
+let browser;
+(async () => {
+  const proxy = process.env.HTTPS_PROXY ? {server:process.env.HTTPS_PROXY,bypass:'localhost,127.0.0.1'} : undefined;
+  browser = await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox'],proxy});
+  result.browser = browser.version();
+  const context = await browser.newContext({viewport:{width:1440,height:1000}});
+  await context.addInitScript(() => sessionStorage.setItem('heavenly_decoy_unlocked','true'));
+  const page = await context.newPage(); page.setDefaultTimeout(15000);
+  page.on('pageerror', e => result.errors.push(e.message.slice(0,500)));
+  const response = await page.goto(target.href,{waitUntil:'domcontentloaded'});
+  assert.equal(response.status(),200);
+  await page.locator('#heavenly-loading-screen').waitFor({state:'hidden'});
+  await page.locator('#url').fill('codex');
+  await page.locator('#url').press('Enter');
+  await page.locator('#codex-dev-modal.active').waitFor();
+  await page.keyboard.press('Escape');
+  await page.locator('#codex-dev-modal').waitFor({state:'hidden'});
+  result.checks.push('Deployed homepage initializes, dismisses loader and opens HQ only on intentional submission');
+  await page.evaluate(() => {
+    const data=loadBookmarkData();data.categories.filter(c=>c.side==='right').forEach(c=>c.side='left');
+    saveBookmarkData(data);renderBookmarksUI();HeavenlyLayout.refresh();
+  });
+  await page.waitForFunction(() => document.getElementById('right-sidebar').classList.contains('is-empty'));
+  const before=await page.locator('#center-container').evaluate(n=>n.getBoundingClientRect().width);
+  const savedWidth=await page.evaluate(()=>HeavenlyLayout.getState().preferences.left.width);
+  for(const control of await page.locator('#left-column .category-collapse-toggle').all()) await control.click();
+  await page.waitForFunction(width=>document.getElementById('center-container').getBoundingClientRect().width>width+40,before);
+  assert.equal(await page.evaluate(()=>HeavenlyLayout.getState().preferences.left.width),savedWidth);
+  result.checks.push('Deployed all-category compact rail reclaims center width without overwriting saved panel width');
+  await page.goto(target.origin+'/settings.html',{waitUntil:'domcontentloaded'});
+  await page.locator('#heavenly-loading-screen').waitFor({state:'hidden'});
+  const beforeSettings=await page.evaluate(()=>localStorage.getItem('heavenly_settings'));
+  await page.locator('#settings-search').fill('bookmark count');
+  await page.locator('#set-bookmark-count-mode').waitFor({state:'visible'});
+  await page.locator('#settings-search-clear').click();
+  assert.equal(await page.evaluate(()=>localStorage.getItem('heavenly_settings')),beforeSettings);
+  await page.locator('#settings-search').fill('dock');
+  await page.locator('#set-use-widget-dock').waitFor({state:'visible'});
+  result.checks.push('Deployed Settings searches individual names/aliases and clearing preserves saved preferences');
+  await page.goto(target.origin+'/html-viewer.html',{waitUntil:'domcontentloaded'});
+  await page.evaluate(()=>localStorage.setItem('preview_smoke_secret','retained'));
+  const attack='<h1 id="probe">Running</h1><script>var p={};try{p.storage=parent.localStorage.getItem("preview_smoke_secret")}catch(e){p.storage="blocked"}try{parent.document.body.dataset.smokeEscape="bad";p.dom="allowed"}catch(e){p.dom="blocked"}document.getElementById("probe").textContent=JSON.stringify(p);<\/script>';
+  await page.locator('#code-input').fill(attack);
+  await page.locator('#code-input').press('Control+Enter');
+  const probe=page.frameLocator('#preview-iframe').locator('#probe');
+  await probe.filter({hasText:'"storage":"blocked","dom":"blocked"'}).waitFor();
+  assert.deepEqual(JSON.parse(await probe.textContent()),{storage:'blocked',dom:'blocked'});
+  assert.equal(await page.evaluate(()=>localStorage.getItem('preview_smoke_secret')),'retained');
+  assert.equal(await page.locator('body').getAttribute('data-smoke-escape'),null);
+  result.checks.push('Deployed authored JavaScript executes while parent storage and DOM attacks remain blocked');
+  await page.setViewportSize({width:390,height:844});
+  await page.locator('#view-editor').click();
+  assert.equal(await page.locator('#code-input').inputValue(),attack);
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  result.checks.push('Deployed phone view preserves edited source and has no horizontal page overflow');
+  assert.deepEqual(result.errors,[]);
+  result.status='passed';
+  console.log('PASS '+result.checks.length+' deployed browser checks at '+target.origin);
+})().catch(error=>{
+  result.status='failed';result.failure=String(error.message).replaceAll(target.href,target.origin).slice(0,2000);
+  console.error('FAIL deployed smoke: '+result.failure);process.exitCode=1;
+}).finally(async()=>{
+  fs.writeFileSync(process.env.HEAVENLY_PREVIEW_RESULTS || 'docs/phase4-5/evidence/preview-results.json',JSON.stringify(result,null,2)+'\n');
+  await browser?.close();
+});
