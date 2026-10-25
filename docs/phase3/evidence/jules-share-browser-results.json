@@ -1,0 +1,33 @@
+{
+  "executed": "2026-10-25T01:21:09.986Z",
+  "physicalDevices": [],
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "actual arrow/Home/End keyboard navigation, selection, roving focus, inactive panel isolation and draft retention",
+        "Escape restores invoking focus; no navigation or bookmark storage changes"
+      ],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "actual arrow/Home/End keyboard navigation, selection, roving focus, inactive panel isolation and draft retention",
+        "Escape restores invoking focus; no navigation or bookmark storage changes"
+      ],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "actual arrow/Home/End keyboard navigation, selection, roving focus, inactive panel isolation and draft retention",
+        "Escape restores invoking focus; no navigation or bookmark storage changes"
+      ],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

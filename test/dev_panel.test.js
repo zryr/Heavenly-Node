@@ -57,18 +57,21 @@ describe("Developer QA Panel, Loading Screen Redesign & Touch Drop Indicators", 
     });
   });
 
-  describe("Secret Developer QA Panel (jules trigger)", function () {
-    it("should include the hidden glassmorphic Developer QA Panel modal markup", function () {
-      assert(indexHtml.includes('id="jules-dev-modal"'), "Should contain jules-dev-modal element");
-      assert(indexHtml.includes('Developer QA Panel'), "Should contain modal title Developer QA Panel");
-      assert(indexHtml.includes('id="jules-preview-loading-btn"'), "Should contain Preview Loading Screen button");
-      assert(indexHtml.includes('id="jules-clear-storage-btn"'), "Should contain Clear Local Storage button");
-      assert(indexHtml.includes('id="jules-exit-preview-btn"'), "Should contain Exit Loading Preview button");
+  describe("Codex Developer HQ command and safe QA tools", function () {
+    it("opens the local workshop from the codex command", function () {
+      assert(indexHtml.includes('id="codex-dev-modal"'));
+      assert(indexHtml.includes('Codex Developer HQ'));
+      assert(indexHtml.includes("url.toLowerCase() === 'codex'"));
+      assert(indexHtml.includes('openCodexDevModal()'));
     });
-
-    it("should check for jules trigger in processSearchSubmission", function () {
-      assert(indexHtml.includes("url.toLowerCase() === 'jules'"), "processSearchSubmission should check for jules keyword");
-      assert(indexHtml.includes("openJulesDevModal()"), "processSearchSubmission should invoke openJulesDevModal()");
+    it("uses scoped data operations and preserves bookmark recovery", function () {
+      assert(!indexHtml.includes('localStorage.clear()'));
+      assert(!indexHtml.includes('sessionStorage.clear()'));
+      assert(indexHtml.includes('heavenly_dev_hq_bookmark_recovery'));
+      const controller=fs.readFileSync(path.join(__dirname,'../public/assets/heavenly-dev-hq.js'),'utf8');
+      assert(controller.includes('confirmScope'));
+      assert(controller.includes('Clear temporary data'));
+      assert(controller.includes('Restore QA recovery copy'));
     });
   });
 });

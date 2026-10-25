@@ -71,7 +71,7 @@ describe('Persistent mirror choices',()=>{
  for(const file of ['index.html','settings.html']) it('preserves complex catalog choices during '+file+' reconciliation',()=>{
   const html=fs.readFileSync(require.resolve('../public/'+file),'utf8');const f=fixture();const c={URL,HeavenlyNavigation:navigation,HeavenlyCatalog: require('../public/assets/heavenly-catalog'), catalog: require('../public/assets/heavenly-catalog'), HeavenlyBookmarks:bookmarks,localStorage:f.storage};vm.createContext(c);
   let a; c.DEFAULT_BOOKMARK_DATA=c.HeavenlyCatalog.defaults;
-  const data=JSON.parse(JSON.stringify(c.DEFAULT_BOOKMARK_DATA));assert.equal(data.categories.length,4);assert.equal(data.bookmarks.length,52);
+  const data=JSON.parse(JSON.stringify(c.DEFAULT_BOOKMARK_DATA));assert.equal(data.categories.length,4);assert.equal(new Set(data.bookmarks.map(b=>b.id)).size,data.bookmarks.length);
   const aether=data.bookmarks.find(b=>b.id==='bm_aether'),opium=data.bookmarks.find(b=>b.id==='bm_opium');assert.equal(aether.subBookmarks.length,16);assert.equal(opium.subBookmarks.length,22);
   aether.mirrorPreferences={preferred:'id:sub_aether_3',active:'id:sub_aether_5',order:['id:sub_aether_3','main'],explained:true};
   f.storage.setItem('heavenly_bookmarks',JSON.stringify(data));

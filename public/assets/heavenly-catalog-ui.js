@@ -38,15 +38,16 @@
         card.append(el('p','',data._catalog.lastDecision==='skipped'?'Your collection is unchanged. Future releases can still offer new changes.':'New official websites and sections will appear here when available.'));
       } else {
         card.append(el('h3','','What’s new'));
+        if(review.summary)card.append(el('p','catalog-release-summary',review.summary));
         var groups={};review.changes.forEach(function(change){var record=change.after||change.before, categoryId=record.kind==='category'?record.value.id:record.kind==='section'?record.parent:record.value.categoryId;
           if(!categoryId&&record.parent){var parent=catalog.records(catalog.defaults)['bookmark:'+record.parent];categoryId=parent&&parent.value.categoryId;}
           var category=catalog.defaults.categories.find(function(c){return c.id===categoryId;})||data.categories.find(function(c){return c.id===categoryId;});
           var title=category?category.title:'Links & mirrors';if(!groups[title])groups[title]=[];groups[title].push(change);
         });
-        Object.keys(groups).forEach(function(title){card.append(el('h4','',title));var list=el('ul');groups[title].forEach(function(change){var record=change.after||change.before, kind=record.kind==='category'?'category':record.kind==='section'?'section':record.parent?(catalog.records(catalog.defaults)['bookmark:'+record.parent]||{value:{}}).value.url?'mirror':'link':'bookmark';var item=el('li','catalog-change '+change.kind),icon=el('span','catalog-change-icon',change.kind==='added'?'+':change.kind==='removed'?'−':'↻');icon.setAttribute('aria-hidden','true');item.append(icon,el('span','',(change.kind==='added'?'Added ':change.kind==='removed'?'Retired ':'Updated ')+kind+': '+record.value.title));list.append(item);});card.append(list);});
+        Object.keys(groups).forEach(function(title){card.append(el('h4','',title));var list=el('ul');groups[title].forEach(function(change){var record=change.after||change.before, kind=record.kind==='category'?'category':record.kind==='section'?'section':record.parent?(catalog.records(catalog.defaults)['bookmark:'+record.parent]||{value:{}}).value.url?'mirror':'link':'bookmark';var item=el('li','catalog-change '+change.kind),icon=el('span','catalog-change-icon',change.kind==='added'?'+':change.kind==='removed'?'−':'↻');icon.setAttribute('aria-hidden','true');item.append(icon,el('span','',(change.layoutOnly?'Official default order: ':(change.kind==='added'?'Added ':change.kind==='removed'?'Retired ':'Updated ')+kind+': ')+record.value.title));list.append(item);});card.append(list);});
       }
       body.append(card);
-      body.append(el('p','catalog-preservation','Your order, moved bookmarks, hidden items, notes and mirror choices stay yours. Retired links are kept so personal data is safe.'));
+      body.append(el('p','catalog-preservation','Your order, moved bookmarks, hidden items, notes and mirror choices stay yours. Applying defaults makes them available to Restore Official Order; it does not reset your personal layout. Retired links are kept so personal data is safe.'));
       if(data._catalog.conflicts&&data._catalog.conflicts.length){var conflicts=el('ul','catalog-conflicts');data._catalog.conflicts.forEach(function(c){conflicts.append(el('li','',c.title+': '+c.message));});body.append(conflicts);}
       if(review.changes.length){
         button('Apply Update','catalog-apply',function(){decide('applied');});

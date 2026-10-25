@@ -1,0 +1,92 @@
+{
+  "runtime": "v24.19.0",
+  "differentialCases": 2500,
+  "iterationsPerNavigationSample": 150000,
+  "navigationMedianMs": {
+    "before": 719.8326159999997,
+    "after": 624.7827930000001
+  },
+  "navigationSamples": [
+    {
+      "before": 692.873064,
+      "after": 624.7827930000001
+    },
+    {
+      "before": 605.694681,
+      "after": 609.8236499999998
+    },
+    {
+      "before": 655.788724,
+      "after": 546.4468850000003
+    },
+    {
+      "before": 875.5967289999999,
+      "after": 669.759838
+    },
+    {
+      "before": 902.4271800000006,
+      "after": 687.2428659999996
+    },
+    {
+      "before": 1082.2715919999991,
+      "after": 659.8246579999995
+    },
+    {
+      "before": 719.8326159999997,
+      "after": 590.7369150000013
+    }
+  ],
+  "guardOnlySamples": [
+    {
+      "before": {
+        "ms": 33.46148399999947,
+        "count": 1125000
+      },
+      "after": {
+        "ms": 25.637344000000667,
+        "count": 1125000
+      }
+    },
+    {
+      "before": {
+        "ms": 66.07501799999955,
+        "count": 1125000
+      },
+      "after": {
+        "ms": 23.670930000000226,
+        "count": 1125000
+      }
+    },
+    {
+      "before": {
+        "ms": 93.27388100000098,
+        "count": 1125000
+      },
+      "after": {
+        "ms": 54.03274000000056,
+        "count": 1125000
+      }
+    },
+    {
+      "before": {
+        "ms": 41.753099999999904,
+        "count": 1125000
+      },
+      "after": {
+        "ms": 25.525038999998287,
+        "count": 1125000
+      }
+    },
+    {
+      "before": {
+        "ms": 71.05332799999996,
+        "count": 1125000
+      },
+      "after": {
+        "ms": 28.90259100000003,
+        "count": 1125000
+      }
+    }
+  ],
+  "scope": "Local function microbenchmark, not a network/proxy throughput or physical-device performance claim."
+}
