@@ -1,0 +1,5 @@
+PASS continuous touch resizes each inner separator independently, saves widths and never starts a bookmark drag or writes bookmark data
+PASS touch cancellation, second contacts, lost focus and orientation changes restore the prior committed width and release input ownership
+PASS intermediate widths reveal both panels through real touch controls and retain explicit compact visibility after reload
+PASS Chromium125% page/pinch scale preserves layout constraints (this is pinch scaling, not native browser UI zoom)
+4 sidebar touch integration groups passed; emulated Chromium input only

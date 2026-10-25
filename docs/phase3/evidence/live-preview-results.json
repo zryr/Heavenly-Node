@@ -1,0 +1,45 @@
+{
+  "executed": "2026-10-25T01:38:04.825Z",
+  "physicalDevices": [],
+  "deployments": [
+    {
+      "phase": "refinement",
+      "origin": "https://heavenly-node-87455s15j-syshi.vercel.app",
+      "checks": [
+        "authenticated app, keyboard sidebar resize and saved width after reload",
+        "independent category collapse and unified search retain category intent",
+        "phone viewport actual browser tap expands panel without overflow"
+      ],
+      "errors": [],
+      "httpStatus": 200,
+      "title": "Heavenly",
+      "loadedOrigin": "https://heavenly-node-87455s15j-syshi.vercel.app",
+      "globals": {
+        "layout": true,
+        "search": true
+      },
+      "status": "passed"
+    },
+    {
+      "phase": "phase3",
+      "origin": "https://heavenly-node-ei054z9mb-syshi.vercel.app",
+      "checks": [
+        "authenticated app, keyboard sidebar resize and saved width after reload",
+        "independent category collapse and unified search retain category intent",
+        "deployed official catalog, exact Bunny search, empty Picks and codex ranking editor",
+        "phone viewport actual browser tap expands panel without overflow"
+      ],
+      "errors": [],
+      "status": "passed"
+    }
+  ],
+  "initialAttempt": {
+    "phase": "refinement",
+    "origin": "https://heavenly-node-87455s15j-syshi.vercel.app",
+    "checks": [],
+    "errors": [],
+    "status": "failed",
+    "failure": "page.waitForFunction: Timeout 15000ms exceeded."
+  },
+  "note": "The initial refined-preview readiness wait timed out. A fresh authenticated access link and one rerun passed without application changes. Phase3 passed on its first live attempt."
+}

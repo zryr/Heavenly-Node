@@ -1,0 +1,15 @@
+{
+  "mode": "implementation",
+  "baseCommit": "013cd07a36854c74b8feb8f29a8437f2c4daa72b",
+  "browser": "Chromium CDP touch input (emulated)",
+  "results": [
+    {
+      "case": "removed source",
+      "stalePreview": false
+    },
+    {
+      "case": "viewport change",
+      "stalePreview": false
+    }
+  ]
+}

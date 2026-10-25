@@ -4,10 +4,10 @@
   "version": "2026.10.24.2",
   "items": [
     {
-      "id": "pick_mvn59pv3",
+      "id": "pick_mvn5fghg",
       "title": "Reviewed browser game",
       "url": "https://www.newgrounds.com/portal/view/1",
-      "description": "Locally drafted recommendation.",
+      "description": "Edited, locally drafted recommendation.",
       "icon": "",
       "thumbnail": "",
       "tags": [

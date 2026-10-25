@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),playwright=require('playwright'),app=require('../../app');
-const output=path.resolve(__dirname,'../../docs/homepage-refinement/evidence/browser-matrix.json');
+const output=process.env.HEAVENLY_REFINEMENT_MATRIX ? path.resolve(process.env.HEAVENLY_REFINEMENT_MATRIX) : path.resolve(__dirname,'../../docs/homepage-refinement/evidence/browser-matrix.json');
 const summary={executed:new Date().toISOString(),physicalDevices:[],touchScope:'Continuous gestures use the separate Chromium CDP suite; WebKit here is Linux engine emulation.',browsers:[]};
 let server;
 (async()=>{

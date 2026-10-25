@@ -1,0 +1,85 @@
+{
+  "executed": "2026-10-25T01:30:12.479Z",
+  "suite": "test/browser/phase3_public_collection.cjs",
+  "scope": "Application-owned UI and storage flows; external destination requests are aborted in this suite.",
+  "physicalDevices": [],
+  "viewports": [
+    {
+      "width": 1366,
+      "height": 900
+    },
+    {
+      "width": 768,
+      "height": 1024
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "new game popups preserve exact direct/proxy destinations including the SVG; only Dancing Bunny receives the verified launcher hint",
+        "Newgrounds has a targeted streamlined popup; empty Picks opens, traps focus, returns with Escape and contains no invented cards",
+        "saved Newgrounds children have a nonintrusive manager and complete private recovery download; other sites retain normal mirror management",
+        "draft preview stays isolated; unsafe/duplicate/disabled cards are excluded, media fails gracefully, and cards offer direct/proxy launches with failure feedback",
+        "real globe/document SVGs retain bounded dimensions through expanded/collapsed, moved category and section management views",
+        "section restoration previews accepted ordering, focuses Cancel, cancels without writes and preserves all personal data and unrelated layout when confirmed",
+        "global confirmation and cancellation preserve hidden states, moved built-ins, custom bookmarks, notes, mirrors and catalog decisions",
+        "a real localStorage write failure leaves the exact previous collection intact and offers useful recovery feedback",
+        "tablet and narrow phone empty-state layouts fit without overflow; return/close controls work with emulated touch",
+        "rapid Picks/Restore close and reopen keeps one dialog/title identity, current focus and normal body scrolling with default and reduced motion",
+        "Settings bookmark management exposes both scoped and global confirmation, with cancellation and useful restored focus"
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "passed",
+      "executed": "2026-10-25T01:29:11.783Z",
+      "touchEmulation": true
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "new game popups preserve exact direct/proxy destinations including the SVG; only Dancing Bunny receives the verified launcher hint",
+        "Newgrounds has a targeted streamlined popup; empty Picks opens, traps focus, returns with Escape and contains no invented cards",
+        "saved Newgrounds children have a nonintrusive manager and complete private recovery download; other sites retain normal mirror management",
+        "draft preview stays isolated; unsafe/duplicate/disabled cards are excluded, media fails gracefully, and cards offer direct/proxy launches with failure feedback",
+        "real globe/document SVGs retain bounded dimensions through expanded/collapsed, moved category and section management views",
+        "section restoration previews accepted ordering, focuses Cancel, cancels without writes and preserves all personal data and unrelated layout when confirmed",
+        "global confirmation and cancellation preserve hidden states, moved built-ins, custom bookmarks, notes, mirrors and catalog decisions",
+        "a real localStorage write failure leaves the exact previous collection intact and offers useful recovery feedback",
+        "tablet and narrow phone empty-state layouts fit without overflow; return/close controls work with mouse input",
+        "rapid Picks/Restore close and reopen keeps one dialog/title identity, current focus and normal body scrolling with default and reduced motion",
+        "Settings bookmark management exposes both scoped and global confirmation, with cancellation and useful restored focus"
+      ],
+      "errors": [],
+      "version": "153.0",
+      "status": "passed",
+      "executed": "2026-10-25T01:29:36.092Z",
+      "touchEmulation": false
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "new game popups preserve exact direct/proxy destinations including the SVG; only Dancing Bunny receives the verified launcher hint",
+        "Newgrounds has a targeted streamlined popup; empty Picks opens, traps focus, returns with Escape and contains no invented cards",
+        "saved Newgrounds children have a nonintrusive manager and complete private recovery download; other sites retain normal mirror management",
+        "draft preview stays isolated; unsafe/duplicate/disabled cards are excluded, media fails gracefully, and cards offer direct/proxy launches with failure feedback",
+        "real globe/document SVGs retain bounded dimensions through expanded/collapsed, moved category and section management views",
+        "section restoration previews accepted ordering, focuses Cancel, cancels without writes and preserves all personal data and unrelated layout when confirmed",
+        "global confirmation and cancellation preserve hidden states, moved built-ins, custom bookmarks, notes, mirrors and catalog decisions",
+        "a real localStorage write failure leaves the exact previous collection intact and offers useful recovery feedback",
+        "tablet and narrow phone empty-state layouts fit without overflow; return/close controls work with emulated touch",
+        "rapid Picks/Restore close and reopen keeps one dialog/title identity, current focus and normal body scrolling with default and reduced motion",
+        "Settings bookmark management exposes both scoped and global confirmation, with cancellation and useful restored focus"
+      ],
+      "errors": [],
+      "version": "26.5",
+      "status": "passed",
+      "executed": "2026-10-25T01:30:05.696Z",
+      "touchEmulation": true
+    }
+  ]
+}

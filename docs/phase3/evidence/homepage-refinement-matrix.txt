@@ -1,0 +1,17 @@
+PASS chromium keyboard Layout options closes to its trigger; reset is disabled at defaults; search preserves all four panel states
+PASS chromium six required viewport sizes retain the same category DOM and usable center controls; 12 resize paint frames stay within the viewport; keyboard resize remains functional
+PASS chromium rapid Show More/category reversal preserve focus/final state; independent collapsed headers support real horizontal mouse reorder; stable IDs survive move/reload; empty side has no track/control
+PASS chromium Reset layout only restores widths and panel/category collapse; bookmark placement, notes, Show More and Settings data remain intact
+PASS chromium legacy fixed counts remain Custom; Settings Auto/Custom/section overrides work; Auto bottom counts follow actual measured rows across five widths
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox keyboard Layout options closes to its trigger; reset is disabled at defaults; search preserves all four panel states
+PASS firefox six required viewport sizes retain the same category DOM and usable center controls; 12 resize paint frames stay within the viewport; keyboard resize remains functional
+PASS firefox rapid Show More/category reversal preserve focus/final state; independent collapsed headers support real horizontal mouse reorder; stable IDs survive move/reload; empty side has no track/control
+PASS firefox Reset layout only restores widths and panel/category collapse; bookmark placement, notes, Show More and Settings data remain intact
+PASS firefox legacy fixed counts remain Custom; Settings Auto/Custom/section overrides work; Auto bottom counts follow actual measured rows across five widths
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit keyboard Layout options closes to its trigger; reset is disabled at defaults; search preserves all four panel states
+PASS webkit six required viewport sizes retain the same category DOM and usable center controls; 12 resize paint frames stay within the viewport; keyboard resize remains functional
+PASS webkit rapid Show More/category reversal preserve focus/final state; independent collapsed headers support real horizontal mouse reorder; stable IDs survive move/reload; empty side has no track/control
+PASS webkit Reset layout only restores widths and panel/category collapse; bookmark placement, notes, Show More and Settings data remain intact
+PASS webkit legacy fixed counts remain Custom; Settings Auto/Custom/section overrides work; Auto bottom counts follow actual measured rows across five widths

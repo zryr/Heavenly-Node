@@ -6,7 +6,8 @@ const playwright = require('playwright');
 const app = require('../../app');
 const engine = process.env.HEAVENLY_BROWSER || 'chromium';
 let browser, server, checks = 0;
-const pass = message => { checks++; console.log('PASS ' + message); };
+const passedChecks = [];
+const pass = message => { checks++; passedChecks.push(message); console.log('PASS ' + message); };
 const evidence = process.env.HEAVENLY_PHASE3_EVIDENCE || '/tmp/heavenly-phase3-public-' + engine;
 const withoutLayout = input => {
   const data = JSON.parse(JSON.stringify(input));
@@ -224,5 +225,9 @@ const withoutLayout = input => {
   assert.deepEqual(withoutLayout(await read()),withoutLayout(settingsBefore)); assert.equal(await page.locator('#settings-official-order-summary').evaluate(node => document.activeElement === node),true);
   pass('Settings bookmark management exposes both scoped and global confirmation, with cancellation and useful restored focus');
   assert.deepEqual(errors,[]);
+  if (process.env.HEAVENLY_PHASE3_RESULTS) fs.writeFileSync(process.env.HEAVENLY_PHASE3_RESULTS, JSON.stringify({
+    executed:new Date().toISOString(), physicalDevices:[],
+    browsers:[{ engine, checks:passedChecks, errors, version:browser.version(), status:'passed' }]
+  }, null, 2) + '\n');
   console.log(checks + ' Phase 3 public collection groups passed in ' + engine + '; screenshots: ' + evidence);
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => { await browser?.close(); if (server) { server.closeAllConnections?.(); await new Promise(resolve => server.close(resolve)); } });

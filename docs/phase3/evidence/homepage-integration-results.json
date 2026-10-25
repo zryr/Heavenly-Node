@@ -1,0 +1,85 @@
+{
+  "executed": "2026-10-25T01:31:50.055Z",
+  "scope": "Combined PartA homepage refinements and Phase3 catalog/developer features",
+  "baseCommit": "0b46931",
+  "execution": "Sequential isolated browser suites",
+  "physicalDevices": [],
+  "suites": [
+    {
+      "command": "node test/browser/homepage_touch_drag.cjs",
+      "status": "passed",
+      "exitCode": 0,
+      "checks": 12,
+      "engine": "Chromium CDP touch emulation",
+      "log": "homepage-touch-drag.txt"
+    },
+    {
+      "command": "node test/browser/homepage_drag_interruption.cjs",
+      "started": "2026-10-25T01:31:50.056Z",
+      "finished": "2026-10-25T01:31:53.426Z",
+      "status": "passed",
+      "exitCode": 0,
+      "checks": 2,
+      "log": "homepage-drag-interruption.txt"
+    },
+    {
+      "command": "node test/browser/homepage_layout_touch.cjs",
+      "started": "2026-10-25T01:31:53.426Z",
+      "finished": "2026-10-25T01:32:01.005Z",
+      "status": "passed",
+      "exitCode": 0,
+      "checks": 4,
+      "log": "homepage-layout-touch.txt"
+    },
+    {
+      "command": "node test/browser/refinement_cross_browser.cjs",
+      "started": "2026-10-25T01:32:01.006Z",
+      "finished": "2026-10-25T01:32:41.578Z",
+      "status": "passed",
+      "exitCode": 0,
+      "checks": 15,
+      "log": "homepage-refinement-matrix.txt",
+      "environment": {
+        "LD_LIBRARY_PATH": "/workspace/shared/webkit-libs/root/usr/lib/x86_64-linux-gnu",
+        "PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS": "1",
+        "HEAVENLY_REFINEMENT_MATRIX": "/workspace/Heavenly-Node/docs/phase3/evidence/homepage-refinement-matrix.json"
+      },
+      "results": "homepage-refinement-matrix.json",
+      "browsers": [
+        {
+          "engine": "chromium",
+          "version": "154.0.8037.57",
+          "status": "passed",
+          "groups": 5,
+          "viewports": 6,
+          "resizePaintSamples": 60,
+          "pageErrors": []
+        },
+        {
+          "engine": "firefox",
+          "version": "153.0",
+          "status": "passed",
+          "groups": 5,
+          "viewports": 6,
+          "resizePaintSamples": 60,
+          "pageErrors": []
+        },
+        {
+          "engine": "webkit",
+          "version": "26.5",
+          "status": "passed",
+          "groups": 5,
+          "viewports": 6,
+          "resizePaintSamples": 60,
+          "pageErrors": []
+        }
+      ]
+    }
+  ],
+  "historicalPartAReports": {
+    "filesChecked": 110,
+    "changed": []
+  },
+  "finished": "2026-10-25T01:32:41.631Z",
+  "status": "passed"
+}

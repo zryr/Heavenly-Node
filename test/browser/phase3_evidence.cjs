@@ -24,7 +24,7 @@ async function context(browser, origin, options={}) {
   await ctx.route('**/*',r=>r.request().url().startsWith(origin)&&!r.request().url().includes('/proxy/')?r.continue():r.abort());
   return ctx;
 }
-async function ready(page, origin) { await page.goto(origin,{waitUntil:'domcontentloaded'}); await page.locator('[data-bm-id="bm_ng"]').waitFor(); await page.waitForTimeout(350); }
+async function ready(page, origin) { await page.goto(origin,{waitUntil:'domcontentloaded'}); await page.locator('[data-bm-id="bm_ng"]').waitFor({state:'attached'}); await page.waitForTimeout(350); }
 async function shot(page,id,title,note,target) {
   await page.waitForTimeout(220);
   const file='phase3-'+id+'.png'; await (target||page).screenshot({path:path.join(output,file)});
@@ -47,7 +47,7 @@ async function capture(origin) {
     const oldData=await page.evaluate(()=>localStorage.getItem('heavenly_bookmarks'));
     result.baseline.catalogVersion=await page.evaluate(()=>HeavenlyCatalog.release.version);
     assert.equal(await page.locator('[data-bm-id="bm_user_ng"]').count(),1);
-    const oldGames=page.locator('[data-category-id="cat_games"]');await shot(page,'games-before','Games before the additions','Actual pre-Phase3 Games with the two original Newgrounds records.',oldGames);
+    const oldGames=page.locator('[data-category-id="cat_games"]');await oldGames.locator('.show-more-btn').first().click();await shot(page,'games-before','Games before the additions','Actual expanded pre-Phase3 Games with the two original Newgrounds records.',oldGames);
     await page.locator('#bm-universal-search').fill('Newgrounds');await shot(page,'newgrounds-before','Newgrounds before consolidation','Actual pre-Phase3 unified search shows the two original official/default identities.');await page.locator('#bm-universal-search').fill('');
     await openNewgrounds(page);await shot(page,'newgrounds-popup-before','Newgrounds popup before consolidation','Actual pre-Phase3 Syshi popup, including the generic mirror controls.',page.locator('#builtin-test-modal'));
     await ctx.close();
@@ -56,12 +56,14 @@ async function capture(origin) {
     result.catalogVersion=await page.evaluate(()=>HeavenlyCatalog.release.version);
     const games=page.locator('[data-category-id="cat_games"]');
     await games.locator('.show-more-btn').first().click();
-    await shot(page,'games-after','Games after the additions','Fresh collection: History Minds and Dancing Bunny are installed; Newgrounds has one official identity.',games);
+    await shot(page,'games-after','Games after the additions','Fresh expanded collection: History Minds and Dancing Bunny are installed; Newgrounds has one official identity.',games);
     const order=await games.locator('[data-subsection-id="builtin"] > div > [data-bm-id]').evaluateAll(nodes=>nodes.map(n=>n.dataset.bmId));
     assert.equal(order.indexOf('bm_gamebois'),order.indexOf('bm_dancing_bunny')+1);
+    await page.setViewportSize({width:390,height:844});
     const pair=games.locator('[data-bm-id="bm_dancing_bunny"]');await pair.scrollIntoViewIfNeeded();
     const pairBox=await pair.boundingBox();await page.evaluate(y=>window.scrollBy(0,y-250),pairBox.y);
-    await shot(page,'bunny-before-gamebois','Dancing Bunny directly above Gamebois','Rendered default order, asserted from adjacent real bookmark rows. The exact SVG destination remains intact.');
+    await shot(page,'bunny-before-gamebois','Dancing Bunny directly above Gamebois','Fresh default order in a 390-pixel single-column layout, asserted from adjacent real bookmark rows. The exact SVG destination remains intact.');
+    await page.setViewportSize({width:1440,height:1000});
     await page.locator('#bm-universal-search').fill('Newgrounds');await shot(page,'newgrounds-after','One official Newgrounds result','Fresh collection search returns one official Newgrounds bookmark.');
     assert.equal(await page.locator('#bookmark-search-results [data-bookmark-id="bm_ng"]').count(),1);
     assert.equal(await page.locator('[data-bm-id="bm_user_ng"]').count(),0);
@@ -125,12 +127,35 @@ async function smoke(origin,engine) {
   }catch(e){row.status='failed';row.failure=e.stack;process.exitCode=1;console.error(engine+' '+e.stack);}finally{await ctx?.close();await browser?.close();}
 }
 async function verifyReport() {
-  const report=path.join(root,'docs/phase3/comparison.html');const browser=await launch('chromium');try{const page=await browser.newPage();await page.goto('file://'+report);await page.locator('img[data-capture]').first().waitFor();const images=await page.locator('img[data-capture]').evaluateAll(nodes=>nodes.map(n=>({id:n.dataset.capture,loaded:n.complete&&n.naturalWidth>0,width:n.naturalWidth,height:n.naturalHeight})));assert(images.every(x=>x.loaded));assert(images.length>=16);await page.locator('.capture-open').first().click();await page.locator('#image-viewer[open]').waitFor();await page.keyboard.press('Escape');assert.equal(await page.locator('#image-viewer').evaluate(n=>n.open),false);const video=page.locator('video');await video.evaluate(n=>n.load());await page.waitForFunction(()=>document.querySelector('video').readyState>=1);const verification={verified:new Date().toISOString(),report:'comparison.html',images,video:{readyState:await video.evaluate(n=>n.readyState),duration:await video.evaluate(n=>n.duration)},viewer:'opens and closes with Escape',externalResources:await page.locator('[src^="http"]').count()};assert.equal(verification.externalResources,0);fs.writeFileSync(path.join(output,'phase3-report-verification.json'),JSON.stringify(verification,null,2));console.log('Report verified: '+images.length+' images decode; recording metadata loads; full-resolution viewer works.');}finally{await browser.close();}
+  const report=path.join(root,'docs/phase3/comparison.html'),browser=await launch('chromium');
+  try {
+    const reportApp=express();reportApp.use(express.static(path.dirname(report)));const reportOrigin=await serve(reportApp);
+    const page=await browser.newPage({acceptDownloads:true});await page.goto(reportOrigin+'/comparison.html');await page.locator('img[data-capture]').first().waitFor();
+    const images=await page.locator('img[data-capture]').evaluateAll(nodes=>nodes.map(n=>({id:n.dataset.capture,loaded:n.complete&&n.naturalWidth>0,width:n.naturalWidth,height:n.naturalHeight})));
+    assert(images.every(x=>x.loaded));assert(images.length>=16);
+    const links=await page.locator('a[href]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('href')).filter(h=>h&&!h.startsWith('data:')));
+    for(const href of links){if(href.startsWith('#'))assert(await page.locator(href).count());else assert(fs.existsSync(path.resolve(path.dirname(report),href)),'Missing report link: '+href);}
+    const captures=read('phase3-visual-results.json').captures,downloads=[];
+    for(const capture of captures){
+      const trigger=page.locator('.capture-open[data-capture="'+capture.id+'"]');await trigger.click();await page.locator('#image-viewer[open]').waitFor();
+      await page.waitForFunction(()=>{const n=document.getElementById('viewer-image');return n.complete&&n.naturalWidth>0;});
+      assert.equal(await page.locator('#viewer-image').evaluate(n=>n.getBoundingClientRect().width===n.naturalWidth),true,'Viewer must show original pixels: '+capture.id);
+      const downloading=page.waitForEvent('download');await page.locator('#viewer-download').click();const download=await downloading;
+      assert(fs.readFileSync(await download.path()).equals(fs.readFileSync(path.join(output,capture.file))),'Downloaded PNG differs: '+capture.id);downloads.push({id:capture.id,filename:download.suggestedFilename(),identical:true});
+      await page.keyboard.press('Escape');assert.equal(await page.locator('#image-viewer').evaluate(n=>n.open),false);assert.equal(await trigger.evaluate(n=>n===document.activeElement),true);
+    }
+    await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    const first=page.locator('.capture-open').first();await first.click();await page.locator('#image-viewer[open]').waitFor();await page.keyboard.press('Escape');assert.equal(await first.evaluate(n=>n===document.activeElement),true);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    const video=page.locator('video');await video.scrollIntoViewIfNeeded();await video.evaluate(async n=>{n.muted=true;n.currentTime=0;await n.play();});await page.waitForFunction(()=>{const n=document.querySelector('video');return !n.paused&&n.currentTime>.3;});assert(await video.evaluate(n=>Number.isFinite(n.duration)&&n.duration>0));
+    const verification={verified:new Date().toISOString(),report:'comparison.html',openedVia:'local HTTP because this executor Chromium policy blocks file URLs',images,localLinks:links,downloads,phone:{width:390,height:844,horizontalOverflow:false,keyboardDismissal:'Escape restores trigger focus'},video:{readyState:await video.evaluate(n=>n.readyState),duration:await video.evaluate(n=>n.duration),playedTo:await video.evaluate(n=>n.currentTime)},viewer:'All screenshots open at original pixel width, download byte-identical PNGs, and close with Escape',externalResources:await page.locator('[src^="http"]').count()};
+    assert.equal(verification.externalResources,0);fs.writeFileSync(path.join(output,'phase3-report-verification.json'),JSON.stringify(verification,null,2));
+    console.log('Report verified: '+images.length+' images decode, open at original width and download unchanged; links exist; video plays; phone layout and keyboard dismissal work.');
+  } finally { await browser.close(); }
 }
 (async()=>{
   fs.mkdirSync(output,{recursive:true});if(process.argv.includes('--verify-report'))return verifyReport();
   const origin=await serve(app);if(!process.argv.includes('--smoke-only'))await capture(origin);
   for(const engine of (process.env.HEAVENLY_ENGINES||'chromium,firefox,webkit').split(','))await smoke(origin,engine);
-  if(process.argv.includes('--smoke-only')){const old=read('phase3-visual-results.json');old.browsers=result.browsers;old.smokeCaptured=result.captured;fs.writeFileSync(path.join(output,'phase3-visual-results.json'),JSON.stringify(old,null,2));}
+  if(process.argv.includes('--smoke-only')){const old=read('phase3-visual-results.json');old.browsers=old.browsers.filter(b=>!result.browsers.some(r=>r.engine===b.engine)).concat(result.browsers);old.smokeCaptured=result.captured;fs.writeFileSync(path.join(output,'phase3-visual-results.json'),JSON.stringify(old,null,2));}
   else fs.writeFileSync(path.join(output,'phase3-visual-results.json'),JSON.stringify(result,null,2));
 })().catch(e=>{console.error(e.stack);process.exitCode=1;}).finally(async()=>{for(const server of servers){server.closeAllConnections?.();await new Promise(r=>server.close(r));}});

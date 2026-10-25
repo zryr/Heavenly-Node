@@ -1,0 +1,25 @@
+{
+  "executed": "2026-10-25T01:40:27.825Z",
+  "origin": "https://heavenly-node-ei054z9mb-syshi.vercel.app",
+  "destination": "https://cdn.jsdelivr.net/gh/ltorl/dancing-bunny/index.svg",
+  "physicalDevices": [],
+  "responses": [
+    {
+      "resource": "index.svg",
+      "status": 308,
+      "contentType": "text/html"
+    },
+    {
+      "resource": "index.svg",
+      "status": 200,
+      "contentType": "image/svg+xml"
+    }
+  ],
+  "auth": {
+    "status": 200,
+    "title": "Heavenly",
+    "origin": "https://heavenly-node-ei054z9mb-syshi.vercel.app"
+  },
+  "outcome": "unverified",
+  "failure": "page.goto: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://heavenly-node-ei054z9mb-syshi.vercel.app/proxy/https://cdn.jsdelivr.net/gh/ltorl/dancing-bunny/index.svg\", waiting until \"domcontentloaded\"\u001b[22m\n"
+}

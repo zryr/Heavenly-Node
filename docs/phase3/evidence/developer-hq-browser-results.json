@@ -1,7 +1,53 @@
 {
-  "executed": "2026-10-25T01:23:08.574Z",
+  "executed": "2026-10-25T01:27:59.504Z",
   "physicalDevices": [],
   "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "codex opens local HQ without navigating; focus enters the modal",
+        "modal focus trap and keyboard tab navigation work with reduced motion",
+        "temporary clear requires confirmation, cancellation preserves data, confirmed scope keeps bookmarks",
+        "fresh-install test cancellation, failed backup refusal, scoped clear and complete recovery work",
+        "loading preview, exit and cleanup return to QA",
+        "confirmed QA reset retains a complete recovery copy and restore returns original collection",
+        "official move/top/undo, compatible destination and highlighted exact preview leave personal sorting unchanged",
+        "category sidebar and subsection edits, actual nested drag, and keyboard reorder are functional",
+        "validated and reviewed official source downloads with edited stable identity",
+        "malformed draft import is refused without replacing personal data",
+        "multiple Picks reorder up/down, removal and saved editing preserve stable identities",
+        "Picks add/edit fields and isolated public-style preview work while published recommendations remain empty",
+        "reviewed Picks export uses repository UMD source and never mutates public content",
+        "Picks remove/undo and phone/tablet/Chromebook modal layouts remain usable",
+        "close restores command focus; invalid persisted draft remains untouched and public data stays unchanged"
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "codex opens local HQ without navigating; focus enters the modal",
+        "modal focus trap and keyboard tab navigation work with reduced motion",
+        "temporary clear requires confirmation, cancellation preserves data, confirmed scope keeps bookmarks",
+        "fresh-install test cancellation, failed backup refusal, scoped clear and complete recovery work",
+        "loading preview, exit and cleanup return to QA",
+        "confirmed QA reset retains a complete recovery copy and restore returns original collection",
+        "official move/top/undo, compatible destination and highlighted exact preview leave personal sorting unchanged",
+        "category sidebar and subsection edits, actual nested drag, and keyboard reorder are functional",
+        "validated and reviewed official source downloads with edited stable identity",
+        "malformed draft import is refused without replacing personal data",
+        "multiple Picks reorder up/down, removal and saved editing preserve stable identities",
+        "Picks add/edit fields and isolated public-style preview work while published recommendations remain empty",
+        "reviewed Picks export uses repository UMD source and never mutates public content",
+        "Picks remove/undo and phone/tablet/Chromebook modal layouts remain usable",
+        "close restores command focus; invalid persisted draft remains untouched and public data stays unchanged"
+      ],
+      "errors": [],
+      "version": "153.0",
+      "status": "passed"
+    },
     {
       "engine": "webkit",
       "checks": [
@@ -15,6 +61,7 @@
         "category sidebar and subsection edits, actual nested drag, and keyboard reorder are functional",
         "validated and reviewed official source downloads with edited stable identity",
         "malformed draft import is refused without replacing personal data",
+        "multiple Picks reorder up/down, removal and saved editing preserve stable identities",
         "Picks add/edit fields and isolated public-style preview work while published recommendations remain empty",
         "reviewed Picks export uses repository UMD source and never mutates public content",
         "Picks remove/undo and phone/tablet/Chromebook modal layouts remain usable",
