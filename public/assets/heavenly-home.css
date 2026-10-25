@@ -219,3 +219,139 @@
   .qs-homepage .app-layout, .qs-homepage .sidebar-resize::after { transition: none; }
   .qs-homepage .brand-logo-img, .qs-homepage .bookmark-card, .qs-homepage .section-card { animation: none; transition: none; }
 }
+
+/* Expressive refinement: retain Heavenly's cyan/blue identity within the quiet navy frame.
+   These rules describe surfaces and states; adaptive sizing lives in heavenly-adaptive.css. */
+.qs-homepage {
+  --home-accent: #a5e1fa;
+  --home-selection: #c2b1e8;
+}
+.qs-homepage .container {
+  border-color: #354b65;
+  box-shadow: 0 10px 28px #02081724;
+}
+.qs-homepage .container:hover { border-color: #46617e; box-shadow: 0 10px 28px #02081724; }
+.qs-homepage .brand-title-group h1 {
+  color: #c3e9fb;
+  background: linear-gradient(110deg, #edf8ff 5%, #b7e4fb 42%, #7bc6ef 74%, #9aaee8 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.qs-homepage .brand-logo-img { filter: drop-shadow(0 2px 6px #7dd3fc24); }
+
+/* Utility destinations remain secondary to Go; each keeps its familiar color family. */
+.qs-homepage .header-actions-group .settings-btn {
+  --utility-ink: #b9dce9;
+  --utility-bg: #192c3d;
+  --utility-hover: #223a4f;
+  --utility-line: #3c566a;
+  --utility-hover-line: #607f96;
+  --utility-glow: #9fd7e21a;
+  color: var(--utility-ink) !important;
+  background: var(--utility-bg) !important;
+  border-color: var(--utility-line) !important;
+  border-radius: 12px;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms var(--home-ease);
+}
+.qs-homepage #open-html-viewer-btn {
+  --utility-ink: #a6dffa;
+  --utility-bg: #132b40;
+  --utility-hover: #1b3a53;
+  --utility-line: #305a74;
+  --utility-hover-line: #5286a4;
+  --utility-glow: #7dd3fc1c;
+}
+.qs-homepage #open-share-btn {
+  --utility-ink: #c4c5ef;
+  --utility-bg: #242940;
+  --utility-hover: #303653;
+  --utility-line: #4a527a;
+  --utility-hover-line: #747ba2;
+  --utility-glow: #a5b4fc1c;
+}
+.qs-homepage .header-actions-group .settings-btn:hover {
+  color: var(--utility-ink) !important;
+  background: var(--utility-hover) !important;
+  border-color: var(--utility-hover-line) !important;
+}
+.qs-homepage .add-category-btn {
+  color: #b9e7f6 !important;
+  background: #172d3e !important;
+  border-color: #3c5e72 !important;
+  border-radius: 999px;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms var(--home-ease);
+}
+.qs-homepage .add-category-btn:hover { color: #e2f7ff !important; background: #203e51 !important; border-color: #6b9cb3 !important; }
+.qs-homepage #search-go-btn {
+  background: #91d9f5;
+  transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms var(--home-ease);
+}
+.qs-homepage #search-newtab-btn:hover { background: #243b55 !important; border-color: #6687a5 !important; }
+.qs-homepage :is(.header-actions-group .settings-btn, .add-category-btn, #search-go-btn, #search-newtab-btn):focus-visible {
+  outline: 2px solid var(--home-accent);
+  outline-offset: 3px;
+}
+
+/* Category frames, subsection strips and destination rows have separate visual roles. */
+.qs-homepage .section-card { border-color: #2b3c52; }
+.qs-homepage .section-header-title { color: #edf3fb; }
+.qs-homepage .subsection-divider {
+  background: #101d2f;
+  border-color: #29394f;
+  border-radius: 7px;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+.qs-homepage .subsection-divider:hover { background: #17283c; border-color: #405a76; }
+.qs-homepage .subsection-divider[aria-expanded="false"] { background: transparent; }
+.qs-homepage .subsection-title { color: #b9cbdf; }
+.qs-homepage .subsection-arrow { color: #8bcce7; }
+.qs-homepage .bookmark-card {
+  border-radius: 12px;
+  background: #17253a;
+  border-color: #29384c;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms var(--home-ease);
+}
+.qs-homepage .bookmark-card:hover { background: #1e3049; border-color: #496580; }
+.qs-homepage .bookmark-card:focus-visible { outline: 2px solid var(--home-accent); outline-offset: 2px; }
+.qs-homepage .drag-dots-handle:hover {
+  color: #c1dcec;
+  background: #254059;
+  outline: none;
+}
+.qs-homepage .drag-dots-handle.selected,
+.qs-homepage .drag-dots-handle.heavenly-hold-ready {
+  color: #ded1f9;
+  background: #383c5a;
+  outline: 1px solid #ab96d2;
+  outline-offset: -3px;
+}
+.qs-homepage .drag-dots-handle:focus-visible { outline: 2px solid var(--home-accent); outline-offset: -2px; }
+.qs-homepage .bookmark-card:has(> .drag-dots-handle.selected) { background: #242e48; border-color: #8c79b7; }
+.qs-homepage .bookmark-card.dragging { border-color: #b39cdb !important; box-shadow: 0 6px 16px #0003 !important; }
+.qs-homepage .section-card.dragging { border-color: #78bddb !important; box-shadow: 0 8px 20px #0003 !important; }
+.qs-homepage .heavenly-drag-preview { border-radius: 12px; box-shadow: 0 12px 26px #0006, 0 0 12px #b39cdb14 !important; }
+.qs-homepage .heavenly-drag-preview[data-kind="category"] { box-shadow: 0 12px 26px #0006, 0 0 12px #7dd3fc14 !important; }
+.qs-homepage .heavenly-placement-slot { border-color: #b39cdb80; background: #a78bfa12; box-shadow: none; border-radius: 10px; }
+.qs-homepage .heavenly-placement-slot[data-kind="category"] { border-color: #7dd3fc80; background: #7dd3fc12; box-shadow: none; }
+.qs-homepage .show-more-btn { border-radius: 999px; border-color: #38546d; color: #b4dff2; }
+
+@media (hover: hover) and (pointer: fine) {
+  .qs-homepage .header-actions-group .settings-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px #02081738, 0 0 12px var(--utility-glow);
+  }
+  .qs-homepage .add-category-btn:hover, .qs-homepage #search-go-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px #02081738, 0 0 12px #7dd3fc14;
+  }
+  .qs-homepage .bookmark-card:hover:not(.dragging) { transform: translateY(-1px); box-shadow: 0 4px 12px #02081740, 0 0 10px #7dd3fc0c; }
+  .qs-homepage .header-actions-group .settings-btn:active, .qs-homepage .add-category-btn:active, .qs-homepage #search-go-btn:active { transform: translateY(0); box-shadow: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qs-homepage :is(.header-actions-group .settings-btn, .add-category-btn, #search-go-btn, .bookmark-card, .subsection-divider) { transition: none; }
+  .qs-homepage :is(.header-actions-group .settings-btn, .add-category-btn, #search-go-btn, .bookmark-card):hover { transform: none; }
+}
+@media (forced-colors: active) {
+  .qs-homepage .brand-title-group h1 { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
+}

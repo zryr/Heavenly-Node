@@ -24,6 +24,35 @@ describe('Homepage bookmark view preferences and visible collection search', fun
     assert.equal(view.validLimit('30'), 30);
     assert.equal(view.limit({ bookmarkInitialLimit: 1000 }, 'a'), 5);
   });
+  it('uses measured complete bottom rows by default while side panels keep five', function () {
+    const before={untouched:'safe'},context={side:'bottom'};
+    for(let width=120;width<=2000;width+=7){
+      context.width=width;const count=view.limit(before,'a','s',context);
+      assert.equal(count,Math.max(1,Math.floor((width+10)/210)));
+      if(width>=200)assert(count*200+(count-1)*10<=width);
+      assert.equal(view.limit(before,'a','s',{side:'left',width}),5);
+    }
+    assert.deepEqual(before,{untouched:'safe'});
+    assert.equal(view.rowCapacity(619),2);assert.equal(view.rowCapacity(620),3);
+    assert.equal(view.rowCapacity(619.99),2);assert.equal(view.rowCapacity(620.01),3);
+    assert.equal(view.rowCapacity(0),1);assert.equal(view.rowCapacity(Infinity),30);
+  });
+  it('preserves legacy custom counts and explicit per-section precedence across Auto changes', function () {
+    const context={side:'bottom',width:1374};
+    let settings={bookmarkInitialLimit:7,bookmarkSectionLimits:{[view.sectionKey('a')]:4,[view.sectionKey('a','s')]:2},bookmarkExpandedSections:{kept:true}};
+    const before=JSON.stringify(settings);
+    assert.equal(view.mode(settings),'custom');assert.equal(view.limit(settings,'other','s',context),7);
+    assert.equal(view.limit(settings,'a','s',context),2);assert.equal(view.limit(settings,'a','other',context),4);
+    assert.equal(JSON.stringify(settings),before);
+    settings.bookmarkCountMode='auto';
+    assert.equal(view.limit(settings,'other','s',context),6);assert.equal(view.limit(settings,'a','s',context),2);
+    settings=Object.assign({},settings,view.override(settings,'a','s','auto'));
+    assert.equal(view.limit(settings,'a','s',context),6);assert.equal(view.limit(settings,'a','other',context),4);
+    settings=Object.assign({},settings,view.override(settings,'a','s',null));
+    assert.equal(view.limit(settings,'a','s',context),6);assert.equal(settings.bookmarkSectionLimits[view.sectionKey('a','s')],'global');
+    settings.bookmarkCountMode='custom';assert.equal(view.limit(settings,'a','s',context),7);
+    assert.deepEqual(settings.bookmarkExpandedSections,{kept:true});
+  });
   it('searches built-in and custom entries using category, subsection and folder context without exposing hidden ancestors', function () {
     const data = { categories: [{ id:'c', title:'Explore', subSections:[{ id:'saved', title:'Research' }] }, { id:'hidden', title:'Secret', hidden:true }], bookmarks: [
       { id:'a', title:'Atlas', url:'https://atlas.test', categoryId:'c', subSectionId:'saved', builtIn:true },

@@ -27,4 +27,33 @@ describe('Content-sized homepage layout', function () {
     assert.equal(parsed.left.width,240);assert(parsed.left.collapsed);assert.equal(parsed.right.width,400);
     assert.deepEqual(layout.normalize({version:99}),layout.defaults());
   });
+  it('removes empty side tracks from pressure without erasing saved manual intent', function () {
+    for (const eligible of [{left:false,right:true},{left:true,right:false},{left:false,right:false}]) {
+      const prefs=layout.defaults();prefs.left.width=400;prefs.left.collapsed=true;prefs.right.width=300;prefs.categoryCollapsed.personal=true;
+      const before=JSON.stringify(prefs);
+      for(let available=280;available<=1800;available+=17){
+        const actual=layout.calculate(available,prefs,'right',eligible);
+        for(const side of ['left','right']) if(!eligible[side]){assert(actual[side].empty);assert(!actual[side].open);assert.equal(actual[side].width,0);}
+        if(!actual.compact){const used=['left','right'].reduce((sum,side)=>sum+(actual[side].empty?0:(actual[side].open?actual[side].width:44)+16),0);assert(available-used>=440||(!eligible.left&&!eligible.right));}
+      }
+      assert.equal(JSON.stringify(prefs),before);
+      assert(layout.calculate(1440,prefs,'right',{left:true,right:true}).right.open);
+      assert(!layout.calculate(1440,prefs,'right',{left:true,right:true}).left.open);
+    }
+  });
+  it('keeps sparse stable category collapse separate from automatic layout pressure', function () {
+    const original={version:1,left:{width:256},right:{width:256},categoryCollapsed:{'stable/category':true,expanded:false}};
+    const prefs=layout.normalize(original);
+    assert.deepEqual(prefs.categoryCollapsed,{'stable/category':true});
+    const before=JSON.stringify(prefs);
+    for(const width of [390,700,788,1024,1440])layout.calculate(width,prefs);
+    assert.equal(JSON.stringify(prefs),before);
+    assert(layout.customized(prefs));assert(!layout.customized(layout.defaults()));
+    assert(!layout.customized(Object.assign(layout.defaults(),{priority:'right'})));
+    const panel=layout.defaults();panel.right.compactOpen=true;assert(layout.customized(panel));
+    assert.equal(layout.resizeTip,'You can resize the left and right bookmark panels by dragging their inner edges.');
+    const special=layout.normalize(JSON.parse('{"version":1,"categoryCollapsed":{"constructor":true,"__proto__":true}}'));
+    assert.equal(special.categoryCollapsed.constructor,true);assert.equal(special.categoryCollapsed.__proto__,true);
+    assert.equal(Object.getPrototypeOf(special.categoryCollapsed),Object.prototype);
+  });
 });

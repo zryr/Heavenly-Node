@@ -1,8 +1,8 @@
 (function (root, factory) {
   'use strict';
   if (typeof module === 'object' && module.exports) module.exports = factory();
-  else root.HeavenlyBookmarkView = factory();
-})(typeof window === 'undefined' ? this : window, function () {
+  else root.HeavenlyBookmarkView = factory(root);
+})(typeof window === 'undefined' ? this : window, function (root) {
   'use strict';
   var DEFAULT_LIMIT = 5, MAX_LIMIT = 30;
   function validLimit(value) {
@@ -11,25 +11,76 @@
     return Number.isInteger(number) && number >= 1 && number <= MAX_LIMIT ? number : null;
   }
   function sectionKey(categoryId, subsectionId) { return JSON.stringify([categoryId, subsectionId || null]); }
-  function limit(settings, categoryId, subsectionId) {
+  function rowCapacity(width, minimum, gap) {
+    minimum = Number(minimum) || 200; gap = Number(gap) || 10;
+    return Math.max(1, Math.min(MAX_LIMIT, Math.floor((Math.max(0, Number(width) || 0) + gap) / (minimum + gap))));
+  }
+  function mode(settings) { settings = settings || {}; return settings.bookmarkCountMode === 'auto' ? 'auto' : settings.bookmarkCountMode === 'custom' || validLimit(settings.bookmarkInitialLimit) !== null ? 'custom' : 'auto'; }
+  function policy(settings, categoryId, subsectionId) {
     settings = settings || {};
     var overrides = settings.bookmarkSectionLimits || {};
-    var global = validLimit(settings.bookmarkInitialLimit) || DEFAULT_LIMIT;
-    if (overrides[sectionKey(categoryId, subsectionId)] === 'global') return global;
-    return validLimit(overrides[sectionKey(categoryId, subsectionId)]) ||
-      validLimit(overrides[sectionKey(categoryId)]) || global;
+    var global = { mode: mode(settings), count: validLimit(settings.bookmarkInitialLimit) || DEFAULT_LIMIT };
+    var keys = [sectionKey(categoryId, subsectionId), sectionKey(categoryId)];
+    for (var i = 0; i < keys.length; i++) {
+      var value = overrides[keys[i]];
+      if (value === 'global') return global;
+      if (value === 'auto') return { mode: 'auto', count: DEFAULT_LIMIT };
+      if (validLimit(value) !== null) return { mode: 'custom', count: validLimit(value) };
+    }
+    return global;
+  }
+  function limit(settings, categoryId, subsectionId, context) {
+    var resolved = policy(settings, categoryId, subsectionId);
+    if (resolved.mode === 'custom') return resolved.count;
+    return context && context.side === 'bottom' ? rowCapacity(context.width, context.minimum, context.gap) : DEFAULT_LIMIT;
   }
   function override(settings, categoryId, subsectionId, value) {
     var overrides = Object.assign({}, settings.bookmarkSectionLimits || {}), key = sectionKey(categoryId, subsectionId);
     var count = validLimit(value);
-    if (count === null) {
+    if (value === 'auto') overrides[key] = 'auto';
+    else if (count === null) {
       delete overrides[key];
       // Reset means the global default, even when a category has its own count.
       // Keep only that explicit exception, never a redundant copy of the number.
-      if (subsectionId && validLimit(overrides[sectionKey(categoryId)])) overrides[key] = 'global';
+      if (subsectionId && (validLimit(overrides[sectionKey(categoryId)]) || overrides[sectionKey(categoryId)] === 'auto')) overrides[key] = 'global';
     }
     else overrides[key] = count;
     return { bookmarkSectionLimits: overrides };
+  }
+  // One observer belongs to the existing render lifecycle. It observes widths,
+  // never item heights; changing Show More cannot trigger a density feedback loop.
+  var rowObserver, rowFrame = 0, rowCallbacks = new Map(), rowWidths = new Map(), pendingRows = new Set(), fallbackBound = false;
+  function measuredWidth(node) { return node.getBoundingClientRect().width; }
+  function flushRows() {
+    rowFrame = 0;
+    Array.from(pendingRows).forEach(function (node) {
+      pendingRows.delete(node);
+      var callback = rowCallbacks.get(node);
+      if (!node.isConnected) { rowCallbacks.delete(node); rowWidths.delete(node); if (rowObserver) rowObserver.unobserve(node); return; }
+      var width = measuredWidth(node);
+      if (callback && width > 0) { rowWidths.set(node, width); callback(width); }
+    });
+  }
+  function observeRow(node, callback) {
+    if (!root) return;
+    rowCallbacks.set(node, callback);
+    if (!rowObserver && root.ResizeObserver) rowObserver = new root.ResizeObserver(function (entries) {
+      entries.forEach(function (entry) { if (Math.abs(measuredWidth(entry.target) - (rowWidths.get(entry.target) || 0)) > .01) pendingRows.add(entry.target); });
+      if (!rowFrame) rowFrame = root.requestAnimationFrame(flushRows);
+    });
+    if (rowObserver) rowObserver.observe(node);
+    else if (!fallbackBound) {
+      fallbackBound = true;
+      function remeasure() { rowCallbacks.forEach(function (_, target) { pendingRows.add(target); }); if (!rowFrame) rowFrame = root.requestAnimationFrame(flushRows); }
+      root.addEventListener('resize', remeasure); root.addEventListener('orientationchange', remeasure);
+    }
+    pendingRows.add(node);
+    if (!rowFrame) rowFrame = root.requestAnimationFrame(flushRows);
+  }
+  function disconnectRows() {
+    if (rowObserver) rowObserver.disconnect();
+    if (rowFrame) root.cancelAnimationFrame(rowFrame);
+    rowFrame = 0; rowCallbacks.clear(); rowWidths.clear(); pendingRows.clear();
   }
   function text(value) { return String(value || '').toLocaleLowerCase(); }
   // Search the authoritative collection, independently of layout, lazy rendering,
@@ -165,17 +216,22 @@
   }
   function initLimitSettings(options) {
     var doc = options.document, globalInput = doc.getElementById('set-bookmark-initial-limit'), sectionSelect = doc.getElementById('set-bookmark-limit-section'), sectionInput = doc.getElementById('set-bookmark-section-limit'), reset = doc.getElementById('reset-bookmark-section-limit'), status = doc.getElementById('bookmark-limit-status');
+    var globalMode = doc.getElementById('set-bookmark-count-mode'), sectionMode = doc.getElementById('set-bookmark-section-mode');
     if (!globalInput || !sectionSelect || !sectionInput) return;
     function selected() { try { return JSON.parse(sectionSelect.value); } catch (error) { return null; } }
     function sync() {
       var settings = options.settings(), chosen = selected();
       globalInput.value = validLimit(settings.bookmarkInitialLimit) || DEFAULT_LIMIT;
+      if (globalMode) { globalMode.value = mode(settings); globalInput.disabled = globalMode.value === 'auto'; }
       sectionInput.disabled = !chosen; reset.disabled = !chosen;
+      if (sectionMode) { sectionMode.disabled = !chosen; sectionMode.value = 'inherit'; }
       if (!chosen) return;
       var value = (settings.bookmarkSectionLimits || {})[sectionKey(chosen[0], chosen[1])];
       sectionInput.value = validLimit(value) || '';
-      sectionInput.placeholder = 'Effective count: ' + limit(settings, chosen[0], chosen[1]);
-      reset.disabled = validLimit(value) === null;
+      var resolved = policy(settings, chosen[0], chosen[1]);
+      sectionInput.placeholder = resolved.mode === 'auto' ? 'Auto: one bottom row; 5 in side panels' : 'Effective count: ' + resolved.count;
+      if (sectionMode) { sectionMode.value = value === 'auto' ? 'auto' : validLimit(value) ? 'custom' : 'inherit'; sectionInput.disabled = sectionMode.value !== 'custom'; }
+      reset.disabled = validLimit(value) === null && value !== 'auto';
     }
     function refreshSections() {
       var previous = sectionSelect.value;
@@ -198,9 +254,19 @@
     }
     globalInput.onchange = function () {
       if (!validate(globalInput, false)) return;
-      options.save({ bookmarkInitialLimit: validLimit(globalInput.value) }); sync(); status.textContent = 'Default bookmark count saved.';
+      options.save({ bookmarkInitialLimit: validLimit(globalInput.value), bookmarkCountMode: 'custom' }); sync(); status.textContent = 'Custom default bookmark count saved.';
+    };
+    if (globalMode) globalMode.onchange = function () {
+      options.save({ bookmarkCountMode: globalMode.value, bookmarkInitialLimit: validLimit(globalInput.value) || validLimit(options.settings().bookmarkInitialLimit) || DEFAULT_LIMIT }); sync();
+      status.textContent = globalMode.value === 'auto' ? 'Auto shows one complete row in bottom sections and 5 bookmarks in side panels.' : 'Custom default bookmark count saved.';
     };
     sectionSelect.onchange = sync;
+    if (sectionMode) sectionMode.onchange = function () {
+      var chosen = selected(); if (!chosen) return;
+      var value = sectionMode.value === 'auto' ? 'auto' : sectionMode.value === 'custom' ? validLimit(sectionInput.value) || limit(options.settings(), chosen[0], chosen[1]) : null;
+      options.save(override(options.settings(), chosen[0], chosen[1], value)); sync();
+      status.textContent = value === 'auto' ? 'This section now uses Auto.' : value === null ? 'This section now uses the default.' : 'Custom section count saved.';
+    };
     sectionInput.onchange = function () {
       var chosen = selected(); if (!chosen || !validate(sectionInput, true)) return;
       options.save(override(options.settings(), chosen[0], chosen[1], sectionInput.value)); sync(); status.textContent = 'Section bookmark count saved.';
@@ -213,5 +279,5 @@
     refreshSections();
     return { refresh: refreshSections };
   }
-  return { validLimit: validLimit, limit: limit, override: override, sectionKey: sectionKey, search: search, initSearch: initSearch, initLimitSettings: initLimitSettings };
+  return { validLimit: validLimit, rowCapacity: rowCapacity, mode: mode, policy: policy, limit: limit, override: override, observeRow: observeRow, disconnectRows: disconnectRows, sectionKey: sectionKey, search: search, initSearch: initSearch, initLimitSettings: initLimitSettings };
 });

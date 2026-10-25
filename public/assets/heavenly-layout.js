@@ -7,12 +7,15 @@
   'use strict';
   var KEY = 'heavenly_home_layout_v1', MIN = 240, MAX = 400, CENTER = 440, RAIL = 44, GAP = 16;
   var sides = ['left', 'right'];
-  function defaults() { return { version: 1, priority: 'left', left: { width: 256, collapsed: false, compactOpen: false }, right: { width: 256, collapsed: false, compactOpen: false } }; }
+  function defaults() { return { version: 1, priority: 'left', left: { width: 256, collapsed: false, compactOpen: false }, right: { width: 256, collapsed: false, compactOpen: false }, categoryCollapsed: {} }; }
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
   function normalize(value) {
     var result = defaults();
     if (!value || value.version !== 1) return result;
     if (value.priority === 'right') result.priority = 'right';
+    if (value.categoryCollapsed && typeof value.categoryCollapsed === 'object' && !Array.isArray(value.categoryCollapsed)) Object.keys(value.categoryCollapsed).forEach(function (id) {
+      if (value.categoryCollapsed[id] === true) Object.defineProperty(result.categoryCollapsed, id, { value: true, enumerable: true, configurable: true, writable: true });
+    });
     sides.forEach(function (side) {
       var saved = value[side];
       if (!saved || typeof saved !== 'object') return;
@@ -23,13 +26,19 @@
     return result;
   }
   // Pure layout calculation, also used by the keyboard separator's limits.
-  function calculate(available, preferences, priority) {
+  function customized(preferences) {
     preferences = normalize(preferences);
-    var compact = available < CENTER + MIN + RAIL + GAP * 2;
+    return Object.keys(preferences.categoryCollapsed).length > 0 || sides.some(function (side) { return preferences[side].width !== 256 || preferences[side].collapsed || preferences[side].compactOpen; });
+  }
+  function calculate(available, preferences, priority, eligible) {
+    preferences = normalize(preferences);
+    eligible = eligible || { left: true, right: true };
+    var count = sides.filter(function (side) { return eligible[side] !== false; }).length;
+    var compact = count > 0 && available < CENTER + MIN + (count === 2 ? RAIL : 0) + GAP * count;
     var result = { compact: compact, left: {}, right: {} };
-    sides.forEach(function (side) { result[side] = { open: !preferences[side].collapsed && !compact, width: preferences[side].width }; });
+    sides.forEach(function (side) { var empty = eligible[side] === false; result[side] = { open: !empty && !preferences[side].collapsed && !compact, width: empty ? 0 : preferences[side].width, empty: empty }; });
     if (compact) return result;
-    function total() { return sides.reduce(function (sum, side) { return sum + (result[side].open ? result[side].width : RAIL); }, CENTER + GAP * 2); }
+    function total() { return sides.reduce(function (sum, side) { return sum + (result[side].empty ? 0 : result[side].open ? result[side].width : RAIL); }, CENTER + GAP * count); }
     // Reduce surplus width before hiding useful content. Prefer the most recently opened panel.
     var order = (priority || preferences.priority) === 'right' ? ['left', 'right'] : ['right', 'left'];
     order.forEach(function (side) { if (result[side].open) result[side].width -= Math.min(result[side].width - MIN, Math.max(0, total() - available)); });
@@ -39,41 +48,91 @@
     });
     return result;
   }
-  var api = { defaults: defaults, normalize: normalize, calculate: calculate, key: KEY, min: MIN, max: MAX };
+  var api = { defaults: defaults, normalize: normalize, calculate: calculate, customized: customized, key: KEY, min: MIN, max: MAX };
+  api.resizeTip = 'You can resize the left and right bookmark panels by dragging their inner edges.';
   if (!root || !root.document) return api;
   function init() {
     var doc = root.document, layout = doc.querySelector('.app-layout');
     if (!layout) return;
     var preferences;
     try { preferences = normalize(JSON.parse(root.localStorage.getItem(KEY))); } catch (e) { preferences = defaults(); }
-    var current, priority = preferences.priority, resize = null, pendingFrame = 0, lastWidth = 0;
+    var current, priority = preferences.priority, resize = null, pendingFrame = 0, viewportFrame = 0, lastWidth = 0;
     var status = doc.getElementById('layout-status');
+    var menuTrigger = doc.getElementById('layout-options-trigger'), menu = doc.getElementById('layout-options-menu'), resetButton = doc.getElementById('reset-home-layout');
     function save() { try { root.localStorage.setItem(KEY, JSON.stringify(preferences)); } catch (e) {} }
-    function announce(message) { status.textContent = message; }
+    function announce(message) { if (status) status.textContent = message; }
     function panel(side) { return doc.getElementById(side + '-sidebar'); }
     function separator(side) { return doc.getElementById(side + '-resize'); }
     function maxWidth(side) {
       var other = side === 'left' ? 'right' : 'left';
-      return clamp(layout.clientWidth - CENTER - GAP * 2 - (current[other].open ? current[other].width : RAIL), MIN, MAX);
+      return clamp(layout.clientWidth - CENTER - GAP * (current[other].empty ? 1 : 2) - (current[other].empty ? 0 : current[other].open ? current[other].width : RAIL), MIN, MAX);
+    }
+    function categoryState(card, animate) {
+      var id = card.dataset.categoryId, body = card.querySelector('.category-content'), button = card.querySelector('.category-collapse-toggle');
+      if (!body || !button) return;
+      var collapsed = preferences.categoryCollapsed[id] === true;
+      body.__layoutCollapsed = collapsed;
+      button.setAttribute('aria-expanded', String(!collapsed));
+      button.setAttribute('aria-label', (collapsed ? 'Expand ' : 'Collapse ') + card.dataset.categoryTitle);
+      button.title = (collapsed ? 'Expand ' : 'Collapse ') + card.dataset.categoryTitle;
+      if (collapsed && body.contains(doc.activeElement)) button.focus({ preventScroll: true });
+      body.inert = collapsed;
+      // Keep the current footprint while the shared height animation closes.
+      // A reversal retires that close's completion before it can compact the card.
+      if (!collapsed) card.classList.remove('is-category-collapsed');
+      if (animate && root.HeavenlyMotion) root.HeavenlyMotion.height(body, !collapsed, null, function () { card.classList.toggle('is-category-collapsed', collapsed); });
+      else { if (root.HeavenlyMotion) root.HeavenlyMotion.cancel(body, false); body.hidden = collapsed; card.classList.toggle('is-category-collapsed', collapsed); }
+    }
+    function bindCategories() {
+      sides.forEach(function (side) {
+        panel(side).querySelectorAll('.section-card[data-category-id]').forEach(function (card) {
+          var button = card.querySelector('.category-collapse-toggle');
+          if (!button) return;
+          if (!button.__layoutBound) {
+            button.__layoutBound = true;
+            button.addEventListener('click', function (event) {
+              event.stopPropagation();
+              if (root.HeavenlyGestures && root.HeavenlyGestures.owner) return;
+              var id = card.dataset.categoryId;
+              if (preferences.categoryCollapsed[id] === true) delete preferences.categoryCollapsed[id];
+              else Object.defineProperty(preferences.categoryCollapsed, id, { value: true, enumerable: true, configurable: true, writable: true });
+              save(); categoryState(card, true); syncReset();
+              announce((preferences.categoryCollapsed[id] === true ? 'Collapsed ' : 'Expanded ') + card.dataset.categoryTitle + '.');
+            });
+          }
+          // Do not interrupt an owned category height animation during a resize.
+          var body = card.querySelector('.category-content');
+          if (!body.__accordionAnimation || body.__layoutCollapsed !== (preferences.categoryCollapsed[card.dataset.categoryId] === true)) categoryState(card, false);
+        });
+      });
+    }
+    function syncReset() {
+      if (resetButton) { resetButton.disabled = !customized(preferences); resetButton.title = resetButton.disabled ? 'Layout already uses its defaults' : 'Restore panel widths and panel/category collapse states'; }
     }
     function apply() {
       pendingFrame = 0;
       var width = layout.clientWidth;
-      current = calculate(width, preferences, priority);
+      var eligible = {};
+      sides.forEach(function (side) { eligible[side] = !!doc.getElementById(side + '-column').querySelector('.section-card[data-category-id]'); });
+      current = calculate(width, preferences, priority, eligible);
       layout.classList.toggle('layout-compact', current.compact);
+      bindCategories(); syncReset();
       sides.forEach(function (side) {
         var state = current[side], shell = panel(side);
         var focused = doc.activeElement, ownedFocus = shell.contains(focused);
-        if (current.compact) state.open = preferences[side].compactOpen && !preferences[side].collapsed;
+        if (current.compact) state.open = !state.empty && preferences[side].compactOpen && !preferences[side].collapsed;
+        shell.classList.toggle('is-empty', state.empty);
+        layout.classList.toggle('has-empty-' + side, state.empty);
         shell.classList.toggle('is-collapsed', !state.open);
-        shell.dataset.collapse = !state.open ? (preferences[side].collapsed ? 'manual' : 'automatic') : 'none';
-        layout.style.setProperty('--' + side + '-track', (state.open ? state.width : RAIL) + 'px');
+        shell.dataset.collapse = state.empty ? 'empty' : !state.open ? (preferences[side].collapsed ? 'manual' : 'automatic') : 'none';
+        layout.style.setProperty('--' + side + '-track', (state.empty ? 0 : state.open ? state.width : RAIL) + 'px');
         var column = doc.getElementById(side + '-column');
         column.inert = !state.open;
         column.setAttribute('aria-hidden', String(!state.open));
         shell.querySelector('.sidebar-content').hidden = !state.open;
-        shell.querySelector('.sidebar-tab').hidden = state.open || current.compact;
+        shell.querySelector('.sidebar-tab').hidden = state.empty || state.open || current.compact;
         doc.querySelectorAll('[data-sidebar-toggle="' + side + '"]').forEach(function (button) {
+          button.disabled = state.empty; button.hidden = state.empty || (button.classList.contains('sidebar-tab') && (state.open || current.compact));
           button.setAttribute('aria-expanded', String(state.open));
           button.setAttribute('aria-label', (state.open ? 'Collapse ' : 'Expand ') + side + ' bookmarks');
         });
@@ -83,7 +142,7 @@
         handle.setAttribute('aria-valuemax', String(maxWidth(side)));
         handle.setAttribute('aria-valuetext', Math.round(state.width) + ' pixels');
         if (ownedFocus && (focused.closest('[hidden]') || (!state.open && focused !== shell.querySelector('.sidebar-tab')))) {
-          var focusTarget = state.open ? shell.querySelector('.sidebar-heading button') : current.compact ? doc.querySelector('.layout-toolbar [data-sidebar-toggle="' + side + '"]') : shell.querySelector('.sidebar-tab');
+          var focusTarget = state.empty ? menuTrigger : state.open ? shell.querySelector('.sidebar-heading button') : current.compact ? doc.querySelector('.layout-toolbar [data-sidebar-toggle="' + side + '"]') : shell.querySelector('.sidebar-tab');
           focusTarget.focus({ preventScroll: true });
         }
       });
@@ -107,6 +166,7 @@
     }
     function toggle(side) {
       if (root.HeavenlyGestures && root.HeavenlyGestures.owner) return;
+      if (!current || current[side].empty) return;
       var open = current[side].open;
       preferences[side].collapsed = open;
       if (current.compact) preferences[side].compactOpen = !open;
@@ -165,16 +225,30 @@
         preferences[side].width = clamp(next, MIN, maxWidth(side)); save(); apply();
       });
     });
-    doc.getElementById('reset-home-layout').addEventListener('click', function () {
+    if (resetButton) resetButton.addEventListener('click', function () {
       if (root.HeavenlyGestures && root.HeavenlyGestures.owner) return;
-      preferences = defaults(); priority = 'left'; save(); apply(); announce('Homepage layout reset.');
+      preferences = defaults(); priority = 'left'; save(); apply(); closeMenu(true); announce('Panel widths and collapse states reset.');
     });
+    function closeMenu(focus) { if (!menu) return; menu.hidden = true; menuTrigger.setAttribute('aria-expanded', 'false'); if (focus) menuTrigger.focus({ preventScroll: true }); }
+    if (menuTrigger && menu) {
+      menuTrigger.addEventListener('click', function () { var open = menu.hidden; menu.hidden = !open; menuTrigger.setAttribute('aria-expanded', String(open)); });
+      menuTrigger.addEventListener('keydown', function (event) { if (event.key === 'ArrowDown') { event.preventDefault(); menu.hidden = false; menuTrigger.setAttribute('aria-expanded', 'true'); if (!resetButton.disabled) resetButton.focus(); } });
+      doc.addEventListener('click', function (event) { if (!event.target.closest('.layout-options')) closeMenu(false); });
+      doc.addEventListener('focusin', function (event) { if (!event.target.closest('.layout-options')) closeMenu(false); });
+      doc.addEventListener('keydown', function (event) { if (event.key === 'Escape' && !menu.hidden) { event.preventDefault(); closeMenu(true); } });
+    }
     function viewportChanged() {
+      // Viewport pressure must settle before the next paint. Interpolating a
+      // responsive minmax track can briefly overflow during WebKit rotation.
+      layout.classList.add('layout-viewport-changing');
+      root.cancelAnimationFrame(viewportFrame);
       if (resize) cancelResize();
       if (root.HeavenlyGestures && root.HeavenlyGestures.owner === 'bookmark-drag') root.HeavenlyGestures.cancel();
       schedule();
+      viewportFrame = root.requestAnimationFrame(function () { viewportFrame = root.requestAnimationFrame(function () { layout.classList.remove('layout-viewport-changing'); viewportFrame = 0; }); });
     }
     if (root.ResizeObserver) new root.ResizeObserver(function () { if (Math.abs(layout.clientWidth - lastWidth) > 1) viewportChanged(); }).observe(layout);
+    if (root.MutationObserver) sides.forEach(function (side) { new root.MutationObserver(schedule).observe(doc.getElementById(side + '-column'), { childList: true }); });
     root.addEventListener('resize', viewportChanged);
     root.addEventListener('orientationchange', viewportChanged);
     root.addEventListener('blur', cancelResize);

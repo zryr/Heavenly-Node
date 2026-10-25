@@ -6,13 +6,14 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {chromium, firefox, webkit} = require('playwright');
 const app = require('../../app');
+const {resetHomeLayout} = require('./homepage_test_helpers.cjs');
 const output = path.resolve(process.env.HEAVENLY_BROWSER_MATRIX || 'docs/homepage-overhaul/evidence/browser-matrix.json');
 const summary = {executed:new Date().toISOString(),physicalDevices:[],continuousTouch:'Chromium CDP emulation only; Firefox/WebKit continuous touch injection is not exposed by Playwright',browsers:[]};
 let server;
 (async()=>{
   server=app.listen(0,'127.0.0.1');await new Promise(r=>server.on('listening',r));
   const origin='http://127.0.0.1:'+server.address().port;
-  for (const [name,engine] of Object.entries({chromium,firefox,webkit})) {
+  for (const [name,engine] of Object.entries({chromium,firefox,webkit}).filter(([name])=>!process.env.HEAVENLY_BROWSER||process.env.HEAVENLY_BROWSER===name)) {
     const record={engine:name,checks:[],errors:[],viewports:[]};summary.browsers.push(record);let browser,context;
     try {
       browser=await engine.launch(name==='chromium'?{executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox']}:{ });
@@ -26,7 +27,7 @@ let server;
       const state=()=>page.evaluate(()=>HeavenlyLayout.getState());
       const settle=()=>page.waitForTimeout(240);
       const toggle=side=>page.locator('[data-sidebar-toggle="'+side+'"]:visible').first().click();
-      await page.locator('#reset-home-layout').click();await settle();
+      await resetHomeLayout(page);await settle();
       assert((await state()).actual.left.open&&(await state()).actual.right.open);
       await toggle('left');await settle();assert.equal((await state()).actual.left.open,false);assert.equal((await state()).actual.right.open,true);
       await toggle('right');await settle();assert.equal((await state()).actual.right.open,false);
@@ -47,7 +48,7 @@ let server;
       assert((await state()).preferences.right.width<start);
       const pref=(await state()).preferences;await page.reload({waitUntil:'domcontentloaded'});await settle();assert.deepEqual((await state()).preferences,pref);
       pass('separator keyboard min/max, mouse resize and local persistence work independently');
-      await page.locator('#reset-home-layout').click();await settle();
+      await resetHomeLayout(page);await settle();
       for(const [label,width,height] of [['narrow-phone',320,740],['phone',390,844],['large-phone',430,932],['ipad-portrait',820,1180],['ipad-landscape',1180,820],['chromebook',1366,768],['wide-desktop',1920,1080]]) {
         await page.setViewportSize({width,height});await settle();
         const metrics=await page.evaluate(()=>{const c=document.getElementById('center-container').getBoundingClientRect();const controls=['bm-universal-search','url','search-go-btn','search-newtab-btn'].map(id=>{const b=document.getElementById(id).getBoundingClientRect();return{id,x:b.x,right:b.right,width:b.width,height:b.height}});return{scrollWidth:document.documentElement.scrollWidth,innerWidth,center:{x:c.x,right:c.right,width:c.width},controls,state:HeavenlyLayout.getState()}});

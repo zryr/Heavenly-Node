@@ -1,5 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),{chromium}=require('playwright'),app=require('../../app');
+const {resetHomeLayout}=require('./homepage_test_helpers.cjs');
 let browser,server,checks=0;const pass=s=>{checks++;console.log('PASS '+s)};
 (async()=>{
  server=app.listen(0,'127.0.0.1');await new Promise(r=>server.on('listening',r));const origin='http://127.0.0.1:'+server.address().port;
@@ -32,14 +33,14 @@ let browser,server,checks=0;const pass=s=>{checks++;console.log('PASS '+s)};
   await page.waitForTimeout(230);assert.equal((await state()).preferences.left.width,before);assert.equal(await page.evaluate(()=>HeavenlyGestures.owner),'');assert.equal(await page.evaluate(()=>document.body.classList.contains('homepage-resizing')),false);
  }
  pass('touch cancellation, second contacts, lost focus and orientation changes restore the prior committed width and release input ownership');
- await page.locator('#reset-home-layout').click();await page.waitForTimeout(220);assert.equal((await state()).preferences.left.width,256);assert.equal((await state()).preferences.right.width,256);
+ await resetHomeLayout(page);await page.waitForTimeout(220);assert.equal((await state()).preferences.left.width,256);assert.equal((await state()).preferences.right.width,256);
  await page.setViewportSize({width:700,height:900});await page.waitForTimeout(220);
  assert((await state()).actual.compact);await page.locator('.layout-toolbar [data-sidebar-toggle="left"]').tap();await page.waitForTimeout(400);
   await page.waitForFunction(()=>HeavenlyLayout.getState().actual.left.open);assert((await state()).actual.left.open);await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>HeavenlyLayout.getState().actual.left.open);assert((await state()).actual.left.open);
  await page.locator('.layout-toolbar [data-sidebar-toggle="right"]').tap();await page.waitForTimeout(400);assert((await state()).actual.right.open&&(await state()).actual.left.open);
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  pass('intermediate widths reveal both panels through real touch controls and retain explicit compact visibility after reload');
- await page.setViewportSize({width:1440,height:1000});await page.waitForTimeout(220);await page.locator('#reset-home-layout').click();await page.waitForTimeout(220);
+ await page.setViewportSize({width:1440,height:1000});await page.waitForTimeout(220);await resetHomeLayout(page);await page.waitForTimeout(220);
  await cdp.send('Emulation.setPageScaleFactor',{pageScaleFactor:1.25});
  assert.equal(await page.evaluate(()=>visualViewport.scale),1.25);
  assert(await page.evaluate(()=>{const s=HeavenlyLayout.getState(),c=document.getElementById('center-container').getBoundingClientRect();return c.width>=440&&s.actual.left.open&&s.actual.right.open&&document.documentElement.scrollWidth<=innerWidth}));

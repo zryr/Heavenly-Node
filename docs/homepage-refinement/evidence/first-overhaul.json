@@ -1,0 +1,270 @@
+{
+  "phase": "first-overhaul",
+  "sourceCommit": "9d7d3295f43b05ee594f131938d4e1363d484c31",
+  "captured": "2026-10-24T18:52:28.137Z",
+  "physicalDevices": [],
+  "assetPolicy": "External fonts, stylesheets and images allowed; proxy navigation blocked.",
+  "captures": [
+    {
+      "id": "desktop",
+      "file": "evidence/first-overhaul-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      },
+      "centerWidth": 864
+    },
+    {
+      "id": "wide",
+      "file": "evidence/first-overhaul-wide.png",
+      "width": 1920,
+      "height": 1080,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 1920,
+      "innerWidth": 1920,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      },
+      "centerWidth": 992
+    },
+    {
+      "id": "ipad-portrait",
+      "file": "evidence/first-overhaul-ipad-portrait.png",
+      "width": 820,
+      "height": 1180,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 820,
+      "innerWidth": 820,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": false,
+            "width": 240
+          }
+        }
+      },
+      "centerWidth": 456
+    },
+    {
+      "id": "ipad-landscape",
+      "file": "evidence/first-overhaul-ipad-landscape.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 1180,
+      "innerWidth": 1180,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      },
+      "centerWidth": 604
+    },
+    {
+      "id": "phone-small",
+      "file": "evidence/first-overhaul-phone-small.png",
+      "width": 320,
+      "height": 740,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 320,
+      "innerWidth": 320,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": true,
+          "left": {
+            "open": false,
+            "width": 256
+          },
+          "right": {
+            "open": false,
+            "width": 256
+          }
+        }
+      },
+      "centerWidth": 296
+    },
+    {
+      "id": "phone",
+      "file": "evidence/first-overhaul-phone.png",
+      "width": 390,
+      "height": 844,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": true,
+          "left": {
+            "open": false,
+            "width": 256
+          },
+          "right": {
+            "open": false,
+            "width": 256
+          }
+        }
+      },
+      "centerWidth": 366
+    },
+    {
+      "id": "search",
+      "file": "evidence/first-overhaul-search.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Central bookmark search for Games.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256
+          },
+          "right": {
+            "open": true,
+            "width": 256
+          }
+        }
+      },
+      "centerWidth": 864
+    }
+  ],
+  "errors": [],
+  "browser": "154.0.8037.57"
+}

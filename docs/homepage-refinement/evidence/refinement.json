@@ -1,0 +1,658 @@
+{
+  "phase": "refinement",
+  "sourceCommit": null,
+  "captured": "2026-10-25T01:21:45.719Z",
+  "physicalDevices": [],
+  "assetPolicy": "External fonts, stylesheets and images allowed; proxy navigation blocked.",
+  "captures": [
+    {
+      "id": "desktop",
+      "file": "evidence/refinement-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 864
+    },
+    {
+      "id": "wide",
+      "file": "evidence/refinement-wide.png",
+      "width": 1920,
+      "height": 1080,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 1920,
+      "innerWidth": 1920,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 992
+    },
+    {
+      "id": "ipad-portrait",
+      "file": "evidence/refinement-ipad-portrait.png",
+      "width": 820,
+      "height": 1180,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 820,
+      "innerWidth": 820,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": false,
+            "width": 240,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 456
+    },
+    {
+      "id": "ipad-landscape",
+      "file": "evidence/refinement-ipad-landscape.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 1180,
+      "innerWidth": 1180,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 604
+    },
+    {
+      "id": "phone-small",
+      "file": "evidence/refinement-phone-small.png",
+      "width": 320,
+      "height": 740,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 320,
+      "innerWidth": 320,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": true,
+          "left": {
+            "open": false,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": false,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 296
+    },
+    {
+      "id": "phone",
+      "file": "evidence/refinement-phone.png",
+      "width": 390,
+      "height": 844,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": true,
+          "left": {
+            "open": false,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": false,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 366
+    },
+    {
+      "id": "search",
+      "file": "evidence/refinement-search.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Central bookmark search for Games.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 864
+    },
+    {
+      "id": "both-expanded",
+      "file": "evidence/refinement-both-expanded.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Both sidebars expanded, default widths.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 864
+    },
+    {
+      "id": "left-collapsed",
+      "file": "evidence/refinement-left-collapsed.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Left sidebar collapsed.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": false,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 1076
+    },
+    {
+      "id": "right-collapsed",
+      "file": "evidence/refinement-right-collapsed.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Right sidebar collapsed.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "right",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": false,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 1076
+    },
+    {
+      "id": "both-collapsed",
+      "file": "evidence/refinement-both-collapsed.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Both sidebars collapsed.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": false,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": false,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 1288
+    },
+    {
+      "id": "search-collapsed",
+      "file": "evidence/refinement-search-collapsed.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Search includes bookmarks from both collapsed sidebars.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": true,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": false,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": false,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 1288
+    },
+    {
+      "id": "category-collapsed",
+      "file": "evidence/refinement-category-collapsed.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Individual category collapsed inside an expanded sidebar.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {
+            "cat_movies": true
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 864
+    },
+    {
+      "id": "layout-options",
+      "file": "evidence/refinement-layout-options.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Layout options keeps the scoped reset out of the persistent toolbar.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {
+            "cat_movies": true
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          },
+          "right": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 864
+    },
+    {
+      "id": "category-rails",
+      "file": "evidence/refinement-category-rails.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Multiple real categories moved into one sidebar and collapsed into independent compact draggable headers.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 400,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {
+            "cat_movies": true,
+            "cat_anime": true
+          }
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": true,
+            "width": 400,
+            "empty": false
+          },
+          "right": {
+            "open": false,
+            "width": 0,
+            "empty": true
+          }
+        }
+      },
+      "centerWidth": 992
+    },
+    {
+      "id": "empty-left",
+      "file": "evidence/refinement-empty-left.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "All left categories moved right: the empty side occupies no column or expansion rail.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "layout": {
+        "preferences": {
+          "version": 1,
+          "priority": "left",
+          "left": {
+            "width": 400,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "right": {
+            "width": 256,
+            "collapsed": false,
+            "compactOpen": false
+          },
+          "categoryCollapsed": {}
+        },
+        "actual": {
+          "compact": false,
+          "left": {
+            "open": false,
+            "width": 0,
+            "empty": true
+          },
+          "right": {
+            "open": true,
+            "width": 256,
+            "empty": false
+          }
+        }
+      },
+      "centerWidth": 1136
+    }
+  ],
+  "errors": [],
+  "browser": "154.0.8037.57"
+}
