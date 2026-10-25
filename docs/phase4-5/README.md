@@ -1,6 +1,6 @@
 # Heavenly — combined Phases 4 + 5
 
-One branch: `feat/celestial-settings-viewer-widgets`, from latest `main` `f870d509569f241a23090c52c7b4c0b5696fc69b`. PRs #193 and #196 are included in the baseline. No automatic merge.
+One branch: `feat/celestial-settings-viewer-widgets`, from latest `main` `f870d509569f241a23090c52c7b4c0b5696fc69b`. PRs #193 and #196 are included in the baseline. [Combined PR #199](https://github.com/zryr/Heavenly-Node/pull/199) is open and unmerged.
 
 The [portable before/after comparison](comparison.html) contains real implemented screenshots, full-resolution viewing, and representative interaction frames. The [design audit](design-audit.md) records the historical original/overhaul/refinement review and the decisions made before major edits. Surface-specific audits preserve the baseline findings.
 
@@ -57,3 +57,11 @@ The final source passed JavaScript syntax checks and `git diff --check`. The com
 The final Chromium runs of Quick Settings customization (**23 groups**), cloaking consolidation (**13 checks**) and catalog/motion/backup regression (**21 groups**) also completed all assertions. Existing search, touch, layout and cross-engine checks are detailed in the linked reports.
 
 Only the explicitly launched VUS utility adds sandboxed popup permission; normal authored previews and their new-tab shells continue to block popups. Real user-click VUS external links were verified with inherited isolation after navigation. VUS apps requiring cross-window raw HTML writes can fail under the origin boundary; the UI explains that restriction. Its pre-existing local fallback lacks a complete card renderer, and the test fixture is explicitly identified rather than presented as a working full catalog.
+
+## Vercel preview
+
+[Reviewed preview](https://heavenly-node-m8ocxn5nj-syshi.vercel.app) is **READY**, built from application commit `c647d3093f0aef4f49d793ce9621f948656c2cd2` in the existing `heavenly-node` project. Vercel's Git status is successful. Deployment protection remains enabled; the temporary share link is provided separately, without committing access parameters.
+
+The deployed Chromium smoke test passed **five groups**, with HTTP 200 and no page errors: homepage initialization/loader/HQ submission; genuine center-width gain from collapsed categories; individual Settings search with preference preservation; executed parent DOM/storage attacks blocked; and 390px source-preserving Viewer layout. See [actual preview results](evidence/preview-results.json). The test's decoy-unlock setup is scoped to the top document so it does not itself attempt storage access in sandboxed frames.
+
+The follow-up evidence commit changes documentation and the preview-test harness only; the deployed application source is the same reviewed runtime.

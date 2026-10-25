@@ -14,7 +14,7 @@ let browser;
   browser = await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox'],proxy});
   result.browser = browser.version();
   const context = await browser.newContext({viewport:{width:1440,height:1000}});
-  await context.addInitScript(() => sessionStorage.setItem('heavenly_decoy_unlocked','true'));
+  await context.addInitScript(() => { if (window === top) { try { sessionStorage.setItem('heavenly_decoy_unlocked','true'); } catch (_) {} } });
   const page = await context.newPage(); page.setDefaultTimeout(15000);
   page.on('pageerror', e => result.errors.push(e.message.slice(0,500)));
   const response = await page.goto(target.href,{waitUntil:'domcontentloaded'});
