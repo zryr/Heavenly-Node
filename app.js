@@ -264,11 +264,12 @@ function iframeSecurityHeadersResponseMiddleware(data) {
     // node-unblocker's default CSP middleware removes upstream CSP. Restore
     // these restrictions unchanged; frame refusal must use explicit recovery.
     var original = data.remoteResponse.headers;
-    Object.keys(original).forEach(function(key) {
-        if (/^(?:x-frame-options|content-security-policy(?:-report-only)?|x-content-security-policy|x-webkit-csp|x-content-type-options)$/i.test(key)) {
+    for (var key in original) {
+        var lower = key.toLowerCase();
+        if (lower === 'x-frame-options' || lower === 'content-security-policy' || lower === 'content-security-policy-report-only' || lower === 'x-content-security-policy' || lower === 'x-webkit-csp' || lower === 'x-content-type-options') {
             data.headers[key] = original[key];
         }
-    });
+    }
 }
 
 var unblockerConfig = {

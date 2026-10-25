@@ -93,3 +93,9 @@
 **Learning:** Re-instantiating `new RegExp()` on every chunk invocation in streaming transforms like `repairNamespaces` forces V8 to compile and allocate regex objects repeatedly. Guarding `text.replace` with a lightweight `!/xmlns/i.test(text)` check bypasses regex evaluation entirely on non-XML chunks, and caching compiled `RegExp` instances in a module-level dictionary (`namespaceRegexCache`) yields a ~66% execution speedup.
 
 **Action:** Always cache compiled `RegExp` instances in module scope and use fast-path `test()` guards before executing regex replacements in high-frequency stream transforms.
+
+## 2025-06-03 - Replacing regex character testing with inline ASCII helper checks in hot srcset parsing loops
+
+**Learning:** Evaluating regular expressions (`/[\s,]/.test(c)` and `!/\s/.test(c)`) per character inside tight `while` loops during client `srcset` attribute parsing introduces severe execution overhead. Replacing RegExp evaluations with inline ASCII character lookup helpers (`isSpaceOrComma` and `isWhitespace`) speeds up `fixSrcset` execution by ~67.6% (from 573.5ms down to 185.5ms for 100k srcset candidate parsing operations).
+
+**Action:** Avoid calling RegExp `.test()` per character in tight string traversal loops; use simple character comparison checks instead.

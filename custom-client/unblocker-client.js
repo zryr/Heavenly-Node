@@ -26,6 +26,14 @@
   // call() and apply() on `this || original_thing`
   // prevent a failure in one initializer from stopping subsequent initializers
 
+  function isSpaceOrComma(c) {
+    return c === ' ' || c === '\t' || c === '\n' || c === '\r' || c === '\f' || c === ',';
+  }
+
+  function isWhitespace(c) {
+    return c === ' ' || c === '\t' || c === '\n' || c === '\r' || c === '\f';
+  }
+
   function fixSrcset(srcsetStr, config, location) {
     if (srcsetStr === null || srcsetStr === undefined) {
       return srcsetStr;
@@ -36,9 +44,9 @@
     // parser does, rather than splitting base64 placeholders into fake URLs.
     var fixedCandidates = [], index = 0;
     while (index < srcsetStr.length) {
-      while (index < srcsetStr.length && /[\s,]/.test(srcsetStr[index])) index++;
+      while (index < srcsetStr.length && isSpaceOrComma(srcsetStr[index])) index++;
       var start = index;
-      while (index < srcsetStr.length && !/\s/.test(srcsetStr[index])) index++;
+      while (index < srcsetStr.length && !isWhitespace(srcsetStr[index])) index++;
       var url = srcsetStr.slice(start, index);
       if (!url) break;
       var descriptor = '';
