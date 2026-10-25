@@ -1,0 +1,30 @@
+{
+  "impeccable": {
+    "target": [
+      "public/assets/heavenly-home.css",
+      "public/assets/heavenly-layout.js"
+    ],
+    "findings": []
+  },
+  "taste": {
+    "viewports": [
+      1440,
+      768,
+      390
+    ],
+    "findings": [
+      {
+        "level": "FAIL",
+        "id": "no-title",
+        "width": 1440,
+        "message": "The screen has no h1.",
+        "fix": "Name the screen in an h1 at the top of the canvas (18\u201328px): \"Overview\", \"Payouts\", the project's name.",
+        "alsoAt": [
+          768,
+          390
+        ]
+      }
+    ],
+    "explanation": "The no-title detector selects the first h1, which is inside the hidden educational decoy; the visible Heavenly h1 is present in the center main landmark. Other actionable final inspector findings were fixed."
+  }
+}

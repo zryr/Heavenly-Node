@@ -23,6 +23,19 @@ const reportPath = path.resolve(process.argv[2] || 'work/final-ux/comparison.htm
     assert(count >= 20);
     assert(await previews.locator('img').evaluateAll(nodes => nodes.every(n => n.src.startsWith('data:image/png;base64,'))));
     console.log('PASS ' + count + ' embedded screenshots decode and render in a real browser');
+    const recordings = page.locator('video');
+    for (let i = 0; i < await recordings.count(); i++) {
+      const recording = recordings.nth(i);
+      await recording.evaluate(video => { video.muted = true; video.load(); });
+      await page.waitForFunction(index => {
+        const video = document.querySelectorAll('video')[index];
+        return video.readyState >= 1 && video.videoWidth > 0 && video.duration > 0;
+      }, i);
+      await recording.evaluate(video => video.play());
+      await page.waitForFunction(index => document.querySelectorAll('video')[index].currentTime > .05, i);
+      await recording.evaluate(video => video.pause());
+    }
+    if (await recordings.count()) console.log('PASS ' + await recordings.count() + ' embedded recordings decode and play actual frames');
     for (let i = 0; i < count; i++) {
       const preview = previews.nth(i);
       const width = await preview.locator('img').evaluate(n => n.naturalWidth);

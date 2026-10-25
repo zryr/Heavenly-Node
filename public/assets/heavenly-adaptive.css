@@ -1,0 +1,35 @@
+/* Functional layout states; shared surface styling stays in heavenly-home.css. */
+.layout-options { position: relative; margin-left: auto; }
+.layout-options-menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 12; width: min(280px, calc(100vw - 32px)); padding: 8px; border: 1px solid #3b506d; border-radius: 12px; background: #142139; box-shadow: 0 12px 32px #050b1670; }
+.layout-options-menu #reset-home-layout { width: 100%; justify-content: flex-start; margin: 0; }
+.layout-options-menu p { margin: 3px 10px 8px; font-size: 12px; line-height: 1.5; color: #a5b4c8; }
+.layout-options-menu button:disabled { opacity: .45; cursor: default; }
+.layout-options button:focus-visible, .category-collapse-toggle:focus-visible { outline: 2px solid #8bd8f5; outline-offset: 2px; }
+.qs-homepage .bookmark-sidebar.is-empty { display: none; }
+.qs-homepage .app-layout.layout-viewport-changing { transition: none; }
+.qs-homepage .app-layout.has-empty-left:not(.layout-compact) { grid-template-columns: minmax(0, 1fr) var(--right-track); }
+.qs-homepage .app-layout.has-empty-right:not(.layout-compact) { grid-template-columns: var(--left-track) minmax(0, 1fr); }
+.qs-homepage .app-layout.has-empty-left.has-empty-right:not(.layout-compact) { grid-template-columns: minmax(0, 1fr); }
+.qs-homepage .app-layout.has-empty-left:not(.layout-compact) #center-container { grid-column: 1; }
+.qs-homepage .app-layout.has-empty-left:not(.layout-compact) #right-sidebar { grid-column: 2; }
+.qs-homepage .app-layout.has-empty-right:not(.layout-compact) #center-container { grid-column: 2; }
+.qs-homepage .app-layout.has-empty-left.has-empty-right:not(.layout-compact) #center-container { grid-column: 1; }
+.qs-homepage .side-column { min-height: 0; display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; gap: 10px; }
+.qs-homepage .side-column > .section-card { box-sizing: border-box; min-width: 0; flex: 1 0 100%; }
+.category-content { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.qs-homepage .category-collapse-toggle { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 36px; min-height: 44px; padding: 8px; border: 0; border-radius: 8px; background: transparent; color: #a6bed7; cursor: pointer; touch-action: manipulation; }
+.category-collapse-toggle svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; transition: transform 160ms ease; }
+.category-collapse-toggle[aria-expanded="false"] svg { transform: rotate(-90deg); }
+.qs-homepage .side-column > .is-category-collapsed { flex: 0 1 auto; max-width: 100%; padding: 2px 6px; border-radius: 11px; gap: 0; }
+.qs-homepage .is-category-collapsed .section-header { flex-wrap: nowrap; padding: 0; gap: 0; }
+.qs-homepage .is-category-collapsed .section-header-title { flex-basis: auto; flex: 1; gap: 2px; }
+.qs-homepage .is-category-collapsed .category-title { font-size: 13px; max-width: 180px; }
+.qs-homepage .is-category-collapsed .category-actions { margin: 0; }
+.qs-homepage .is-category-collapsed .category-actions > :not(.category-collapse-toggle) { display: none; }
+.qs-homepage .is-category-collapsed .drag-dots-handle { width: 30px; min-width: 30px; }
+.qs-homepage .side-column .subsection-content { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.qs-homepage .bottom-section-container .section-card .bookmarks-list { display: flex; flex-direction: column; gap: 10px; }
+.qs-homepage .bottom-section-container .subsection-content { --bookmark-row-min: 200px; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--bookmark-row-min)), 1fr)); gap: 10px; min-width: 0; }
+.qs-homepage .subsection-content > .show-more-btn { grid-column: 1 / -1; width: 100%; }
+@media (pointer: coarse) { .qs-homepage .category-collapse-toggle { width: 44px; } .qs-homepage .is-category-collapsed .drag-dots-handle { width: 44px; min-width: 44px; } }
+@media (prefers-reduced-motion: reduce) { .category-collapse-toggle svg { transition: none; } }

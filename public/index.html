@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Heavenly</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="icon" type="image/png" href="/assets/heavenly-logo.png">
   <script>
     try {
@@ -16,6 +16,8 @@
   <script src="/assets/heavenly-icons.js"></script>
   <script src="/assets/heavenly-navigation.js"></script>
   <script src="/assets/heavenly-bookmarks.js"></script>
+  <script src="/assets/heavenly-bookmark-view.js"></script>
+  <link rel="stylesheet" href="/assets/heavenly-bookmark-view.css">
   <script src="/assets/heavenly-catalog.js"></script>
   <script src="/assets/heavenly-catalog-ui.js"></script>
   <link rel="stylesheet" href="/assets/heavenly-catalog.css">
@@ -137,188 +139,6 @@
 
     .entrance-animate {
       animation: topToBottomEntrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    /* Ethereal Heavenly Loading Screen Animation */
-    @keyframes divineHaloPulse {
-      0%, 100% {
-        transform: scale(1);
-        opacity: 0.7;
-        box-shadow: 0 0 25px rgba(56, 189, 248, 0.35), 0 0 50px rgba(129, 140, 248, 0.2);
-      }
-      50% {
-        transform: scale(1.08);
-        opacity: 0.95;
-        box-shadow: 0 0 40px rgba(56, 189, 248, 0.65), 0 0 80px rgba(186, 230, 253, 0.35);
-      }
-    }
-
-    @keyframes etherealFadeOut {
-      0% { opacity: 1; visibility: visible; }
-      100% { opacity: 0; visibility: hidden; pointer-events: none; }
-    }
-
-    @keyframes logoFloatGlow {
-      0%, 100% {
-        transform: translateY(0) scale(1);
-        filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.75)) drop-shadow(0 0 32px rgba(186, 230, 253, 0.4));
-      }
-      50% {
-        transform: translateY(-8px) scale(1.03);
-        filter: drop-shadow(0 0 28px rgba(56, 189, 248, 0.95)) drop-shadow(0 0 52px rgba(186, 230, 253, 0.6));
-      }
-    }
-
-    @keyframes celestialAuraPulse {
-      0%, 100% {
-        transform: scale(0.92);
-        opacity: 0.55;
-      }
-      50% {
-        transform: scale(1.18);
-        opacity: 0.95;
-      }
-    }
-
-    @keyframes cloudDriftSlow {
-      0% { transform: translateX(-4%) translateY(0) scale(1); }
-      50% { transform: translateX(4%) translateY(-8px) scale(1.03); }
-      100% { transform: translateX(-4%) translateY(0) scale(1); }
-    }
-
-    @keyframes shimmerBar {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(200%); }
-    }
-
-    @keyframes textPulse {
-      0%, 100% { opacity: 0.8; }
-      50% { opacity: 1; text-shadow: 0 0 16px rgba(56, 189, 248, 0.7); }
-    }
-
-    .loading-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: radial-gradient(circle at 50% 40%, #0c182e 0%, #030712 75%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 22px;
-      overflow: hidden;
-      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .loading-overlay.fade-out {
-      animation: etherealFadeOut 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    /* Cloud / Heavenly backdrop accents */
-    .loading-cloud-bg {
-      position: absolute;
-      inset: -20%;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 50% 35%, rgba(186, 230, 253, 0.18) 0%, transparent 45%),
-        radial-gradient(circle at 25% 65%, rgba(56, 189, 248, 0.14) 0%, transparent 40%),
-        radial-gradient(circle at 75% 65%, rgba(129, 140, 248, 0.14) 0%, transparent 40%);
-      animation: cloudDriftSlow 16s ease-in-out infinite;
-    }
-
-    .loading-center-stage {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 170px;
-      height: 170px;
-    }
-
-    /* Soft Radiant Feathered Celestial Aura */
-    .loading-celestial-aura {
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(186, 230, 253, 0.35) 0%, rgba(56, 189, 248, 0.22) 45%, rgba(129, 140, 248, 0.1) 75%, transparent 100%);
-      filter: blur(18px);
-      animation: celestialAuraPulse 4s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    /* Soft Divine Halo Ring */
-    .loading-divine-halo {
-      position: absolute;
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(186, 230, 253, 0.45);
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(186, 230, 253, 0.05) 60%, transparent 100%);
-      animation: divineHaloPulse 3s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    /* Heavenly Logo in Center with Peaceful Floating & Breathing Glow */
-    .loading-logo-img {
-      width: 84px;
-      height: 84px;
-      object-fit: contain;
-      border-radius: 50%;
-      z-index: 2;
-      animation: logoFloatGlow 3.5s ease-in-out infinite;
-    }
-
-    .loading-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.55rem;
-      font-weight: 800;
-      letter-spacing: 0.18em;
-      background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 40%, #7dd3fc 80%, #a5b4fc 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: textPulse 2.5s ease-in-out infinite;
-      text-transform: uppercase;
-      z-index: 2;
-    }
-
-    /* Shimmering Line & Subtitle */
-    .loading-status-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      z-index: 2;
-    }
-
-    .loading-shimmer-line {
-      width: 180px;
-      height: 2px;
-      background: rgba(186, 230, 253, 0.15);
-      border-radius: 999px;
-      overflow: hidden;
-      position: relative;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
-    }
-
-    .loading-shimmer-glow {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 50%;
-      background: linear-gradient(90deg, transparent, rgba(186, 230, 253, 0.9), rgba(56, 189, 248, 0.9), transparent);
-      border-radius: 999px;
-      animation: shimmerBar 1.8s ease-in-out infinite;
-    }
-
-    .loading-subtitle {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.82rem;
-      font-weight: 500;
-      letter-spacing: 0.22em;
-      color: #bae6fd;
-      text-transform: uppercase;
-      animation: textPulse 2.5s ease-in-out infinite;
     }
 
     /* Ambient heavenly background glow */
@@ -2475,6 +2295,10 @@
 
   </style>
   <link rel="stylesheet" href="/assets/bookmark-dialogs.css" />
+  <link rel="stylesheet" href="/assets/heavenly-home.css" />
+  <link rel="stylesheet" href="/assets/heavenly-adaptive.css" />
+  <script src="/assets/heavenly-layout.js" defer></script>
+  <link rel="stylesheet" href="/assets/heavenly-loading.css" />
 </head>
 
 <body data-catalog-auto="true">
@@ -2727,16 +2551,27 @@
   </div>
 
   <!-- Ethereal Splash / Loading Screen Overlay -->
-  <div id="heavenly-loading-screen" class="loading-overlay">
-    <div class="loading-cloud-bg"></div>
+  <div id="heavenly-loading-screen" class="loading-overlay" role="status" aria-live="polite" aria-label="Loading Heavenly">
+    <div class="loading-cloud-bg" aria-hidden="true"></div>
     <div class="loading-center-stage">
-      <div class="loading-celestial-aura"></div>
-      <div class="loading-divine-halo"></div>
-      <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="loading-logo-img" />
+      <div class="loading-wings-wrapper" aria-hidden="true">
+        <svg class="loading-wing loading-wing-left" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M90 70 C70 50, 40 30, 10 35 C25 45, 45 55, 60 75 C45 65, 25 60, 15 62 C30 72, 50 80, 75 85 Z" fill="rgba(56, 189, 248, 0.08)"/>
+          <path d="M85 55 C65 35, 35 15, 5 20 C20 30, 40 40, 55 60" />
+          <path d="M75 40 C55 20, 30 5, 5 8" />
+        </svg>
+        <svg class="loading-wing loading-wing-right" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M90 70 C70 50, 40 30, 10 35 C25 45, 45 55, 60 75 C45 65, 25 60, 15 62 C30 72, 50 80, 75 85 Z" fill="rgba(56, 189, 248, 0.08)"/>
+          <path d="M85 55 C65 35, 35 15, 5 20 C20 30, 40 40, 55 60" />
+          <path d="M75 40 C55 20, 30 5, 5 8" />
+        </svg>
+      </div>
+      <div class="loading-divine-halo" aria-hidden="true"></div>
+      <img src="/assets/heavenly-logo.png" alt="" aria-hidden="true" class="loading-logo-img" />
     </div>
     <div class="loading-title">HEAVENLY</div>
     <div class="loading-status-container">
-      <div class="loading-shimmer-line">
+      <div class="loading-shimmer-line" aria-hidden="true">
         <div class="loading-shimmer-glow"></div>
       </div>
       <div class="loading-subtitle">Entering Heavenly...</div>
@@ -2747,21 +2582,44 @@
   <div class="glow-orb glow-orb-2"></div>
 
   <div class="app-layout">
+    <nav class="layout-toolbar" aria-label="Homepage layout">
+      <span class="layout-title">Your Heavenly space</span>
+      <button type="button" data-sidebar-toggle="left" aria-controls="left-column" aria-expanded="true"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>Left bookmarks</span></button>
+      <button type="button" data-sidebar-toggle="right" aria-controls="right-column" aria-expanded="true"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>Right bookmarks</span></button>
+      <div class="layout-options">
+        <button type="button" id="layout-options-trigger" aria-controls="layout-options-menu" aria-expanded="false" title="Layout options"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="18" r="2"/></svg><span>Layout options</span></button>
+        <div id="layout-options-menu" class="layout-options-menu" hidden>
+          <button type="button" id="reset-home-layout" aria-describedby="layout-reset-scope" disabled>Reset layout</button>
+          <p id="layout-reset-scope">Restore panel widths and panel/category collapse states.</p>
+        </div>
+      </div>
+      <span id="layout-status" class="layout-status" role="status" aria-live="polite"></span>
+    </nav>
+
 
     <!-- Left Side Column -->
-    <div id="left-column" class="side-column"></div>
+    <aside id="left-sidebar" class="bookmark-sidebar" aria-label="Left bookmarks">
+      <button type="button" class="sidebar-tab" data-sidebar-toggle="left" aria-controls="left-column" aria-expanded="false" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>Left bookmarks</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
+      <div class="sidebar-content">
+        <div class="sidebar-heading"><span><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg>Left bookmarks</span><button type="button" data-sidebar-toggle="left" aria-controls="left-column" aria-expanded="true" title="Collapse left bookmarks"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button></div>
+        <div id="left-column" class="side-column"></div>
+      </div>
+      <div id="left-resize" class="sidebar-resize" role="separator" tabindex="0" aria-label="Resize left bookmarks" aria-controls="left-column" aria-orientation="vertical" aria-valuemin="240" aria-valuemax="400" aria-valuenow="256" title="Drag to resize. Arrow keys adjust width; Home and End set limits."></div>
+    </aside>
 
     <!-- Center Container -->
-    <div class="container" id="center-container">
+    <main class="container" id="center-container" aria-label="Heavenly">
 
       <!-- Universal Bookmark Search -->
       <div style="margin-bottom: 28px;">
         <div style="position: relative; width: 100%; display: flex; align-items: center;">
           <svg style="position: absolute; left: 14px; width: 16px; height: 16px; fill: none; stroke: #94a3b8; stroke-width: 2; pointer-events: none;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <input type="text" id="bm-universal-search" placeholder="Search bookmarks, folders & categories..." autocomplete="off" aria-label="Search bookmarks and folders" style="padding-left: 40px; padding-right: 44px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); font-size: 0.9rem;" />
-          <button type="button" id="bm-search-clear-btn" class="url-clear-btn" aria-label="Clear bookmark search input" title="Clear search input">✕</button>
+          <button type="button" id="bm-search-clear-btn" class="url-clear-btn" aria-label="Clear bookmark search input" title="Clear search input"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></svg></button>
         </div>
       </div>
+
+      <div id="bookmark-search-results" hidden></div>
 
       <div class="brand-header" style="margin-bottom: 32px;">
         <div class="brand-title-group">
@@ -2795,7 +2653,7 @@
       <form action="no-js" method="get" id="unblocker-form" class="search-form" style="margin-bottom: 24px;">
         <div class="input-wrapper">
           <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autocomplete="off" aria-label="URL or search query" aria-expanded="false" aria-controls="history-dropdown" style="padding-right: 44px;" />
-          <button type="button" id="url-clear-btn" class="url-clear-btn" aria-label="Clear search input" title="Clear input">✕</button>
+          <button type="button" id="url-clear-btn" class="url-clear-btn" aria-label="Clear search input" title="Clear input"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></svg></button>
         </div>
         <input type="submit" id="search-go-btn" value="Go" />
         <button type="button" id="search-newtab-btn" class="settings-btn" aria-label="Open search query in new tab" title="Open search in new tab" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; border-radius: 16px; padding: 0 20px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;">New Tab</button>
@@ -2836,10 +2694,17 @@
         <p>Originally created by <a href="http://www.nfriedly.com/" target="_blank" rel="noopener">Nathan Friedly</a> &bull; Improved by <strong>Syshi</strong> &bull; Credits to <a href="https://0800webdev.github.io/UBGdir/" target="_blank" rel="noopener">UBGDir</a></p>
       </div>
 
-    </div>
+    </main>
 
     <!-- Right Side Column -->
-    <div id="right-column" class="side-column"></div>
+    <aside id="right-sidebar" class="bookmark-sidebar" aria-label="Right bookmarks">
+      <button type="button" class="sidebar-tab" data-sidebar-toggle="right" aria-controls="right-column" aria-expanded="false" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>Right bookmarks</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button>
+      <div class="sidebar-content">
+        <div class="sidebar-heading"><span><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg>Right bookmarks</span><button type="button" data-sidebar-toggle="right" aria-controls="right-column" aria-expanded="true" title="Collapse right bookmarks"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button></div>
+        <div id="right-column" class="side-column"></div>
+      </div>
+      <div id="right-resize" class="sidebar-resize" role="separator" tabindex="0" aria-label="Resize right bookmarks" aria-controls="right-column" aria-orientation="vertical" aria-valuemin="240" aria-valuemax="400" aria-valuenow="256" title="Drag to resize. Arrow keys adjust width; Home and End set limits."></div>
+    </aside>
 
   </div>
 
@@ -4174,7 +4039,7 @@
             bmSearch.value = '';
             var bmClearBtn = $('bm-search-clear-btn');
             if (bmClearBtn) bmClearBtn.classList.remove('visible');
-            renderBookmarksUI();
+            if (bookmarkSearchController) bookmarkSearchController.refresh();
           }
         }
       });
@@ -4188,7 +4053,8 @@
 
     var expandedCategories = {};
     var expandedFolders = {};
-    var expandedSubSections = {};
+    var expandedSubSections = HeavenlyNavigation.readSettings(localStorage).bookmarkExpandedSections || {};
+    if (typeof expandedSubSections !== 'object' || Array.isArray(expandedSubSections)) expandedSubSections = {};
     var collapsedSubSections = {}; // e.g. { "cat_anime_builtin": true }
     var selectedIconMode = 'favicon'; // 'favicon' | 'preset' | 'custom'
     var selectedPresetIconId = 'gamepad';
@@ -4295,8 +4161,15 @@
       if (type === 'category') {
         var column = hit.closest('#left-column,#right-column,#bottom-container');
         if (!column) return null;
-        var grid = getComputedStyle(column).display === 'grid';
-        var position = nearestPlacement(Array.from(column.children).filter(function (n) { return n.classList.contains('section-card') && n.dataset.categoryId !== sourceId; }), x, y, grid);
+        var columnStyle = getComputedStyle(column);
+        var grid = columnStyle.display === 'grid';
+        var wrappedTabs = columnStyle.display === 'flex' && columnStyle.flexDirection === 'row' && columnStyle.flexWrap === 'wrap';
+        var position = nearestPlacement(Array.from(column.children).filter(function (n) { return n.classList.contains('section-card') && n.dataset.categoryId !== sourceId; }), x, y, grid || wrappedTabs);
+        // Compact category tabs share a row. Expanded side categories still
+        // use their vertical midpoint for before/after placement.
+        if (position && wrappedTabs && !grid && !position.node.classList.contains('is-category-collapsed')) {
+          position.after = insertionAfter(position.rect, x, y, false); position.grid = false;
+        }
         return Object.assign(position || { node: column, rect: column.getBoundingClientRect(), after: true }, { type: type, target: position && position.node.dataset.categoryId, side: column.id === 'right-column' ? 'right' : column.id === 'bottom-container' ? 'bottom' : 'left' });
       }
       if (!category) return null;
@@ -4388,7 +4261,7 @@
 
     var activeDragPreview = null;
     var bookmarkInputType = 'mouse', bookmarkDragHandleOrigin = false, bookmarkPointerOrigin = null, bookmarkPointerStart = null;
-    document.addEventListener('pointerdown', function (event) { if (bookmarkMouseDrag && event.pointerType !== 'mouse') clearBookmarkDrag(); bookmarkInputType = event.pointerType || 'mouse'; bookmarkPointerOrigin = event.target; bookmarkPointerStart = { x:event.clientX, y:event.clientY }; bookmarkDragHandleOrigin = !!event.target.closest('.drag-dots-handle'); }, true);
+    document.addEventListener('pointerdown', function (event) { if ((bookmarkMouseDrag && event.pointerType !== 'mouse') || (cancelBookmarkTouchGesture && event.pointerType === 'mouse')) clearBookmarkDrag(); bookmarkInputType = event.pointerType || 'mouse'; bookmarkPointerOrigin = event.target; bookmarkPointerStart = { x:event.clientX, y:event.clientY }; bookmarkDragHandleOrigin = !!event.target.closest('.drag-dots-handle'); }, true);
     function categoryDragIcon(value) {
       var preset = PRESET_LUCIDE_ICONS.find(function (item) { return item.id === value || 'preset:' + item.id === value; });
       if (!preset) return null;
@@ -4584,7 +4457,7 @@
         var handle = document.createElement('button');
         handle.type = 'button';
         handle.className = 'drag-dots-handle';
-        handle.draggable = true;
+        handle.draggable = !window.PointerEvent;
         handle.title = 'Drag to reorder';
         handle.setAttribute('aria-label', 'Reorder ' + section.title + '; use arrow keys to move');
         handle.innerHTML = sixDotGrip;
@@ -4658,6 +4531,13 @@
     var bookmarkIgnoreMouseUntil = 0;
     var suppressBookmarkClickUntil = 0;
 
+    function acquireBookmarkGesture() {
+      return !window.HeavenlyGestures || window.HeavenlyGestures.acquire('bookmark-drag', clearBookmarkDrag);
+    }
+    function releaseBookmarkGesture() {
+      if (window.HeavenlyGestures) window.HeavenlyGestures.release('bookmark-drag');
+    }
+
     function isBookmarkCompatibilityMouse(e) {
       if (e.sourceCapabilities) return e.sourceCapabilities.firesTouchEvents;
       // Firefox omits sourceCapabilities. A new mouse pointerdown distinguishes
@@ -4681,7 +4561,7 @@
     document.addEventListener('touchstart', function (e) {
       bookmarkTouchInProgress = bookmarkTouchInProgress || !!e.target.closest('.section-card') || !!e.target.closest('.section-order-row');
       if (bookmarkTouchInProgress) bookmarkIgnoreMouseUntil = Date.now() + 800;
-      suppressBookmarkClickUntil = 0;
+      if (e.touches.length === 1) suppressBookmarkClickUntil = 0;
       if (e.touches.length !== 1) cancelActiveBookmarkTouch();
     }, { passive: true, capture: true });
     ['touchend', 'touchcancel'].forEach(function (type) {
@@ -4717,6 +4597,7 @@
       if (!state) return;
       bookmarkMouseDrag = null;
       state.detach();
+      releaseBookmarkGesture();
       if (state.source.__cancelMouseHold) state.source.__cancelMouseHold();
       if (state.started) suppressBookmarkClickUntil = Date.now()+500;
     }
@@ -4728,9 +4609,12 @@
       var handle = origin.closest('.drag-dots-handle');
       if (!handle && origin.closest('a:not(.bookmark-card),button,input,textarea,select,summary,[role="button"],[contenteditable="true"],.category-actions,.folder-expand-btn,.subsection-divider')) return;
       if (!source.matches('.bookmark-card') && !handle && !origin.closest('.section-header') && origin !== source) return;
+      if (!acquireBookmarkGesture()) return;
       var state = { source:source, pointer:event.pointerId, x:event.clientX, y:event.clientY, started:false };
+      var sourceObserver = null;
       bookmarkMouseDrag = state;
       function detach() {
+        if (sourceObserver) sourceObserver.disconnect();
         document.removeEventListener('pointermove', move, true);
         document.removeEventListener('pointerup', finish, true);
         document.removeEventListener('pointercancel', cancel, true);
@@ -4783,6 +4667,10 @@
       document.addEventListener('pointerup',finish,true);
       document.addEventListener('pointercancel',cancel,true);
       source.addEventListener('lostpointercapture',cancel);
+      if (window.MutationObserver) {
+        sourceObserver = new MutationObserver(function () { if (!source.isConnected) cancel(); });
+        sourceObserver.observe(document.body, { childList:true, subtree:true });
+      }
     }, true);
     function clearBookmarkDrag() {
       cancelBookmarkMouseDrag();
@@ -4794,9 +4682,13 @@
       clearBookmarkPlacement();
       removePopoutAvatar();
       bookmarkGestureSource = '';
+      releaseBookmarkGesture();
     }
     document.addEventListener('dragstart', function (e) {
       cancelActiveBookmarkBodyPress();
+      if (window.HeavenlyGestures && window.HeavenlyGestures.owner === 'bookmark-drag' && bookmarkInputType !== 'mouse') {
+        e.preventDefault(); e.stopImmediatePropagation(); return;
+      }
       var source = e.target.closest('.bookmark-card[data-bm-id],.section-card');
       if (e.isTrusted && bookmarkMouseDrag && source === bookmarkMouseDrag.source) { e.preventDefault(); e.stopImmediatePropagation(); return; }
       var origin = bookmarkPointerOrigin;
@@ -4822,11 +4714,13 @@
       bookmarkTouchInProgress = false;
     }
     window.addEventListener('blur', interruptBookmarkTouch);
+    window.addEventListener('orientationchange', interruptBookmarkTouch);
+    window.addEventListener('resize', interruptBookmarkTouch);
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) interruptBookmarkTouch();
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && (bookmarkMouseDrag || activePopoutAvatar || bookmarkGestureSource === 'drag')) {
+      if (e.key === 'Escape' && (bookmarkMouseDrag || cancelBookmarkTouchGesture || activePopoutAvatar || bookmarkGestureSource === 'drag')) {
         clearBookmarkDrag(); closeReorderBar();
       }
     }, true);
@@ -4884,52 +4778,116 @@
       bookmarkEdgeFrame = requestAnimationFrame(step);
     }
 
+    // Pointer Events own modern touch/pen input. Touch Events below are a fallback
+    // only: letting both pipelines run made browser cancellation and native iOS
+    // long-press dragging able to tear down an otherwise valid handle gesture.
     function bindPenHandle(handle, hold, move, end, cancelDrag) {
+      if (!window.PointerEvent) return;
       handle.addEventListener('pointerdown', function (event) {
-        if (event.pointerType !== 'pen' || event.button !== 0 || !event.isPrimary) return;
+        var sectionMouse = event.pointerType === 'mouse' && handle.closest('.section-order-row');
+        if ((!sectionMouse && event.pointerType !== 'pen' && event.pointerType !== 'touch') || event.button !== 0 || !event.isPrimary) return;
+        if (!acquireBookmarkGesture()) return;
         event.stopPropagation(); event.preventDefault(); cancelActiveBookmarkTouch();
-        var pointer = event.pointerId, start = { clientX: event.clientX, clientY: event.clientY }, dragging = false;
+        // cancelActiveBookmarkTouch may release a preceding gesture of our kind.
+        if (!acquireBookmarkGesture()) return;
+        var pointer = event.pointerId, input = event.pointerType;
+        var start = { clientX: event.clientX, clientY: event.clientY };
+        var held = input !== 'touch', dragging = false, finished = false, timer = 0;
+        var observer = null;
         bookmarkGestureSource = 'handle';
-        try { handle.setPointerCapture(pointer); } catch (e) {}
-        function cancel() {
-          handle.removeEventListener('pointermove', moved); handle.removeEventListener('pointerup', ended);
-          handle.removeEventListener('pointercancel', cancel); handle.removeEventListener('lostpointercapture', cancel);
+        bookmarkInputType = input;
+        handle.classList.add('heavenly-hold-pending');
+        function detach() {
+          if (finished) return;
+          finished = true; clearTimeout(timer);
+          document.removeEventListener('pointermove', moved, true);
+          document.removeEventListener('pointerup', ended, true);
+          document.removeEventListener('pointercancel', canceled, true);
+          document.removeEventListener('pointerdown', additional, true);
+          handle.removeEventListener('lostpointercapture', canceled);
+          if (observer) observer.disconnect();
           if (cancelBookmarkTouchGesture === cancel) cancelBookmarkTouchGesture = null;
-          if (dragging) suppressBookmarkClickUntil = Date.now() + 800;
-          bookmarkGestureSource = ''; cancelDrag(); removePopoutAvatar();
+          handle.classList.remove('heavenly-hold-pending', 'heavenly-hold-ready', 'selected');
+          releaseBookmarkGesture();
           try { if (handle.hasPointerCapture(pointer)) handle.releasePointerCapture(pointer); } catch (e) {}
         }
+        function cancel() {
+          if (finished) return;
+          detach();
+          suppressBookmarkClickUntil = Date.now() + 800;
+          bookmarkGestureSource = ''; cancelDrag(); removePopoutAvatar();
+        }
+        function canceled(e) { if (!e || e.pointerId === pointer) cancel(); }
+        function additional(e) { if (e.pointerId !== pointer) cancel(); }
+        function activate() {
+          if (finished || !handle.isConnected) { cancel(); return; }
+          held = true;
+          handle.classList.remove('heavenly-hold-pending');
+          handle.classList.add('heavenly-hold-ready');
+          hold(start);
+        }
+        if (input === 'touch') timer = setTimeout(activate, 420);
         function moved(e) {
-          if (e.pointerId !== pointer) return;
-          if (!dragging && Math.hypot(e.clientX - start.clientX, e.clientY - start.clientY) < 6) return;
-          if (!dragging) { hold(start); closeReorderBar(); dragging = true; }
+          if (e.pointerId !== pointer || finished) return;
+          if (!handle.isConnected) { cancel(); return; }
+          var distance = Math.hypot(e.clientX - start.clientX, e.clientY - start.clientY);
+          if (!held) {
+            if (distance > 10) { suppressBookmarkClickUntil = Date.now() + 800; cancel(); }
+            return;
+          }
+          if (!dragging && distance < 5) return;
+          if (!dragging) {
+            if (input !== 'touch') activate();
+            closeReorderBar(); dragging = true;
+          }
           bookmarkGestureSource = 'drag'; suppressBookmarkClickUntil = Date.now() + 800;
-          e.preventDefault();
+          if (e.cancelable) e.preventDefault();
           move({ touches: [{ clientX: e.clientX, clientY: e.clientY }], changedTouches: [], preventDefault: function () {} });
           if (!activePopoutAvatar) createPopoutAvatar(handle.closest('.section-order-row,.bookmark-card,.section-card'), e.clientX, e.clientY);
           updatePopoutAvatar(e.clientX, e.clientY);
           scrollBookmarkEdge(handle, e.clientX, e.clientY, move);
         }
         function ended(e) {
-          if (e.pointerId !== pointer) return;
-          if (dragging) { e.preventDefault(); end({ changedTouches: [{ clientX: e.clientX, clientY: e.clientY }] }); }
-          cancel();
+          if (e.pointerId !== pointer || finished) return;
+          var committed = dragging;
+          // Release capture/listeners before a commit rerenders the source.
+          detach(); bookmarkGestureSource = '';
+          if (committed) {
+            suppressBookmarkClickUntil = Date.now() + 800;
+            if (e.cancelable) e.preventDefault();
+            end({ changedTouches: [{ clientX: e.clientX, clientY: e.clientY }] });
+          } else {
+            cancelDrag();
+            // Pointer Events still emit the native click after pointerup. Let
+            // the existing handle action receive it exactly once.
+          }
+          removePopoutAvatar();
         }
         cancelBookmarkTouchGesture = cancel;
-        handle.addEventListener('pointermove', moved); handle.addEventListener('pointerup', ended);
-        handle.addEventListener('pointercancel', cancel); handle.addEventListener('lostpointercapture', cancel);
-      });
+        document.addEventListener('pointermove', moved, { capture:true, passive:false });
+        document.addEventListener('pointerup', ended, true);
+        document.addEventListener('pointercancel', canceled, true);
+        document.addEventListener('pointerdown', additional, true);
+        handle.addEventListener('lostpointercapture', canceled);
+        try { handle.setPointerCapture(pointer); } catch (e) {}
+        if (window.MutationObserver) {
+          observer = new MutationObserver(function () { if (!handle.isConnected) cancel(); });
+          observer.observe(document.body, { childList:true, subtree:true });
+        }
+      }, { passive:false });
     }
 
     function bindBookmarkTouchHandle(handle, hold, move, end, cancelDrag) {
       bindPenHandle(handle, hold, move, end, cancelDrag);
       handle.addEventListener('touchstart', function (e) {
+        if (window.PointerEvent) return;
         e.stopPropagation();
         if (e.touches.length !== 1) return;
         var start = e.touches[0];
         var held = false, dragging = false;
         // Cancel any previous gesture before installing this hold timer.
         cancelActiveBookmarkTouch();
+        if (!acquireBookmarkGesture()) return;
         bookmarkGestureSource = 'handle';
         var timer = setTimeout(function () { held = true; hold(start); }, 500);
         trackBookmarkTouch(e, {
@@ -4954,6 +4912,7 @@
           },
           end: function (event) {
             bookmarkGestureSource = '';
+            releaseBookmarkGesture();
             clearTimeout(timer);
             if (dragging) {
               suppressBookmarkClickUntil = Date.now() + 800;
@@ -4966,6 +4925,7 @@
           },
           cancel: function () {
             bookmarkGestureSource = '';
+            releaseBookmarkGesture();
             clearTimeout(timer);
             if (dragging) suppressBookmarkClickUntil = Date.now() + 800;
             if (held) closeReorderBar();
@@ -4998,8 +4958,63 @@
       HeavenlyMotion.height(node, open, mutate, complete);
     }
 
+    // One launch path for homepage cards and central search, including active
+    // mirrors, saved launch preferences, notices and the existing launch dialogs.
+    function launchHomepageBookmark(bm) {
+      var latest = HeavenlyBookmarks.findEntry(loadBookmarkData(), bm.id) || bm;
+      var launchState = HeavenlyBookmarks.mirrorState(latest, bm.url, bm.title, getBrokenLinksMap());
+      var destination = launchState.active ? HeavenlyNavigation.bookmarkKey(launchState.active.url) : HeavenlyNavigation.bookmarkKey(bm.url);
+      var launchProxy = location.origin + '/proxy/' + destination;
+      var settings = loadSettings();
+      if (latest.launchPreference === 'direct') {
+        try { HeavenlyBookmarks.saveMirrorPreferences(localStorage, bm.id, launchState.preferences); } catch (err) {}
+        openTargetUrlWithSetting(destination);
+        return;
+      } else if (latest.launchPreference === 'proxy') {
+        try { HeavenlyBookmarks.saveMirrorPreferences(localStorage, bm.id, launchState.preferences); } catch (err) {}
+        openTargetUrlWithSetting(launchProxy);
+        return;
+      }
+
+      if (settings.skipBuiltinTestPrompt) {
+        try { HeavenlyBookmarks.saveMirrorPreferences(localStorage, bm.id, launchState.preferences); } catch (err) {}
+        openTargetUrlWithSetting(launchProxy);
+        return;
+      }
+
+      if (bm.builtIn && (bm.id === 'bm_everythingmoe' || bm.id === 'bm_fmhy_movies' || bm.id === 'bm_fmhy_anime' || (bm.url && (bm.url.includes('everythingmoe.com') || bm.url.includes('fmhy.net'))))) {
+        openEverythingMoeNoticeModal(bm.title, HeavenlyNavigation.bookmarkKey(bm.url), launchProxy);
+        return;
+      }
+
+      openBuiltinTestModal(bm.title, bm.url, launchProxy, null, false, bm.id);
+    }
+
+    function bookmarkSearchHref(result) {
+      var entry = result.entry, owner = result.parent || entry;
+      var destination = HeavenlyNavigation.bookmarkKey(entry.url);
+      if (!result.parent) {
+        var state = HeavenlyBookmarks.mirrorState(entry, entry.url, entry.title, getBrokenLinksMap());
+        if (state.active) destination = HeavenlyNavigation.bookmarkKey(state.active.url);
+      }
+      return owner.launchPreference === 'direct' ? destination : location.origin + '/proxy/' + destination;
+    }
+
+    function launchBookmarkSearchResult(result) {
+      if (!result.parent) { launchHomepageBookmark(result.entry); return; }
+      var child = result.entry, parent = result.parent;
+      var raw = HeavenlyNavigation.bookmarkKey(child.url), proxied = location.origin + '/proxy/' + raw;
+      if (loadSettings().skipBuiltinTestPrompt) openTargetUrlWithSetting(proxied);
+      else if (parent.launchPreference === 'direct') openTargetUrlWithSetting(raw);
+      else if (parent.launchPreference === 'proxy') openTargetUrlWithSetting(proxied);
+      else openBuiltinTestModal(child.title, child.url, proxied, null, false, parent.id);
+    }
+
+    var bookmarkSearchController = null;
+
     function renderBookmarksUI() {
       clearBookmarkDrag();
+      HeavenlyBookmarkView.disconnectRows();
       var data = loadBookmarkData();
       var leftCol = $('left-column');
       var rightCol = $('right-column');
@@ -5011,7 +5026,8 @@
       rightCol.innerHTML = '';
       bottomCol.innerHTML = '';
 
-      var searchQuery = ($('bm-universal-search') ? $('bm-universal-search').value.trim().toLowerCase() : '');
+      // Column content stays stable while central search results update independently.
+      var bookmarkViewSettings = HeavenlyNavigation.readSettings(localStorage);
 
       var cats = data.categories.filter(function (c) { return !c.hidden; });
       cats.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
@@ -5021,34 +5037,13 @@
         bms.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
 
         var specialBms = bms.filter(isSpecialBookmark);
-        if (!searchQuery) bms = bms.filter(function (bm) { return !isSpecialBookmark(bm); });
-
-        // Filter bookmarks by search query if active
-        if (searchQuery) {
-          var catMatches = cat.title.toLowerCase().includes(searchQuery);
-          bms = bms.filter(function (bm) {
-            if (catMatches) return true;
-            var titleMatch = (bm.title || '').toLowerCase().includes(searchQuery);
-            var urlMatch = (bm.url || '').toLowerCase().includes(searchQuery);
-            var subMatch = false;
-            if (bm.subBookmarks) {
-              subMatch = bm.subBookmarks.some(function (sb) {
-                return (sb.title || '').toLowerCase().includes(searchQuery) || (sb.url || '').toLowerCase().includes(searchQuery);
-              });
-            }
-            return titleMatch || urlMatch || subMatch;
-          });
-
-          // Skip category if neither category title nor any bookmark inside matches
-          if (!catMatches && bms.length === 0) {
-            return;
-          }
-        }
+        bms = bms.filter(function (bm) { return !isSpecialBookmark(bm); });
 
         var card = document.createElement('div');
         card.className = 'section-card';
         card.__heavenlyDragItem = { kind: 'category', label: cat.title, icon: categoryDragIcon(cat.icon) };
         card.setAttribute('data-category-id', cat.id);
+        card.dataset.categoryTitle = cat.title;
         card.draggable = !window.PointerEvent;
 
         // Native fallback for browsers without Pointer Events.
@@ -5140,7 +5135,7 @@
         bindBookmarkTouchHandle(handle, function (touch) {
           startX = touch.clientX;
           startY = touch.clientY;
-          openReorderBar({ type: 'category', id: cat.id, title: cat.title }, handle);
+          handle.classList.add('selected');
         }, moveHandle, endHandle, function () {
           isTouchDraggingCat = false;
           card.classList.remove('dragging');
@@ -5154,9 +5149,10 @@
           openReorderBar({ type: 'category', id: cat.id, title: cat.title }, handle);
         };
 
-        var titleText = document.createElement('span');
+        var titleText = document.createElement('h2');
         titleText.textContent = cat.title;
         titleText.className = 'category-title';
+        titleText.id = 'category-title-' + encodeURIComponent(cat.id);
         titleText.title = cat.title;
         var categoryActions = document.createElement('div');
         categoryActions.className = 'category-actions';
@@ -5228,14 +5224,29 @@
 
         header.appendChild(titleGroup);
         categoryActions.appendChild(addBmBtn);
+        if (cat.side !== 'bottom') {
+          var collapseCategoryBtn = document.createElement('button');
+          collapseCategoryBtn.type = 'button';
+          collapseCategoryBtn.className = 'category-collapse-toggle category-action';
+          collapseCategoryBtn.setAttribute('aria-controls', 'category-content-' + encodeURIComponent(cat.id));
+          collapseCategoryBtn.setAttribute('aria-expanded', 'true');
+          collapseCategoryBtn.setAttribute('aria-label', 'Collapse ' + cat.title);
+          collapseCategoryBtn.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>';
+          categoryActions.appendChild(collapseCategoryBtn);
+        }
         header.appendChild(categoryActions);
         card.appendChild(header);
+        var categoryContent = document.createElement('div');
+        categoryContent.className = 'category-content';
+        categoryContent.id = 'category-content-' + encodeURIComponent(cat.id);
+        categoryContent.setAttribute('aria-labelledby', titleText.id);
+        card.appendChild(categoryContent);
 
         if (cat.id === 'cat_anime' || cat.id === 'cat_movies') {
           var notice = document.createElement('div');
           notice.style.cssText = 'font-size: 0.78rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 6px 10px; margin-top: 2px; margin-bottom: 2px; line-height: 1.4; font-weight: 500; display: flex; align-items: center; gap: 6px;';
           notice.innerHTML = '<svg style="width:14px;height:14px;fill:none;stroke:#38bdf8;stroke-width:2;flex-shrink:0;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg><span>' + (cat.id === 'cat_anime' ? 'Try different servers if an anime is blocked or not loading!' : 'Try different servers if a movie or show is blocked or not loading!') + '</span>';
-          card.appendChild(notice);
+          categoryContent.appendChild(notice);
         }
 
         installBookmarkDropTarget(card);
@@ -5244,9 +5255,6 @@
         var listContainer = document.createElement('div');
         listContainer.className = 'bookmarks-list';
 
-        // Limit items before Show More: side columns show 4 items; bottom container shows up to 6 items to fill a row on larger screens
-        var limit = (cat.side === 'bottom') ? 6 : 4;
-        var isExpanded = !!expandedCategories[cat.id] || !!searchQuery;
 
         var builtinBms = bms.filter(function (b) { return b.builtIn === true; });
         var userBms = bms.filter(function (b) { return !b.builtIn; });
@@ -5255,7 +5263,7 @@
         function renderBookmarkListSection(bmList, targetContainer) {
           bmList.forEach(function (bm) {
             var isFolderType = bm.type === 'folder' || bm.type === 'folder_bookmark' || (HeavenlyNavigation.isCoolmathUrl(bm.url) && (bm.subBookmarks || []).length > 0);
-            var isFolderExpanded = !!expandedFolders[bm.id] || !!searchQuery;
+            var isFolderExpanded = !!expandedFolders[bm.id];
 
             var bmWrapper = document.createElement('div');
             bmWrapper.style.display = 'flex';
@@ -5374,38 +5382,8 @@
                   return;
                 }
 
-                var latest = HeavenlyBookmarks.findEntry(loadBookmarkData(), bm.id) || bm;
-                var launchState = HeavenlyBookmarks.mirrorState(latest, bm.url, bm.title, getBrokenLinksMap());
-                var destination = launchState.active ? HeavenlyNavigation.bookmarkKey(launchState.active.url) : rawTargetUrl;
-                var launchProxy = location.origin + '/proxy/' + destination;
-                var settings = loadSettings();
-                if (bm.launchPreference === 'direct') {
-                  e.preventDefault();
-                  try { HeavenlyBookmarks.saveMirrorPreferences(localStorage, bm.id, launchState.preferences); } catch (err) {}
-                  openTargetUrlWithSetting(destination);
-                  return;
-                } else if (bm.launchPreference === 'proxy') {
-                  e.preventDefault();
-                  try { HeavenlyBookmarks.saveMirrorPreferences(localStorage, bm.id, launchState.preferences); } catch (err) {}
-                  openTargetUrlWithSetting(launchProxy);
-                  return;
-                }
-
-                if (settings.skipBuiltinTestPrompt) {
-                  e.preventDefault();
-                  try { HeavenlyBookmarks.saveMirrorPreferences(localStorage, bm.id, launchState.preferences); } catch (err) {}
-                  openTargetUrlWithSetting(launchProxy);
-                  return;
-                }
-
-                if (bm.builtIn && (bm.id === 'bm_everythingmoe' || bm.id === 'bm_fmhy_movies' || bm.id === 'bm_fmhy_anime' || (bm.url && (bm.url.includes('everythingmoe.com') || bm.url.includes('fmhy.net'))))) {
-                  e.preventDefault();
-                  openEverythingMoeNoticeModal(bm.title, rawTargetUrl, proxiedUrl);
-                  return;
-                }
-
                 e.preventDefault();
-                openBuiltinTestModal(bm.title, bm.url, proxiedUrl, null, false, bm.id);
+                launchHomepageBookmark(bm);
               };
             } else {
               bmCard.style.cursor = 'pointer';
@@ -5424,6 +5402,7 @@
               expandBtn.type = 'button';
               expandBtn.className = 'folder-expand-btn';
               expandBtn.title = isFolderExpanded ? 'Collapse folder' : 'Expand folder';
+              expandBtn.setAttribute('aria-expanded', String(isFolderExpanded));
               expandBtn.setAttribute('aria-label', (isFolderExpanded ? 'Collapse folder ' : 'Expand folder ') + bm.title);
               expandBtn.style.background = 'none';
               expandBtn.style.border = 'none';
@@ -5449,6 +5428,7 @@
             var bmTitle = document.createElement('span');
             bmTitle.className = 'bookmark-title';
             bmTitle.textContent = bm.title;
+            bmTitle.title = bm.title;
 
             bmLeft.appendChild(bmIconEl);
             bmLeft.appendChild(bmTitle);
@@ -5512,7 +5492,7 @@
             bindBookmarkTouchHandle(bmHandle, function (touch) {
               bmSX = touch.clientX;
               bmSY = touch.clientY;
-              openReorderBar({ type: 'bookmark', id: bm.id, categoryId: cat.id, title: bm.title }, bmHandle);
+              bmHandle.classList.add('selected');
             }, moveBmHandle, endBmHandle, function () {
               isTouchDraggingBm = false;
               bmCard.classList.remove('dragging');
@@ -5533,6 +5513,7 @@
 
             function buildFolderChildren() {
               var subContainer = document.createElement('div');
+              subContainer.className = 'bookmark-folder-children';
               subContainer.style.display = 'flex';
               subContainer.style.flexDirection = 'column';
               subContainer.style.gap = '6px';
@@ -5542,11 +5523,7 @@
 
               var brokenMap = getBrokenLinksMap();
               var subBms = bm.subBookmarks || [];
-              if (searchQuery) {
-                subBms = subBms.filter(function (sb) {
-                  return (sb.title || '').toLowerCase().includes(searchQuery) || (sb.url || '').toLowerCase().includes(searchQuery);
-                });
-              }
+
 
               subBms.forEach(function (sb, sbIdx) {
                 var isSbBroken = !!brokenMap[sb.url];
@@ -5754,7 +5731,13 @@
                   folderChildren = null;
                 }
               }
-              if (!folderChildren && isFolderExpanded) { folderChildren = buildFolderChildren(); bmWrapper.appendChild(folderChildren); }
+              if (!folderChildren && isFolderExpanded) {
+                folderChildren = buildFolderChildren();
+                // Newly mounted content must begin closed so its first opening
+                // measures 0 -> content height instead of content -> content.
+                folderChildren.hidden = true;
+                bmWrapper.appendChild(folderChildren);
+              }
               if (folderChildren) animateBookmarkContent(folderChildren, isFolderExpanded);
               if (expandBtn) {
                 expandBtn.textContent = '>';
@@ -5775,6 +5758,8 @@
         ];
 
         subSectionsToRender.forEach(function (subSec) {
+          if (subSec.hidden) return;
+          var limit = HeavenlyBookmarkView.limit(bookmarkViewSettings, cat.id, subSec.id);
           var subBms = bms.filter(function (b) {
             if (b.subSectionId) return b.subSectionId === subSec.id;
             return subSec.id === 'builtin' ? b.builtIn === true : !b.builtIn;
@@ -5784,7 +5769,7 @@
           if (subSec.builtIn && subSec.id === 'builtin' && subBms.length === 0) return;
 
           var subSecKey = cat.id + '_' + subSec.id;
-          var isSubCollapsed = (collapsedSubSections[subSecKey] !== undefined ? !!collapsedSubSections[subSecKey] : (subSec.id === 'naenae' || !!subSec.defaultCollapsed)) && !searchQuery;
+          var isSubCollapsed = (collapsedSubSections[subSecKey] !== undefined ? !!collapsedSubSections[subSecKey] : (subSec.id === 'naenae' || !!subSec.defaultCollapsed));
 
           var subDiv = document.createElement('div');
           subDiv.className = 'subsection-divider' + (isSubCollapsed ? ' is-collapsed' : '');
@@ -5867,6 +5852,8 @@
           var sectionContent = document.createElement('div');
           sectionContent.className = 'subsection-content';
           sectionContent.dataset.ownerCategoryId = cat.id; sectionContent.dataset.subsectionId = subSec.id;
+          sectionContent.dataset.initialLimit = limit;
+          sectionContent.dataset.countMode = HeavenlyBookmarkView.policy(bookmarkViewSettings, cat.id, subSec.id).mode;
           sectionContent.inert = isSubCollapsed;
           sectionContent.hidden = isSubCollapsed;
           listContainer.appendChild(sectionContent);
@@ -5874,34 +5861,51 @@
           function ensureSectionContent() {
             if (contentBuilt) return;
             contentBuilt = true;
+            var updateInitialRow = null;
             if (subBms.length > 0) {
-              var isSubExpanded = !!expandedSubSections[cat.id + '_' + subSec.id] || !!searchQuery;
+              var isSubExpanded = !!expandedSubSections[subSecKey];
               var visibleSubBms = isSubExpanded ? subBms : subBms.slice(0, limit);
               renderBookmarkListSection(visibleSubBms, sectionContent);
               var renderedCount = visibleSubBms.length;
 
-              if (subBms.length > limit && !searchQuery) {
+              if (subBms.length > 1) {
                 var showMoreBtn = document.createElement('button');
                 showMoreBtn.type = 'button';
                 showMoreBtn.className = 'show-more-btn';
                 showMoreBtn.setAttribute('aria-expanded', String(isSubExpanded));
-                showMoreBtn.innerHTML = '<span>' + (isSubExpanded ? 'Show Less' : 'Show More (' + (subBms.length - limit) + ' more)') + '</span> <span style="margin-left:4px; display:inline-block; transition:transform 0.2s ease; transform:' + (isSubExpanded ? 'rotate(-90deg)' : 'rotate(0deg)') + ';">&gt;</span>';
+                showMoreBtn.innerHTML = '<span></span> <span aria-hidden="true" style="margin-left:4px; display:inline-block; transition:transform 0.2s ease;">&gt;</span>';
+                function syncInitialRow(animate) {
+                  var wanted = isSubExpanded ? subBms.length : Math.min(limit, subBms.length);
+                  function update() {
+                    var keepButtonFocus = document.activeElement === showMoreBtn;
+                    if (wanted > renderedCount) { renderBookmarkListSection(subBms.slice(renderedCount, wanted), sectionContent); renderedCount = wanted; }
+                    Array.from(sectionContent.children).filter(function (node) { return node !== showMoreBtn; }).forEach(function (node, index) {
+                      var hide = !isSubExpanded && index >= limit;
+                      if (hide && node.contains(document.activeElement)) showMoreBtn.focus({ preventScroll: true });
+                      node.hidden = hide;
+                    });
+                    if (sectionContent.lastElementChild !== showMoreBtn) sectionContent.appendChild(showMoreBtn);
+                    if (keepButtonFocus) showMoreBtn.focus({ preventScroll: true });
+                  }
+                  if (animate) animateBookmarkContent(sectionContent, true, update); else update();
+                  showMoreBtn.querySelector('span').textContent = isSubExpanded ? 'Show Less' : 'Show More (' + Math.max(0, subBms.length - limit) + ' more)';
+                  showMoreBtn.lastElementChild.style.transform = isSubExpanded ? 'rotate(-90deg)' : 'rotate(0deg)';
+                  showMoreBtn.setAttribute('aria-expanded', String(isSubExpanded));
+                  var unnecessary = subBms.length <= limit;
+                  if (unnecessary && showMoreBtn === document.activeElement) subDiv.focus({ preventScroll: true });
+                  showMoreBtn.hidden = unnecessary;
+                }
                 showMoreBtn.onclick = function (e) {
                   e.stopPropagation();
+                  if (window.HeavenlyGestures && HeavenlyGestures.owner) return;
                   isSubExpanded = !isSubExpanded;
                   expandedSubSections[subSecKey] = isSubExpanded;
-                  animateBookmarkContent(sectionContent, true, function () {
-                  if (isSubExpanded && renderedCount < subBms.length) {
-                    renderBookmarkListSection(subBms.slice(renderedCount), sectionContent);
-                    renderedCount = subBms.length;
-                    sectionContent.appendChild(showMoreBtn);
-                  }
-                  Array.from(sectionContent.children).filter(function (node) { return node !== showMoreBtn; }).forEach(function (node, index) { node.hidden = !isSubExpanded && index >= limit; });
-                  });
-                  showMoreBtn.querySelector('span').textContent = isSubExpanded ? 'Show Less' : 'Show More (' + (subBms.length - limit) + ' more)';
-                  showMoreBtn.setAttribute('aria-expanded', String(isSubExpanded));
+                  try { HeavenlyNavigation.updateSettings(localStorage, { bookmarkExpandedSections: expandedSubSections }); } catch (error) {}
+                  syncInitialRow(true);
                 };
                 sectionContent.appendChild(showMoreBtn);
+                syncInitialRow(false);
+                updateInitialRow = syncInitialRow;
               }
             } else {
               // Add Bookmark button when sub-section has no bookmarks
@@ -5915,10 +5919,20 @@
               };
               sectionContent.appendChild(addBmInEmptySubSecBtn);
             }
+            if (cat.side === 'bottom') HeavenlyBookmarkView.observeRow(sectionContent, function (width) {
+              var style = getComputedStyle(sectionContent);
+              var next = HeavenlyBookmarkView.limit(bookmarkViewSettings, cat.id, subSec.id, { side: 'bottom', width: width, minimum: parseFloat(style.getPropertyValue('--bookmark-row-min')), gap: parseFloat(style.columnGap) });
+              sectionContent.dataset.initialLimit = next;
+              if (next === limit) return;
+              // Layout measurement changes visibility in place. The saved
+              // Show More choice and each existing bookmark node survive.
+              limit = next;
+              if (updateInitialRow) updateInitialRow(false);
+            });
           }
           if (!isSubCollapsed) ensureSectionContent();
         });
-        card.appendChild(listContainer);
+        categoryContent.appendChild(listContainer);
 
         // Apply entrance animation
         card.classList.add('entrance-animate');
@@ -5932,6 +5946,8 @@
           leftCol.appendChild(card);
         }
       });
+      if (window.HeavenlyLayout && HeavenlyLayout.refresh) HeavenlyLayout.refresh();
+      if (bookmarkSearchController) bookmarkSearchController.refresh();
     }
 
     function renderPresetIconPicker() {
@@ -7201,6 +7217,38 @@
           unavailable.textContent = 'None of these destinations is known to be working. Broken status reflects your saved markers, not a live health check.'; altContainer.appendChild(unavailable);
         }
 
+        function bindMirrorDisclosure(section, summary, body, arrow) {
+          function sync(open) {
+            body.hidden = !open; body.inert = !open;
+            section.dataset.expanded = String(open);
+            summary.setAttribute('aria-expanded', String(open));
+            if (arrow) arrow.style.transform = open ? 'rotate(90deg)' : 'rotate(0deg)';
+          }
+          sync(section.open);
+          summary.addEventListener('click', function (event) {
+            event.preventDefault();
+            var open = section.dataset.expanded !== 'true';
+            if (!open) {
+              closeMirrorMenus();
+              if (body.contains(document.activeElement)) summary.focus({ preventScroll:true });
+            }
+            section.dataset.expanded = String(open);
+            summary.setAttribute('aria-expanded', String(open));
+            if (arrow) arrow.style.transform = open ? 'rotate(90deg)' : 'rotate(0deg)';
+            // Keep native details open until the closing frame has finished.
+            section.open = true;
+            animateBookmarkContent(body, open, null, function () { section.open = open; });
+          });
+          section.addEventListener('toggle', function () {
+            if (body.__accordionAnimation) {
+              // An external/native close wins over an unfinished opening.
+              if (!section.open) { HeavenlyMotion.cancel(body, false); sync(false); }
+              return;
+            }
+            sync(section.open);
+          });
+        }
+
         function createMirrorSection(titleText, iconSvg, mirrorItems, isUserSection, isDefaultCollapsed) {
           var secWrapper = document.createElement('details');
           secWrapper.dataset.mirrorSection = titleText;
@@ -7288,25 +7336,13 @@
 
             titleInp.setAttribute('aria-label','Mirror name');urlInp.setAttribute('aria-label','Mirror URL');
             addBody.appendChild(titleInp);addBody.appendChild(urlInp);addBody.appendChild(submitAddBtn);addForm.appendChild(addBody);
+            bindMirrorDisclosure(addForm,addSummary,addBody);
           }
 
           var body=document.createElement('div');body.className='mirror-disclosure-body';
           body.appendChild(itemsList);if(typeof addForm!=='undefined')body.appendChild(addForm);body.appendChild(mirrorOrderStatus);
           secWrapper.append(secHeader,body);
-          body.hidden=!secWrapper.open;body.inert=!secWrapper.open;
-          secWrapper.dataset.expanded=String(secWrapper.open);secHeader.setAttribute('aria-expanded',String(secWrapper.open));
-          function setExpanded(open){
-            if(!open){closeMirrorMenus();if(body.contains(document.activeElement))secHeader.focus({preventScroll:true});}
-            secWrapper.dataset.expanded=String(open);secHeader.setAttribute('aria-expanded',String(open));
-            secWrapper.open=true;arrow.style.transform=open?'rotate(90deg)':'rotate(0deg)';
-            animateBookmarkContent(body,open,null,function(){secWrapper.open=open;});
-          }
-          secHeader.addEventListener('click',function(e){e.preventDefault();setExpanded(secWrapper.dataset.expanded!=='true');});
-          secWrapper.addEventListener('toggle',function(){
-            if(body.__accordionAnimation)return;
-            body.hidden=!secWrapper.open;body.inert=!secWrapper.open;
-            secWrapper.dataset.expanded=String(secWrapper.open);secHeader.setAttribute('aria-expanded',String(secWrapper.open));
-          });
+          bindMirrorDisclosure(secWrapper,secHeader,body,arrow);
           return secWrapper;
         }
 
@@ -7319,8 +7355,11 @@
           var brokenSection = document.createElement('details'); brokenSection.className = 'broken-mirrors'; brokenSection.dataset.mirrorSection = 'Broken';
           brokenSection.open = expandedMirrors.indexOf('Broken') !== -1;
           var brokenToggle = document.createElement('summary'); brokenToggle.className = 'broken-mirrors-toggle'; brokenToggle.textContent = 'Broken (' + mirrorState.broken.length + ')';
-          brokenSection.appendChild(brokenToggle);
-          mirrorState.broken.forEach(function (entry) { brokenSection.appendChild(renderMirrorItemCard(entry, false)); }); altContainer.appendChild(brokenSection);
+          var brokenBody = document.createElement('div'); brokenBody.className = 'mirror-disclosure-body';
+          mirrorState.broken.forEach(function (entry) { brokenBody.appendChild(renderMirrorItemCard(entry, false)); });
+          brokenSection.append(brokenToggle,brokenBody);
+          bindMirrorDisclosure(brokenSection,brokenToggle,brokenBody);
+          altContainer.appendChild(brokenSection);
         }
       }
 
@@ -7876,35 +7915,10 @@
       setupContainerDropTarget($('right-column'), 'right');
       setupContainerDropTarget($('bottom-container'), 'bottom');
 
-      var searchInput = $('bm-universal-search');
-      var searchClearBtn = $('bm-search-clear-btn');
-      if (searchInput) {
-        var updateBmSearchClearBtn = function () {
-          if (searchClearBtn) {
-            if (searchInput.value.trim().length > 0) {
-              searchClearBtn.classList.add('visible');
-            } else {
-              searchClearBtn.classList.remove('visible');
-            }
-          }
-        };
-
-        if (searchClearBtn) {
-          searchClearBtn.onclick = function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            searchInput.value = '';
-            updateBmSearchClearBtn();
-            renderBookmarksUI();
-            searchInput.focus();
-          };
-        }
-
-        searchInput.oninput = function () {
-          updateBmSearchClearBtn();
-          renderBookmarksUI();
-        };
-      }
+      bookmarkSearchController = HeavenlyBookmarkView.initSearch({
+        input: $('bm-universal-search'), host: $('bookmark-search-results'), clear: $('bm-search-clear-btn'),
+        data: loadBookmarkData, icon: renderIconElement, launch: launchBookmarkSearchResult, href: bookmarkSearchHref
+      });
 
       var bmTypeSelect = $('bm-type');
       if (bmTypeSelect) {

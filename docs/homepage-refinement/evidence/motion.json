@@ -1,0 +1,135 @@
+{
+  "captured": "2026-10-25T01:26:04.734Z",
+  "input": "Actual Chromium CDP touch: 520ms hold, 14 moves 45ms apart, release and reload. Mouse resize and category controls use browser input.",
+  "loader": "Actual shared CSS animations paused at stated currentTime after reopening the existing preview. Live recording includes one normal-clock settling cycle.",
+  "physicalDevices": [],
+  "captures": [
+    {
+      "id": "refinement-resizing",
+      "file": "evidence/refinement-resizing.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Pressed mouse resize; no bookmark drag preview."
+    },
+    {
+      "id": "refinement-category-closing",
+      "file": "evidence/refinement-category-closing.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Real category height animation 60ms after collapse input."
+    },
+    {
+      "id": "refinement-touch-drag",
+      "file": "evidence/refinement-touch-drag.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Active continuous emulated touch with the real bookmark drag preview."
+    },
+    {
+      "id": "refinement-drop",
+      "file": "evidence/refinement-drop.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Touch release and settling. The recorded ordering is asserted after reload."
+    },
+    {
+      "id": "loader-home-0",
+      "file": "evidence/loader-home-0.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Shared home loader; real CSS animations paused at 0ms.",
+      "properties": {
+        "left": "matrix(1, 0, 0, 1, 0, 0)",
+        "right": "matrix(-1, 0, 0, 1, 0, 0)",
+        "mirrored": true,
+        "animationCount": 4
+      }
+    },
+    {
+      "id": "loader-home-900",
+      "file": "evidence/loader-home-900.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Shared home loader; real CSS animations paused at 900ms.",
+      "properties": {
+        "left": "matrix(0.99863, -0.052336, 0.052336, 0.99863, -3, -4)",
+        "right": "matrix(-0.99863, -0.052336, -0.052336, 0.99863, 3, -4)",
+        "mirrored": true,
+        "animationCount": 4
+      }
+    },
+    {
+      "id": "loader-home-2200",
+      "file": "evidence/loader-home-2200.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Shared home loader; real CSS animations paused at 2200ms.",
+      "properties": {
+        "left": "matrix(1, 0, 0, 1, 0, 0)",
+        "right": "matrix(-1, 0, 0, 1, 0, 0)",
+        "mirrored": true,
+        "animationCount": 4
+      }
+    },
+    {
+      "id": "loader-settings-0",
+      "file": "evidence/loader-settings-0.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Shared settings loader; real CSS animations paused at 0ms.",
+      "properties": {
+        "left": "matrix(1, 0, 0, 1, 0, 0)",
+        "right": "matrix(-1, 0, 0, 1, 0, 0)",
+        "mirrored": true,
+        "animationCount": 4
+      }
+    },
+    {
+      "id": "loader-settings-900",
+      "file": "evidence/loader-settings-900.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Shared settings loader; real CSS animations paused at 900ms.",
+      "properties": {
+        "left": "matrix(0.99863, -0.052336, 0.052336, 0.99863, -3, -4)",
+        "right": "matrix(-0.99863, -0.052336, -0.052336, 0.99863, 3, -4)",
+        "mirrored": true,
+        "animationCount": 4
+      }
+    },
+    {
+      "id": "loader-settings-2200",
+      "file": "evidence/loader-settings-2200.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Shared settings loader; real CSS animations paused at 2200ms.",
+      "properties": {
+        "left": "matrix(1, 0, 0, 1, 0, 0)",
+        "right": "matrix(-1, 0, 0, 1, 0, 0)",
+        "mirrored": true,
+        "animationCount": 4
+      }
+    }
+  ],
+  "errors": [],
+  "browser": "154.0.8037.57",
+  "drag": {
+    "bookmarkId": "bm_streamopro",
+    "before": [
+      "bm_fmhy_movies",
+      "bm_streamopro",
+      "bm_movish_movies",
+      "bm_7movies",
+      "bm_rivestream"
+    ],
+    "after": [
+      "bm_fmhy_movies",
+      "bm_movish_movies",
+      "bm_7movies",
+      "bm_rivestream",
+      "bm_streamopro"
+    ],
+    "persisted": true
+  },
+  "recording": "evidence/refinement-motion.webm"
+}

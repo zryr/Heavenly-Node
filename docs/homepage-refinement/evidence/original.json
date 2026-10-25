@@ -1,0 +1,81 @@
+{
+  "phase": "original",
+  "sourceCommit": "013cd07a36854c74b8feb8f29a8437f2c4daa72b",
+  "captured": "2026-10-24T18:52:43.370Z",
+  "physicalDevices": [],
+  "assetPolicy": "External fonts, stylesheets and images allowed; proxy navigation blocked.",
+  "captures": [
+    {
+      "id": "desktop",
+      "file": "evidence/original-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "centerWidth": 672
+    },
+    {
+      "id": "wide",
+      "file": "evidence/original-wide.png",
+      "width": 1920,
+      "height": 1080,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 1920,
+      "innerWidth": 1920,
+      "centerWidth": 672
+    },
+    {
+      "id": "ipad-portrait",
+      "file": "evidence/original-ipad-portrait.png",
+      "width": 820,
+      "height": 1180,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 820,
+      "innerWidth": 820,
+      "centerWidth": 788
+    },
+    {
+      "id": "ipad-landscape",
+      "file": "evidence/original-ipad-landscape.png",
+      "width": 1180,
+      "height": 820,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 1180,
+      "innerWidth": 1180,
+      "centerWidth": 440
+    },
+    {
+      "id": "phone-small",
+      "file": "evidence/original-phone-small.png",
+      "width": 320,
+      "height": 740,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 320,
+      "innerWidth": 320,
+      "centerWidth": 288
+    },
+    {
+      "id": "phone",
+      "file": "evidence/original-phone.png",
+      "width": 390,
+      "height": 844,
+      "note": "Fresh installation; default layout.",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "centerWidth": 358
+    },
+    {
+      "id": "search",
+      "file": "evidence/original-search.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Central bookmark search for Games.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "centerWidth": 672
+    }
+  ],
+  "errors": [],
+  "browser": "154.0.8037.57"
+}
