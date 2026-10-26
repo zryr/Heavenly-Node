@@ -60,6 +60,8 @@
   }
 
   function isCoolmathUrl(value) {
+    // Fast-path guard: check if value is object or string containing coolmathgames.com
+    if (typeof value === 'string' && value.toLowerCase().indexOf('coolmathgames.com') === -1 && value.indexOf('%63oolmathgames.com') === -1) return false;
     try {
       var url = new URL(value);
       return (url.protocol === 'http:' || url.protocol === 'https:') &&
