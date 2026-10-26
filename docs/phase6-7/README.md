@@ -1,6 +1,6 @@
 # Heavenly — combined Phases 6 + 7
 
-One branch: `feat/academy-dynamic-messages-plain-language`, based on merged `main` `a329d6cf0a01728526057b8a854a5ec7fb19c705` after PR #199. The existing Settings, isolated HTML Viewer, widgets, bookmark layouts, catalog and official ranking behavior remain in place. No automatic merge is part of this delivery.
+One branch: `feat/academy-dynamic-messages-plain-language`, based on merged `main` `a329d6cf0a01728526057b8a854a5ec7fb19c705` after PR #199. [Combined PR #202](https://github.com/zryr/Heavenly-Node/pull/202) is open and unmerged. The existing Settings, isolated HTML Viewer, widgets, bookmark layouts, catalog and official ranking behavior remain in place. No automatic merge is part of this delivery.
 
 Open the [portable visual comparison](comparison.html) for **40 actual before/after screenshots and two embedded interaction recordings**. Every image was decoded, opened at its original pixel width, and dismissed by keyboard; both videos loaded with autoplay off. The third [plain-language tools recording](evidence/plain-language-tools-phone.webm) is separate. [Report validation](evidence/report-validation.json) used local HTTP with external requests blocked because managed Chromium forbids `file://` navigation.
 
@@ -51,6 +51,12 @@ PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=1 node test/browser/phase6_7_acceptan
 ```
 
 Individual suite commands and results are linked in the surface reports. Test-only browser tooling adds no production dependency.
+
+## Reviewed preview
+
+[Vercel preview](https://heavenly-node-ozmk1evqr-syshi.vercel.app) is **READY** in the existing `heavenly-node` project at application commit `e77460eedf584067db3a04e7ea61a66bfe47795e`, with a successful GitHub Vercel status. Deployment protection remains enabled; no access parameters are committed. The follow-up commit adds this verification record and the deployed test harness, with no application-source change.
+
+The actual deployed Chromium run passed **six groups**, with zero page errors: independent Academy/image/Coming Soon/404 rendering; Terms return and ordinary message/Pause; opt-in Spotify with once-session advice; the nonmodal dance and live reduced-motion focus; command-only HQ and old Settings aliases; and executed parent DOM/storage attacks blocked in the Viewer with code retained at phone width. [Results](evidence/preview-results.json) · [execution log](evidence/preview-results.txt) · [repeatable harness](../../test/browser/phase6_7_preview.cjs).
 
 ## Design, contributions and compatibility limits
 
