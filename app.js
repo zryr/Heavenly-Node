@@ -103,8 +103,6 @@ function headersMiddleware(data) {
     // Fast-path guard: Skip URL instantiation if no headers exist or if both referer and origin are missing
     if (!data.url || !data.headers || (!data.headers.referer && !data.headers.origin)) return;
     try {
-        var targetUri = data.uri || new URL(data.url);
-
         // Clean & normalize Referer header if present
         if (data.headers.referer) {
             var ref = data.headers.referer;
@@ -123,9 +121,12 @@ function headersMiddleware(data) {
             data.headers.referer = ref;
         }
 
-        // Rewrite Origin header to target origin if set to proxy domain
-        if (data.headers.origin && targetUri.origin) {
-            data.headers.origin = targetUri.origin;
+        // Rewrite Origin header to target origin if set to proxy domain (lazy URL evaluation)
+        if (data.headers.origin) {
+            var targetUri = data.uri || new URL(data.url);
+            if (targetUri.origin) {
+                data.headers.origin = targetUri.origin;
+            }
         }
     } catch (e) {
         // ignore invalid URL
@@ -259,16 +260,18 @@ function responseRedirectMiddleware(data) {
     }
 }
 
+var FRAME_SECURITY_HEADERS_REGEX = /^(?:x-frame-options|content-security-policy(?:-report-only)?|x-content-security-policy|x-webkit-csp|x-content-type-options)$/i;
+
 function iframeSecurityHeadersResponseMiddleware(data) {
     if (!data || !data.headers || !data.remoteResponse || !data.remoteResponse.headers) return;
     // node-unblocker's default CSP middleware removes upstream CSP. Restore
     // these restrictions unchanged; frame refusal must use explicit recovery.
     var original = data.remoteResponse.headers;
-    Object.keys(original).forEach(function(key) {
-        if (/^(?:x-frame-options|content-security-policy(?:-report-only)?|x-content-security-policy|x-webkit-csp|x-content-type-options)$/i.test(key)) {
+    for (var key in original) {
+        if (FRAME_SECURITY_HEADERS_REGEX.test(key)) {
             data.headers[key] = original[key];
         }
-    });
+    }
 }
 
 var unblockerConfig = {

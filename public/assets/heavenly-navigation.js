@@ -84,16 +84,20 @@
 
   function findBookmarkByUrl(data, value) {
     var key = bookmarkKey(value);
-    if (!key) return null;
-    var found = null;
-    (data.bookmarks || []).some(function (bookmark) {
-      if (bookmarkKey(bookmark.url) === key) { found = bookmark; return true; }
-      return (bookmark.subBookmarks || []).some(function (child) {
-        if (bookmarkKey(child.url) === key) { found = child; return true; }
-        return false;
-      });
-    });
-    return found;
+    if (!key || !data || !Array.isArray(data.bookmarks)) return null;
+    var bookmarks = data.bookmarks;
+    for (var i = 0; i < bookmarks.length; i++) {
+      var bookmark = bookmarks[i];
+      if (bookmarkKey(bookmark.url) === key) return bookmark;
+      var sub = bookmark.subBookmarks;
+      if (Array.isArray(sub)) {
+        for (var j = 0; j < sub.length; j++) {
+          var child = sub[j];
+          if (bookmarkKey(child.url) === key) return child;
+        }
+      }
+    }
+    return null;
   }
 
   function prepareMissingBookmark(data, definition) {

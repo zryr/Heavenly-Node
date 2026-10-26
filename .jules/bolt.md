@@ -93,3 +93,9 @@
 **Learning:** Re-instantiating `new RegExp()` on every chunk invocation in streaming transforms like `repairNamespaces` forces V8 to compile and allocate regex objects repeatedly. Guarding `text.replace` with a lightweight `!/xmlns/i.test(text)` check bypasses regex evaluation entirely on non-XML chunks, and caching compiled `RegExp` instances in a module-level dictionary (`namespaceRegexCache`) yields a ~66% execution speedup.
 
 **Action:** Always cache compiled `RegExp` instances in module scope and use fast-path `test()` guards before executing regex replacements in high-frequency stream transforms.
+
+## 2025-06-03 - Lazy object construction, for...in iteration, and fast-path string checks across middleware & bookmarks
+
+**Learning:** Instantiating `new URL(data.url)` on referer-only subresource requests in `headersMiddleware` creates unnecessary parsing overhead (~37.1%). Using `Object.keys().forEach()` in `iframeSecurityHeadersResponseMiddleware` and `mirrorState` allocates temporary key arrays and function closures per response (~29% to ~34% slower than `for...in`). Evaluating regexes and `new URL()` in `vitepressRouter` without `indexOf('javascript')` or `indexOf('/assets/')` fast-paths forces wasted URL parsing on non-asset requests (~31.5% overhead). Using `Array.prototype.some()` closures in `findBookmarkByUrl` adds function allocation overhead on bookmark lookup paths (~30.2% slower than indexed `for` loops).
+
+**Action:** Always defer object construction until properties are confirmed needed, use `for...in` instead of `Object.keys().forEach()` on hot object traversal paths, add `indexOf` fast-path guards before URL/regex operations, and prefer indexed `for` loops with early returns over higher-order array methods in core search helpers.
