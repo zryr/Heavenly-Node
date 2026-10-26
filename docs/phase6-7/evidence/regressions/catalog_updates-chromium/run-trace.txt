@@ -1,0 +1,23 @@
+PASS fresh browser installs latest with no popup
+PASS existing visitor receives one readable version card with actual missing bookmark, section, category and mirror changes
+PASS Maybe Later changes no optional content, restores focus and prevents repeat interruption this session
+PASS release details scroll by keyboard, with real emulated touch scrolling verified in Chromium Settings
+PASS Settings reopens pending review; Escape and Close postpone with focus restoration
+PASS Skip persists and both Settings and homepage leave the saved collection untouched
+PASS failed Apply keeps prior collection and review decision intact with a useful error
+PASS Apply preserves customized ordering, columns, moved hidden bookmark, notes and mirror preferences while appending current content
+PASS private backup downloads all layout-bearing built-ins and roundtrips catalog metadata through actual file import
+PASS bookmark Show More and subsection accordions survive rapid clicks without replacing their owner
+PASS Mark Broken shows confirmation before any broken state or danger animation
+PASS confirmed broken action animates destination and actual fallback with PROMOTED feedback
+MOTIONTRACE {"now":4268.800000000745,"trace":[{"kind":"working","id":"main","visible":true,"time":4141.200000001118,"animations":[{"state":"running","start":null,"duration":240}]}],"targets":[{"cls":"bookmark-mirror-card mirror-destination-row","visible":true,"anims":1}]}
+PASS Mark Working animates successful restoration and preserves active and preferred choices
+PASS manual Preferred selection uses purple confirmation, accessible status and no promotion notice
+PASS mirror disclosure reverses rapidly and settles into the requested accessible state
+PASS external animation cancellation completes logical disclosure state
+PASS rerender during an active transition cancels old ownership without stale styles
+PASS rapid modal close/reopen rejects stale closing completion
+PASS a delayed animation clock is not truncated by the former duration-plus-40ms cleanup timer
+PASS hidden-document interruption clears animation ownership and completes state
+PASS reduced motion changes state immediately without leaving animations or hidden focus
+21 catalog and motion browser groups passed in chromium

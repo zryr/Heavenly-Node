@@ -1,0 +1,6 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox: independent collapse controls, central search and keyboard results retain layout
+PASS firefox: separator keyboard min/max, mouse resize and local persistence work independently
+PASS firefox: seven representative viewports keep center controls usable without overflow; automatic collapse restores intent
+PASS firefox: actual mouse bookmark drag persists after reload; keyboard subsection ordering saves through dialog
+PASS firefox: dialogs and reduced-motion completion leave no page errors or accidental navigation

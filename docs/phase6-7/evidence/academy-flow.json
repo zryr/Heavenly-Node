@@ -1,0 +1,412 @@
+{
+  "executed": "2026-10-26T12:49:29.533Z",
+  "scope": "Linux Playwright mouse/keyboard; CSS zoom is not native browser zoom. Chromium CDP page scale is a separate emulated pinch scale. No physical devices or Apple Safari tested.",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "fresh homepage entry redirects to a standalone Academy document with no underlying application UI",
+        "keyboard/mobile menu, real guide navigation and browser Back restore the prior document and scroll",
+        "about:blank native hash Back/Forward and repeated Terms→Privacy→Terms history retain distinct entries; shell Back returns Privacy, Terms, then Academy",
+        "Search new-tab/about:blank modes show correct trusted content/title, null opener, shell Back, top-level Academy home and Continue; unrelated settings preserved",
+        "blocked popup and denied Storage getter both fall back to real current-tab information navigation",
+        "explicit existing timed-entry preference still unlocks this session",
+        "literal Academy content and navigation remain readable with JavaScript disabled"
+      ],
+      "layouts": [],
+      "inventory": [],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "entryRequests": [
+        "/",
+        "/assets/academy-session.js",
+        "/assets/heavenly-tokens.css",
+        "/assets/heavenly-loading.js",
+        "/assets/heavenly-icons.js",
+        "/assets/heavenly-navigation.js",
+        "/assets/heavenly-bookmarks.js",
+        "/assets/heavenly-bookmark-view.js",
+        "/assets/heavenly-bookmark-view.css",
+        "/assets/heavenly-official-order.js",
+        "/assets/heavenly-catalog.js",
+        "/assets/heavenly-messages-data.js",
+        "/assets/heavenly-messages.js",
+        "/assets/heavenly-messages.css",
+        "/assets/heavenly-dev-hq-model.js",
+        "/assets/heavenly-dev-hq-messages.js",
+        "/assets/heavenly-dev-hq.js",
+        "/assets/heavenly-dev-hq.css",
+        "/assets/heavenly-catalog-ui.js",
+        "/assets/heavenly-catalog.css",
+        "/assets/heavenly-drag.js",
+        "/assets/heavenly-motion.js",
+        "/assets/heavenly-dialogs.js",
+        "/assets/heavenly-mirror-menu.js",
+        "/assets/heavenly-collection-dialog.js",
+        "/assets/heavenly-picks.js",
+        "/assets/heavenly-picks-ui.js",
+        "/assets/heavenly-restore-ui.js",
+        "/assets/heavenly-collection.css",
+        "/assets/quick-settings.css",
+        "/assets/cloak-pool.js",
+        "/assets/quick-settings-model.js",
+        "/assets/quick-settings-help.js",
+        "/assets/quick-settings-dialog.js",
+        "/assets/quick-settings-config.js",
+        "/assets/quick-settings.js",
+        "/css2",
+        "/assets/bookmark-dialogs.css",
+        "/assets/heavenly-home.css",
+        "/assets/heavenly-adaptive.css",
+        "/assets/heavenly-loading.css",
+        "/assets/heavenly-logo.png",
+        "/assets/icons/coolmath-icon.ico",
+        "/academy",
+        "/assets/academy.css",
+        "/assets/academy-session.js",
+        "/assets/academy/library-960.webp",
+        "/assets/heavenly-navigation.js",
+        "/assets/academy-information.js",
+        "/assets/academy.js",
+        "/assets/academy-mark.svg"
+      ],
+      "informationHistory": [
+        {
+          "label": "native Back removes same-document hash",
+          "address": "about:blank",
+          "document": "/academy/about",
+          "entry": 1,
+          "title": "Our approach · Morrowfield Academy"
+        },
+        {
+          "label": "native Forward restores same-document hash",
+          "address": "about:blank",
+          "document": "/academy/about#principles",
+          "entry": 2,
+          "title": "Our approach · Morrowfield Academy"
+        },
+        {
+          "label": "first Terms entry",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 0,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "Privacy after Terms",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "repeated Terms entry",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 2,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "native Back from repeated Terms returns Privacy",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "native Forward returns repeated Terms",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 2,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "shell Back from repeated Terms returns Privacy",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "shell Back returns first Terms",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 0,
+          "title": "Terms of Service · Morrowfield Academy"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "fresh homepage entry redirects to a standalone Academy document with no underlying application UI",
+        "keyboard/mobile menu, real guide navigation and browser Back restore the prior document and scroll",
+        "about:blank native hash Back/Forward and repeated Terms→Privacy→Terms history retain distinct entries; shell Back returns Privacy, Terms, then Academy",
+        "Search new-tab/about:blank modes show correct trusted content/title, null opener, shell Back, top-level Academy home and Continue; unrelated settings preserved",
+        "blocked popup and denied Storage getter both fall back to real current-tab information navigation",
+        "explicit existing timed-entry preference still unlocks this session",
+        "literal Academy content and navigation remain readable with JavaScript disabled"
+      ],
+      "layouts": [],
+      "inventory": [],
+      "errors": [],
+      "version": "153.0",
+      "entryRequests": [
+        "/",
+        "/assets/academy-session.js",
+        "/assets/heavenly-tokens.css",
+        "/assets/heavenly-loading.js",
+        "/assets/heavenly-icons.js",
+        "/assets/heavenly-navigation.js",
+        "/assets/heavenly-bookmarks.js",
+        "/assets/heavenly-bookmark-view.js",
+        "/assets/heavenly-bookmark-view.css",
+        "/assets/heavenly-official-order.js",
+        "/assets/heavenly-catalog.js",
+        "/assets/heavenly-messages-data.js",
+        "/assets/heavenly-messages.js",
+        "/assets/heavenly-messages.css",
+        "/assets/heavenly-dev-hq-model.js",
+        "/assets/heavenly-dev-hq-messages.js",
+        "/assets/heavenly-dev-hq.js",
+        "/assets/heavenly-dev-hq.css",
+        "/assets/heavenly-catalog-ui.js",
+        "/assets/heavenly-catalog.css",
+        "/assets/heavenly-drag.js",
+        "/assets/heavenly-motion.js",
+        "/assets/heavenly-dialogs.js",
+        "/assets/heavenly-mirror-menu.js",
+        "/assets/heavenly-collection-dialog.js",
+        "/assets/heavenly-picks.js",
+        "/assets/heavenly-picks-ui.js",
+        "/assets/heavenly-restore-ui.js",
+        "/assets/heavenly-collection.css",
+        "/assets/quick-settings.css",
+        "/assets/cloak-pool.js",
+        "/assets/quick-settings-model.js",
+        "/assets/quick-settings-help.js",
+        "/assets/quick-settings-dialog.js",
+        "/assets/quick-settings-config.js",
+        "/assets/quick-settings.js",
+        "/css2",
+        "/assets/bookmark-dialogs.css",
+        "/assets/heavenly-home.css",
+        "/assets/heavenly-adaptive.css",
+        "/assets/heavenly-layout.js",
+        "/assets/heavenly-loading.css",
+        "/assets/heavenly-logo.png",
+        "/assets/icons/coolmath-icon.ico",
+        "/academy",
+        "/assets/academy.css",
+        "/assets/academy-session.js",
+        "/assets/heavenly-navigation.js",
+        "/assets/academy-information.js",
+        "/assets/academy.js",
+        "/assets/academy/library-960.webp",
+        "/assets/academy-mark.svg"
+      ],
+      "informationHistory": [
+        {
+          "label": "native Back removes same-document hash",
+          "address": "about:blank",
+          "document": "/academy/about",
+          "entry": 1,
+          "title": "Our approach · Morrowfield Academy"
+        },
+        {
+          "label": "native Forward restores same-document hash",
+          "address": "about:blank",
+          "document": "/academy/about#principles",
+          "entry": 2,
+          "title": "Our approach · Morrowfield Academy"
+        },
+        {
+          "label": "first Terms entry",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 0,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "Privacy after Terms",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "repeated Terms entry",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 2,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "native Back from repeated Terms returns Privacy",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "native Forward returns repeated Terms",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 2,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "shell Back from repeated Terms returns Privacy",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "shell Back returns first Terms",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 0,
+          "title": "Terms of Service · Morrowfield Academy"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "fresh homepage entry redirects to a standalone Academy document with no underlying application UI",
+        "keyboard/mobile menu, real guide navigation and browser Back restore the prior document and scroll",
+        "about:blank native hash Back/Forward and repeated Terms→Privacy→Terms history retain distinct entries; shell Back returns Privacy, Terms, then Academy",
+        "Search new-tab/about:blank modes show correct trusted content/title, null opener, shell Back, top-level Academy home and Continue; unrelated settings preserved",
+        "blocked popup and denied Storage getter both fall back to real current-tab information navigation",
+        "explicit existing timed-entry preference still unlocks this session",
+        "literal Academy content and navigation remain readable with JavaScript disabled"
+      ],
+      "layouts": [],
+      "inventory": [],
+      "errors": [],
+      "version": "26.5",
+      "entryRequests": [
+        "/",
+        "/assets/academy-session.js",
+        "/assets/heavenly-tokens.css",
+        "/assets/heavenly-loading.js",
+        "/assets/heavenly-icons.js",
+        "/assets/heavenly-navigation.js",
+        "/assets/heavenly-bookmarks.js",
+        "/assets/heavenly-bookmark-view.js",
+        "/assets/heavenly-bookmark-view.css",
+        "/assets/heavenly-official-order.js",
+        "/assets/heavenly-catalog.js",
+        "/assets/heavenly-messages-data.js",
+        "/assets/heavenly-messages.js",
+        "/assets/heavenly-messages.css",
+        "/assets/heavenly-dev-hq-model.js",
+        "/assets/heavenly-dev-hq-messages.js",
+        "/assets/heavenly-dev-hq.js",
+        "/assets/heavenly-dev-hq.css",
+        "/assets/heavenly-catalog-ui.js",
+        "/assets/heavenly-catalog.css",
+        "/assets/heavenly-drag.js",
+        "/assets/heavenly-motion.js",
+        "/assets/heavenly-dialogs.js",
+        "/assets/heavenly-mirror-menu.js",
+        "/assets/heavenly-collection-dialog.js",
+        "/assets/heavenly-picks.js",
+        "/assets/heavenly-picks-ui.js",
+        "/assets/heavenly-restore-ui.js",
+        "/assets/heavenly-collection.css",
+        "/assets/quick-settings.css",
+        "/assets/cloak-pool.js",
+        "/assets/quick-settings-model.js",
+        "/assets/quick-settings-help.js",
+        "/assets/quick-settings-dialog.js",
+        "/assets/quick-settings-config.js",
+        "/assets/quick-settings.js",
+        "/css2",
+        "/assets/bookmark-dialogs.css",
+        "/assets/heavenly-home.css",
+        "/assets/heavenly-adaptive.css",
+        "/assets/heavenly-layout.js",
+        "/assets/heavenly-loading.css",
+        "/assets/heavenly-logo.png",
+        "/assets/icons/coolmath-icon.ico",
+        "/academy",
+        "/assets/academy.css",
+        "/assets/academy-session.js",
+        "/assets/heavenly-navigation.js",
+        "/assets/academy-information.js",
+        "/assets/academy.js",
+        "/assets/academy/library-960.webp"
+      ],
+      "informationHistory": [
+        {
+          "label": "native Back removes same-document hash",
+          "address": "about:blank",
+          "document": "/academy/about",
+          "entry": 1,
+          "title": "Our approach · Morrowfield Academy"
+        },
+        {
+          "label": "native Forward restores same-document hash",
+          "address": "about:blank",
+          "document": "/academy/about#principles",
+          "entry": 2,
+          "title": "Our approach · Morrowfield Academy"
+        },
+        {
+          "label": "first Terms entry",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 0,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "Privacy after Terms",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "repeated Terms entry",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 2,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "native Back from repeated Terms returns Privacy",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "native Forward returns repeated Terms",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 2,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "shell Back from repeated Terms returns Privacy",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "shell Back returns first Terms",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 0,
+          "title": "Terms of Service · Morrowfield Academy"
+        }
+      ],
+      "status": "passed"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "executed": "2026-10-26T12:51:14Z",
+  "suite": "catalog_updates",
+  "engine": "chromium",
+  "status": "failed",
+  "exitCode": 1,
+  "elapsedSeconds": 32.6,
+  "groups": 13,
+  "log": "regressions/post-jules-catalog_updates-chromium/run.txt",
+  "scope": "After targeted Bolt PR #200 bookmark lookup adaptation."
+}

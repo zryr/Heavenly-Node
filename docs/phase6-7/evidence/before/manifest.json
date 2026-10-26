@@ -1,0 +1,97 @@
+{
+  "captured": "2026-10-25T23:03:10.317Z",
+  "commit": "a329d6cf0a01728526057b8a854a5ec7fb19c705",
+  "physicalDevices": [],
+  "captures": [
+    {
+      "file": "academy-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "No unlock key or bypass; actual Academy entry.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440
+    },
+    {
+      "file": "academy-phone.png",
+      "width": 390,
+      "height": 844,
+      "note": "No unlock key or bypass; actual Academy entry.",
+      "scrollWidth": 390,
+      "innerWidth": 390
+    },
+    {
+      "file": "home-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Fresh local application; session decoy bypass only for Heavenly surfaces.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440
+    },
+    {
+      "file": "home-phone.png",
+      "width": 390,
+      "height": 844,
+      "note": "Fresh local application; session decoy bypass only for Heavenly surfaces.",
+      "scrollWidth": 390,
+      "innerWidth": 390
+    },
+    {
+      "file": "settings-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Fresh local application; session decoy bypass only for Heavenly surfaces.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440
+    },
+    {
+      "file": "settings-phone.png",
+      "width": 390,
+      "height": 844,
+      "note": "Fresh local application; session decoy bypass only for Heavenly surfaces.",
+      "scrollWidth": 390,
+      "innerWidth": 390
+    },
+    {
+      "file": "viewer-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Fresh local application; session decoy bypass only for Heavenly surfaces.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440
+    },
+    {
+      "file": "viewer-phone.png",
+      "width": 390,
+      "height": 844,
+      "note": "Fresh local application; session decoy bypass only for Heavenly surfaces.",
+      "scrollWidth": 390,
+      "innerWidth": 390
+    },
+    {
+      "file": "quick-settings-dialog-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Actual Quick Settings information dialog opened by its button.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440
+    },
+    {
+      "file": "widgets-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "note": "Real dock injected into deterministic local host fixture.",
+      "scrollWidth": 1440,
+      "innerWidth": 1440
+    },
+    {
+      "file": "widgets-phone.png",
+      "width": 390,
+      "height": 844,
+      "note": "Same live injected widget dock at phone viewport.",
+      "scrollWidth": 390,
+      "innerWidth": 390
+    }
+  ],
+  "errors": [],
+  "engine": "Chromium 154.0.8037.57"
+}

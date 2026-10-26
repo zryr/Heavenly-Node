@@ -1,0 +1,20 @@
+'use strict';
+// Real pre-edit application captures; no physical-device testing is implied.
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),{chromium}=require('playwright'),app=require('../../app');
+const out=path.resolve(__dirname,'../../docs/phase6-7/evidence/before');
+const report={captured:new Date().toISOString(),commit:cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),physicalDevices:[],captures:[],errors:[]};
+let server,browser;
+(async()=>{
+ fs.mkdirSync(out,{recursive:true});server=app.listen(0,'127.0.0.1');await new Promise(r=>server.on('listening',r));const origin='http://127.0.0.1:'+server.address().port;
+ browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});report.engine='Chromium '+browser.version();
+ const snap=async(page,id,width,height,note)=>{await page.setViewportSize({width,height});await page.evaluate(()=>scrollTo(0,0));await page.waitForTimeout(300);const file=id+'.png';await page.screenshot({path:path.join(out,file)});report.captures.push({file,width,height,note,...await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,innerWidth}))});console.log('CAPTURE '+file)};
+ const academy=await browser.newContext();const ap=await academy.newPage();ap.on('pageerror',e=>report.errors.push({surface:'academy',message:e.message}));await ap.goto(origin,{waitUntil:'domcontentloaded'});await ap.waitForTimeout(300);for(const [name,w,h]of[['desktop',1440,1000],['phone',390,844]])await snap(ap,'academy-'+name,w,h,'No unlock key or bypass; actual Academy entry.');await academy.close();
+ const context=await browser.newContext();await context.addInitScript(()=>{if(window===top)sessionStorage.setItem('heavenly_decoy_unlocked','true')});
+ const page=await context.newPage();page.on('pageerror',e=>report.errors.push({surface:page.url(),message:e.message}));page.setDefaultTimeout(8000);
+ for(const [surface,url]of[['home','/'],['settings','/settings.html'],['viewer','/html-viewer.html']]){await page.goto(origin+url,{waitUntil:'domcontentloaded'});await page.waitForTimeout(500);for(const [name,w,h]of[['desktop',1440,1000],['phone',390,844]])await snap(page,surface+'-'+name,w,h,'Fresh local application; session decoy bypass only for Heavenly surfaces.');}
+ await page.goto(origin,{waitUntil:'domcontentloaded'});await page.setViewportSize({width:1440,height:1000});await page.locator('#quick-settings-info-btn').click();await snap(page,'quick-settings-dialog-desktop',1440,1000,'Actual Quick Settings information dialog opened by its button.');await page.keyboard.press('Escape');
+ const fixture='<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Widget baseline fixture</title><style>body{margin:0;padding:40px;background:#eaf0f7;color:#1b3148;font:16px system-ui;min-height:2000px}button{padding:12px}</style><script src="/proxy/client/unblocker-client.js"></script><script>unblockerInit({prefix:"/proxy/",url:"https://widgets.heavenly.test/fixture"},window)</script><h1>Host page with Heavenly tools</h1><p>Local fixture for real injected controls.</p><button>Host button</button>';
+ await context.route('**/proxy/https://widgets.heavenly.test/fixture',r=>r.fulfill({contentType:'text/html',body:fixture}));
+ await page.evaluate(()=>localStorage.setItem('heavenly_settings',JSON.stringify({useWidgetDock:true,touchPanic:false})));await page.goto(origin+'/proxy/https://widgets.heavenly.test/fixture',{waitUntil:'domcontentloaded'});const pull=page.locator('#heavenly-dock-root .pull-tab');await pull.waitFor();await pull.click();await snap(page,'widgets-desktop',1440,1000,'Real dock injected into deterministic local host fixture.');await snap(page,'widgets-phone',390,844,'Same live injected widget dock at phone viewport.');
+ await context.close();
+})().catch(e=>{report.failure=e.stack;process.exitCode=1;console.error(e)}).finally(async()=>{fs.writeFileSync(path.join(out,'manifest.json'),JSON.stringify(report,null,2));await browser?.close();if(server){server.closeAllConnections?.();await new Promise(r=>server.close(r))}});

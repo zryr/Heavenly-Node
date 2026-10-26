@@ -1,0 +1,17 @@
+{
+  "executed": "2026-10-26T12:38:53.277Z",
+  "physicalDevices": [],
+  "participants": [],
+  "input": "Chromium emulated touch taps and keyboard; deterministic message selection. No student participants or physical devices.",
+  "recordings": [
+    "academy-to-home-phone.webm",
+    "character-scenes-phone.webm",
+    "plain-language-tools-phone.webm"
+  ],
+  "flows": [
+    "Fresh Academy entry → touch menu → Learning pathways → readable Terms → Continue to Heavenly → message Next and Pause",
+    "Controller selects reproducible Ao Oni and Doggy examples; real touch activates/advances/dismisses scenes; timed dance ends automatically",
+    "Legacy Settings phrase finds current control → HTML Viewer help disclosure → authored HTML actually runs in isolated preview"
+  ],
+  "engine": "154.0.8037.57"
+}

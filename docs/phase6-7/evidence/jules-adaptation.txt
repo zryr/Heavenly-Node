@@ -1,0 +1,126 @@
+Warning: Cannot find any files matching pattern "test/bookmarks.test.js"
+
+
+  ............................Error initializing Heavenly Cloak & Panic: TypeError: window.document.getElementById is not a function
+    at initHeavenlyCloakAndPanic (/workspace/Heavenly-Node/custom-client/unblocker-client.js:819:63)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4320:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:238:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+Error initializing Heavenly widgets: TypeError: window.document.getElementById is not a function
+    at /workspace/Heavenly-Node/custom-client/unblocker-client.js:1901:54
+    at Array.forEach (<anonymous>)
+    at initHeavenlyWidgets (/workspace/Heavenly-Node/custom-client/unblocker-client.js:1900:109)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4321:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:238:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+.Error initializing Heavenly Cloak & Panic: TypeError: window.document.getElementById is not a function
+    at initHeavenlyCloakAndPanic (/workspace/Heavenly-Node/custom-client/unblocker-client.js:819:63)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4320:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:244:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+Error initializing Heavenly widgets: TypeError: window.document.getElementById is not a function
+    at /workspace/Heavenly-Node/custom-client/unblocker-client.js:1901:54
+    at Array.forEach (<anonymous>)
+    at initHeavenlyWidgets (/workspace/Heavenly-Node/custom-client/unblocker-client.js:1900:109)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4321:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:244:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+.Error initializing Heavenly Cloak & Panic: TypeError: window.document.getElementById is not a function
+    at initHeavenlyCloakAndPanic (/workspace/Heavenly-Node/custom-client/unblocker-client.js:819:63)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4320:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:253:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+Error initializing Heavenly widgets: TypeError: window.document.getElementById is not a function
+    at /workspace/Heavenly-Node/custom-client/unblocker-client.js:1901:54
+    at Array.forEach (<anonymous>)
+    at initHeavenlyWidgets (/workspace/Heavenly-Node/custom-client/unblocker-client.js:1900:109)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4321:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:253:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+.Error initializing Heavenly Cloak & Panic: TypeError: window.document.getElementById is not a function
+    at initHeavenlyCloakAndPanic (/workspace/Heavenly-Node/custom-client/unblocker-client.js:819:63)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4320:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:262:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+Error initializing Heavenly widgets: TypeError: window.document.getElementById is not a function
+    at /workspace/Heavenly-Node/custom-client/unblocker-client.js:1901:54
+    at Array.forEach (<anonymous>)
+    at initHeavenlyWidgets (/workspace/Heavenly-Node/custom-client/unblocker-client.js:1900:109)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4321:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:262:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+.
+
+  32 passing (23ms)

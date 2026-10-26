@@ -6,13 +6,13 @@
   sections.dataset.organized = 'true';
   var children = Array.from(sections.children);
   var definitions = [
-    { source: 2, id: 'bookmarks', title: 'Bookmarks & shortcuts', description: 'Your launch preferences, display counts, and collections.', icon: 'M5 3h14v18l-7-4-7 4z', hash: 'bookmark-display-settings' },
-    { source: 1, id: 'cloaking', title: 'Tab cloaking', description: 'Tab appearance, presets, and launch behavior.', icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', hash: 'tab-cloaking' },
-    { source: 3, id: 'panic', title: 'Panic controls', description: 'Keyboard and touch shortcuts for a quick departure.', icon: 'M12 3 2 21h20L12 3z M12 9v5 M12 17v1', hash: 'panic-controls' },
-    { source: 4, id: 'widgets', title: 'Widgets & dock', description: 'Tools that accompany you on proxied pages.', icon: 'M3 4h7v7H3z M14 4h7v7h-7z M3 15h7v6H3z M14 15h7v6h-7z', hash: 'widget-settings' },
-    { source: 0, id: 'features', title: 'Feature controls', description: 'Master overrides for cloaking, panic, and widgets.', icon: 'M4 7h16 M4 17h16 M8 4v6 M16 14v6', hash: 'master-controls' },
-    { source: 6, id: 'backup', title: 'Backup & transfer', description: 'Keep a local copy or bring your preferences with you.', icon: 'M4 15v6h16v-6 M12 3v13 M7 8l5-5 5 5', hash: 'settings-group-backup' },
-    { source: 5, id: 'updates', title: 'Bookmark updates', description: 'Review changes to the official collection.', icon: 'M20 7a8 8 0 1 0 1 7 M20 2v6h-6', hash: 'bookmark-updates' }
+    { source: 2, id: 'bookmarks', title: 'Bookmarks & shortcuts', description: 'Choose how bookmarks open and how many you see.', icon: 'M5 3h14v18l-7-4-7 4z', hash: 'bookmark-display-settings' },
+    { source: 1, id: 'cloaking', title: 'Tab cloaking', description: 'Change the tab title, icon, and how pages open.', icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', hash: 'tab-cloaking' },
+    { source: 3, id: 'panic', title: 'Panic controls', description: 'Choose a key or button to open another website.', icon: 'M12 3 2 21h20L12 3z M12 9v5 M12 17v1', hash: 'panic-controls' },
+    { source: 4, id: 'widgets', title: 'Widgets & dock', description: 'Choose the tools shown on proxy pages.', icon: 'M3 4h7v7H3z M14 4h7v7h-7z M3 15h7v6H3z M14 15h7v6h-7z', hash: 'widget-settings' },
+    { source: 0, id: 'features', title: 'Feature controls', description: 'Turn groups of tools and tab disguises off.', icon: 'M4 7h16 M4 17h16 M8 4v6 M16 14v6', hash: 'master-controls' },
+    { source: 6, id: 'backup', title: 'Backup & transfer', description: 'Download a backup or restore one from a file.', icon: 'M4 15v6h16v-6 M12 3v13 M7 8l5-5 5 5', hash: 'settings-group-backup' },
+    { source: 5, id: 'updates', title: 'Bookmark updates', description: 'Review new and changed built-in bookmarks.', icon: 'M20 7a8 8 0 1 0 1 7 M20 2v6h-6', hash: 'bookmark-updates' }
   ];
   var nav = document.getElementById('settings-category-nav');
   var groups = [];
@@ -43,7 +43,7 @@
       }
       // Keep contextual configuration actions beside their related controls.
       var configure = heading.querySelector('[data-qs-config]');
-      if (configure) { configure.classList.add('settings-context-config'); configure.textContent = definition.id === 'widgets' ? 'Advanced widget preferences' : 'Shortcut preferences'; body.appendChild(configure); }
+      if (configure) { configure.classList.add('settings-context-config'); configure.textContent = definition.id === 'widgets' ? 'More widget settings' : 'Shortcut preferences'; body.appendChild(configure); }
       heading.remove();
     }
     if (definition.id === 'features') {
@@ -62,7 +62,7 @@
     } else body.appendChild(original);
     if (definition.id === 'cloaking' || definition.id === 'panic') {
       var featureNote = document.createElement('p'); featureNote.className = 'settings-feature-gating'; featureNote.hidden = true;
-      featureNote.textContent = 'These features are turned off in Feature controls. Your preferences are remembered.';
+      featureNote.textContent = 'These features are off in Feature controls. Your saved choices are kept.';
       body.prepend(featureNote);
     }
     group.append(summary, body);
@@ -83,26 +83,28 @@
   var aliases = {
     'set-bookmark-count-mode': 'bookmark count limit show more auto custom density number visible bottom row',
     'customize-quick-settings-btn': 'quick settings shortcuts visibility reorder order customize homepage menu',
-    'set-auto-cloak': 'cloaking hide disguise tab title favicon automatic background',
-    'set-persistent-cloak': 'cloaking persistent always title favicon',
+    'set-auto-cloak': 'cloaking hide disguise tab title favicon automatic background auto tab cloaking',
+    'set-persistent-cloak': 'cloaking persistent always title favicon persistent cloaking',
     'preset-select': 'cloaking custom title icon identity preset favicon',
     'set-randomize-preset-session': 'randomizer pool identities session presets',
     'set-panic-key-enable': 'panic keyboard shortcut hotkey emergency redirect',
     'set-touch-panic': 'panic touch gesture emergency',
     'set-panic-url': 'panic destination redirect url address',
-    'set-use-widget-dock': 'dock toolbar edge position floating widgets top bottom left right',
+    'set-use-widget-dock': 'dock toolbar edge position floating widgets top bottom left right enable collapsible widget dock bar',
     'set-show-magnifier': 'magnifier magnify lens zoom size dimensions',
     'set-show-scroll-lock': 'scroll lock scrolling unlock',
     'set-show-nav-bookmark': 'navigation save bookmark floating',
     'set-show-nav-search': 'navigation search address url floating',
     'set-show-nav-home': 'navigation home direct page floating',
-    'set-disable-all-features': 'master disable all privacy overlays features off',
-    'set-disable-all-widgets': 'master disable all widgets dock off',
-    'open-export-modal-btn': 'backup export import transfer json download restore notes local device',
+    'set-disable-all-features': 'master disable all privacy overlays features off disable all privacy widget overlays',
+    'set-disable-all-widgets': 'master disable all widgets dock off disable all proxied page widgets',
+    'open-export-modal-btn': 'backup export import transfer json download restore notes local device data migration granular backup',
     'reset-widget-pos-btn': 'widget position reset screen offscreen restore',
     'reset-builtin-bookmarks-btn': 'bookmarks hidden categories restore built in reset',
     'set-search-new-tab': 'general navigation go new tab search merge button',
     'set-bookmarks-new-tab': 'general navigation bookmarks new tab launch',
+    'set-decoy-auto-timer': 'timed decoy auto unlock timer academy school page wait terms of service',
+    'set-merge-go-newtab': 'merge go new tab buttons combine',
     'set-bookmarks-about-blank': 'cloaking bookmarks blank launch',
     'set-search-about-blank': 'cloaking search blank launch'
   };
@@ -158,7 +160,7 @@
     unmark(); root.classList.remove('settings-searching');
     records.forEach(function (record) { record.node.hidden = false; record.node.style.removeProperty('order'); });
     groups.forEach(function (group) { group.node.hidden = false; group.node.style.removeProperty('order'); });
-    clear.hidden = true; empty.hidden = true; status.textContent = 'Search names, descriptions, or shortcuts.';
+    clear.hidden = true; empty.hidden = true; status.textContent = 'Search setting names, help, or shortcuts.';
     if (!snapshot) return;
     var currentDetails = Array.from(sections.querySelectorAll('details'));
     snapshot.details.forEach(function (state) { var node = state.node.isConnected ? state.node : currentDetails.find(function (entry) { return detailsKey(entry) === state.key; }); if (node) node.open = state.open; });
@@ -200,7 +202,7 @@
       record.node.querySelectorAll('details').forEach(function (details) { details.open = true; });
       highlight(record.node, tokens);
     });
-    status.textContent = count ? count + (count === 1 ? ' setting found.' : ' settings found.') + ' Use ↓ to explore results.' : 'No matching settings.';
+    status.textContent = count ? count + (count === 1 ? ' setting found.' : ' settings found.') + ' Press Down Arrow to browse results.' : 'No matching settings.';
     empty.hidden = count > 0;
     document.getElementById('settings-empty-query').textContent = search.value.trim();
   }

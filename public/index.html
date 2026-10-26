@@ -6,13 +6,9 @@
   <title>Heavenly</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="icon" type="image/png" href="/assets/heavenly-logo.png">
-  <script>
-    try {
-      if (sessionStorage.getItem('heavenly_decoy_unlocked') === 'true') {
-        document.documentElement.classList.add('decoy-bypassed');
-      }
-    } catch (e) {}
-  </script>
+  <script src="/assets/academy-session.js"></script>
+  <script>AcademySession.gateHome(window);</script>
+  <noscript><meta http-equiv="refresh" content="0;url=/academy"></noscript>
   <link rel="stylesheet" href="/assets/heavenly-tokens.css">
   <script src="/assets/heavenly-loading.js"></script>
   <script src="/assets/heavenly-icons.js"></script>
@@ -22,7 +18,11 @@
   <link rel="stylesheet" href="/assets/heavenly-bookmark-view.css">
   <script src="/assets/heavenly-official-order.js"></script>
   <script src="/assets/heavenly-catalog.js"></script>
+  <script src="/assets/heavenly-messages-data.js"></script>
+  <script src="/assets/heavenly-messages.js"></script>
+  <link rel="stylesheet" href="/assets/heavenly-messages.css">
   <script src="/assets/heavenly-dev-hq-model.js"></script>
+  <script src="/assets/heavenly-dev-hq-messages.js"></script>
   <script src="/assets/heavenly-dev-hq.js"></script>
   <link rel="stylesheet" href="/assets/heavenly-dev-hq.css">
   <script src="/assets/heavenly-catalog-ui.js"></script>
@@ -1586,723 +1586,6 @@
       pointer-events: none !important;
     }
 
-    /* =========================================================
-       Milestone 2: Educational Decoy Landing Screen ("Academy Disguise")
-       ========================================================= */
-    html.decoy-bypassed #academy-decoy-root:not(.unlocked),
-    html.decoy-bypassed #heavenly-decoy-screen:not(.unlocked) {
-      display: none !important;
-    }
-
-    #academy-decoy-root,
-    .academy-decoy-screen {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 999999;
-      background: #ffffff;
-      color: #1e293b;
-      overflow-y: auto;
-      overflow-x: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      opacity: 1;
-      visibility: visible;
-      transition: opacity 0.5s ease;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    #academy-decoy-root.unlocked,
-    .academy-decoy-screen.unlocked {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    /* Clean Navy Top Bar with School Branding & Portal Links */
-    .decoy-top-bar {
-      background: #0f2942;
-      color: #cbd5e1;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      padding: 9px 32px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .decoy-top-bar-notice {
-      color: #93c5fd;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.76rem;
-    }
-
-    .decoy-top-bar-links {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      flex-wrap: wrap;
-    }
-
-    .decoy-top-bar-links a {
-      color: #cbd5e1;
-      text-decoration: none;
-      transition: color 0.15s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .decoy-top-bar-links a:hover {
-      color: #38bdf8;
-    }
-
-    .decoy-portal-cta {
-      background: #2563eb;
-      color: #ffffff !important;
-      padding: 3px 10px;
-      border-radius: 4px;
-      font-size: 0.74rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      transition: background 0.15s ease !important;
-    }
-
-    .decoy-portal-cta:hover {
-      background: #1d4ed8 !important;
-    }
-
-    /* Header with School Crest & ACA Branding */
-    .decoy-header {
-      background: #0f2942;
-      color: #ffffff;
-      padding: 20px 32px 14px 32px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      border-bottom: 3px solid #1e40af;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .decoy-header-main {
-      width: 100%;
-      max-width: 1180px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .decoy-brand {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      text-align: left;
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .decoy-crest {
-      width: 58px;
-      height: 58px;
-      fill: none;
-      stroke: #ffffff;
-      flex-shrink: 0;
-      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
-    }
-
-    .decoy-brand-title {
-      font-family: "Georgia", "Times New Roman", serif;
-      font-size: 1.7rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      line-height: 1.15;
-      color: #ffffff;
-    }
-
-    .decoy-brand-tagline {
-      font-size: 0.82rem;
-      letter-spacing: 0.04em;
-      color: #93c5fd;
-      margin-top: 3px;
-    }
-
-    .decoy-header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .decoy-header-btn {
-      padding: 8px 18px;
-      border-radius: 6px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.15s ease;
-    }
-
-    .decoy-header-btn-primary {
-      background: #ffffff;
-      color: #0f2942;
-    }
-
-    .decoy-header-btn-primary:hover {
-      background: #f1f5f9;
-      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
-    }
-
-    .decoy-header-btn-outline {
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      color: #ffffff;
-    }
-
-    .decoy-header-btn-outline:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: #ffffff;
-    }
-
-    .decoy-nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      width: 100%;
-      max-width: 1180px;
-    }
-
-    .decoy-nav a {
-      color: #f1f5f9;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 600;
-      padding: 5px 10px;
-      border-radius: 4px;
-      transition: background 0.15s ease, color 0.15s ease;
-      letter-spacing: 0.01em;
-    }
-
-    .decoy-nav a:hover {
-      background: rgba(255, 255, 255, 0.14);
-      color: #ffffff;
-    }
-
-    /* Hero Section: High-contrast academic banner */
-    .decoy-hero {
-      position: relative;
-      background: linear-gradient(135deg, #091d30 0%, #0f2942 55%, #19385c 100%);
-      color: #ffffff;
-      padding: 80px 24px 72px 24px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      min-height: 400px;
-    }
-
-    .decoy-hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 50% 25%, rgba(59, 130, 246, 0.22) 0%, transparent 68%);
-      pointer-events: none;
-    }
-
-    .decoy-hero-content {
-      position: relative;
-      z-index: 1;
-      max-width: 860px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .decoy-hero-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 14px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      border-radius: 20px;
-      color: #93c5fd;
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    .decoy-hero-headline {
-      font-family: "Georgia", "Times New Roman", serif;
-      font-size: 2.75rem;
-      font-weight: 700;
-      line-height: 1.18;
-      letter-spacing: -0.01em;
-      color: #ffffff;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-    }
-
-    .decoy-hero-mission {
-      font-size: 1.12rem;
-      line-height: 1.7;
-      color: #e2e8f0;
-      max-width: 740px;
-      margin: 0 auto;
-    }
-
-    .decoy-hero-cta-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      justify-content: center;
-      align-items: center;
-      margin-top: 10px;
-    }
-
-    .decoy-btn-enroll {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 30px;
-      background: #ffffff;
-      color: #0f2942;
-      font-size: 0.96rem;
-      font-weight: 700;
-      border-radius: 6px;
-      text-decoration: none;
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
-      transition: all 0.2s ease;
-    }
-
-    .decoy-btn-enroll:hover {
-      background: #f8fafc;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-      color: #0c2338;
-    }
-
-    .decoy-btn-tour {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 13px 26px;
-      background: transparent;
-      border: 2px solid #ffffff;
-      color: #ffffff;
-      font-size: 0.96rem;
-      font-weight: 600;
-      border-radius: 6px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .decoy-btn-tour:hover {
-      background: rgba(255, 255, 255, 0.15);
-      transform: translateY(-2px);
-    }
-
-    .decoy-btn-outline {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 13px 24px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      color: #cbd5e1;
-      font-size: 0.96rem;
-      font-weight: 600;
-      border-radius: 6px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .decoy-btn-outline:hover {
-      background: rgba(255, 255, 255, 0.16);
-      color: #ffffff;
-      transform: translateY(-2px);
-    }
-
-    /* Key Academic Stats Strip */
-    .decoy-stats-strip {
-      background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-      padding: 28px 24px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-    }
-
-    .decoy-stats-grid {
-      max-width: 1140px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 24px;
-      text-align: center;
-    }
-
-    .decoy-stat-item {
-      padding: 8px 16px;
-    }
-
-    .decoy-stat-number {
-      font-family: "Georgia", "Times New Roman", serif;
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: #0f2942;
-      line-height: 1.1;
-      margin-bottom: 4px;
-    }
-
-    .decoy-stat-label {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #64748b;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    /* Curriculum Grid: 3 modern white cards with subtle drop shadows */
-    .decoy-curriculum-section {
-      background: #f8fafc;
-      color: #1e293b;
-      padding: 72px 24px;
-      border-top: 1px solid #e2e8f0;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    .decoy-curriculum-inner {
-      max-width: 1160px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .decoy-curriculum-badge {
-      display: inline-block;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #2563eb;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      padding: 4px 14px;
-      border-radius: 20px;
-      margin-bottom: 12px;
-    }
-
-    .decoy-curriculum-heading {
-      font-family: "Georgia", "Times New Roman", serif;
-      font-size: 2.35rem;
-      font-weight: 700;
-      color: #0f2942;
-      margin-bottom: 12px;
-      letter-spacing: -0.01em;
-    }
-
-    .decoy-curriculum-sub {
-      font-size: 1.05rem;
-      line-height: 1.65;
-      color: #475569;
-      max-width: 760px;
-      margin: 0 auto 44px;
-    }
-
-    .decoy-curriculum-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-      gap: 30px;
-      text-align: left;
-    }
-
-    .decoy-curriculum-card {
-      background: #ffffff;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 4px 20px rgba(15, 41, 66, 0.07), 0 1px 3px rgba(15, 41, 66, 0.04);
-      padding: 34px 28px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
-    }
-
-    .decoy-curriculum-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 16px 36px rgba(15, 41, 66, 0.12), 0 2px 6px rgba(15, 41, 66, 0.06);
-      border-color: #cbd5e1;
-    }
-
-    .decoy-card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
-    }
-
-    .decoy-card-icon-wrap {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: #eff6ff;
-      border: 1px solid #dbeafe;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #2563eb;
-    }
-
-    .decoy-card-icon {
-      width: 24px;
-      height: 24px;
-    }
-
-    .decoy-card-tag {
-      font-size: 0.74rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 20px;
-      background: #f1f5f9;
-      color: #475569;
-    }
-
-    .decoy-card-title {
-      font-family: "Georgia", "Times New Roman", serif;
-      font-size: 1.45rem;
-      font-weight: 700;
-      color: #0f2942;
-      margin-bottom: 12px;
-      line-height: 1.25;
-    }
-
-    .decoy-card-desc {
-      font-size: 0.94rem;
-      line-height: 1.62;
-      color: #475569;
-      margin-bottom: 20px;
-      flex-grow: 1;
-    }
-
-    .decoy-card-features {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 24px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      border-top: 1px solid #f1f5f9;
-      padding-top: 16px;
-    }
-
-    .decoy-card-features li {
-      font-size: 0.88rem;
-      color: #334155;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .decoy-card-features li::before {
-      content: "✓";
-      color: #2563eb;
-      font-weight: 700;
-      font-size: 0.85rem;
-    }
-
-    .decoy-card-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: #2563eb;
-      text-decoration: none;
-      transition: color 0.15s ease, gap 0.15s ease;
-      margin-top: auto;
-    }
-
-    .decoy-card-link:hover {
-      color: #1d4ed8;
-      gap: 10px;
-    }
-
-    /* Core Virtues Section */
-    .decoy-virtues-section {
-      background: #ffffff;
-      padding: 60px 24px;
-      text-align: center;
-    }
-
-    .decoy-virtues-inner {
-      max-width: 1080px;
-      margin: 0 auto;
-    }
-
-    .decoy-virtues-title {
-      font-family: "Georgia", "Times New Roman", serif;
-      font-size: 2rem;
-      font-weight: 700;
-      color: #0f2942;
-      margin-bottom: 10px;
-    }
-
-    .decoy-virtues-sub {
-      font-size: 1rem;
-      color: #64748b;
-      margin-bottom: 36px;
-      max-width: 680px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .decoy-virtues-grid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 14px;
-    }
-
-    .decoy-virtue-pill {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 30px;
-      padding: 10px 22px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #1e293b;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-      transition: all 0.2s ease;
-    }
-
-    .decoy-virtue-pill:hover {
-      border-color: #2563eb;
-      color: #2563eb;
-      background: #eff6ff;
-      transform: translateY(-2px);
-    }
-
-    /* Academic Footer with Working TOS Link */
-    .decoy-footer {
-      background: #091e32;
-      color: #94a3b8;
-      padding: 56px 24px 28px 24px;
-      border-top: 3px solid #1e40af;
-    }
-
-    .decoy-footer-grid {
-      max-width: 1140px;
-      margin: 0 auto 40px auto;
-      display: grid;
-      grid-template-columns: 2fr 1fr 1.2fr 1.2fr;
-      gap: 40px;
-      text-align: left;
-    }
-
-    @media (max-width: 900px) {
-      .decoy-footer-grid {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 32px;
-      }
-    }
-
-    .decoy-footer-col h4 {
-      color: #f1f5f9;
-      font-size: 0.94rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .decoy-footer-about {
-      font-size: 0.88rem;
-      line-height: 1.6;
-      color: #94a3b8;
-      margin-bottom: 16px;
-    }
-
-    .decoy-footer-contact {
-      font-size: 0.84rem;
-      line-height: 1.65;
-      color: #64748b;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .decoy-footer-col ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .decoy-footer-col a {
-      color: #cbd5e1;
-      text-decoration: none;
-      font-size: 0.86rem;
-      transition: color 0.15s ease;
-    }
-
-    .decoy-footer-col a:hover {
-      color: #38bdf8;
-    }
-
-    .decoy-footer-link {
-      cursor: pointer;
-    }
-
-    .decoy-footer-bottom {
-      max-width: 1140px;
-      margin: 0 auto;
-      padding-top: 24px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 0.82rem;
-      color: #64748b;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 14px;
-    }
-
-    .decoy-footer-bottom-links {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .decoy-footer-bottom-links a {
-      color: #64748b;
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }
-
-    .decoy-footer-bottom-links a:hover {
-      color: #cbd5e1;
-    }
 
   </style>
   <link rel="stylesheet" href="/assets/bookmark-dialogs.css" />
@@ -2313,253 +1596,6 @@
 </head>
 
 <body data-catalog-auto="true">
-
-  <!-- Milestone 2: Educational Decoy Landing Screen ("Academy Disguise") -->
-  <div id="academy-decoy-root" class="academy-decoy-screen" role="region" aria-label="Atlanta Classical Academy">
-    <!-- Decoy Utility Top Bar -->
-    <div class="decoy-top-bar">
-      <div class="decoy-top-bar-notice">
-        <span>🏛️ Tuition-Free Classical K–12 Public Charter School &bull; Atlanta, GA</span>
-      </div>
-      <div class="decoy-top-bar-links">
-        <a href="#parent-portal">Parent Portal</a>
-        <a href="#student-portal">Student Portal</a>
-        <a href="#faculty">Faculty &amp; Staff</a>
-        <a href="#calendar">Academic Calendar</a>
-        <a href="#contact">Contact</a>
-        <a href="#admissions" class="decoy-portal-cta">Apply for 2026–2027</a>
-      </div>
-    </div>
-
-    <!-- Decoy Clean Navy Header -->
-    <header class="decoy-header">
-      <div class="decoy-header-main">
-        <a href="#home" class="decoy-brand">
-          <svg class="decoy-crest" width="58" height="58" viewBox="0 0 100 100" fill="none" stroke="currentColor">
-            <circle cx="50" cy="50" r="46" stroke-width="2.5" />
-            <circle cx="50" cy="50" r="41" stroke-width="1.2" stroke-dasharray="2,2" />
-            <polygon points="50,22 26,35 74,35" stroke-width="2" fill="rgba(255,255,255,0.15)" />
-            <line x1="24" y1="35" x2="76" y2="35" stroke-width="2.5" />
-            <line x1="32" y1="36" x2="32" y2="68" stroke-width="3" />
-            <line x1="44" y1="36" x2="44" y2="68" stroke-width="3" />
-            <line x1="56" y1="36" x2="56" y2="68" stroke-width="3" />
-            <line x1="68" y1="36" x2="68" y2="68" stroke-width="3" />
-            <rect x="24" y="68" width="52" height="6" stroke-width="2" fill="rgba(255,255,255,0.15)" />
-            <circle cx="50" cy="28" r="2" fill="currentColor" />
-            <path d="M26 80 C 40 85, 60 85, 74 80" stroke-width="1.5" />
-          </svg>
-          <div>
-            <div class="decoy-brand-title">Atlanta Classical Academy</div>
-            <div class="decoy-brand-tagline">A Tuition-Free Classical K–12 Charter Public Institution</div>
-          </div>
-        </a>
-        <div class="decoy-header-actions">
-          <a href="#tour" class="decoy-header-btn decoy-header-btn-outline">Visit Campus</a>
-          <a href="#admissions" class="decoy-header-btn decoy-header-btn-primary">Apply Now</a>
-        </div>
-      </div>
-      <nav class="decoy-nav">
-        <a href="#about">About ACA</a>
-        <a href="#academics">Academics</a>
-        <a href="#admissions">Admissions</a>
-        <a href="#curriculum">Core Curriculum</a>
-        <a href="#athletics">Athletics</a>
-        <a href="#fine-arts">Fine Arts</a>
-        <a href="#community">Community</a>
-        <a href="#giving">Giving &amp; Support</a>
-      </nav>
-    </header>
-
-    <!-- Decoy Hero Mission Section: High-contrast academic banner -->
-    <section class="decoy-hero">
-      <div class="decoy-hero-content">
-        <div class="decoy-hero-tag">Classical Liberal Arts Education &bull; Grades K–12</div>
-        <h1 class="decoy-hero-headline">Forming Knowledgeable, Virtuous Citizens</h1>
-        <p class="decoy-hero-mission">The mission of Atlanta Classical Academy is to develop students in mind and character through a classical, content-rich curriculum that emphasizes the principles of virtuous living, traditional learning, and civic responsibility.</p>
-        <div class="decoy-hero-cta-group">
-          <a href="#admissions" class="decoy-btn-enroll">Apply for 2026–2027 &rarr;</a>
-          <a href="#tour" class="decoy-btn-tour">Schedule a Campus Tour</a>
-          <a href="#curriculum" class="decoy-btn-outline">Explore Classical Curriculum</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Institutional Highlights Strip -->
-    <section class="decoy-stats-strip">
-      <div class="decoy-stats-grid">
-        <div class="decoy-stat-item">
-          <div class="decoy-stat-number">100%</div>
-          <div class="decoy-stat-label">Graduation &amp; Acceptance</div>
-        </div>
-        <div class="decoy-stat-item">
-          <div class="decoy-stat-number">14:1</div>
-          <div class="decoy-stat-label">Student-to-Teacher Ratio</div>
-        </div>
-        <div class="decoy-stat-item">
-          <div class="decoy-stat-number">K–12</div>
-          <div class="decoy-stat-label">Tuition-Free Public Charter</div>
-        </div>
-        <div class="decoy-stat-item">
-          <div class="decoy-stat-number">Top 1%</div>
-          <div class="decoy-stat-label">Ranked Charter School in GA</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Curriculum Grid: 3 modern white cards with subtle drop shadows -->
-    <section class="decoy-curriculum-section">
-      <div class="decoy-curriculum-inner">
-        <div class="decoy-curriculum-badge">Academic Excellence</div>
-        <h2 class="decoy-curriculum-heading">Classical Curriculum &amp; Programs</h2>
-        <p class="decoy-curriculum-sub">Rooted in the Western classical tradition, our three-tier Trivium develops disciplined minds, eloquent communicators, and virtuous leaders across all grade levels.</p>
-
-        <div class="decoy-curriculum-grid">
-          <!-- Card 1: Grammar Stage (Lower School) -->
-          <div class="decoy-curriculum-card">
-            <div>
-              <div class="decoy-card-top">
-                <div class="decoy-card-icon-wrap">
-                  <svg class="decoy-card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                  </svg>
-                </div>
-                <span class="decoy-card-tag">Grades K–5</span>
-              </div>
-              <h3 class="decoy-card-title">Grammar Stage (Lower School)</h3>
-              <p class="decoy-card-desc">Laying the foundation of scholarship through explicit phonics, Singapore mathematics, Core Knowledge world history, laboratory sciences, and habits of virtuous character.</p>
-              <ul class="decoy-card-features">
-                <li>Explicit Phonics, Spelling &amp; Cursive</li>
-                <li>Singapore Math Conceptual Mastery</li>
-                <li>Core Knowledge History &amp; Science</li>
-              </ul>
-            </div>
-            <a href="#lower-school" class="decoy-card-link">Explore Lower School &rarr;</a>
-          </div>
-
-          <!-- Card 2: Logic Stage (Middle School) -->
-          <div class="decoy-curriculum-card">
-            <div>
-              <div class="decoy-card-top">
-                <div class="decoy-card-icon-wrap">
-                  <svg class="decoy-card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                  </svg>
-                </div>
-                <span class="decoy-card-tag">Grades 6–8</span>
-              </div>
-              <h3 class="decoy-card-title">Logic Stage (Middle School)</h3>
-              <p class="decoy-card-desc">Advancing from facts to reasoned analysis. Scholars investigate causal relationships, dissect logical arguments, master Latin grammar, and engage in disciplined Socratic inquiry.</p>
-              <ul class="decoy-card-features">
-                <li>Formal Logic &amp; Argumentation</li>
-                <li>Classical Latin Language &amp; Etymology</li>
-                <li>Pre-Algebra &amp; Earth/Life Sciences</li>
-              </ul>
-            </div>
-            <a href="#middle-school" class="decoy-card-link">Explore Middle School &rarr;</a>
-          </div>
-
-          <!-- Card 3: Rhetoric Stage (Upper School) -->
-          <div class="decoy-curriculum-card">
-            <div>
-              <div class="decoy-card-top">
-                <div class="decoy-card-icon-wrap">
-                  <svg class="decoy-card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                  </svg>
-                </div>
-                <span class="decoy-card-tag">Grades 9–12</span>
-              </div>
-              <h3 class="decoy-card-title">Rhetoric Stage (Upper School)</h3>
-              <p class="decoy-card-desc">Preparing articulate scholars who synthesize complex ideas, defend moral truths, and communicate persuasively through Great Books seminars and senior capstone thesis defense.</p>
-              <ul class="decoy-card-features">
-                <li>Humane Letters Literature &amp; History</li>
-                <li>Classical Rhetoric &amp; Senior Thesis</li>
-                <li>Moral Philosophy, Government &amp; STEM</li>
-              </ul>
-            </div>
-            <a href="#upper-school" class="decoy-card-link">Explore Upper School &rarr;</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Core Virtues Overview -->
-    <section class="decoy-virtues-section">
-      <div class="decoy-virtues-inner">
-        <h2 class="decoy-virtues-title">The Seven Core Virtues</h2>
-        <p class="decoy-virtues-sub">Our academic community is governed by timeless virtues practiced daily inside the classroom and across campus life.</p>
-        <div class="decoy-virtues-grid">
-          <div class="decoy-virtue-pill">🛡️ Courage</div>
-          <div class="decoy-virtue-pill">🤝 Courtesy</div>
-          <div class="decoy-virtue-pill">⚖️ Honesty</div>
-          <div class="decoy-virtue-pill">🧗 Perseverance</div>
-          <div class="decoy-virtue-pill">🧘 Self-Government</div>
-          <div class="decoy-virtue-pill">🌱 Service</div>
-          <div class="decoy-virtue-pill">✨ Wonder</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Formal Academic Footer with Working TOS Bypass Link -->
-    <footer class="decoy-footer">
-      <div class="decoy-footer-grid">
-        <div class="decoy-footer-col">
-          <h4>Atlanta Classical Academy</h4>
-          <p class="decoy-footer-about">A Tuition-Free Classical K–12 Charter Public School developing students in mind and character through rigorous inquiry, virtue, and civic responsibility.</p>
-          <div class="decoy-footer-contact">
-            <div>📍 3260 Northside Drive NW, Atlanta, GA 30327</div>
-            <div>📞 Main Office: (404) 369-3500 | Fax: (404) 369-3501</div>
-            <div>✉️ admissions@classicalacademy.org</div>
-            <div>🏛️ CEEB: 110294 &bull; SACS Accredited &bull; Title IX Compliant</div>
-          </div>
-        </div>
-        <div class="decoy-footer-col">
-          <h4>Academics</h4>
-          <ul>
-            <li><a href="#curriculum">Core Curriculum</a></li>
-            <li><a href="#lower-school">Lower School (Grammar)</a></li>
-            <li><a href="#middle-school">Middle School (Logic)</a></li>
-            <li><a href="#upper-school">Upper School (Rhetoric)</a></li>
-            <li><a href="#latin">Classical Latin &amp; Greek</a></li>
-            <li><a href="#athletics">Athletics (The Archers)</a></li>
-          </ul>
-        </div>
-        <div class="decoy-footer-col">
-          <h4>Portals &amp; Resources</h4>
-          <ul>
-            <li><a href="#parent-portal">Parent Infinite Campus</a></li>
-            <li><a href="#student-portal">Student Portal Login</a></li>
-            <li><a href="#faculty">Faculty &amp; Staff Directory</a></li>
-            <li><a href="#calendar">2026–2027 Calendar</a></li>
-            <li><a href="#library">Classical Library Catalog</a></li>
-            <li><a href="#support-aca">Support ACA &amp; Giving</a></li>
-          </ul>
-        </div>
-        <div class="decoy-footer-col">
-          <h4>Governance &amp; Policies</h4>
-          <ul>
-            <li><a href="#board">Board of Trustees Minutes</a></li>
-            <li><a href="#charter-policies">Charter School Policies</a></li>
-            <li><a href="#privacy">Student Privacy Policy</a></li>
-            <li><a href="#terms" id="decoy-tos-link" class="decoy-footer-link">Terms of Service</a></li>
-            <li><a href="#nondiscrimination">Nondiscrimination Statement</a></li>
-            <li><a href="#accessibility">Accessibility Statement</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="decoy-footer-bottom">
-        <div>&copy; 2026 Atlanta Classical Academy. All rights reserved. A 501(c)(3) Classical Public Charter Institution.</div>
-        <div class="decoy-footer-bottom-links">
-          <a href="#privacy">Privacy</a> &bull;
-          <a href="#terms">Terms</a> &bull;
-          <a href="#accessibility">Accessibility</a>
-        </div>
-      </div>
-    </footer>
-  </div>
 
   <!-- Ethereal Splash / Loading Screen Overlay -->
   <div id="heavenly-loading-screen" class="loading-overlay" role="status" aria-live="polite" aria-label="Loading Heavenly">
@@ -2588,8 +1624,8 @@
         <button type="button" id="layout-options-trigger" aria-label="Layout options" aria-controls="layout-options-menu" aria-expanded="false" title="Layout options"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="18" r="2"/></svg><span>Layout options</span></button>
         <div id="layout-options-menu" class="layout-options-menu" hidden>
           <button type="button" id="reset-home-layout" aria-describedby="layout-reset-scope" disabled>Reset layout</button>
-          <p id="layout-reset-scope">Restore panel widths and panel/category collapse states.</p>
-          <p class="layout-resize-tip">You can resize the left and right bookmark panels by dragging their inner edges.</p>
+          <p id="layout-reset-scope">Reset panel widths and which panels and categories are open.</p>
+          <p class="layout-resize-tip">Drag the inside edge of a side panel to change its width.</p>
         </div>
       </div>
       <span id="layout-status" class="layout-status" role="status" aria-live="polite"></span>
@@ -2625,7 +1661,7 @@
           <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img">
           <h1>Heavenly</h1>
         </div>
-        <p class="tagline">Streamlined &bull; Seamless &bull; Ethereal Web Proxy</p>
+        <div id="heavenly-messages" class="tagline">Doing anything but homework...</div>
       </div>
 
       <div id="error"></div>
@@ -2651,7 +1687,7 @@
 
       <form action="no-js" method="get" id="unblocker-form" class="search-form" style="margin-bottom: 24px;">
         <div class="input-wrapper">
-          <input type="text" id="url" name="url" placeholder="Enter a URL or search query..." autocomplete="off" aria-label="URL or search query" aria-expanded="false" aria-controls="history-dropdown" style="padding-right: 44px;" />
+          <input type="text" id="url" name="url" placeholder="Search or enter a website address…" autocomplete="off" aria-label="Search or enter a website address" aria-expanded="false" aria-controls="history-dropdown" style="padding-right: 44px;" />
           <button type="button" id="url-clear-btn" class="url-clear-btn" aria-label="Clear search input" title="Clear input"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></svg></button>
         </div>
         <input type="submit" id="search-go-btn" value="Go" />
@@ -2681,15 +1717,15 @@
           <h2 id="about-heavenly-title">About Heavenly</h2>
           <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17h10a4 4 0 0 0 .6-7.95 6 6 0 0 0-11.5-1.1A4.5 4.5 0 0 0 7 17Z"/></svg>
         </div>
-        <p>Your favorite places, thoughtfully within reach. Search your bookmarks, organize collections, or explore the web through Heavenly’s proxy.</p>
+        <p>Save your favorite websites, organize bookmarks, and browse through Heavenly’s proxy.</p>
         <details class="about-details">
           <summary>Make yourself at home <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></summary>
           <ul>
-            <li><strong>A layout that fits.</strong> Move categories, collapse them independently, and resize the side panels.</li>
-            <li><strong>Your way to launch.</strong> Choose Direct or Proxy where offered. Site compatibility and availability can vary.</li>
-            <li><strong>Small, useful tools.</strong> Customize Quick Settings and the proxied widget dock in Settings.</li>
+            <li><strong>Arrange your bookmarks.</strong> Move categories, open or close each one, and resize the side panels.</li>
+            <li><strong>Choose how websites open.</strong> Direct opens the website itself. Proxy opens it through Heavenly. Some websites may not work or may be unavailable.</li>
+            <li><strong>Choose your tools.</strong> Choose your Quick Settings shortcuts and proxy page tools in Settings.</li>
           </ul>
-          <p class="about-backup-note">Bookmarks and preferences live in this browser. Export a backup in Settings before clearing browser data or changing devices.</p>
+          <p class="about-backup-note">Bookmarks and settings stay in this browser and do not sync automatically. Clearing browser data can erase them. Download a backup in Settings before clearing data or changing devices.</p>
         </details>
         <div class="about-create">
           <button id="open-add-modal-btn" type="button" class="add-category-btn">
@@ -2785,12 +1821,12 @@
         <div class="form-group">
           <label class="form-label" for="bm-type">Item Type</label>
           <select id="bm-type" class="form-select">
-            <option value="bookmark">Standard Bookmark (Site Link)</option>
-            <option value="folder_bookmark">Folder-Bookmark (Site Link + Expandable Folder)</option>
-            <option value="folder">Normal Folder (Expandable Container Only)</option>
+            <option value="bookmark">Bookmark (opens a website)</option>
+            <option value="folder_bookmark">Bookmark with folder (website and saved links)</option>
+            <option value="folder">Folder (holds saved links)</option>
           </select>
           <div id="bm-type-explain" style="font-size: 0.78rem; color: #94a3b8; margin-top: 4px; line-height: 1.4;">
-            Standard Bookmark: Opens site link in a new tab.
+            Bookmark: Opens a website using your new-tab setting.
           </div>
         </div>
         <div class="form-group">
@@ -2802,9 +1838,9 @@
           <input type="text" id="bm-url" class="form-input" placeholder="https://example.com" />
         </div>
         <div class="form-group" id="group-bm-launch-pref">
-          <label class="form-label" for="bm-launch-pref">Launch Mode</label>
+          <label class="form-label" for="bm-launch-pref">How to open</label>
           <select id="bm-launch-pref" class="form-select">
-            <option value="ask">Always Ask [Default]</option>
+            <option value="ask">Ask each time (default)</option>
             <option value="proxy">Always Proxy</option>
             <option value="direct">Always Direct</option>
           </select>
@@ -2822,7 +1858,7 @@
           <div role="tablist" aria-label="Icon Source selection" style="display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap;">
             <button type="button" id="icon-tab-favicon" class="icon-tab-btn active" role="tab" aria-selected="true" aria-label="Auto Favicon icon source" style="flex: 1; min-width: 90px; padding: 6px; border-radius: 8px; background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.4); color: #38bdf8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Auto Favicon</button>
             <button type="button" id="icon-tab-preset" class="icon-tab-btn" role="tab" aria-selected="false" aria-controls="icon-preset-container" aria-label="Preset Icons selection" style="flex: 1; min-width: 90px; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Preset Icons</button>
-            <button type="button" id="icon-tab-manual" class="icon-tab-btn" role="tab" aria-selected="false" aria-controls="icon-manual-container" aria-label="Manually Select Icon or Custom URL selection" style="flex: 1; min-width: 140px; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Manually Select Icon / Custom URL</button>
+            <button type="button" id="icon-tab-manual" class="icon-tab-btn" role="tab" aria-selected="false" aria-controls="icon-manual-container" aria-label="Manually Select Icon or Custom URL selection" style="flex: 1; min-width: 140px; padding: 6px; border-radius: 8px; background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Choose an icon or image address</button>
           </div>
 
           <!-- Preset Icons Container -->
@@ -2830,14 +1866,14 @@
 
           <!-- Unified Manual / Custom URL Container -->
           <div id="icon-manual-container" style="display: none; padding: 10px; background: rgba(30, 41, 59, 0.4); border-radius: 12px; border: 1px solid rgba(148,163,184,0.2); font-size: 0.78rem; color: #cbd5e1; line-height: 1.4; display: flex; flex-direction: column; gap: 8px;">
-            <div>Enter an image / GIF URL directly below, or click the Live Icon Picker button to detect icons on the target site:</div>
+            <div>Enter an image or GIF address below, or use the Live Icon Picker to find icons on the website.</div>
             <div style="display: flex; gap: 8px; align-items: center;">
               <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="Custom Icon URL (e.g. https://example.com/icon.png)" style="font-size: 0.82rem; padding: 8px 10px; flex: 1;" />
               <div id="bm-custom-icon-preview" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;"></div>
             </div>
             <button type="button" id="btn-launch-live-picker" style="padding: 8px 12px; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 10px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;">
               <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-              <span>Launch Live Icon Picker Overlay</span>
+              <span>Find icons on the website</span>
             </button>
           </div>
         </div>
@@ -2846,7 +1882,7 @@
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px;">
             <div>
               <div style="font-weight: 600; font-size: 0.88rem; color: #f8fafc;">Enable Quick Save Widget</div>
-              <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Shows a floating widget on proxied pages to quickly save sub-bookmarks</div>
+              <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Show a floating Quick Save button on supported proxy pages to save links in this bookmark.</div>
             </div>
             <label class="switch-toggle">
               <input type="checkbox" id="bm-quick-save-toggle" checked />
@@ -2956,7 +1992,7 @@
         <button id="close-everythingmoe-modal-btn" type="button" class="modal-close-btn" aria-label="Close bookmark dialog">✕</button>
       </div>
       <div style="font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 16px;">
-        This website is for you to test other sites to see if they are unblocked where you are.
+        Try opening the website directly to see whether it works on your network.
       </div>
       <div id="everythingmoe-actions" style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
         <button id="everythingmoe-ok-btn" type="button" class="modal-submit-btn" style="flex: 1; margin-top: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Open with Proxy</span></button>
@@ -2997,7 +2033,7 @@
 
         <div id="share-tree-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px;"></div>
 
-        <label class="share-note-option"><input type="checkbox" id="share-include-notes" /><span>Include personal notes<small>Your notes will be visible to anyone who receives this share code or link.</small></span></label>
+        <label class="share-note-option"><input type="checkbox" id="share-include-notes" /><span>Include personal notes<small>Anyone with this share code or link can read the notes you include.</small></span></label>
         <p id="share-size-warning" class="bookmark-note-hint" role="status"></p>
         <!-- Generated Code / Link Section -->
         <div id="share-output-container" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid rgba(148,163,184,0.15); padding-top: 10px;">
@@ -3150,7 +2186,7 @@
         <button id="close-builtin-modal-btn" type="button" class="modal-close-btn" aria-label="Close bookmark dialog">✕</button>
       </div>
       <div id="builtin-modal-desc" style="font-size: 0.9rem; color: #94a3b8; line-height: 1.5; margin-bottom: 16px;">
-        Would you like to test opening <strong id="builtin-site-name" style="color: #38bdf8;"></strong> directly without the proxy to see if your internet blocks it or if things load better without proxy?
+        Try opening <strong id="builtin-site-name" style="color: #38bdf8;"></strong> directly to see whether it works on your network. You can also open it through Heavenly’s proxy.
       </div>
       <div id="builtin-quick-save-container" class="bookmark-quick-save">
         <div><label for="builtin-quick-save-toggle">Enable Quick Save Widget</label><p>Show a floating quick-save button on supported proxied pages.</p><span class="bookmark-setting-status" role="status"></span></div>
@@ -3342,72 +2378,6 @@
       var s = String(str);
       if (!/[&<>"']/.test(s)) return s;
       return s.replace(/[&<>"']/g, function (m) { return HTML_ESCAPE_MAP[m]; });
-    }
-
-    // --- Milestone 2: Educational Decoy ("Academy Disguise") Controller ---
-    var decoyTimer = null;
-
-    function unlockAcademyDecoy() {
-      if (decoyTimer) {
-        clearTimeout(decoyTimer);
-        decoyTimer = null;
-      }
-      try {
-        sessionStorage.setItem('heavenly_decoy_unlocked', 'true');
-      } catch (e) {}
-
-      var decoy = $('academy-decoy-root') || $('heavenly-decoy-screen');
-      if (decoy) {
-        if (decoy.classList.contains('unlocked') || decoy.style.display === 'none') return;
-        decoy.classList.add('unlocked');
-        setTimeout(function () {
-          decoy.style.display = 'none';
-          document.documentElement.classList.add('decoy-bypassed');
-        }, 500);
-      } else {
-        document.documentElement.classList.add('decoy-bypassed');
-      }
-      hideLoadingScreen();
-    }
-
-    function initAcademyDecoy() {
-      try {
-        if (sessionStorage.getItem('heavenly_decoy_unlocked') === 'true') {
-          document.documentElement.classList.add('decoy-bypassed');
-          var decoy = $('academy-decoy-root') || $('heavenly-decoy-screen');
-          if (decoy) decoy.style.display = 'none';
-          return;
-        }
-      } catch (e) {}
-
-      var tosLinks = document.querySelectorAll('#decoy-tos-link, a[href="#terms"]');
-      if (tosLinks && tosLinks.length > 0) {
-        tosLinks.forEach(function (link) {
-          link.onclick = function (e) {
-            e.preventDefault();
-            unlockAcademyDecoy();
-          };
-        });
-      }
-
-      var autoTimerEnabled = false;
-      try {
-        var settings = loadSettings();
-        if (settings && settings.decoyAutoTimer === true) {
-          autoTimerEnabled = true;
-        }
-      } catch (e) {}
-
-      if (autoTimerEnabled) {
-        if (!decoyTimer) {
-          decoyTimer = setTimeout(function () {
-            unlockAcademyDecoy();
-          }, 2600);
-        }
-      } else if (decoyTimer) {
-        clearTimeout(decoyTimer);
-        decoyTimer = null;
-      }
     }
 
     // --- Milestone 3: about:blank Tab Cloaking Launcher ---
@@ -6027,19 +4997,19 @@
       var subBmsGroup = $('group-sub-bookmarks');
 
       if (val === 'bookmark') {
-        explain.textContent = 'Standard Bookmark: Opens site link directly in a new tab.';
+        explain.textContent = 'Bookmark: Opens a website using your new-tab setting.';
         urlGroup.style.display = 'flex';
         urlInput.required = true;
         if (quickSaveGroup) quickSaveGroup.style.display = 'none';
         if (subBmsGroup) subBmsGroup.style.display = 'none';
       } else if (val === 'folder_bookmark') {
-        explain.textContent = 'Folder-Bookmark: Main title opens site link, while > arrow expands to show sub-bookmarks.';
+        explain.textContent = 'Bookmark with folder: The title opens the website. The arrow shows its saved links.';
         urlGroup.style.display = 'flex';
         urlInput.required = true;
         if (quickSaveGroup) quickSaveGroup.style.display = 'block';
         if (subBmsGroup) subBmsGroup.style.display = 'block';
       } else if (val === 'folder') {
-        explain.textContent = 'Normal Folder: Purely an expandable container for sub-bookmarks (no main link).';
+        explain.textContent = 'Folder: Opens a list of saved links. The folder itself has no website address.';
         urlGroup.style.display = 'none';
         urlInput.required = false;
         if (quickSaveGroup) quickSaveGroup.style.display = 'block';
@@ -6564,7 +5534,7 @@
       input.id = modalId + '-note-text'; input.maxLength = 4000; input.rows = 4;
       input.setAttribute('aria-label', 'My Note'); input.placeholder = 'Add a note about this website...'; input.value = saved;
       var hint = document.createElement('p'); hint.className = 'bookmark-note-hint';
-      hint.textContent = 'Saved on this device. Private backups can transfer notes; public sharing includes them only if you choose. Notes do not sync automatically.';
+      hint.textContent = 'Notes stay in this browser and do not sync automatically. Backups include them. Share links include notes only if you choose.';
       var actions = document.createElement('div'); actions.className = 'bookmark-note-actions';
       var status = document.createElement('p'); status.className = 'bookmark-setting-status'; status.setAttribute('role', 'status');
       function refresh() { preview.textContent = saved ? saved.replace(/\s+/g, ' ').slice(0, 100) : 'Optional'; }
@@ -7046,7 +6016,7 @@
           panel.setAttribute('aria-label', eventSpecific ? 'Mirror selection update' : 'About mirror selection');
           panel.dataset.helpKind = eventSpecific ? 'promotion' : 'general';
           var message = document.createElement(eventSpecific?'p':'ul');
-          if(eventSpecific)message.textContent='The selected site was marked as broken, so Heavenly switched to an available mirror. You can choose your preferred site at any time.';
+          if(eventSpecific)message.textContent='You marked the active site as broken, so Heavenly switched to another saved link (a mirror). You can choose your preferred site at any time.';
           else [
             ['Active Site','The website Heavenly opens right now.'],
             ['Preferred Site','The website you choose to use first.'],
@@ -7093,7 +6063,7 @@
         if (promotionState.guideUntil > Date.now() || promotionState.guideRemaining > 0) explain(true, true, true);
         if (allAreBroken) {
           var unavailable = document.createElement('p'); unavailable.className = 'bookmark-setting-status'; unavailable.setAttribute('role','status');
-          unavailable.textContent = 'None of these destinations is known to be working. Broken status reflects your saved markers, not a live health check.'; altContainer.appendChild(unavailable);
+          unavailable.textContent = 'You marked all these links as broken. Heavenly has not checked them live. Mark one as working or add another mirror link.'; altContainer.appendChild(unavailable);
         }
 
         function bindMirrorDisclosure(section, summary, body, arrow) {
@@ -7162,7 +6132,7 @@
           } else {
             var emptyNotice = document.createElement('div');
             emptyNotice.style.cssText = 'font-size: 0.78rem; color: #94a3b8; font-style: italic; padding: 6px 10px; background: rgba(15,23,42,0.4); border-radius: 8px; border: 1px dashed rgba(148,163,184,0.2);';
-            emptyNotice.textContent = 'No available mirrors. Restore a link or add a custom mirror.';
+            emptyNotice.textContent = 'No mirror links are available. Mark a saved link as working or add your own mirror.';
             itemsList.appendChild(emptyNotice);
           }
 
@@ -7194,7 +6164,7 @@
               var mTitle = titleInp.value.trim();
               var mUrl = urlInp.value.trim();
               if (!mUrl) {
-                alert('Please enter a mirror URL.');
+                alert('Enter the mirror’s website address (URL).');
                 return;
               }
               var latestData = loadBookmarkData();
@@ -7672,7 +6642,7 @@
       if (applyShareBtn) {
         applyShareBtn.onclick = function () {
           if (!parsedSharePayload) {
-            alert('Please enter a valid share code or link.');
+            alert('Enter a valid share code or link, then try again.');
             return;
           }
 
@@ -8134,7 +7104,7 @@
           var subTitle = titleInp.value.trim();
           var subUrl = urlInp.value.trim();
           if (!subUrl) {
-            alert('Please enter a URL for the sub-bookmark.');
+            alert('Enter a website address (URL) for this saved link.');
             return;
           }
           modalSubBookmarks.push({
@@ -8219,12 +7189,12 @@
           }
           var res = saveBookmarkForm();
           if (!res) {
-            alert('Please enter a Bookmark Title and URL first.');
+            alert('Enter a bookmark title and website address first.');
             return false;
           }
           var urlToLaunch = res.url;
           if (!urlToLaunch) {
-            alert('Please enter a Bookmark URL to launch the Live Icon Picker.');
+            alert('Enter a website address before opening the Live Icon Picker.');
             return false;
           }
           var cleanUrl = urlToLaunch.startsWith('http') ? urlToLaunch : 'https://' + urlToLaunch;
@@ -8535,14 +7505,12 @@
       }
 
       checkError();
-      initAcademyDecoy();
       hideLoadingScreen();
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLandingPage, { once: true });
     else initLandingPage();
 
     window.addEventListener('pageshow', function (e) {
-      initAcademyDecoy();
       hideLoadingScreen();
       initLandingCloak();
       renderBookmarksUI();

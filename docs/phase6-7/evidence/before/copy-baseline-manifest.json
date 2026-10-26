@@ -1,0 +1,12 @@
+{
+  "commit": "a329d6cf0a01728526057b8a854a5ec7fb19c705",
+  "captured": "2026-10-26T03:18:02.690Z",
+  "method": "Immutable git archive of the merged baseline, rendered after implementation began; no second branch",
+  "captures": [
+    "settings-cloaking-desktop.png",
+    "viewer-help-phone.png",
+    "error-desktop.png"
+  ],
+  "physicalDevices": [],
+  "engine": "154.0.8037.57"
+}

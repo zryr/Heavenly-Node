@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-10-25",
+  "title": "File:George-peabody-library.jpg",
+  "pageid": 24162642,
+  "author": "Matthew Petroff",
+  "source_page": "https://commons.wikimedia.org/wiki/File:George-peabody-library.jpg",
+  "source_original": "https://upload.wikimedia.org/wikipedia/commons/c/c1/George-peabody-library.jpg",
+  "downloaded_thumbnail": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/George-peabody-library.jpg/1920px-George-peabody-library.jpg",
+  "downloaded_dimensions": [
+    1920,
+    1440
+  ],
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+  "changes": "Resized to 640/960/1600px wide and encoded as WebP, no generated or added content. Application may display with CSS object-fit crop.",
+  "license_metadata": {
+    "Artist": {
+      "value": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Petroffm&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Petroffm (page does not exist)\">Matthew Petroff</a>",
+      "source": "commons-desc-page"
+    },
+    "Credit": {
+      "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+      "source": "commons-desc-page"
+    },
+    "LicenseShortName": {
+      "value": "CC BY-SA 3.0",
+      "source": "commons-desc-page",
+      "hidden": ""
+    },
+    "LicenseUrl": {
+      "value": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "commons-desc-page"
+    },
+    "UsageTerms": {
+      "value": "Creative Commons Attribution-Share Alike 3.0",
+      "source": "commons-desc-page"
+    },
+    "AttributionRequired": {
+      "value": "true",
+      "source": "commons-desc-page",
+      "hidden": ""
+    },
+    "License": {
+      "value": "cc-by-sa-3.0",
+      "source": "commons-templates",
+      "hidden": ""
+    }
+  },
+  "derivatives": [
+    {
+      "path": "public/assets/academy/library-640.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 85024,
+      "sha256": "76e1452413af0893c5ac296cfa3c35c0af7f29f2e56bcd67853f83a088d81ca1"
+    },
+    {
+      "path": "public/assets/academy/library-960.webp",
+      "width": 960,
+      "height": 720,
+      "bytes": 186458,
+      "sha256": "5189f704208c7115279146b33ec41cec394929b6734f202fd50d8e579932ecdd"
+    },
+    {
+      "path": "public/assets/academy/library-1600.webp",
+      "width": 1600,
+      "height": 1200,
+      "bytes": 484246,
+      "sha256": "044c8c1e3d1f60169e477f487a4602b9d977b582d807df478eaa6fe9bdf459fd"
+    }
+  ]
+}

@@ -1,0 +1,3898 @@
+{
+  "executed": "2026-10-26T12:43:48.151Z",
+  "engine": "webkit",
+  "purpose": "Temporary repeated-viewport geometry diagnostic; no app changes or relaxed assertions.",
+  "records": [
+    {
+      "round": 0,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 0,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 0,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 0,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 0,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 0,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 0,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 0,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 0,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 0,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 0,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 0,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 1,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 2,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 3,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 4,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 5,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 301.890625,
+        "controlsTop": 322.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 6,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 7,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 8,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 9,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 10,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 820,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 198.859375,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 820,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 404.8125,
+        "copyBottom": 316.390625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 820,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 216.40625,
+        "copyBottom": 320.578125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 820,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 235.265625,
+        "copyBottom": 309.078125,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 820,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 250.515625,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 820,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 820,
+        "scrollWidth": 820,
+        "height": 91.1875,
+        "copyWidth": 290.328125,
+        "copyBottom": 305.890625,
+        "controlsTop": 326.578125,
+        "copyFont": "14px",
+        "copyLine": "21px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 390,
+      "id": "msg_homework",
+      "immediate": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_homework",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 184.65625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 390,
+      "id": "msg_resize",
+      "immediate": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_resize",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 332,
+        "copyBottom": 294.890625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 390,
+      "id": "msg_purple_hulk",
+      "immediate": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_purple_hulk",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 205.515625,
+        "copyBottom": 300.578125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 390,
+      "id": "msg_favorites",
+      "immediate": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_favorites",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 221.15625,
+        "copyBottom": 288.328125,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 390,
+      "id": "msg_settings",
+      "immediate": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_settings",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 232.625,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    },
+    {
+      "round": 11,
+      "viewport": 390,
+      "id": "msg_viewer",
+      "immediate": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      },
+      "settled": {
+        "id": "msg_viewer",
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "height": 115.1875,
+        "copyWidth": 269.59375,
+        "copyBottom": 285.140625,
+        "controlsTop": 318.578125,
+        "copyFont": "13px",
+        "copyLine": "19.5px"
+      }
+    }
+  ],
+  "failures": [],
+  "version": "26.5",
+  "status": "passed"
+}

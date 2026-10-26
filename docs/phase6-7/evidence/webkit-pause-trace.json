@@ -1,0 +1,484 @@
+{
+  "runs": [
+    {
+      "hasTouch": true,
+      "stages": [
+        {
+          "label": "initial",
+          "state": {
+            "id": "msg_week",
+            "kind": "ordinary",
+            "paused": false,
+            "reasons": [],
+            "remaining": 13825,
+            "changes": 1,
+            "counts": {
+              "msg_week": 1
+            },
+            "destroyed": false
+          },
+          "pause": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+          "focus": "<body data-catalog-auto=\"true\">",
+          "trace": []
+        },
+        {
+          "label": "next keyboard",
+          "state": {
+            "id": "msg_settings",
+            "kind": "ordinary",
+            "paused": true,
+            "reasons": [
+              "focus"
+            ],
+            "remaining": 14727,
+            "changes": 2,
+            "counts": {
+              "msg_week": 1,
+              "msg_settings": 1
+            },
+            "destroyed": false
+          },
+          "pause": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+          "focus": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">",
+          "trace": [
+            {
+              "type": "focusin",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "time": 1306
+            },
+            {
+              "type": "keydown",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1313
+            },
+            {
+              "type": "click",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "button": 0,
+              "time": 1342
+            },
+            {
+              "type": "keyup",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1350
+            }
+          ]
+        },
+        {
+          "label": "pause click",
+          "state": {
+            "id": "msg_settings",
+            "kind": "ordinary",
+            "paused": true,
+            "reasons": [
+              "focus",
+              "hover"
+            ],
+            "remaining": 14727,
+            "changes": 2,
+            "counts": {
+              "msg_week": 1,
+              "msg_settings": 1
+            },
+            "destroyed": false
+          },
+          "pause": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+          "focus": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">",
+          "trace": [
+            {
+              "type": "focusin",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "time": 1306
+            },
+            {
+              "type": "keydown",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1313
+            },
+            {
+              "type": "click",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "button": 0,
+              "time": 1342
+            },
+            {
+              "type": "keyup",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1350
+            },
+            {
+              "type": "pointerdown",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1470
+            },
+            {
+              "type": "mousedown",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1471
+            },
+            {
+              "type": "focusin",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 0,
+              "time": 1471
+            },
+            {
+              "type": "pointerup",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1472
+            },
+            {
+              "type": "mouseup",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1472
+            }
+          ]
+        },
+        {
+          "label": "200ms",
+          "state": {
+            "id": "msg_settings",
+            "kind": "ordinary",
+            "paused": true,
+            "reasons": [
+              "focus",
+              "hover"
+            ],
+            "remaining": 14727,
+            "changes": 2,
+            "counts": {
+              "msg_week": 1,
+              "msg_settings": 1
+            },
+            "destroyed": false
+          },
+          "pause": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+          "focus": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">",
+          "trace": [
+            {
+              "type": "focusin",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "time": 1306
+            },
+            {
+              "type": "keydown",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1313
+            },
+            {
+              "type": "click",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "button": 0,
+              "time": 1342
+            },
+            {
+              "type": "keyup",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1350
+            },
+            {
+              "type": "pointerdown",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1470
+            },
+            {
+              "type": "mousedown",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1471
+            },
+            {
+              "type": "focusin",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 0,
+              "time": 1471
+            },
+            {
+              "type": "pointerup",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1472
+            },
+            {
+              "type": "mouseup",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1472
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "hasTouch": false,
+      "stages": [
+        {
+          "label": "initial",
+          "state": {
+            "id": "msg_resize",
+            "kind": "ordinary",
+            "paused": false,
+            "reasons": [],
+            "remaining": 12847,
+            "changes": 1,
+            "counts": {
+              "msg_resize": 1
+            },
+            "destroyed": false
+          },
+          "pause": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+          "focus": "<body data-catalog-auto=\"true\">",
+          "trace": []
+        },
+        {
+          "label": "next keyboard",
+          "state": {
+            "id": "msg_ao_oni",
+            "kind": "special",
+            "paused": true,
+            "reasons": [
+              "focus"
+            ],
+            "remaining": 13365,
+            "changes": 2,
+            "counts": {
+              "msg_resize": 1,
+              "msg_ao_oni": 1
+            },
+            "destroyed": false
+          },
+          "pause": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+          "focus": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">",
+          "trace": [
+            {
+              "type": "focusin",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "time": 1302
+            },
+            {
+              "type": "keydown",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1319
+            },
+            {
+              "type": "click",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "button": 0,
+              "time": 1324
+            },
+            {
+              "type": "keyup",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1332
+            }
+          ]
+        },
+        {
+          "label": "pause click",
+          "state": {
+            "id": "msg_ao_oni",
+            "kind": "special",
+            "paused": true,
+            "reasons": [
+              "focus",
+              "hover"
+            ],
+            "remaining": 13365,
+            "changes": 2,
+            "counts": {
+              "msg_resize": 1,
+              "msg_ao_oni": 1
+            },
+            "destroyed": false
+          },
+          "pause": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+          "focus": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">",
+          "trace": [
+            {
+              "type": "focusin",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "time": 1302
+            },
+            {
+              "type": "keydown",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1319
+            },
+            {
+              "type": "click",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "button": 0,
+              "time": 1324
+            },
+            {
+              "type": "keyup",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1332
+            },
+            {
+              "type": "pointerdown",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1813
+            },
+            {
+              "type": "mousedown",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1813
+            },
+            {
+              "type": "focusin",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 0,
+              "time": 1814
+            },
+            {
+              "type": "pointerup",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1824
+            },
+            {
+              "type": "mouseup",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1825
+            }
+          ]
+        },
+        {
+          "label": "200ms",
+          "state": {
+            "id": "msg_ao_oni",
+            "kind": "special",
+            "paused": true,
+            "reasons": [
+              "focus",
+              "hover"
+            ],
+            "remaining": 13365,
+            "changes": 2,
+            "counts": {
+              "msg_resize": 1,
+              "msg_ao_oni": 1
+            },
+            "destroyed": false
+          },
+          "pause": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+          "focus": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">",
+          "trace": [
+            {
+              "type": "focusin",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "time": 1302
+            },
+            {
+              "type": "keydown",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1319
+            },
+            {
+              "type": "click",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "button": 0,
+              "time": 1324
+            },
+            {
+              "type": "keyup",
+              "target": "<button type=\"button\" data-message-next=\"\" aria-label=\"Next homepage message\">Next</button>",
+              "detail": 0,
+              "key": "Enter",
+              "time": 1332
+            },
+            {
+              "type": "pointerdown",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1813
+            },
+            {
+              "type": "mousedown",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1813
+            },
+            {
+              "type": "focusin",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 0,
+              "time": 1814
+            },
+            {
+              "type": "pointerup",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1824
+            },
+            {
+              "type": "mouseup",
+              "target": "<button type=\"button\" data-message-pause=\"\" aria-label=\"Pause homepage messages\" aria-pressed=\"false\">Pause</button>",
+              "detail": 1,
+              "button": 0,
+              "time": 1825
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

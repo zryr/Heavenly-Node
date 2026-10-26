@@ -1,0 +1,5 @@
+PASS Blob QA: chromium (3 groups)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS Blob QA: firefox (3 groups)
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS Blob QA: webkit (3 groups)

@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "All 40 embedded screenshots decode, open at original pixel width and close by keyboard",
+    "Both embedded recordings load metadata and remain paused with native playback controls",
+    "Phone report has no page overflow and retains usable image dismissal"
+  ],
+  "physicalDevices": [],
+  "engine": "154.0.8037.57",
+  "transport": "Local HTTP; external requests blocked; managed browser disallows file://",
+  "screenshots": 40,
+  "status": "passed"
+}

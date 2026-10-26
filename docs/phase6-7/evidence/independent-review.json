@@ -1,0 +1,322 @@
+{
+  "executed": "2026-10-26T12:39:28.277Z",
+  "scope": "Independent review scenarios, rerun after the identified fixes",
+  "physicalDevices": [],
+  "engines": [
+    {
+      "engine": "chromium",
+      "checks": [
+        {
+          "name": "safe DOM, destination validation and external attributes",
+          "status": "passed",
+          "evidence": {
+            "images": 0,
+            "text": "Literal <img src=x onerror=alert(1)>",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "blockedAux": true,
+            "badLinks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        },
+        {
+          "name": "hidden and focused tooltip bounds at 320 and 390 pixels",
+          "status": "passed",
+          "evidence": [
+            {
+              "width": 320,
+              "id": "msg_settings",
+              "hidden": "none",
+              "left": 44.984375,
+              "right": 274.984375,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "id": "msg_viewer",
+              "hidden": "none",
+              "left": 45,
+              "right": 275,
+              "scrollWidth": 320
+            },
+            {
+              "width": 390,
+              "id": "msg_settings",
+              "hidden": "none",
+              "left": 79.984375,
+              "right": 309.984375,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "id": "msg_viewer",
+              "hidden": "none",
+              "left": 80,
+              "right": 310,
+              "scrollWidth": 390
+            }
+          ]
+        },
+        {
+          "name": "focused inline link survives live reduced-motion change",
+          "status": "passed",
+          "evidence": {
+            "tag": "A",
+            "href": "/settings.html"
+          }
+        },
+        {
+          "name": "dialogue control and close return focus survive reduced-motion change",
+          "status": "passed",
+          "evidence": "Next remains focused, then Close returns to the current rendered trigger"
+        },
+        {
+          "name": "nonmodal dance preserves unrelated input focus on live reduced motion",
+          "status": "passed",
+          "evidence": {
+            "id": "url",
+            "tag": "INPUT",
+            "text": ""
+          }
+        },
+        {
+          "name": "detaching a mounted message host destroys its scheduler",
+          "status": "passed",
+          "evidence": {
+            "id": "msg_homework",
+            "kind": "ordinary",
+            "paused": true,
+            "reasons": [
+              "user"
+            ],
+            "remaining": 12000,
+            "changes": 1,
+            "counts": {
+              "msg_homework": 1
+            },
+            "destroyed": true
+          }
+        }
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        {
+          "name": "safe DOM, destination validation and external attributes",
+          "status": "passed",
+          "evidence": {
+            "images": 0,
+            "text": "Literal <img src=x onerror=alert(1)>",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "blockedAux": true,
+            "badLinks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        },
+        {
+          "name": "hidden and focused tooltip bounds at 320 and 390 pixels",
+          "status": "passed",
+          "evidence": [
+            {
+              "width": 320,
+              "id": "msg_settings",
+              "hidden": "none",
+              "left": 45,
+              "right": 275,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "id": "msg_viewer",
+              "hidden": "none",
+              "left": 45,
+              "right": 275,
+              "scrollWidth": 320
+            },
+            {
+              "width": 390,
+              "id": "msg_settings",
+              "hidden": "none",
+              "left": 80,
+              "right": 310,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "id": "msg_viewer",
+              "hidden": "none",
+              "left": 79.98333740234375,
+              "right": 309.98333740234375,
+              "scrollWidth": 390
+            }
+          ]
+        },
+        {
+          "name": "focused inline link survives live reduced-motion change",
+          "status": "passed",
+          "evidence": {
+            "tag": "A",
+            "href": "/settings.html"
+          }
+        },
+        {
+          "name": "dialogue control and close return focus survive reduced-motion change",
+          "status": "passed",
+          "evidence": "Next remains focused, then Close returns to the current rendered trigger"
+        },
+        {
+          "name": "nonmodal dance preserves unrelated input focus on live reduced motion",
+          "status": "passed",
+          "evidence": {
+            "id": "url",
+            "tag": "INPUT",
+            "text": ""
+          }
+        },
+        {
+          "name": "detaching a mounted message host destroys its scheduler",
+          "status": "passed",
+          "evidence": {
+            "id": "msg_homework",
+            "kind": "ordinary",
+            "paused": true,
+            "reasons": [
+              "user"
+            ],
+            "remaining": 12000,
+            "changes": 1,
+            "counts": {
+              "msg_homework": 1
+            },
+            "destroyed": true
+          }
+        }
+      ],
+      "errors": [],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        {
+          "name": "safe DOM, destination validation and external attributes",
+          "status": "passed",
+          "evidence": {
+            "images": 0,
+            "text": "Literal <img src=x onerror=alert(1)>",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "blockedAux": true,
+            "badLinks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        },
+        {
+          "name": "hidden and focused tooltip bounds at 320 and 390 pixels",
+          "status": "passed",
+          "evidence": [
+            {
+              "width": 320,
+              "id": "msg_settings",
+              "hidden": "none",
+              "left": 44.984375,
+              "right": 274.984375,
+              "scrollWidth": 320
+            },
+            {
+              "width": 320,
+              "id": "msg_viewer",
+              "hidden": "none",
+              "left": 45,
+              "right": 275,
+              "scrollWidth": 320
+            },
+            {
+              "width": 390,
+              "id": "msg_settings",
+              "hidden": "none",
+              "left": 79.984375,
+              "right": 309.984375,
+              "scrollWidth": 390
+            },
+            {
+              "width": 390,
+              "id": "msg_viewer",
+              "hidden": "none",
+              "left": 80,
+              "right": 310,
+              "scrollWidth": 390
+            }
+          ]
+        },
+        {
+          "name": "focused inline link survives live reduced-motion change",
+          "status": "passed",
+          "evidence": {
+            "tag": "A",
+            "href": "/settings.html"
+          }
+        },
+        {
+          "name": "dialogue control and close return focus survive reduced-motion change",
+          "status": "passed",
+          "evidence": "Next remains focused, then Close returns to the current rendered trigger"
+        },
+        {
+          "name": "nonmodal dance preserves unrelated input focus on live reduced motion",
+          "status": "passed",
+          "evidence": {
+            "id": "url",
+            "tag": "INPUT",
+            "text": ""
+          }
+        },
+        {
+          "name": "detaching a mounted message host destroys its scheduler",
+          "status": "passed",
+          "evidence": {
+            "id": "msg_homework",
+            "kind": "ordinary",
+            "paused": true,
+            "reasons": [
+              "user"
+            ],
+            "remaining": 11999,
+            "changes": 1,
+            "counts": {
+              "msg_homework": 1
+            },
+            "destroyed": true
+          }
+        }
+      ],
+      "errors": [],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

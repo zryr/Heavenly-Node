@@ -451,7 +451,7 @@
               try { target.setAttribute("href", proxiedHref); } catch (err) {}
             }
 
-            // EverythingMoe Link Interception
+            // Open an EverythingMoe linkion
             if (isEverythingMoePage(window, config)) {
               if (rawHref.substr(0, 11) !== "javascript:" && rawHref.substr(0, 1) !== "#") {
                 e.preventDefault();
@@ -1226,7 +1226,7 @@
 
       var title = window.document.createElement('span');
       title.style.cssText = 'font-size:1.15rem;font-weight:700;color:#f8fafc;display:flex;align-items:center;gap:8px;';
-      title.innerHTML = '<svg style="width:18px;height:18px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>FMHY Link Intercept</span>';
+      title.innerHTML = '<svg style="width:18px;height:18px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>Open an FMHY link</span>';
 
       var closeBtn = window.document.createElement('button');
       closeBtn.type = 'button';
@@ -1242,7 +1242,7 @@
 
       var body = window.document.createElement('div');
       body.style.cssText = 'display:flex;flex-direction:column;gap:12px;font-size:0.9rem;color:#cbd5e1;line-height:1.5;';
-      body.innerHTML = '<p>Would you like to open this FMHY external link in a new tab?</p>' +
+      body.innerHTML = '<p>Choose how to open this FMHY link in a new tab.</p>' +
         '<div style="background:rgba(30,41,59,0.7);padding:10px 14px;border-radius:12px;border:1px solid rgba(56,189,248,0.25);word-break:break-all;color:#38bdf8;font-weight:600;font-family:monospace;">' + cleanDirectUrl + '</div>';
 
       var actions = window.document.createElement('div');
@@ -1304,7 +1304,7 @@
 
       var title = window.document.createElement('span');
       title.style.cssText = 'font-size:1.15rem;font-weight:700;color:#f8fafc;display:flex;align-items:center;gap:8px;';
-      title.innerHTML = '<svg style="width:18px;height:18px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>EverythingMoe Link Intercept</span>';
+      title.innerHTML = '<svg style="width:18px;height:18px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>Open an EverythingMoe link</span>';
 
       var closeBtn = window.document.createElement('button');
       closeBtn.type = 'button';
@@ -1320,7 +1320,7 @@
 
       var body = window.document.createElement('div');
       body.style.cssText = 'display:flex;flex-direction:column;gap:12px;font-size:0.9rem;color:#cbd5e1;line-height:1.5;';
-      body.innerHTML = '<p>Would you like to open this link in a new tab?</p>' +
+      body.innerHTML = '<p>Choose how to open this link in a new tab.</p>' +
         '<div style="background:rgba(30,41,59,0.7);padding:10px 14px;border-radius:12px;border:1px solid rgba(56,189,248,0.25);word-break:break-all;color:#38bdf8;font-weight:600;font-family:monospace;">' + cleanDirectUrl + '</div>';
 
       var actions = window.document.createElement('div');
@@ -1406,7 +1406,7 @@
   function openDirectSitePreview(window, directUrl) {
     try {
       if (!directUrl || directUrl === 'undefined' || directUrl === 'https://' || directUrl === 'http://') {
-        alert('Could not determine original website URL.');
+        alert('The original website address could not be found.');
         return;
       }
       var existingModal = window.document.getElementById('heavenly-direct-preview-modal');
@@ -1437,7 +1437,7 @@
 
       var body = window.document.createElement('div');
       body.style.cssText = 'display:flex;flex-direction:column;gap:12px;font-size:0.9rem;color:#cbd5e1;line-height:1.5;';
-      body.innerHTML = '<p>Check if this website is accessible directly on your current network connection without proxying:</p>' +
+      body.innerHTML = '<p>Try this website directly to see whether it works on your network, without Heavenly’s proxy.</p>' +
         '<div style="background:rgba(30,41,59,0.7);padding:10px 14px;border-radius:12px;border:1px solid rgba(56,189,248,0.25);word-break:break-all;color:#38bdf8;font-weight:600;font-family:monospace;">' + directUrl + '</div>' +
         '<p style="font-size:0.82rem;color:#94a3b8;">You can attempt loading the site directly in an isolated test popup or open it in a new tab.</p>';
 
@@ -1540,7 +1540,7 @@
 
       var titleEl = window.document.createElement('div');
       titleEl.style.cssText = 'display:flex;align-items:center;gap:10px;';
-      titleEl.innerHTML = '<div style="width:36px;height:36px;border-radius:10px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.4);display:flex;align-items:center;justify-content:center;"><svg style="width:20px;height:20px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div><div><div style="font-size:1.15rem;font-weight:700;color:#f8fafc;">Bookmark Current Page</div><div style="font-size:0.8rem;color:#94a3b8;">Save page to your Heavenly bookmarks</div></div>';
+      titleEl.innerHTML = '<div style="width:36px;height:36px;border-radius:10px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.4);display:flex;align-items:center;justify-content:center;"><svg style="width:20px;height:20px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div><div><div style="font-size:1.15rem;font-weight:700;color:#f8fafc;">Bookmark Current Page</div><div style="font-size:0.8rem;color:#94a3b8;">Save this page in this browser’s Heavenly bookmarks</div></div>';
 
       var closeBtn = window.document.createElement('button');
       closeBtn.type = 'button';
@@ -1599,7 +1599,7 @@
 
       var iconLabelTitle = window.document.createElement('span');
       iconLabelTitle.style.cssText = 'font-weight:600;color:#e0f2fe;font-size:0.9rem;';
-      iconLabelTitle.textContent = 'Bookmark Icon & Preview:';
+      iconLabelTitle.textContent = 'Bookmark icon and preview:';
 
       var previewBox = window.document.createElement('div');
       previewBox.style.cssText = 'width:42px;height:44px;border-radius:12px;background:rgba(30,41,59,0.9);border:1px solid rgba(56,189,248,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 15px rgba(56,189,248,0.2);overflow:hidden;';
@@ -1636,7 +1636,7 @@
       // Presets Grid
       var presetSubTitle = window.document.createElement('span');
       presetSubTitle.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;';
-      presetSubTitle.textContent = 'Select Preset Icon or Favicon:';
+      presetSubTitle.textContent = 'Choose an icon or the website’s icon (favicon):';
 
       var presetGrid = window.document.createElement('div');
       presetGrid.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
@@ -1688,7 +1688,7 @@
       var pickerBtn = window.document.createElement('button');
       pickerBtn.type = 'button';
       pickerBtn.style.cssText = 'padding:8px 12px;border-radius:10px;background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.4);color:#c084fc;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;margin-top:2px;';
-      pickerBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>Launch Live Icon Picker on Page</span>';
+      pickerBtn.innerHTML = '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>Find icons on this page</span>';
       pickerBtn.onclick = function () {
         backdrop.remove();
         storage.setItem('heavenly_manual_icon_pending', JSON.stringify({
@@ -1759,7 +1759,7 @@
 
         storage.setItem('heavenly_bookmarks', JSON.stringify(data));
         backdrop.remove();
-        window.alert('Page bookmarked successfully!');
+        window.alert('Bookmark saved in this browser.');
       };
 
       actions.appendChild(cancelBtn);
@@ -1915,6 +1915,7 @@
         if (!btn) return;
         btn.setAttribute('aria-pressed', String(isEnabled));
         btn.setAttribute('aria-label', 'Scroll Lock ' + (isEnabled ? 'on' : 'off'));
+        btn.title = isEnabled ? 'Scroll Lock is on. Allow page scrolling.' : 'Scroll Lock is off. Stop page scrolling.';
         if (isEnabled) {
           btn.classList.add('active');
           btn.innerHTML = scrollLockMarkup(true);
@@ -2376,7 +2377,7 @@
           lensFrame.innerHTML = [
             '<div class="lens-header" id="lens-header">',
             '  <span class="lens-title">' + magnifierMarkup(false, 'Lens (' + zoomLevel.toFixed(1) + 'x)') + '</span>',
-            '  <button type="button" class="btn-close-lens" id="close-lens-btn">✕</button>',
+            '  <button type="button" class="btn-close-lens" id="close-lens-btn" aria-label="Close magnifier lens" title="Close magnifier lens">✕</button>',
             '</div>',
             '<div class="lens-view" id="lens-view"></div>',
             '<div class="resize-handle resize-handle-n" data-handle="n"></div>',
@@ -2814,7 +2815,7 @@
           var pullBtn = window.document.createElement('button');
           pullBtn.type = 'button';
           pullBtn.className = 'pull-tab';
-          pullBtn.title = 'Expand Heavenly tools. Drag to an edge to reposition.';
+          pullBtn.title = 'Open Heavenly tools. Drag the handle to move them to another edge.';
           pullBtn.setAttribute('aria-label', 'Expand Heavenly tools. Alt plus arrow key moves the dock.');
           pullBtn.setAttribute('aria-expanded', 'false');
           pullBtn.setAttribute('aria-controls', 'heavenly-dock-toolbar');
@@ -2832,24 +2833,24 @@
             items.push('<button type="button" class="btn-ctrl" id="dock-home-btn" title="Return to Heavenly Home"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
-          items.push('<button type="button" class="btn-ctrl" id="dock-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
+          items.push('<button type="button" class="btn-ctrl" id="dock-direct-btn" title="Try the website without Heavenly’s proxy"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
 
-          items.push('<button type="button" class="btn-ctrl" id="dock-blank-btn" title="Open in about:blank Cloak"><svg class="title-icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg><span>about:blank</span></button>');
+          items.push('<button type="button" class="btn-ctrl" id="dock-blank-btn" title="Open the page inside an about:blank tab"><svg class="title-icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg><span>about:blank</span></button>');
 
           if (showNavBookmark) {
             items.push('<button type="button" class="btn-ctrl" id="dock-bm-btn" title="Bookmark Page"><svg class="title-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>Bookmark</span></button>');
           }
 
           if (showNavSearch) {
-            items.push('<div class="dock-item"><input type="text" class="nav-input" id="dock-search-input" aria-label="Search the web or enter a URL" placeholder="Search or URL..." /><button type="button" class="btn-ctrl" id="dock-go-btn">Go</button></div>');
+            items.push('<div class="dock-item"><input type="text" class="nav-input" id="dock-search-input" aria-label="Search the web or enter a website address" placeholder="Search or website address…" /><button type="button" class="btn-ctrl" id="dock-go-btn">Go</button></div>');
           }
 
           if (showScrollLock) {
-            items.push('<div class="dock-item"><span style="font-size:12px;font-weight:600;color:#e0f2fe;">Scroll Lock</span><button type="button" class="btn-toggle" id="dock-scroll-btn" aria-label="Scroll Lock off" aria-pressed="false">' + scrollLockMarkup(false) + '</button></div>');
+            items.push('<div class="dock-item"><span style="font-size:12px;font-weight:600;color:#e0f2fe;">Scroll Lock</span><button type="button" class="btn-toggle" id="dock-scroll-btn" title="Stop page scrolling" aria-label="Scroll Lock off" aria-pressed="false">' + scrollLockMarkup(false) + '</button></div>');
           }
 
           if (showMagnifier) {
-            items.push('<div class="dock-item"><button type="button" class="btn-toggle" id="dock-mag-btn" aria-label="Magnifier" aria-pressed="false">' + magnifierMarkup(false) + '</button><button type="button" class="btn-ctrl" id="dock-zoom-out" aria-label="Zoom out">−</button><span id="dock-zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span><button type="button" class="btn-ctrl" id="dock-zoom-in" aria-label="Zoom in">+</button></div>');
+            items.push('<div class="dock-item"><button type="button" class="btn-toggle" id="dock-mag-btn" title="Turn the magnifier lens on or off" aria-label="Magnifier" aria-pressed="false">' + magnifierMarkup(false) + '</button><button type="button" class="btn-ctrl" id="dock-zoom-out" aria-label="Zoom out">−</button><span id="dock-zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">2.0x</span><button type="button" class="btn-ctrl" id="dock-zoom-in" aria-label="Zoom in">+</button></div>');
           }
 
           dockBar.innerHTML = items.join('<div class="dock-divider" aria-hidden="true"></div>');
@@ -3040,7 +3041,7 @@
               if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Unreadable saved settings');
               raw.dockPosition = position;
               localStorage.setItem('heavenly_settings', JSON.stringify(raw));
-              pullBtn.title = (isCollapsed ? 'Expand' : 'Minimize') + ' Heavenly tools. Drag to an edge to reposition.';
+              pullBtn.title = (isCollapsed ? 'Open' : 'Minimize') + ' Heavenly tools. Drag the handle to move them to another edge.';
             } catch (_) {
               pullBtn.title = 'Dock moved for this page. Its position could not be saved; check browser storage in Settings.';
             }
@@ -3073,7 +3074,7 @@
             isCollapsed = !isCollapsed;
             pullBtn.setAttribute('aria-expanded', String(!isCollapsed));
             pullBtn.setAttribute('aria-label', (isCollapsed ? 'Expand' : 'Minimize') + ' Heavenly tools. Alt plus arrow key moves the dock.');
-            pullBtn.title = (isCollapsed ? 'Expand' : 'Minimize') + ' Heavenly tools. Drag to an edge to reposition.';
+            pullBtn.title = (isCollapsed ? 'Open' : 'Minimize') + ' Heavenly tools. Drag the handle to move them to another edge.';
             if (isCollapsed) {
               wrapper.classList.add('collapsed');
               pullBtn.querySelector('span').style.transform = 'rotate(180deg)';
@@ -3209,12 +3210,12 @@
             '  <svg class="title-icon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18M3 12h18"></path><circle cx="12" cy="12" r="9"></circle></svg>',
             '</button>',
             '<div class="widget-content">',
-            '  <div class="drag-handle" title="Click and drag to move">',
+            '  <div class="drag-handle" title="Drag to move these tools">',
             '    <svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 0 0 18"></path><path d="M3 12h18"></path></svg>',
             '    <span>Scroll Lock</span>',
             '  </div>',
-            '  <button type="button" class="btn-toggle" id="toggle-btn" aria-label="Scroll Lock off" aria-pressed="false">' + scrollLockMarkup(false) + '</button>',
-            '  <button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>',
+            '  <button type="button" class="btn-toggle" id="toggle-btn" title="Stop page scrolling" aria-label="Scroll Lock off" aria-pressed="false">' + scrollLockMarkup(false) + '</button>',
+            '  <button type="button" class="btn-close-widget" title="Minimize these tools">✕</button>',
             '</div>'
           ].join('\n');
 
@@ -3241,16 +3242,16 @@
             '  <svg class="title-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
             '</button>',
             '<div class="widget-content">',
-            '  <div class="drag-handle" title="Click and drag to move">',
+            '  <div class="drag-handle" title="Drag to move these tools">',
             '    <svg class="title-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
             '    <span>Magnifier</span>',
             '  </div>',
-            '  <button type="button" class="btn-toggle" id="mag-toggle-btn" aria-label="Magnifier" aria-pressed="false">' + magnifierMarkup(false) + '</button>',
+            '  <button type="button" class="btn-toggle" id="mag-toggle-btn" title="Turn the magnifier lens on or off" aria-label="Magnifier" aria-pressed="false">' + magnifierMarkup(false) + '</button>',
             '  <button type="button" class="btn-ctrl" id="zoom-out-btn" title="Zoom Out">-</button>',
             '  <span id="zoom-label" style="font-size:11px;font-weight:700;color:#38bdf8;">' + zoomLevel.toFixed(1) + 'x</span>',
             '  <button type="button" class="btn-ctrl" id="zoom-in-btn" title="Zoom In">+</button>',
-            '  <button type="button" class="btn-ctrl" id="size-btn" title="Lens Size">Size</button>',
-            '  <button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>',
+            '  <button type="button" class="btn-ctrl" id="size-btn" title="Change lens size">Size</button>',
+            '  <button type="button" class="btn-close-widget" title="Minimize these tools">✕</button>',
             '</div>'
           ].join('\n');
 
@@ -3317,10 +3318,10 @@
           navWidget.className = 'heavenly-widget';
 
           var navHtml = ['<button type="button" class="mini-icon" title="Navigation (Click to expand)"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 12h18M12 3l9 9-9 9"></path></svg></button>', '<div class="widget-content">'];
-          navHtml.push('<div class="drag-handle" title="Click and drag to move"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg></div>');
+          navHtml.push('<div class="drag-handle" title="Drag to move these tools"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg></div>');
 
           if (showNavSearch) {
-            navHtml.push('<input type="text" class="nav-input" id="nav-search-input" aria-label="Search the web or enter a URL" placeholder="Search or URL..." />');
+            navHtml.push('<input type="text" class="nav-input" id="nav-search-input" aria-label="Search the web or enter a website address" placeholder="Search or website address…" />');
             navHtml.push('<button type="button" class="btn-ctrl" id="nav-go-btn">Go</button>');
           }
 
@@ -3332,11 +3333,11 @@
             navHtml.push('<button type="button" class="btn-ctrl" id="nav-home-btn" title="Return to Heavenly Home"><svg class="title-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></button>');
           }
 
-          navHtml.push('<button type="button" class="btn-ctrl" id="nav-direct-btn" title="Check Direct / Unproxied Site"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
+          navHtml.push('<button type="button" class="btn-ctrl" id="nav-direct-btn" title="Try the website without Heavenly’s proxy"><svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Direct Site</span></button>');
 
-          navHtml.push('<button type="button" class="btn-ctrl" id="nav-blank-btn" title="Open in about:blank Cloak"><svg class="title-icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg><span>about:blank</span></button>');
+          navHtml.push('<button type="button" class="btn-ctrl" id="nav-blank-btn" title="Open the page inside an about:blank tab"><svg class="title-icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg><span>about:blank</span></button>');
 
-          navHtml.push('<button type="button" class="btn-close-widget" title="Collapse Widget">✕</button>');
+          navHtml.push('<button type="button" class="btn-close-widget" title="Minimize these tools">✕</button>');
           navHtml.push('</div>');
           navWidget.innerHTML = navHtml.join('\n');
 

@@ -6,7 +6,7 @@ const path = require('node:path');
 const playwright = require('playwright');
 const app = require('../../app');
 const engine = process.env.HEAVENLY_BROWSER || 'chromium';
-const output = path.resolve(__dirname, '../../docs/phase4-5/evidence');
+const output = process.env.HEAVENLY_EVIDENCE_DIR ? path.resolve(process.env.HEAVENLY_EVIDENCE_DIR) : path.resolve(__dirname, '../../docs/phase4-5/evidence');
 const fixture = `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Widget interaction fixture</title>
 <style>body{margin:0;background:#eaf0f7;color:#1b3148;font:16px system-ui;min-height:2800px;padding:40px;box-sizing:border-box}main{max-width:720px}button,input{padding:12px}h1{font-weight:650}section{height:650px;border-top:1px solid #bbcbdc;padding:25px 0}</style>
 <script src="/proxy/client/unblocker-client.js"></script><script>unblockerInit({prefix:'/proxy/',url:'https://widgets.heavenly.test/fixture'},window)</script>

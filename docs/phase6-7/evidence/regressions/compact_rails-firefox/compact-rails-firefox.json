@@ -1,0 +1,402 @@
+{
+  "engine": "firefox",
+  "executed": "2026-10-26T03:21:43.859Z",
+  "physicalDevices": [],
+  "checks": [
+    "one collapsed among expanded categories retains a usable full-width panel",
+    "all collapsed categories reclaim real center width, keep stable named controls, and disable resizing without changing saved intent",
+    "universal bookmark search still finds hidden category contents without changing saved state",
+    "real mouse dragging reorders independently collapsed category rail headers",
+    "keyboard expansion restores saved width and focus; separator remains usable after reopening",
+    "stable category collapse survives reload, moves, last-category hide and restore without replacing manual layout preferences",
+    "manual whole-sidebar collapse remains distinct from temporary category compaction",
+    "Chromebook, iPad portrait/landscape and narrow portrait/landscape emulation retain reachable full-label category controls without overflow",
+    "rapid reversals and reduced motion settle to the last requested state without width drift, overflow or gesture residue"
+  ],
+  "transitions": [
+    {
+      "width": 1366,
+      "scrollWidth": 1366,
+      "center": 862,
+      "actual": {
+        "compact": false,
+        "left": {
+          "open": true,
+          "width": 184,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": true,
+          "width": 256,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    },
+    {
+      "width": 820,
+      "scrollWidth": 820,
+      "center": 528,
+      "actual": {
+        "compact": false,
+        "left": {
+          "open": true,
+          "width": 184,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": false,
+          "width": 240,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    },
+    {
+      "width": 1180,
+      "scrollWidth": 1180,
+      "center": 676,
+      "actual": {
+        "compact": false,
+        "left": {
+          "open": true,
+          "width": 184,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": true,
+          "width": 256,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "center": 366,
+      "actual": {
+        "compact": true,
+        "left": {
+          "open": false,
+          "width": 184,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": false,
+          "width": 256,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    },
+    {
+      "width": 844,
+      "scrollWidth": 844,
+      "center": 552,
+      "actual": {
+        "compact": false,
+        "left": {
+          "open": true,
+          "width": 184,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": false,
+          "width": 240,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "center": 936,
+      "actual": {
+        "compact": false,
+        "left": {
+          "open": true,
+          "width": 184,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": true,
+          "width": 256,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    }
+  ],
+  "version": "153.0",
+  "compactTransition": [
+    {
+      "time": 0,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 6,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 24,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 37,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 89,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 110,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 129,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 138,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 191,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 209,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 240,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 289,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 329,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 400,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 434,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 547,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 597,
+      "center": 935.38330078125,
+      "track": 184.61666870117188
+    },
+    {
+      "time": 714,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 812,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 894,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 915,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1012,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1026,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1039,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1100,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1115,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1132,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1149,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1193,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1210,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1227,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1240,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1305,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1319,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1335,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1391,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1408,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1429,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1448,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1496,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1511,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1525,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1545,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1593,
+      "center": 936,
+      "track": 184
+    },
+    {
+      "time": 1606,
+      "center": 936,
+      "track": 184
+    }
+  ],
+  "pageErrors": [],
+  "finalState": {
+    "preferences": {
+      "version": 1,
+      "priority": "left",
+      "left": {
+        "width": 400,
+        "collapsed": false,
+        "compactOpen": true
+      },
+      "right": {
+        "width": 256,
+        "collapsed": false,
+        "compactOpen": false
+      },
+      "categoryCollapsed": {
+        "rail_b": true,
+        "rail_a": true
+      }
+    },
+    "actual": {
+      "compact": false,
+      "left": {
+        "open": true,
+        "width": 184,
+        "empty": false,
+        "categoryCompact": true
+      },
+      "right": {
+        "open": true,
+        "width": 256,
+        "empty": false,
+        "categoryCompact": false
+      }
+    }
+  }
+}

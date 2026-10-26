@@ -1,0 +1,14 @@
+{
+  "executed": "2026-10-26T12:38:36.077Z",
+  "physicalDevices": [],
+  "participants": [],
+  "captures": [
+    "after/home-desktop.png",
+    "after/home-phone.png",
+    "after/message-music-desktop.png",
+    "after/message-playlist-progression-phone.png",
+    "after/viewer-help-phone.png"
+  ],
+  "engine": "Chromium 154.0.8037.57",
+  "status": "passed"
+}

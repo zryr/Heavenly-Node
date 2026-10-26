@@ -11,7 +11,7 @@ describe("FMHY Bookmarks & Link Interception", function () {
 
     assert.strictEqual(content.includes("function isFmhyPage"), true, "isFmhyPage function should be defined");
     assert.strictEqual(content.includes("function openFmhyLinkModal"), true, "openFmhyLinkModal function should be defined");
-    assert.strictEqual(content.includes("FMHY Link Intercept"), true, "FMHY link intercept title should exist");
+    assert.strictEqual(content.includes("Open an FMHY link"), true, "FMHY link intercept title should exist");
   });
 
   it("should exclude clicks originating from FMHY search containers", function () {

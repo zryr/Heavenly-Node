@@ -1,0 +1,107 @@
+{
+  "executed": "2026-10-26T12:49:42.915Z",
+  "pullRequest": 200,
+  "heads": {
+    "baseline": "a329d6cf0a01728526057b8a854a5ec7fb19c705",
+    "candidate": "b5635ed4f8540fa091927630f15dad9154b4b9cd"
+  },
+  "method": "Executed actual fetched candidate and baseline functions in isolated Node vm modules. No application files changed.",
+  "cases": [
+    {
+      "name": "invalid target with proxy referer",
+      "baseline": {
+        "referer": "/proxy/https:/upstream.test/from",
+        "origin": "https://heavenly.test"
+      },
+      "candidate": {
+        "referer": "https://upstream.test/from",
+        "origin": "https://heavenly.test"
+      }
+    },
+    {
+      "name": "valid target normalizes referer and origin",
+      "baseline": {
+        "referer": "https://upstream.test/from",
+        "origin": "https://target.test"
+      },
+      "candidate": {
+        "referer": "https://upstream.test/from",
+        "origin": "https://target.test"
+      }
+    },
+    {
+      "name": "inherited security header",
+      "baseline": {
+        "Content-Security-Policy": "frame-ancestors 'self'"
+      },
+      "candidate": {
+        "Content-Security-Policy": "frame-ancestors 'self'",
+        "X-Frame-Options": "INHERITED"
+      }
+    },
+    {
+      "name": "inherited broken-map report",
+      "baseline": {
+        "mainBroken": false,
+        "allBroken": false
+      },
+      "candidate": {
+        "mainBroken": true,
+        "allBroken": true
+      }
+    },
+    {
+      "name": "sparse parent bookmarks array",
+      "baseline": {
+        "id": "found",
+        "url": "https://found.test/"
+      },
+      "candidate": {
+        "error": "TypeError: Cannot read properties of undefined (reading 'url')"
+      }
+    },
+    {
+      "name": "sparse child bookmarks array",
+      "baseline": {
+        "id": "found",
+        "url": "https://found.test/"
+      },
+      "candidate": {
+        "error": "TypeError: Cannot read properties of undefined (reading 'url')"
+      }
+    },
+    {
+      "name": "dense first-match bookmark lookup",
+      "baseline": {
+        "id": "child-first",
+        "url": "https://found.test/"
+      },
+      "candidate": {
+        "id": "child-first",
+        "url": "https://found.test/"
+      }
+    },
+    {
+      "name": "VitePress normalized asset https://site.test/assets/chunks/framework.hash.js",
+      "baseline": {
+        "normalized": "/assets/chunks/framework.hash.js",
+        "adaptationInstalled": true
+      },
+      "candidate": {
+        "normalized": "/assets/chunks/framework.hash.js",
+        "adaptationInstalled": true
+      }
+    },
+    {
+      "name": "VitePress normalized asset https://site.test\\assets\\chunks\\framework.hash.js",
+      "baseline": {
+        "normalized": "/assets/chunks/framework.hash.js",
+        "adaptationInstalled": true
+      },
+      "candidate": {
+        "normalized": "/assets/chunks/framework.hash.js",
+        "adaptationInstalled": false
+      }
+    }
+  ]
+}

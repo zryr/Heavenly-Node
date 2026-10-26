@@ -639,7 +639,7 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
 
         const result = openAboutBlankLauncher('https://example.com/target', 'Google Docs', 'https://example.com/icon.ico', mockWin);
         assert.strictEqual(result, null);
-        assert.ok(alertedMsg && alertedMsg.includes('Popup blocked!'));
+        assert.ok(alertedMsg && alertedMsg.includes('Your browser blocked the new tab. Allow popups for Heavenly, then try again.'));
       });
     });
 

@@ -1,0 +1,8 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit fresh entry redirects to Academy; six responsive sizes, keyboard menu, real subpage and Terms return flow work
+PASS webkit production Academy route handler returns branded 503 on a real missing document; Retry, Resources and Home recovery work; unknown pages return branded 404
+PASS webkit message next/pause work with keyboard/click; six responsive home sizes fit; navigation creates no unsolicited tab, dialog or autoplay media
+PASS webkit focused tooltip and gold playlist modal stay usable on phone; three character scenes advance and dismiss; reduced-motion Ao Oni uses a still and normal dance cleans up on Escape
+FAIL webkit AssertionError [ERR_ASSERTION]: settings narrow-phone horizontal overflow {"innerWidth":320,"scrollWidth":329}
+    at fit (/workspace/Heavenly-Node/test/browser/phase6_7_acceptance.cjs:12:129)
+    at async /workspace/Heavenly-Node/test/browser/phase6_7_acceptance.cjs:50:319

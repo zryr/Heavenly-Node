@@ -1,0 +1,17 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit: all 54 established controls survive; seven categories and no overflow
+PASS webkit: desktop category navigation and stored toggle across reloads and tabs
+PASS webkit: search actual name, alias, description, ranked results and empty state
+PASS webkit: search restores category, every disclosure, scroll, focus, preferences and control identity
+PASS webkit: keyboard result navigation, Enter to setting, Escape restoration
+PASS webkit: all established deep links reveal target and support Back/Forward
+PASS webkit: master gating is semantic, explained, synchronized, and preserves individual choices
+PASS webkit: new-tab prerequisites and advanced pool are discoverable without changing preferences
+PASS webkit: real backup download, focus trap, focus restoration, notes and unknown preferences
+PASS webkit: granular import and overwrite confirmation preserve unrelated data and saved preferences
+PASS webkit: storage write failure reports failure and retains actual stored value
+PASS webkit: malformed stored settings survive toggles and recovery export byte-for-byte
+PASS webkit: injected markup in backup titles stays inert in preview and saved manager
+PASS webkit: reset actions require intent and failed position writes roll back
+PASS webkit: phone/tablet searchable accordion, portrait/landscape, and reduced motion
+PASS webkit: 15 Settings interaction groups; no page errors.

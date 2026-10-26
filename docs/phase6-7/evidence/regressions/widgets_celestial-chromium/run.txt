@@ -1,0 +1,8 @@
+PASS Fully visible restore button, accessible collapse, host CSS/click isolation and Scroll Lock preserves input editing
+PASS Magnifier activation, persisted zoom, keyboard/mouse lens movement and resize, interrupted-gesture cleanup and close
+PASS Real mouse dock edge drag, keyboard edge placement, Escape focus return and usable phone search
+PASS Continuous touch scroll outside widgets, touch dock drag and cancellation without saved-position changes or ghosts
+PASS Long-press continuous floating touch drag, touch cancellation, saved-position commit and no accidental expansion
+PASS Live settings switch to floating, keyboard expand/move/minimize, real mouse drag, reload preference, rotation bounds and duplicate initializer guard and focus-aware auto-minimize
+PASS Cross-tab master gates and individual visibility resume correctly, preferences survive, unreadable settings remain untouched, reduced motion and no page errors
+7 celestial widget groups passed in chromium

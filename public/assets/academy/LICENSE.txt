@@ -1,0 +1,16 @@
+George Peabody Library photograph
+
+Photograph: Matthew Petroff, "George-peabody-library.jpg"
+Source: https://commons.wikimedia.org/wiki/File:George-peabody-library.jpg
+Original: https://upload.wikimedia.org/wikipedia/commons/c/c1/George-peabody-library.jpg
+License: Creative Commons Attribution-Share Alike 3.0 Unported (CC BY-SA 3.0)
+https://creativecommons.org/licenses/by-sa/3.0/
+
+The library-640.webp, library-960.webp and library-1600.webp files are resized
+WebP versions of the source photograph, made for this website. The displayed
+photograph may be cropped by the page layout. These image derivatives remain
+available under CC BY-SA 3.0. No endorsement by the photographer or the depicted
+library is implied. The photograph illustrates a fictional educational demo;
+it does not depict a facility owned by that fictional organization.
+
+The rest of this project retains its own licenses.

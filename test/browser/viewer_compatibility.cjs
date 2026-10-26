@@ -62,10 +62,10 @@ const results = {executed:new Date().toISOString(),physicalDevices:[],browsers:[
       await frame.getByText('Link followed',{exact:true}).waitFor();
       assert.equal(await frame.locator('body').getAttribute('data-isolation'),'blocked');
       await page.locator('#preview-diagnostics').waitFor({state:'visible'});
-      assert((await page.locator('#preview-diagnostics').textContent()).includes('navigated'));
+      assert((await page.locator('#preview-diagnostics').textContent()).includes('opened another page'));
       result.checks.push('User-submitted forms and normal links navigate inside the sandbox and retain parent DOM isolation');
       await run('<h1>Policy probe</h1><object data="'+origin+'/viewer-fixture/object"></object>');
-      await page.waitForFunction(()=>document.getElementById('preview-diagnostics').textContent.includes('Blocked by preview policy'));
+      await page.waitForFunction(()=>document.getElementById('preview-diagnostics').textContent.includes('Blocked by preview rules (policy)'));
       result.checks.push('Observable blocked plugin content produces policy feedback without relaxing sandbox permissions');
 
       // Use the actual local VUS openApp function. A fixture adds only its launch
@@ -111,6 +111,6 @@ const results = {executed:new Date().toISOString(),physicalDevices:[],browsers:[
     }catch(error){result.status='failed';if(page){try{result.state=await page.evaluate(()=>({status:document.getElementById('preview-status-text').textContent,diagnostics:document.getElementById('preview-diagnostics').textContent}));}catch(_){}}result.failure=String(error.stack).slice(0,1800);process.exitCode=1;console.error('FAIL '+engine+': '+result.failure)}finally{await browser?.close()}
   }
 })().catch(error=>{console.error(error);process.exitCode=1}).finally(async()=>{
-  const file=path.resolve('docs/phase4-5/evidence/viewer-compatibility.json');fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,JSON.stringify(results,null,2));
+  const file=path.resolve(process.env.HEAVENLY_VIEWER_COMPATIBILITY_RESULTS || 'docs/phase4-5/evidence/viewer-compatibility.json');fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,JSON.stringify(results,null,2));
   if(server){server.closeAllConnections?.();await new Promise(r=>server.close(r))}
 });

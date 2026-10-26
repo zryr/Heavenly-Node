@@ -1,0 +1,11 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS one collapsed among expanded categories retains a usable full-width panel
+PASS all collapsed categories reclaim real center width, keep stable named controls, and disable resizing without changing saved intent
+PASS universal bookmark search still finds hidden category contents without changing saved state
+PASS real mouse dragging reorders independently collapsed category rail headers
+PASS keyboard expansion restores saved width and focus; separator remains usable after reopening
+PASS stable category collapse survives reload, moves, last-category hide and restore without replacing manual layout preferences
+PASS manual whole-sidebar collapse remains distinct from temporary category compaction
+PASS Chromebook, iPad portrait/landscape and narrow portrait/landscape emulation retain reachable full-label category controls without overflow
+PASS rapid reversals and reduced motion settle to the last requested state without width drift, overflow or gesture residue
+9 compact-rail interaction groups passed in firefox

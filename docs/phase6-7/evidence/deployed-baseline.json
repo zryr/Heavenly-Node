@@ -1,0 +1,14 @@
+{
+  "origin": "https://heavenly-node-m8ocxn5nj-syshi.vercel.app",
+  "physicalDevices": [],
+  "checks": [
+    "Deployed homepage initializes, dismisses loader and opens HQ only on intentional submission",
+    "Deployed all-category compact rail reclaims center width without overwriting saved panel width",
+    "Deployed Settings searches individual names/aliases and clearing preserves saved preferences",
+    "Deployed authored JavaScript executes while parent storage and DOM attacks remain blocked",
+    "Deployed phone view preserves edited source and has no horizontal page overflow"
+  ],
+  "errors": [],
+  "browser": "154.0.8037.57",
+  "status": "passed"
+}

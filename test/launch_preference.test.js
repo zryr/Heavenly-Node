@@ -14,7 +14,7 @@ describe('Launch Preference & Scoped Edit Modal Tests', function () {
 
   it('should contain Launch Mode control in form-add-bm in public/index.html', function () {
     assert.ok(indexHtml.includes('id="bm-launch-pref"'), 'form-add-bm should contain bm-launch-pref select input');
-    assert.ok(indexHtml.includes('Always Ask [Default]'), 'bm-launch-pref should contain Always Ask option');
+    assert.ok(indexHtml.includes('Ask each time (default)'), 'bm-launch-pref should contain Always Ask option');
     assert.ok(indexHtml.includes('Always Proxy'), 'bm-launch-pref should contain Always Proxy option');
     assert.ok(indexHtml.includes('Always Direct'), 'bm-launch-pref should contain Always Direct option');
   });

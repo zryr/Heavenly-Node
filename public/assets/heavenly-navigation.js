@@ -85,15 +85,21 @@
   function findBookmarkByUrl(data, value) {
     var key = bookmarkKey(value);
     if (!key) return null;
-    var found = null;
-    (data.bookmarks || []).some(function (bookmark) {
-      if (bookmarkKey(bookmark.url) === key) { found = bookmark; return true; }
-      return (bookmark.subBookmarks || []).some(function (child) {
-        if (bookmarkKey(child.url) === key) { found = child; return true; }
-        return false;
-      });
-    });
-    return found;
+    // Adapted from Bolt PR #200. Keep Array#some's hole skipping, snapshot
+    // lengths and first-match order while avoiding a closure per lookup.
+    var bookmarks = data.bookmarks || [], count = bookmarks.length;
+    for (var i = 0; i < count; i++) {
+      if (!(i in bookmarks)) continue;
+      var bookmark = bookmarks[i];
+      if (bookmarkKey(bookmark.url) === key) return bookmark;
+      var children = bookmark.subBookmarks || [], childCount = children.length;
+      for (var j = 0; j < childCount; j++) {
+        if (!(j in children)) continue;
+        var child = children[j];
+        if (bookmarkKey(child.url) === key) return child;
+      }
+    }
+    return null;
   }
 
   function prepareMissingBookmark(data, definition) {
@@ -237,7 +243,7 @@
     doc.body.appendChild(bar);
     var frame = doc.createElement('iframe');
     frame.id = 'heavenly-wrapper-frame';
-    frame.title = 'Proxied website';
+    frame.title = 'Website opened through Heavenly';
     frame.setAttribute('allowfullscreen', '');
     // Keep ordinary links, history and user-opened tabs inside their intended
     // context, while preventing an embedded site's automatic top navigation.
@@ -258,7 +264,7 @@
       store();
     };
     wrapper.fail = function () {
-      status.textContent = 'This website could not load in a frame. Choose Open normally to continue.';
+      status.textContent = 'This website could not load here. Choose Open normally to continue.';
     };
     wrapper.home = function () { returnHome(win, origin); };
     // Handle widget Home in the parent event loop. A sandboxed child cannot
@@ -310,8 +316,8 @@
     var blank;
     try { blank = (win.__nativeWinOpen || win.open).call(win, 'about:blank', '_blank'); } catch (e) {}
     if (!blank) {
-      if (win.confirm && win.confirm('Popup blocked! Allow popups for Heavenly, or open this website in the current tab?')) win.location.href = url;
-      else if (win.alert && !win.confirm) win.alert('Popup blocked! Please allow popups for this site.');
+      if (win.confirm && win.confirm('Your browser blocked the new tab. Open this website in the current tab instead?')) win.location.href = url;
+      else if (win.alert && !win.confirm) win.alert('Your browser blocked the new tab. Allow popups for Heavenly, then try again.');
       return null;
     }
     registerHomeReturn(win, blank, new URL(url).origin);
@@ -321,8 +327,8 @@
       mounted = true;
       try { mountWrapper(blank, url, options); }
       catch (e) {
-        notice(win, 'Framed browsing is unavailable. Opening the new tab normally.');
-        try { blank.location.href = url; } catch (err) { try { blank.close(); } catch (ignored) {} notice(win, 'The new tab could not open. Please allow popups and try again.'); }
+        notice(win, 'This website could not load here. Opening it normally in the new tab.');
+        try { blank.location.href = url; } catch (err) { try { blank.close(); } catch (ignored) {} notice(win, 'The new tab could not open. Allow popups for Heavenly, then try again.'); }
       }
     }
     // Chromium's newly opened initial empty document has no session-history
@@ -404,13 +410,13 @@
     // Explicit aboutBlank:false remains the normal proxied recovery path.
     if (proxied && options.aboutBlank === undefined && isCoolmathUrl(remoteUrl(url, origin))) mode.aboutBlank = true;
     if (mode.aboutBlank && proxied) return openBlank(win, url, options);
-    if (!proxied && (mode.aboutBlank || !mode.showProxiedUrl)) notice(win, 'Direct websites open normally for compatibility.');
+    if (!proxied && (mode.aboutBlank || !mode.showProxiedUrl)) notice(win, 'This website opens directly in your browser.');
     var framed = proxied && !mode.showProxiedUrl;
     var target = win;
     if (mode.newTab) {
       try { target = (win.__nativeWinOpen || win.open).call(win, 'about:blank', '_blank'); } catch (e) { target = null; }
       if (!target) {
-        if (!win.confirm || !win.confirm('Popup blocked! Open this website in the current tab instead?')) return false;
+        if (!win.confirm || !win.confirm('Your browser blocked the new tab. Open this website in the current tab instead?')) return false;
         target = win;
       }
     }
@@ -422,7 +428,7 @@
         target.sessionStorage.setItem(key, JSON.stringify({ url: url, title: options.title, icon: options.icon }));
         target.location.href = origin + '/browse.html#' + key;
         return target;
-      } catch (e) { notice(win, 'Private browsing storage is unavailable. Opening normally.'); }
+      } catch (e) { notice(win, 'Heavenly could not save this browsing tab. Opening the website normally.'); }
     }
     target.location.href = url;
     return target;

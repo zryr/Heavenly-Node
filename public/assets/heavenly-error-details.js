@@ -16,11 +16,11 @@
       text.focus();
       text.select();
       text.setSelectionRange(0, text.value.length);
-      status.textContent = 'Diagnostics selected. Copy the selected text using your device’s Copy action.';
+      status.textContent = 'Error details selected. Use your device’s Copy action to copy them.';
     }
     button.addEventListener('click', function () {
       if (!navigator.clipboard || !navigator.clipboard.writeText) { selectText(); return; }
-      navigator.clipboard.writeText(text.value).then(function () { status.textContent = 'Diagnostics copied.'; }, selectText);
+      navigator.clipboard.writeText(text.value).then(function () { status.textContent = 'Error details copied.'; }, selectText);
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup);

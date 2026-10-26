@@ -1,0 +1,29 @@
+PASS chromium ordinary first; real browser scheduler holds through13seconds and rotates once by13.6seconds with no unsolicited popup
+PASS chromium hover, keyboard focus, hidden document, offscreen state and persisted explicit Pause compose; manual Next remains usable
+PASS chromium headphone advice appears once per session; explicit Aura→Hardstyle/Hardtekk→Favorites exploration never autoopens Spotify; real anchor opens exact destination with null opener only on click
+PASS chromium original character assets and keyboard dialogue work; seven short GIF dancers are nonmodal and pointer-transparent; Escape preserves input focus and auto completion removes the scene
+PASS chromium modal keyboard boundaries restore the trigger; hidden, offscreen and page-transition lifecycle events close scenes while preserving explicit Pause
+PASS chromium reduced motion uses only still assets; changing the preference cleans an active dance and rerenders the current fallback without waiting for rotation
+PASS chromium published short, long and sticker messages keep a stable well at1440/820/390/320px with32px controls and no overlap or horizontal overflow
+PASS chromium authored markup remains literal text and disabled preview navigation blocks primary and middle clicks
+PASS chromium detaching the owner during a dance destroys its timer, observer-owned scene and all owned document/window/media listeners
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox ordinary first; real browser scheduler holds through13seconds and rotates once by13.6seconds with no unsolicited popup
+PASS firefox hover, keyboard focus, hidden document, offscreen state and persisted explicit Pause compose; manual Next remains usable
+PASS firefox headphone advice appears once per session; explicit Aura→Hardstyle/Hardtekk→Favorites exploration never autoopens Spotify; real anchor opens exact destination with null opener only on click
+PASS firefox original character assets and keyboard dialogue work; seven short GIF dancers are nonmodal and pointer-transparent; Escape preserves input focus and auto completion removes the scene
+PASS firefox modal keyboard boundaries restore the trigger; hidden, offscreen and page-transition lifecycle events close scenes while preserving explicit Pause
+PASS firefox reduced motion uses only still assets; changing the preference cleans an active dance and rerenders the current fallback without waiting for rotation
+PASS firefox published short, long and sticker messages keep a stable well at1440/820/390/320px with32px controls and no overlap or horizontal overflow
+PASS firefox authored markup remains literal text and disabled preview navigation blocks primary and middle clicks
+PASS firefox detaching the owner during a dance destroys its timer, observer-owned scene and all owned document/window/media listeners
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit ordinary first; real browser scheduler holds through13seconds and rotates once by13.6seconds with no unsolicited popup
+PASS webkit hover, keyboard focus, hidden document, offscreen state and persisted explicit Pause compose; manual Next remains usable
+PASS webkit headphone advice appears once per session; explicit Aura→Hardstyle/Hardtekk→Favorites exploration never autoopens Spotify; real anchor opens exact destination with null opener only on click
+PASS webkit original character assets and keyboard dialogue work; seven short GIF dancers are nonmodal and pointer-transparent; Escape preserves input focus and auto completion removes the scene
+PASS webkit modal keyboard boundaries restore the trigger; hidden, offscreen and page-transition lifecycle events close scenes while preserving explicit Pause
+PASS webkit reduced motion uses only still assets; changing the preference cleans an active dance and rerenders the current fallback without waiting for rotation
+PASS webkit published short, long and sticker messages keep a stable well at1440/820/390/320px with32px controls and no overlap or horizontal overflow
+PASS webkit authored markup remains literal text and disabled preview navigation blocks primary and middle clicks
+PASS webkit detaching the owner during a dance destroys its timer, observer-owned scene and all owned document/window/media listeners

@@ -11,9 +11,9 @@ describe('index.html accessibility and ARIA attributes', function() {
 
     it('should have an aria-label on the main url search input', function() {
         assert.ok(
-            /id="url"[^>]*aria-label="URL or search query"/.test(html) ||
-            /aria-label="URL or search query"[^>]*id="url"/.test(html),
-            'url input should have aria-label="URL or search query"'
+            /id="url"[^>]*aria-label="Search or enter a website address"/.test(html) ||
+            /aria-label="Search or enter a website address"[^>]*id="url"/.test(html),
+            'url input should have aria-label="Search or enter a website address"'
         );
     });
 

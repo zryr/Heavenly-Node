@@ -1,0 +1,17 @@
+{
+  "kind": "automated browser and agent-led copy walkthrough; no student participants",
+  "browser": "154.0.8037.57",
+  "viewportChecks": [
+    "390x844",
+    "1440x1000"
+  ],
+  "passed": [
+    "Legacy Settings search: timed decoy auto unlock",
+    "Legacy Settings search: Disable All Privacy Widget Overlays",
+    "Legacy Settings search: collapsible widget dock",
+    "Legacy Settings search: data migration granular backup",
+    "Settings proxy details opens with Enter and states privacy limit",
+    "Viewer help opens by keyboard; visible isolation, data-loss, external-request limits; no phone overflow",
+    "Viewer expanded help has no desktop overflow"
+  ]
+}

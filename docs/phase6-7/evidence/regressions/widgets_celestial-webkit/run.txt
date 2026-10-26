@@ -1,0 +1,7 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS Fully visible restore button, accessible collapse, host CSS/click isolation and Scroll Lock preserves input editing
+PASS Magnifier activation, persisted zoom, keyboard/mouse lens movement and resize, interrupted-gesture cleanup and close
+PASS Real mouse dock edge drag, keyboard edge placement, Escape focus return and usable phone search
+PASS Live settings switch to floating, keyboard expand/move/minimize, real mouse drag, reload preference, rotation bounds and duplicate initializer guard and focus-aware auto-minimize
+PASS Cross-tab master gates and individual visibility resume correctly, preferences survive, unreadable settings remain untouched, reduced motion and no page errors
+5 celestial widget groups passed in webkit

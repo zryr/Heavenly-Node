@@ -359,7 +359,7 @@ function renderHeavenlyErrorPage(opts) {
     var statusCode = opts.statusCode || 500;
     var errorType = opts.errorType || 'Internal Server Error';
     var targetUrl = opts.targetUrl || '';
-    var details = opts.details || 'An error occurred while attempting to load this website through Heavenly Proxy.';
+    var details = opts.details || 'This website could not load through Heavenly. Try again, check the address, or open the website directly.';
     var pageTitle = 'Heavenly - Error ' + statusCode;
 
     var safeErrorType = escapeHtml(errorType);
@@ -547,11 +547,11 @@ function renderHeavenlyErrorPage(opts) {
 '      <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>\n' +
     '      Heavenly Web Proxy &bull; ' + safeErrorType + '\n' +
 '    </span>\n' +
-'    <h1>' + pageTitle + '</h1>\n' +
+'    <h1>This website could not load</h1>\n' +
 '    <div class="details-box">\n' +
 (safeTargetUrl ? '      <div class="target-url-header">\n' +
 '        <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>\n' +
-'        Target Address:\n' +
+'        Website address:\n' +
 '      </div>\n' +
 '      <div class="target-url-val">' + safeTargetUrl + '</div>\n' : '') +
 '      <div class="error-desc">' + safeDetails + '</div>\n' +
@@ -563,14 +563,15 @@ function renderHeavenlyErrorPage(opts) {
 '      </a>\n' +
 (safeDirectTargetUrl ? '      <a href="' + safeDirectTargetUrl + '" target="_blank" rel="noopener" class="btn-action btn-secondary">\n' +
 '        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>\n' +
-'        <span>Test Direct Connection (No Proxy)</span>\n' +
+'        <span>Open website directly</span>\n' +
 '      </a>\n' : '') +
 '      <script src="/assets/heavenly-navigation.js"></script>\n' +
 '      <a href="/" target="_top" onclick="if(window.HeavenlyNavigation){HeavenlyNavigation.returnHome(window);return false;}" class="btn-action btn-outline">\n' +
 '        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>\n' +
-'        <span>Return to Heavenly Home</span>\n' +
+'        <span>Return to Heavenly</span>\n' +
 '      </a>\n' +
 '    </div>\n' +
+(safeDirectTargetUrl ? '<p class="error-desc">Opening directly uses your browser without Heavenly. Your network may still block the website.</p>' : '') +
 advancedPanel + developerPanel +
 '    <div class="footer-note">Heavenly Web Proxy &bull; Ethereal &bull; Streamlined</div>\n' +
 '  </div>\n' +
@@ -595,6 +596,10 @@ unblockerConfig.responseMiddleware[prefixerIndex] = require('./lib/script-safe-u
 // Otherwise Home (and our logo/scripts) becomes the upstream site's root/assets
 // whenever the request comes from a proxied document.
 var heavenlyPages = { '/': 'index.html', '/index.html': 'index.html', '/settings.html': 'settings.html', '/browse.html': 'browse.html', '/html-viewer.html': 'html-viewer.html' };
+// Academy is a separate document, reserved before proxy Referer recovery.
+// These are content pages; planned features intentionally return 200, not 503.
+app.get(['/academy', '/academy/', '/academy.html', '/academy/:page'], require('./lib/academy-routes').createHandler());
+app.get('/academy/*', require('./lib/academy-routes').notFound);
 app.get(Object.keys(heavenlyPages), function(req, res) {
     res.sendFile(__dirname + '/public/' + heavenlyPages[req.path]);
 });
@@ -687,21 +692,21 @@ function heavenlyErrorMiddleware(err, req, res, next) {
     var code = classification.code;
     var statusCode = classification.status;
     var errorType = classification.category;
-    var details = 'An error occurred while connecting to the requested website through Heavenly Proxy.';
+    var details = 'Heavenly could not connect to this website. Check the address or try again later.';
     if (code === 'ENOTFOUND') {
-        details = 'Heavenly could not connect or resolve the server address at ' + (targetUrl || 'this website') + '. DNS lookup failed from this server; check the address or try again later.';
+        details = 'Heavenly could not find this website’s server. Check the website address or try again later.';
     } else if (code === 'EAI_AGAIN') {
-        details = 'The DNS lookup for ' + (targetUrl || 'this website') + ' temporarily failed. Try again later; this does not establish that the website is offline.';
+        details = 'Heavenly could not look up this website’s address right now. Try again later. The website may still be online.';
     } else if (code === 'ECONNREFUSED') {
-        details = 'The target server at ' + (targetUrl || 'this website') + ' refused the connection. The server may be offline or down for maintenance.';
+        details = 'The website’s server did not accept Heavenly’s connection. Try again later or open the website directly.';
     } else if (classification.phase === 'timeout') {
-        details = 'The connection to ' + (targetUrl || 'this website') + ' timed out before a response was received.';
+        details = 'The website took too long to reply. Try again in a moment.';
     } else if (code === 'ECONNRESET' || code === 'EPIPE') {
-        details = 'The connection to the target website was unexpectedly reset.';
+        details = 'The connection closed before the website could load. Try again.';
     } else if (classification.phase === 'tls') {
-        details = 'Heavenly could not establish a verified secure connection to the target website. TLS verification remains enabled.';
+        details = 'Heavenly could not check this website’s secure connection. The security check stays on. Try another website or try again later.';
     } else if (classification.phase === 'validation') {
-        details = 'The target address is not a valid HTTP or HTTPS URL. Correct the address before trying again.';
+        details = 'Enter a website address that starts with https:// or http://, then try again.';
     }
     // Exception messages can contain private headers, paths and credentials.
     // Only known, application-owned explanations are rendered, even in dev.
@@ -740,7 +745,7 @@ function serverErrorResponseMiddleware(data) {
             else if (status === 503) errorType = 'Service Unavailable (503)';
             else if (status === 504) errorType = 'Gateway Timeout (504)';
 
-            var details = 'The target server at ' + (targetUrl || 'this website') + ' returned a ' + status + ' error response. The remote website is currently experiencing server issues.';
+            var details = 'The website’s server returned error ' + status + '. Try again later or open the website directly. Heavenly cannot tell the exact cause.';
 
             var requestId = require('crypto').randomUUID();
             var html = renderHeavenlyErrorPage({

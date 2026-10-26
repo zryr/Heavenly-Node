@@ -1,0 +1,2909 @@
+{
+  "executed": "2026-10-26T12:46:36.872Z",
+  "scope": "Linux Playwright mouse/keyboard; CSS zoom is not native browser zoom. Chromium CDP page scale is a separate emulated pinch scale. No physical devices or Apple Safari tested.",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "fresh homepage entry redirects to a standalone Academy document with no underlying application UI",
+        "all 12 documents fit six portrait/landscape viewports and CSS zoom 200%/67%",
+        "Chromium CDP page scale 2 and reset execute without replacing the document",
+        "322 real anchor clicks, 1 CSV download(s), 4 disclosures; external destinations verified with explicit fixtures",
+        "keyboard/mobile menu, real guide navigation and browser Back restore the prior document and scroll",
+        "about:blank native hash Back/Forward and repeated Terms→Privacy→Terms history retain distinct entries; shell Back returns Privacy, Terms, then Academy",
+        "Search new-tab/about:blank modes show correct trusted content/title, null opener, shell Back, top-level Academy home and Continue; unrelated settings preserved",
+        "blocked popup and denied Storage getter both fall back to real current-tab information navigation",
+        "explicit existing timed-entry preference still unlocks this session",
+        "literal Academy content and navigation remain readable with JavaScript disabled"
+      ],
+      "layouts": [
+        {
+          "page": "about",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "about",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "about",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "about",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "about",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "about",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "about",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "about",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "accessibility",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "accessibility",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "accessibility",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "accessibility",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "accessibility",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "accessibility",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "accessibility",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "accessibility",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "admissions",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "admissions",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "admissions",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "admissions",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "admissions",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "admissions",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "admissions",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "admissions",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "calendar",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "calendar",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "calendar",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "calendar",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "calendar",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "calendar",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "calendar",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "calendar",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "credits",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "credits",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "credits",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "credits",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "credits",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "credits",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "credits",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "credits",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "home",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "home",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "home",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "home",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "home",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "home",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "home",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "home",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "privacy",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "privacy",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "privacy",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "privacy",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "privacy",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "privacy",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "privacy",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "privacy",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "programs",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "programs",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "programs",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "programs",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "programs",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "programs",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "programs",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "programs",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "resources",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "resources",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "resources",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "resources",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "resources",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "resources",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "resources",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "resources",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "status",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "status",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "status",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "status",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "status",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "status",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "status",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "status",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "students",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "students",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "students",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "students",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "students",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "students",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "students",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "students",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "terms",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "terms",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366,
+          "bodyWidth": 1366,
+          "scale": 1
+        },
+        {
+          "page": "terms",
+          "label": "tablet-portrait",
+          "width": 820,
+          "scrollWidth": 820,
+          "bodyWidth": 820,
+          "scale": 1
+        },
+        {
+          "page": "terms",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "scrollWidth": 1180,
+          "bodyWidth": 1180,
+          "scale": 1
+        },
+        {
+          "page": "terms",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390,
+          "bodyWidth": 390,
+          "scale": 1
+        },
+        {
+          "page": "terms",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320,
+          "bodyWidth": 320,
+          "scale": 1
+        },
+        {
+          "page": "terms",
+          "label": "CSS zoom 2",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        },
+        {
+          "page": "terms",
+          "label": "CSS zoom 0.67",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "bodyWidth": 1440,
+          "scale": 1
+        }
+      ],
+      "inventory": [
+        {
+          "page": "about",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "Our approach",
+              "href": "#approach",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "Learning principles",
+              "href": "#principles",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "About this site",
+              "href": "#about-site",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "privacy notice",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 14,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 23,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 24,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        },
+        {
+          "page": "accessibility",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "Accessibility features",
+              "href": "#features",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "Using this site",
+              "href": "#help",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "Known limits",
+              "href": "#limits",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "student hub",
+              "href": "/academy/students#planner",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 14,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 23,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        },
+        {
+          "page": "admissions",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "Getting started",
+              "href": "#getting-started",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "Common questions",
+              "href": "#questions",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "Family tools",
+              "href": "#family-tools",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "Explore learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "Explore the resource library Open resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 14,
+              "label": "Plan a learning week Downloadable planner",
+              "href": "/academy/students#planner",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "Family portal Coming Soon",
+              "href": "/academy/status?service=family-portal",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "Applications & visits About availability",
+              "href": "/academy/status?service=applications",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 23,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 24,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 25,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 26,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 27,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        },
+        {
+          "page": "calendar",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "2026–2027 learning rhythm",
+              "href": "#year",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "A weekly routine",
+              "href": "#weekly",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "About dates & events",
+              "href": "#dates",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "Use the weekly planner",
+              "href": "/academy/students#planner",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 14,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 23,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        },
+        {
+          "page": "credits",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "Library photography",
+              "href": "#photography",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "Original design & text",
+              "href": "#original",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "External resources",
+              "href": "#links",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "George-peabody-library.jpg",
+              "href": "https://commons.wikimedia.org/wiki/File:George-peabody-library.jpg",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "Matthew Petroff",
+              "href": "https://commons.wikimedia.org/wiki/User:Matthew_Petroff",
+              "download": false
+            },
+            {
+              "index": 14,
+              "label": "Creative Commons Attribution-ShareAlike 3.0 Unported",
+              "href": "https://creativecommons.org/licenses/by-sa/3.0/",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 23,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 24,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 25,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 26,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        },
+        {
+          "page": "home",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Explore our pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "The Morrowfield approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "Photo credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "Explore Foundations",
+              "href": "/academy/programs#foundations",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "Explore Connections",
+              "href": "/academy/programs#connections",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "Explore Perspectives",
+              "href": "/academy/programs#perspectives",
+              "download": false
+            },
+            {
+              "index": 14,
+              "label": "Reading & literature Open collections",
+              "href": "/academy/resources#reading",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "Science & mathematics Explore & practice",
+              "href": "/academy/resources#science",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "Study skills Build your routine",
+              "href": "/academy/students#study",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "Visit the student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 23,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 24,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 25,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 26,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 27,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 28,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        },
+        {
+          "page": "privacy",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "No school records",
+              "href": "#accounts",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "Browser storage",
+              "href": "#storage",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "External websites & hosting",
+              "href": "#external",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 14,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        },
+        {
+          "page": "programs",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "Foundations · 5–10",
+              "href": "#foundations",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "Connections · 11–13",
+              "href": "#connections",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "Perspectives · 14–18",
+              "href": "#perspectives",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "Using the pathways",
+              "href": "#using-pathways",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "Find reading resources",
+              "href": "/academy/resources#reading",
+              "download": false
+            },
+            {
+              "index": 14,
+              "label": "Use the source-checking guide",
+              "href": "/academy/resources#research",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "Plan an independent project",
+              "href": "/academy/students#projects",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 23,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 24,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 25,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 26,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        },
+        {
+          "page": "resources",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "Reading & literature",
+              "href": "#reading",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "Science & mathematics",
+              "href": "#science",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "Research & source checking",
+              "href": "#research",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "Using this library",
+              "href": "#using-library",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "Project Gutenberg",
+              "href": "https://www.gutenberg.org/",
+              "download": false
+            },
+            {
+              "index": 14,
+              "label": "Library of Congress digital collections",
+              "href": "https://www.loc.gov/collections/",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "Poetry Foundation",
+              "href": "https://www.poetryfoundation.org/poems",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "Khan Academy",
+              "href": "https://www.khanacademy.org/",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "PhET interactive simulations",
+              "href": "https://phet.colorado.edu/",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "NASA learning resources",
+              "href": "https://science.nasa.gov/learn/",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Smithsonian Open Access",
+              "href": "https://www.si.edu/openaccess",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 23,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 24,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 25,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 26,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 27,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 28,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 29,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 30,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        },
+        {
+          "page": "status",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "Back to student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "Academy home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "Browse the resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "Plan your learning week",
+              "href": "/academy/students#planner",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "Explore the learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 14,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 23,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 24,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        },
+        {
+          "page": "students",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "Study with attention",
+              "href": "#study",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "A simple weekly plan",
+              "href": "#planner",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "Independent projects",
+              "href": "#projects",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "Tools & support",
+              "href": "#support",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "Download a blank weekly planner (.csv) ↓",
+              "href": "/assets/academy/weekly-planner.csv",
+              "download": true
+            },
+            {
+              "index": 14,
+              "label": "Resource library Open collections",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "Learning calendar A suggested seasonal rhythm",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "Student portal Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "Clubs & societies Coming Soon",
+              "href": "/academy/status?service=clubs",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 23,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 24,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 25,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 26,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 27,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 28,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        },
+        {
+          "page": "terms",
+          "controls": [
+            {
+              "index": 0,
+              "label": "Skip to main content",
+              "href": "#academy-main",
+              "download": false
+            },
+            {
+              "index": 1,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 2,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 3,
+              "label": "Morrowfield AcademyA life of learning",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 4,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 5,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 6,
+              "label": "Resources",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 7,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 8,
+              "label": "Home",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 9,
+              "label": "About this demonstration",
+              "href": "#site",
+              "download": false
+            },
+            {
+              "index": 10,
+              "label": "Responsible use",
+              "href": "#use",
+              "download": false
+            },
+            {
+              "index": 11,
+              "label": "Software & credits",
+              "href": "#software",
+              "download": false
+            },
+            {
+              "index": 12,
+              "label": "Continue for this session",
+              "href": "#continue",
+              "download": false
+            },
+            {
+              "index": 13,
+              "label": "GNU Affero General Public License, version 3",
+              "href": "https://www.gnu.org/licenses/agpl-3.0.html",
+              "download": false
+            },
+            {
+              "index": 14,
+              "label": "View the project source and license",
+              "href": "https://github.com/zryr/Heavenly-Node",
+              "download": false
+            },
+            {
+              "index": 15,
+              "label": "image and content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 16,
+              "label": "privacy notice",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 17,
+              "label": "Continue to Heavenly",
+              "href": "/?academy=continue",
+              "download": false
+            },
+            {
+              "index": 18,
+              "label": "Return to Academy",
+              "href": "/academy",
+              "download": false
+            },
+            {
+              "index": 19,
+              "label": "Our approach",
+              "href": "/academy/about",
+              "download": false
+            },
+            {
+              "index": 20,
+              "label": "Learning pathways",
+              "href": "/academy/programs",
+              "download": false
+            },
+            {
+              "index": 21,
+              "label": "Student hub",
+              "href": "/academy/students",
+              "download": false
+            },
+            {
+              "index": 22,
+              "label": "Resource library",
+              "href": "/academy/resources",
+              "download": false
+            },
+            {
+              "index": 23,
+              "label": "Family guide",
+              "href": "/academy/admissions",
+              "download": false
+            },
+            {
+              "index": 24,
+              "label": "Learning calendar",
+              "href": "/academy/calendar",
+              "download": false
+            },
+            {
+              "index": 25,
+              "label": "Student portal · Coming Soon",
+              "href": "/academy/status?service=student-portal",
+              "download": false
+            },
+            {
+              "index": 26,
+              "label": "Image & content credits",
+              "href": "/academy/credits",
+              "download": false
+            },
+            {
+              "index": 27,
+              "label": "Privacy",
+              "href": "/academy/privacy",
+              "download": false
+            },
+            {
+              "index": 28,
+              "label": "Accessibility",
+              "href": "/academy/accessibility",
+              "download": false
+            },
+            {
+              "index": 29,
+              "label": "Terms of Service",
+              "href": "/academy/terms",
+              "download": false
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "entryRequests": [
+        "/",
+        "/assets/academy-session.js",
+        "/assets/heavenly-tokens.css",
+        "/assets/heavenly-loading.js",
+        "/assets/heavenly-icons.js",
+        "/assets/heavenly-navigation.js",
+        "/assets/heavenly-bookmarks.js",
+        "/assets/heavenly-bookmark-view.js",
+        "/assets/heavenly-bookmark-view.css",
+        "/assets/heavenly-official-order.js",
+        "/assets/heavenly-catalog.js",
+        "/assets/heavenly-messages-data.js",
+        "/assets/heavenly-messages.js",
+        "/assets/heavenly-messages.css",
+        "/assets/heavenly-dev-hq-model.js",
+        "/assets/heavenly-dev-hq-messages.js",
+        "/assets/heavenly-dev-hq.js",
+        "/assets/heavenly-dev-hq.css",
+        "/assets/heavenly-catalog-ui.js",
+        "/assets/heavenly-catalog.css",
+        "/assets/heavenly-drag.js",
+        "/assets/heavenly-motion.js",
+        "/assets/heavenly-dialogs.js",
+        "/assets/heavenly-mirror-menu.js",
+        "/assets/heavenly-collection-dialog.js",
+        "/assets/heavenly-picks.js",
+        "/assets/heavenly-picks-ui.js",
+        "/assets/heavenly-restore-ui.js",
+        "/assets/heavenly-collection.css",
+        "/assets/quick-settings.css",
+        "/assets/cloak-pool.js",
+        "/assets/quick-settings-model.js",
+        "/assets/quick-settings-help.js",
+        "/assets/quick-settings-dialog.js",
+        "/assets/quick-settings-config.js",
+        "/assets/quick-settings.js",
+        "/css2",
+        "/assets/bookmark-dialogs.css",
+        "/assets/heavenly-home.css",
+        "/assets/heavenly-adaptive.css",
+        "/assets/heavenly-loading.css",
+        "/assets/heavenly-logo.png",
+        "/assets/icons/coolmath-icon.ico",
+        "/academy",
+        "/assets/academy.css",
+        "/assets/academy-session.js",
+        "/assets/academy/library-960.webp",
+        "/assets/heavenly-navigation.js",
+        "/assets/academy-information.js",
+        "/assets/academy.js",
+        "/assets/academy-mark.svg"
+      ],
+      "clicks": 322,
+      "downloads": 1,
+      "disclosures": 4,
+      "informationHistory": [
+        {
+          "label": "native Back removes same-document hash",
+          "address": "about:blank",
+          "document": "/academy/about",
+          "entry": 1,
+          "title": "Our approach · Morrowfield Academy"
+        },
+        {
+          "label": "native Forward restores same-document hash",
+          "address": "about:blank",
+          "document": "/academy/about#principles",
+          "entry": 2,
+          "title": "Our approach · Morrowfield Academy"
+        },
+        {
+          "label": "first Terms entry",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 0,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "Privacy after Terms",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "repeated Terms entry",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 2,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "native Back from repeated Terms returns Privacy",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "native Forward returns repeated Terms",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 2,
+          "title": "Terms of Service · Morrowfield Academy"
+        },
+        {
+          "label": "shell Back from repeated Terms returns Privacy",
+          "address": "about:blank",
+          "document": "/academy/privacy",
+          "entry": 1,
+          "title": "Privacy & local preferences · Morrowfield Academy"
+        },
+        {
+          "label": "shell Back returns first Terms",
+          "address": "about:blank",
+          "document": "/academy/terms",
+          "entry": 0,
+          "title": "Terms of Service · Morrowfield Academy"
+        }
+      ],
+      "status": "passed"
+    }
+  ]
+}

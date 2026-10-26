@@ -1,0 +1,221 @@
+{
+  "executed": "2026-10-26T12:50:28.488Z",
+  "pr": 201,
+  "head": "5247068c48a450286b55d961c1348f223bbc6019",
+  "baseline": "a329d6cf0a01728526057b8a854a5ec7fb19c705",
+  "method": "Actual git show source evaluated in isolated Node vm contexts; no application files edited and no pull requests merged.",
+  "checks": [
+    {
+      "label": "Own security headers preserve value arrays and key casing",
+      "baseline": {
+        "Content-Security-Policy": [
+          "frame-ancestors none"
+        ],
+        "X-Frame-Options": "DENY"
+      },
+      "proposed": {
+        "Content-Security-Policy": [
+          "frame-ancestors none"
+        ],
+        "X-Frame-Options": "DENY"
+      },
+      "parity": true
+    },
+    {
+      "label": "Inherited enumerable CSP enters proposed restoration",
+      "baseline": {
+        "X-Frame-Options": "DENY"
+      },
+      "proposed": {
+        "X-Frame-Options": "DENY",
+        "Content-Security-Policy": "inherited; frame-ancestors *"
+      },
+      "parity": false
+    },
+    {
+      "label": "Coolmath normalized URL classification",
+      "value": "https://%43oolmathgames.com/",
+      "parsedHostname": "coolmathgames.com",
+      "baseline": true,
+      "proposed": false,
+      "parity": false
+    },
+    {
+      "label": "Coolmath normalized URL classification",
+      "value": "https://%63%6folmathgames.com/",
+      "parsedHostname": "coolmathgames.com",
+      "baseline": true,
+      "proposed": false,
+      "parity": false
+    },
+    {
+      "label": "Coolmath normalized URL classification",
+      "value": "https://%63OOLMATHGAMES.COM/",
+      "parsedHostname": "coolmathgames.com",
+      "baseline": true,
+      "proposed": false,
+      "parity": false
+    },
+    {
+      "label": "Coolmath normalized URL classification",
+      "value": "https://coolmathgames.com/",
+      "parsedHostname": "coolmathgames.com",
+      "baseline": true,
+      "proposed": true,
+      "parity": true
+    },
+    {
+      "label": "Coolmath normalized URL classification",
+      "value": "https://coolmathgames.com.evil.test/",
+      "parsedHostname": "coolmathgames.com.evil.test",
+      "baseline": false,
+      "proposed": false,
+      "parity": true
+    },
+    {
+      "label": "VitePress raw URL guard versus normalized pathname",
+      "value": "https://docs.test/assets/app.hash.js",
+      "pathname": "/assets/app.hash.js",
+      "baseline": true,
+      "proposed": true,
+      "parity": true
+    },
+    {
+      "label": "VitePress raw URL guard versus normalized pathname",
+      "value": "https://docs.test\\assets\\app.hash.js",
+      "pathname": "/assets/app.hash.js",
+      "baseline": true,
+      "proposed": false,
+      "parity": false
+    },
+    {
+      "label": "VitePress raw URL guard versus normalized pathname",
+      "value": "https://docs.test/assets/../assets/app.hash.js",
+      "pathname": "/assets/app.hash.js",
+      "baseline": true,
+      "proposed": true,
+      "parity": true
+    },
+    {
+      "label": "Legacy parsed URI with explicit port",
+      "input": {
+        "url": "https://upstream.test:8443/path",
+        "uri": {
+          "protocol": "https:",
+          "host": "upstream.test:8443"
+        },
+        "headers": {
+          "origin": "https://proxy.test"
+        }
+      },
+      "baseline": {
+        "origin": "https://proxy.test"
+      },
+      "proposed": {
+        "origin": "https://upstream.test:8443"
+      },
+      "parity": false
+    },
+    {
+      "label": "Malformed target with proxied Referer",
+      "input": {
+        "url": "invalid",
+        "headers": {
+          "origin": "https://proxy.test",
+          "referer": "/proxy/https:/upstream.test/path"
+        }
+      },
+      "baseline": {
+        "origin": "https://proxy.test",
+        "referer": "/proxy/https:/upstream.test/path"
+      },
+      "proposed": {
+        "origin": "https://proxy.test",
+        "referer": "https://upstream.test/path"
+      },
+      "parity": false
+    },
+    {
+      "label": "VitePress MIME string vocabulary",
+      "value": "application/javascript",
+      "baseline": true,
+      "proposed": true,
+      "parity": true
+    },
+    {
+      "label": "VitePress MIME string vocabulary",
+      "value": "text/javascript",
+      "baseline": true,
+      "proposed": true,
+      "parity": true
+    },
+    {
+      "label": "VitePress MIME string vocabulary",
+      "value": "application/x-javascript",
+      "baseline": true,
+      "proposed": true,
+      "parity": true
+    },
+    {
+      "label": "VitePress MIME string vocabulary",
+      "value": "text/x-javascript",
+      "baseline": true,
+      "proposed": true,
+      "parity": true
+    },
+    {
+      "label": "VitePress MIME string vocabulary",
+      "value": "application/ecmascript",
+      "baseline": true,
+      "proposed": true,
+      "parity": true
+    },
+    {
+      "label": "VitePress MIME string vocabulary",
+      "value": "text/ecmascript",
+      "baseline": true,
+      "proposed": true,
+      "parity": true
+    },
+    {
+      "label": "VitePress MIME string vocabulary",
+      "value": "text/html",
+      "baseline": false,
+      "proposed": false,
+      "parity": true
+    },
+    {
+      "label": "VitePress MIME string vocabulary",
+      "value": "application/json",
+      "baseline": false,
+      "proposed": false,
+      "parity": true
+    },
+    {
+      "label": "VitePress MIME string vocabulary",
+      "value": "application/javascript; charset=utf-8",
+      "baseline": false,
+      "proposed": false,
+      "parity": true
+    },
+    {
+      "label": "VitePress MIME string vocabulary",
+      "value": "Application/Javascript",
+      "baseline": false,
+      "proposed": false,
+      "parity": true
+    },
+    {
+      "label": "VitePress MIME string vocabulary",
+      "value": "",
+      "baseline": false,
+      "proposed": false,
+      "parity": true
+    }
+  ],
+  "summary": {
+    "cases": 23,
+    "parityDifferences": 7,
+    "decision": "Reject raw Coolmath and raw assets guards and unguarded for-in; defer lazy origin refactor, direct MIME comparisons and benchmark to maintain Phase 6-7 scope."
+  }
+}

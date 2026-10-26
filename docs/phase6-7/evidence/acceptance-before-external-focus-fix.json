@@ -1,0 +1,896 @@
+{
+  "executed": "2026-10-26T03:30:04.478Z",
+  "physicalDevices": [],
+  "participants": [],
+  "input": "Playwright mouse/keyboard and Chromium/WebKit touch emulation; Firefox uses desktop input. Linux WebKit is not Apple Safari. No student usability study.",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "fresh entry redirects to Academy; six responsive sizes, keyboard menu, real subpage and Terms return flow work",
+        "production Academy route handler returns branded 503 on a real missing document; Retry, Resources and Home recovery work; unknown pages return branded 404",
+        "message next/pause work with keyboard/click; six responsive home sizes fit; navigation creates no unsolicited tab, dialog or autoplay media",
+        "focused tooltip and gold playlist modal stay usable on phone; three character scenes advance and dismiss; reduced-motion Ao Oni uses a still and normal dance cleans up on Escape",
+        "Settings and HTML Viewer fit six sizes; authored HTML actually runs in its isolated preview",
+        "actual injected widget dock fits desktop and phone local host pages without blocking the host control"
+      ],
+      "viewports": [
+        {
+          "surface": "academy",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "academy",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "academy",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "academy",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "academy",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "academy",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        },
+        {
+          "surface": "home",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "home",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "home",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "home",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "home",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "home",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        },
+        {
+          "surface": "settings",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "settings",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "settings",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "settings",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "settings",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "settings",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        },
+        {
+          "surface": "viewer",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "viewer",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "viewer",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "viewer",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "viewer",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "viewer",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "controlTargets": [
+        {
+          "surface": "home",
+          "label": "desktop",
+          "control": "next",
+          "x": 665.921875,
+          "y": 326.578125,
+          "width": 42.875,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "desktop",
+          "control": "pause",
+          "x": 711.984375,
+          "y": 326.578125,
+          "width": 62.078125,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "chromebook",
+          "control": "next",
+          "x": 628.921875,
+          "y": 326.578125,
+          "width": 42.875,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "chromebook",
+          "control": "pause",
+          "x": 674.984375,
+          "y": 326.578125,
+          "width": 62.078125,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-portrait",
+          "control": "next",
+          "x": 461.921875,
+          "y": 326.578125,
+          "width": 42.875,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-portrait",
+          "control": "pause",
+          "x": 507.984375,
+          "y": 326.578125,
+          "width": 62.078125,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-landscape",
+          "control": "next",
+          "x": 535.921875,
+          "y": 326.578125,
+          "width": 42.875,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-landscape",
+          "control": "pause",
+          "x": 581.984375,
+          "y": 326.578125,
+          "width": 62.078125,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "phone",
+          "control": "next",
+          "x": 137.734375,
+          "y": 318.578125,
+          "width": 46.0625,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "phone",
+          "control": "pause",
+          "x": 186.984375,
+          "y": 318.578125,
+          "width": 65.265625,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "narrow-phone",
+          "control": "next",
+          "x": 102.734375,
+          "y": 370.578125,
+          "width": 46.0625,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "narrow-phone",
+          "control": "pause",
+          "x": 151.984375,
+          "y": 370.578125,
+          "width": 65.265625,
+          "height": 32
+        }
+      ],
+      "screenshots": [
+        "after/academy-desktop.png",
+        "after/academy-tablet.png",
+        "after/academy-phone.png",
+        "after/academy-menu-phone.png",
+        "after/academy-programs-tablet.png",
+        "after/academy-program-section-phone.png",
+        "after/academy-coming-soon-phone.png",
+        "after/academy-terms-phone.png",
+        "after/academy-terms-zoom.png",
+        "after/academy-unavailable-phone.png",
+        "after/home-desktop.png",
+        "after/home-phone.png",
+        "after/message-gradient-desktop.png",
+        "after/message-playlist-phone.png",
+        "after/message-side-eye-phone.png",
+        "after/message-khezu-phone.png",
+        "after/message-doggy-phone.png",
+        "after/message-ao-reduced-phone.png",
+        "after/message-ao-dialogue-phone.png",
+        "after/message-ao-dance.png",
+        "after/quick-settings-dialog-desktop.png",
+        "after/settings-desktop.png",
+        "after/settings-phone.png",
+        "after/viewer-desktop.png",
+        "after/viewer-phone.png",
+        "after/viewer-help-phone.png",
+        "after/widgets-desktop.png",
+        "after/widgets-phone.png"
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "fresh entry redirects to Academy; six responsive sizes, keyboard menu, real subpage and Terms return flow work",
+        "production Academy route handler returns branded 503 on a real missing document; Retry, Resources and Home recovery work; unknown pages return branded 404",
+        "message next/pause work with keyboard/click; six responsive home sizes fit; navigation creates no unsolicited tab, dialog or autoplay media",
+        "focused tooltip and gold playlist modal stay usable on phone; three character scenes advance and dismiss; reduced-motion Ao Oni uses a still and normal dance cleans up on Escape",
+        "Settings and HTML Viewer fit six sizes; authored HTML actually runs in its isolated preview",
+        "actual injected widget dock fits desktop and phone local host pages without blocking the host control"
+      ],
+      "viewports": [
+        {
+          "surface": "academy",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "academy",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "academy",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "academy",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "academy",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "academy",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        },
+        {
+          "surface": "home",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "home",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "home",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "home",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "home",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "home",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        },
+        {
+          "surface": "settings",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "settings",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "settings",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "settings",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "settings",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "settings",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        },
+        {
+          "surface": "viewer",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "viewer",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "viewer",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "viewer",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "viewer",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "viewer",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "controlTargets": [
+        {
+          "surface": "home",
+          "label": "desktop",
+          "control": "next",
+          "x": 665.5,
+          "y": 326.6000061035156,
+          "width": 43.933349609375,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "desktop",
+          "control": "pause",
+          "x": 712.6333618164062,
+          "y": 326.6000061035156,
+          "width": 61.83331298828125,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "chromebook",
+          "control": "next",
+          "x": 628.5,
+          "y": 326.6000061035156,
+          "width": 43.933349609375,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "chromebook",
+          "control": "pause",
+          "x": 675.6333618164062,
+          "y": 326.6000061035156,
+          "width": 61.83331298828125,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-portrait",
+          "control": "next",
+          "x": 461.5,
+          "y": 326.6000061035156,
+          "width": 43.933349609375,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-portrait",
+          "control": "pause",
+          "x": 508.6333312988281,
+          "y": 326.6000061035156,
+          "width": 61.833343505859375,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-landscape",
+          "control": "next",
+          "x": 535.5,
+          "y": 326.6000061035156,
+          "width": 43.933349609375,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-landscape",
+          "control": "pause",
+          "x": 582.6333618164062,
+          "y": 326.6000061035156,
+          "width": 61.83331298828125,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "phone",
+          "control": "next",
+          "x": 137.3000030517578,
+          "y": 318.6000061035156,
+          "width": 47.133331298828125,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "phone",
+          "control": "pause",
+          "x": 187.63333129882812,
+          "y": 318.6000061035156,
+          "width": 65.0333251953125,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "narrow-phone",
+          "control": "next",
+          "x": 102.31666564941406,
+          "y": 370.6000061035156,
+          "width": 47.133331298828125,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "narrow-phone",
+          "control": "pause",
+          "x": 152.64999389648438,
+          "y": 370.6000061035156,
+          "width": 65.0333251953125,
+          "height": 32
+        }
+      ],
+      "screenshots": [],
+      "errors": [],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "fresh entry redirects to Academy; six responsive sizes, keyboard menu, real subpage and Terms return flow work",
+        "production Academy route handler returns branded 503 on a real missing document; Retry, Resources and Home recovery work; unknown pages return branded 404",
+        "message next/pause work with keyboard/click; six responsive home sizes fit; navigation creates no unsolicited tab, dialog or autoplay media"
+      ],
+      "viewports": [
+        {
+          "surface": "academy",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "academy",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "academy",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "academy",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "academy",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "academy",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        },
+        {
+          "surface": "home",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "home",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "home",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "home",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "home",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "home",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "controlTargets": [
+        {
+          "surface": "home",
+          "label": "desktop",
+          "control": "next",
+          "x": 665.515625,
+          "y": 326.578125,
+          "width": 43.921875,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "desktop",
+          "control": "pause",
+          "x": 712.625,
+          "y": 326.578125,
+          "width": 61.84375,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "chromebook",
+          "control": "next",
+          "x": 628.515625,
+          "y": 326.578125,
+          "width": 43.921875,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "chromebook",
+          "control": "pause",
+          "x": 675.625,
+          "y": 326.578125,
+          "width": 61.84375,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-portrait",
+          "control": "next",
+          "x": 461.515625,
+          "y": 326.578125,
+          "width": 43.921875,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-portrait",
+          "control": "pause",
+          "x": 508.625,
+          "y": 326.578125,
+          "width": 61.84375,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-landscape",
+          "control": "next",
+          "x": 535.515625,
+          "y": 326.578125,
+          "width": 43.921875,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "tablet-landscape",
+          "control": "pause",
+          "x": 582.625,
+          "y": 326.578125,
+          "width": 61.84375,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "phone",
+          "control": "next",
+          "x": 137.328125,
+          "y": 318.578125,
+          "width": 47.109375,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "phone",
+          "control": "pause",
+          "x": 187.625,
+          "y": 318.578125,
+          "width": 65.03125,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "narrow-phone",
+          "control": "next",
+          "x": 102.328125,
+          "y": 318.578125,
+          "width": 47.109375,
+          "height": 32
+        },
+        {
+          "surface": "home",
+          "label": "narrow-phone",
+          "control": "pause",
+          "x": 152.625,
+          "y": 318.578125,
+          "width": 65.03125,
+          "height": 32
+        }
+      ],
+      "screenshots": [],
+      "errors": [],
+      "version": "26.5",
+      "status": "failed",
+      "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(await page.locator('#url').evaluate(n=>n===document.activeElement))\n\n    at /workspace/Heavenly-Node/test/browser/phase6_7_acceptance.cjs:47:688"
+    }
+  ]
+}
