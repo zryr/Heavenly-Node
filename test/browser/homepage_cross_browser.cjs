@@ -25,7 +25,7 @@ let server;
       await page.goto(origin,{waitUntil:'domcontentloaded'});await page.waitForTimeout(400);
       const pass=message=>{record.checks.push(message);console.log('PASS '+name+': '+message)};
       const state=()=>page.evaluate(()=>HeavenlyLayout.getState());
-      const settle=()=>page.waitForTimeout(240);
+      const settle=async()=>{await page.waitForTimeout(240);await page.waitForFunction(()=>!document.querySelector('.app-layout.layout-viewport-changing'));};
       const toggle=side=>page.locator('[data-sidebar-toggle="'+side+'"]:visible').first().click();
       await resetHomeLayout(page);await settle();
       assert((await state()).actual.left.open&&(await state()).actual.right.open);
@@ -64,8 +64,8 @@ let server;
       await page.mouse.move(a.x+a.width/2,a.y+a.height/2);await page.mouse.down();await page.mouse.move(b.x+b.width/2,b.y+b.height*.85,{steps:18});await page.mouse.up();await page.waitForTimeout(100);
       let ids=await page.evaluate(()=>loadBookmarkData().bookmarks.filter(b=>b.categoryId==='matrix').sort((a,b)=>a.order-b.order).map(b=>b.id));assert(ids.indexOf('matrix_0')>ids.indexOf('matrix_3'));
       await page.reload({waitUntil:'domcontentloaded'});await settle();assert.deepEqual(await page.evaluate(()=>loadBookmarkData().bookmarks.filter(b=>b.categoryId==='matrix').sort((a,b)=>a.order-b.order).map(b=>b.id)),ids);
-      await page.locator('[data-category-id="matrix"] > .section-header .drag-dots-handle').focus();await page.keyboard.press('Enter');await page.locator('#bar-edit').click();await page.waitForTimeout(200);assert(await page.locator('#add-modal').isVisible());
-      await page.locator('.section-order-row .drag-dots-handle').first().focus();await page.keyboard.press('ArrowDown');await page.locator('#cat-submit-btn').click();await page.waitForTimeout(220);assert.deepEqual(await page.evaluate(()=>loadBookmarkData().categories.find(c=>c.id==='matrix').subSections.map(s=>s.id)),['later','daily','reference']);
+      await page.locator('[data-category-id="matrix"] > .section-header .drag-dots-handle').focus();await page.keyboard.press('Enter');await page.locator('#bar-edit').click();await page.waitForTimeout(200);assert(await page.locator('#add-modal').isVisible());await page.locator('#form-add-cat').waitFor({state:'visible'});
+      await page.locator('.section-order-row .drag-dots-handle').first().focus();await page.keyboard.press('ArrowDown');await page.waitForFunction(()=>Array.from(document.querySelectorAll('.section-order-row')).map(n=>n.dataset.sectionId).join(',')==='later,daily,reference');await page.locator('#cat-submit-btn').click();await page.waitForTimeout(220);assert.deepEqual(await page.evaluate(()=>loadBookmarkData().categories.find(c=>c.id==='matrix').subSections.map(s=>s.id)),['later','daily','reference']);
       assert.equal(await page.locator('#heavenly-drag-avatar,.bookmark-card.dragging,.section-card.dragging').count(),0);
       pass('actual mouse bookmark drag persists after reload; keyboard subsection ordering saves through dialog');
       await page.locator('#open-share-btn').click();await page.waitForTimeout(120);assert(await page.locator('#share-modal').isVisible());await page.keyboard.press('Escape');await page.locator('#share-modal').waitFor({state:'hidden',timeout:1000});assert.equal(await page.locator('#share-modal').isVisible(),false);
@@ -83,6 +83,17 @@ let server;
         pass('WebKit iPad profile supports touch taps, central search and portrait/landscape adaptation');
       }
       record.status='passed';
-    }catch(error){record.status='failed';record.failure=error.stack;console.error('FAIL '+name+': '+error.message);process.exitCode=1;}finally{await context?.close();await browser?.close();}
+    }catch(error){
+      if(context){
+        try {
+          const failurePage=context.pages()[0];
+          record.failureState=await failurePage.evaluate(()=>{
+            const ids=['search-go-btn','search-newtab-btn','add-modal','form-add-cat','cat-sections-list','cat-submit-btn'];
+            return {activeElement:document.activeElement&&document.activeElement.outerHTML,controls:ids.map(id=>{const n=document.getElementById(id),s=n&&getComputedStyle(n),r=n&&n.getBoundingClientRect();return{id,className:n&&n.className,hidden:n&&n.hidden,inert:n&&n.inert,display:s&&s.display,visibility:s&&s.visibility,width:r&&r.width,height:r&&r.height,top:r&&r.top,overflow:s&&s.overflow,parent:n&&n.parentElement.outerHTML.slice(0,1200)}})};
+          });
+          fs.mkdirSync(path.dirname(output),{recursive:true});await failurePage.screenshot({path:output+'.'+name+'-failure.png'});
+        }catch(diagnosticError){record.diagnosticFailure=diagnosticError.message;}
+      }
+      record.status='failed';record.failure=error.stack;console.error('FAIL '+name+': '+error.message);process.exitCode=1;}finally{await context?.close();await browser?.close();}
   }
 })().catch(error=>{summary.failure=error.stack;process.exitCode=1;console.error(error)}).finally(async()=>{fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(summary,null,2));if(server){server.closeAllConnections?.();await new Promise(r=>server.close(r));}});

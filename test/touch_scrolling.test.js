@@ -10,8 +10,11 @@ function harness() {
   let now = 1000, nextTimer = 0;
   const timers = new Map();
   function target() {
-    const listeners = new Map();
-    return {
+    const listeners = new Map(), classes = new Set();
+    const node = {
+      isConnected:true,
+      classList:{add(...names){names.forEach(name=>classes.add(name));},remove(...names){names.forEach(name=>classes.delete(name));},contains(name){return classes.has(name);}},
+      contains(other){return other===node;},
       closest: selector => selector.includes('.section-card') ? {} : null,
       addEventListener(type, fn, options = {}) {
         const capture = options === true || !!options.capture;
@@ -30,11 +33,13 @@ function harness() {
           if (event.immediateStopped) break;
         }
       },
-      count(type) { return (listeners.get(type) || []).filter(entry => !entry.capture).length; }
+      count(type) { return (listeners.get(type) || []).length; }
     };
+    return node;
   }
   const document = target(), window = target(), handle = target();
   document.querySelectorAll = () => [];
+  window.PointerEvent = function PointerEvent() {};
   const calls = { hold: 0, move: 0, drop: 0, cancel: 0, close: 0 };
   const context = {
     document, window, bookmarkPointerOrigin:null, bookmarkPointerStart:null, bookmarkInputType:'mouse', bookmarkDragHandleOrigin:true, clearBookmarkPlacement(){}, Date: { now: () => now },
@@ -75,15 +80,14 @@ function harness() {
 }
 
 describe('Bookmark touch scrolling and deliberate handle dragging', function () {
-  it('allows native vertical scrolling on cards and lists, reserving only the handle for dragging', function () {
+  it('allows native vertical scrolling on cards, lists and handles before activation', function () {
     const cardRule = html.match(/\.bookmark-card \{([^}]+)\}/)[1];
     assert(cardRule.includes('touch-action: pan-y;'));
     assert(html.includes('.bottom-section-container {\n      touch-action: pan-y;'));
-    assert.equal((html.match(/touch-action: none;/g) || []).length, 1);
-    assert(html.match(/\.drag-dots-handle \{([^}]+)\}/)[1].includes('touch-action: none;'));
+    assert(html.match(/\.drag-dots-handle \{([^}]+)\}/)[1].includes('touch-action: pan-y;'));
   });
 
-  for (const [axis, x, y] of [['vertical', 20, 29], ['horizontal', 29, 20]]) {
+  for (const [axis, x, y] of [['vertical', 20, 32], ['horizontal', 32, 20]]) {
     it('cancels a fast ' + axis + ' handle swipe before the hold without blocking its events', function () {
       const h = harness();
       assert.equal(h.touch('touchstart').defaultPrevented, false);
@@ -113,6 +117,30 @@ describe('Bookmark touch scrolling and deliberate handle dragging', function () 
     assert.equal(h.calls.drop, 1);
     assert.equal(h.document.count('touchmove'), 0);
     assert.equal(h.context.cancelBookmarkTouchGesture, null);
+  });
+
+
+  it('owns modern touch once without canceling pointerdown or starting a second pipeline', function () {
+    const h=harness();
+    const pointer=h.event('pointerdown',{pointerType:'touch',button:0,isPrimary:true,pointerId:7});
+    h.handle.emit('pointerdown',pointer);
+    assert.equal(pointer.defaultPrevented,false);
+    h.touch('touchstart');h.tick(420);
+    assert.equal(h.calls.hold,1);
+    assert.equal(h.timers.size,0);
+    assert.equal(h.document.count('touchmove'),1);
+    h.touch('touchcancel');
+    assert.equal(h.document.count('touchmove'),0);
+    assert.equal(h.document.count('pointercancel'),0);
+  });
+
+  it('abandons an already browser-owned noncancelable pan without moving or dropping', function () {
+    const h=harness();h.touch('touchstart');h.tick(420);
+    const move=h.touch('touchmove',20,50,{cancelable:false});
+    assert.equal(move.defaultPrevented,false);
+    assert.equal(h.calls.cancel,1);assert.equal(h.calls.move,0);
+    h.touch('touchend',20,50);assert.equal(h.calls.drop,0);
+    assert.equal(h.document.count('touchmove'),0);
   });
 
   it('does not drag on a tap or a stationary long press', function () {
@@ -162,6 +190,10 @@ describe('Bookmark touch scrolling and deliberate handle dragging', function () 
   it('cleans up on blur, hidden documents, and rerender interruption', function () {
     for (const interrupt of [
       h => h.window.emit('blur', h.event('blur')),
+      h => h.window.emit('pagehide', h.event('pagehide')),
+      h => h.window.emit('popstate', h.event('popstate')),
+      h => h.document.emit('keydown',h.event('keydown',{key:'Escape'}),true),
+      h => h.document.emit('pointercancel',h.event('pointercancel',{pointerType:'touch'}),true),
       h => { h.document.hidden = true; h.document.emit('visibilitychange', h.event('visibilitychange')); },
       h => h.context.cancelActiveBookmarkTouch()
     ]) {

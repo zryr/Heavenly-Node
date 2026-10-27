@@ -1,0 +1,30 @@
+{
+  "executed": "2026-10-27T18:37:09.524Z",
+  "baseline": true,
+  "baselineCommit": "2725f32369bb609bcd0cf8c8d51e272f9a420009",
+  "input": "Chromium CDP native touch emulation",
+  "physicalDevices": [],
+  "viewports": [
+    {
+      "name": "portrait",
+      "width": 820,
+      "height": 1180,
+      "checks": [
+        "merged baseline reproduces blocked pre-hold handle scrolling"
+      ],
+      "preHoldScrollDelta": 0
+    },
+    {
+      "name": "landscape",
+      "width": 1180,
+      "height": 820,
+      "checks": [
+        "merged baseline reproduces blocked pre-hold handle scrolling"
+      ],
+      "preHoldScrollDelta": 0
+    }
+  ],
+  "errors": [],
+  "browserVersion": "154.0.8037.57",
+  "status": "passed"
+}
