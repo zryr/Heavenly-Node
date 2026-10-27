@@ -21,10 +21,11 @@ function context(page = 'index.html') {
   return c;
 }
 for (const page of ['index.html', 'settings.html']) describe('Safe bookmark reconciliation: ' + page, () => {
-  it('places Coolmath after all existing built-in Games defaults', () => {
+  it('keeps Coolmath after the pre-Phase-8 Games defaults when adding Budsin', () => {
     const c = context(page);
     const games = c.DEFAULT_BOOKMARK_DATA.bookmarks.filter(b => b.categoryId === 'cat_games' && b.builtIn).sort((a, b) => a.order - b.order);
-    assert.equal(games.at(-1).id, 'bm_coolmath');
+    assert.equal(games.filter(b => b.id !== 'bm_budsin_games').at(-1).id, 'bm_coolmath');
+    assert.equal(games.at(-1).id, 'bm_budsin_games');
   });
   it('appends Coolmath once after existing game order, preserving personalized data and hidden settings', () => {
     const c = context(page), data = plain(c.DEFAULT_BOOKMARK_DATA);
