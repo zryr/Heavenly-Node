@@ -1,0 +1,17 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS grouped Quick Settings retain unrelated preferences, bookmarks and tabs; multi-selection is absent
+PASS native proxy path, displayed URL, URL-only SPA navigation, state-only calls, replaceState, titles, fragments and browser back/forward
+PASS history reopening, keyboard deletion without navigation, refresh persistence and clearing
+PASS legacy about:blank preferences split independently and Settings preserves unrelated fields
+PASS about:blank remains blank, redirects and in-frame navigation update history/URL, clearing stays cleared, recovery opens the current page
+PASS hidden URL mode uses a stable Heavenly page, follows navigation, restores on refresh and preserves recovery
+PASS hidden URL New Tab sessions restore independently and enabling Show Proxied URL returns existing hosted sessions to native navigation
+PASS ordinary bookmarks honor independent about:blank settings; Direct bookmarks stay direct and use normal navigation
+PASS long-press launch opens exactly one tab on release while a user gesture is available
+PASS popup blockers offer a usable current-tab fallback and preserve the page when declined
+PASS frame restrictions keep the wrapper visible with explicit normal-navigation recovery
+PASS persistent cloaking keeps its preset while history retains the real initial and changing website title
+PASS history works independently of the feature/widget switches
+PASS malformed history is recoverable and the browser reports no uncaught application errors
+PASS navigation and controls remain usable when the browser denies storage access
+15 browser checks passed (webkit; emulated touch viewport, no physical device verification)

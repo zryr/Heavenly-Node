@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const playwright = require('playwright');
 const app = require('../../app');
+const { revealSettingsControl } = require('./settings_test_helpers.cjs');
 const engine = process.env.HEAVENLY_BROWSER || 'chromium';
 const listen = server => new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const close = server => new Promise(resolve => { server.closeAllConnections?.(); server.close(resolve); });
@@ -142,6 +143,7 @@ function pass(message) { checks++; console.log('PASS ' + message); }
   assert(await page.locator('#set-bookmarks-about-blank').isChecked());
   assert.equal(await page.locator('#set-search-about-blank').isChecked(), false);
   await page.evaluate(() => HeavenlyNavigation.updateSettings(localStorage, { futureSetting: 'preserved', dockPosition: 'left' }));
+  await revealSettingsControl(page, '#set-search-about-blank');
   await page.locator('label[for="set-search-about-blank"]').click();
   assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('heavenly_settings')).futureSetting), 'preserved');
   assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('heavenly_settings')).dockPosition), 'left');
@@ -207,6 +209,11 @@ function pass(message) { checks++; console.log('PASS ' + message); }
     data.bookmarks.push({ id: 'test_direct', title: 'Direct fixture', url: remote + '/first', categoryId: 'navigation_test', subSectionId: 'user', order: 1, launchPreference: 'direct' });
     saveBookmarkData(data); expandedCategories.navigation_test = true; renderBookmarksUI();
   }, remote);
+  // The phone layout initially collapses side panels. Open the actual panel
+  // before awaiting navigation so a hidden bookmark cannot strand popup waits.
+  const leftBookmarks = page.locator('.layout-toolbar [data-sidebar-toggle="left"]');
+  if (await leftBookmarks.getAttribute('aria-expanded') !== 'true') await leftBookmarks.click();
+  await page.locator('[data-bm-id="test_proxy"] .bookmark-title').waitFor({ state: 'visible' });
   let openedPromise = page.waitForEvent('popup');
   await page.locator('[data-bm-id="test_proxy"] .bookmark-title').click();
   const bookmarkTab = await openedPromise;
