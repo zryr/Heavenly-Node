@@ -1,0 +1,289 @@
+{
+  "baseline": "a329d6cf0a01728526057b8a854a5ec7fb19c705",
+  "screenshots": [
+    {
+      "file": "before/academy-desktop.png",
+      "label": "Before · Desktop entry",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 498205
+    },
+    {
+      "file": "after/academy-desktop.png",
+      "label": "After · Desktop entry",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 783404
+    },
+    {
+      "file": "before/academy-phone.png",
+      "label": "Before · Phone entry",
+      "width": 390,
+      "height": 844,
+      "bytes": 148100
+    },
+    {
+      "file": "after/academy-phone.png",
+      "label": "After · Phone entry",
+      "width": 390,
+      "height": 844,
+      "bytes": 197513
+    },
+    {
+      "file": "after/academy-tablet.png",
+      "label": "Tablet entry",
+      "width": 820,
+      "height": 1180,
+      "bytes": 463976
+    },
+    {
+      "file": "after/academy-menu-phone.png",
+      "label": "Phone navigation",
+      "width": 390,
+      "height": 844,
+      "bytes": 93574
+    },
+    {
+      "file": "after/academy-programs-tablet.png",
+      "label": "Academic pathways",
+      "width": 820,
+      "height": 1180,
+      "bytes": 111479
+    },
+    {
+      "file": "after/academy-program-section-phone.png",
+      "label": "A real learning section",
+      "width": 390,
+      "height": 844,
+      "bytes": 55601
+    },
+    {
+      "file": "after/academy-coming-soon-phone.png",
+      "label": "Planned service: Coming Soon",
+      "width": 390,
+      "height": 844,
+      "bytes": 46903
+    },
+    {
+      "file": "after/academy-unavailable-phone.png",
+      "label": "Genuine server read-failure recovery fixture",
+      "width": 390,
+      "height": 844,
+      "bytes": 41118
+    },
+    {
+      "file": "after/academy-terms-phone.png",
+      "label": "Terms and return action",
+      "width": 390,
+      "height": 844,
+      "bytes": 80674
+    },
+    {
+      "file": "after/academy-terms-zoom.png",
+      "label": "Information at 200% CSS zoom",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 136594
+    },
+    {
+      "file": "before/home-desktop.png",
+      "label": "Before · Heavenly on desktop",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 299030
+    },
+    {
+      "file": "after/home-desktop.png",
+      "label": "After · Heavenly on desktop",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 226581
+    },
+    {
+      "file": "before/home-phone.png",
+      "label": "Before · Heavenly on phone",
+      "width": 390,
+      "height": 844,
+      "bytes": 85834
+    },
+    {
+      "file": "after/home-phone.png",
+      "label": "After · Heavenly on phone",
+      "width": 390,
+      "height": 844,
+      "bytes": 85474
+    },
+    {
+      "file": "after/message-gradient-desktop.png",
+      "label": "A restrained gradient variation",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 227335
+    },
+    {
+      "file": "after/message-music-desktop.png",
+      "label": "An optional music message",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 228288
+    },
+    {
+      "file": "after/message-playlist-phone.png",
+      "label": "Playlist and headphone suggestion",
+      "width": 390,
+      "height": 844,
+      "bytes": 94515
+    },
+    {
+      "file": "after/message-playlist-progression-phone.png",
+      "label": "Optional playlist exploration",
+      "width": 390,
+      "height": 844,
+      "bytes": 101007
+    },
+    {
+      "file": "after/message-side-eye-phone.png",
+      "label": "Ao Oni side-eye: Purple Hulk",
+      "width": 390,
+      "height": 844,
+      "bytes": 97980
+    },
+    {
+      "file": "after/message-ao-dialogue-phone.png",
+      "label": "Original retro dialogue",
+      "width": 390,
+      "height": 844,
+      "bytes": 99647
+    },
+    {
+      "file": "after/message-ao-dance.png",
+      "label": "Brief nonmodal dance surprise",
+      "width": 390,
+      "height": 844,
+      "bytes": 120871
+    },
+    {
+      "file": "after/message-khezu-phone.png",
+      "label": "Khezu interruption",
+      "width": 390,
+      "height": 844,
+      "bytes": 99840
+    },
+    {
+      "file": "after/message-doggy-phone.png",
+      "label": "Doggy appearance",
+      "width": 390,
+      "height": 844,
+      "bytes": 103253
+    },
+    {
+      "file": "after/message-ao-reduced-phone.png",
+      "label": "Reduced-motion alternative",
+      "width": 390,
+      "height": 844,
+      "bytes": 110386
+    },
+    {
+      "file": "before/settings-cloaking-desktop.png",
+      "label": "Before · Tab appearance explanations",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 217408
+    },
+    {
+      "file": "after/settings-cloaking-desktop.png",
+      "label": "After · Tab appearance explanations",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 222017
+    },
+    {
+      "file": "before/viewer-help-phone.png",
+      "label": "Before · HTML Viewer help",
+      "width": 390,
+      "height": 844,
+      "bytes": 105070
+    },
+    {
+      "file": "after/viewer-help-phone.png",
+      "label": "After · HTML Viewer help",
+      "width": 390,
+      "height": 844,
+      "bytes": 97943
+    },
+    {
+      "file": "before/quick-settings-dialog-desktop.png",
+      "label": "Before · Quick Settings explanation",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 313192
+    },
+    {
+      "file": "after/quick-settings-dialog-desktop.png",
+      "label": "After · Quick Settings explanation",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 260731
+    },
+    {
+      "file": "before/widgets-desktop.png",
+      "label": "Before · Website toolbar",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 42271
+    },
+    {
+      "file": "after/widgets-desktop.png",
+      "label": "After · Website toolbar",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 42271
+    },
+    {
+      "file": "before/error-desktop.png",
+      "label": "Before · Actionable website error fixture",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 442962
+    },
+    {
+      "file": "after/error-desktop.png",
+      "label": "After · Actionable website error fixture",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 435371
+    },
+    {
+      "file": "after/settings-phone.png",
+      "label": "Settings on a narrow screen",
+      "width": 390,
+      "height": 844,
+      "bytes": 93049
+    },
+    {
+      "file": "after/viewer-phone.png",
+      "label": "HTML Viewer on a narrow screen",
+      "width": 390,
+      "height": 844,
+      "bytes": 108951
+    },
+    {
+      "file": "chromium-hq-messages-desktop.png",
+      "label": "Registered messages and draft editor",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 314617
+    },
+    {
+      "file": "chromium-hq-scene-preview.png",
+      "label": "Contained special-scene preview",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 364920
+    }
+  ],
+  "recordings": [
+    "academy-to-home-phone.webm",
+    "character-scenes-phone.webm"
+  ]
+}

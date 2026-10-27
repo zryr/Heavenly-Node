@@ -1,0 +1,48 @@
+{
+  "executed": "2026-10-26T12:50:57.997128Z",
+  "reason": "Affected browser checks after selective Bolt PR #200 bookmark URL lookup adaptation",
+  "physicalDevices": [],
+  "jobs": [
+    {
+      "suite": "homepage_search_limits",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "groups": 8,
+      "elapsedSeconds": 17.4,
+      "log": "regressions/post-jules-homepage_search_limits-chromium/run.txt"
+    },
+    {
+      "suite": "homepage_search_limits",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "groups": 8,
+      "elapsedSeconds": 23.3,
+      "log": "regressions/post-jules-homepage_search_limits-firefox/run.txt"
+    },
+    {
+      "suite": "homepage_search_limits",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "groups": 8,
+      "elapsedSeconds": 12.1,
+      "log": "regressions/post-jules-homepage_search_limits-webkit/run.txt"
+    },
+    {
+      "completed": "2026-10-26T12:53:51.810778+00:00",
+      "suite": "catalog_updates",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "groups": 21,
+      "log": "regressions/post-jules-catalog_updates-chromium/run.txt",
+      "scope": "After targeted Bolt PR #200 bookmark lookup adaptation and test-only Preferred animation observation reorder.",
+      "priorFailureLog": "regressions/post-jules-catalog_updates-chromium/prior-failure.txt",
+      "priorFailureResult": "regressions/post-jules-catalog_updates-chromium/prior-failure-result.json"
+    }
+  ],
+  "completed": "2026-10-26T12:53:51.810778+00:00",
+  "status": "passed"
+}

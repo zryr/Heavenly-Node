@@ -94,8 +94,8 @@ describe('settings.html standalone page', function() {
     });
 
     it('should configure Timed Decoy Auto-Unlock setting card and default decoyAutoTimer to false', function() {
-        assert.ok(html.includes('Timed Decoy Auto-Unlock'), 'Card label should be Timed Decoy Auto-Unlock');
-        assert.ok(html.includes('Automatically opens Heavenly after a few seconds without clicking Terms of Service.'), 'Card description should match specification');
+        assert.ok(html.includes('Timed Decoy Auto-Unlock'), 'Legacy timer name stays discoverable in source');
+        assert.ok(html.includes('Open Heavenly a few seconds after the school page appears. You can still use its Terms of Service link to enter.'), 'Card description should match specification');
         assert.ok(html.includes('decoyAutoTimer: saved.decoyAutoTimer !== undefined ? Boolean(saved.decoyAutoTimer) : false'), 'loadSettings should default decoyAutoTimer to false');
         assert.ok(html.includes("settings.decoyAutoTimer = $('set-decoy-auto-timer') ? $('set-decoy-auto-timer').checked : false;"), 'updateHandler should persist decoyAutoTimer');
         assert.ok(html.includes("decoyAutoTimerCb.checked = Boolean(settings.decoyAutoTimer);"), 'syncSettingsToUI should reflect decoyAutoTimer state');

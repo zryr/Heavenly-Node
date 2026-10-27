@@ -1,0 +1,18 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit: Sample HTML/CSS/JavaScript renders and responds in the isolated preview
+PASS webkit: Executed attack cannot read/write parent storage, parent/top DOM or frameElement; preview storage and popup blocked
+PASS webkit: Unregistered/wrong-token messages ignored and rerunning tears down old timers and diagnostic channel
+PASS webkit: Runtime, syntax and rejected-promise failures produce readable diagnostics; browser-redacted details have actionable guidance
+PASS webkit: All three view modes and Ctrl/Cmd+Enter preserve and execute current source
+PASS webkit: Mouse/keyboard splitter preference persists separately from exact source
+PASS webkit: Tab/multiline/Shift+Tab edits autosave; Escape then Tab leaves the editor
+PASS webkit: Clear persists intentional empty source; reload/Restore and sample replacement recover previous work
+PASS webkit: Simulated quota failure during Restore preserves the durable recovery copy and reports unsaved work
+PASS webkit: A denied initial source read followed by working writes never overwrites the unreadable saved document
+PASS webkit: Copy feedback follows actual clipboard completion
+PASS webkit: Fullscreen rejection has a visible fallback with Escape and focus restoration
+PASS webkit: User-initiated full-window preview has no opener and authored code remains opaque-origin isolated
+PASS webkit: Existing three-tier VUS launch reaches local fallback in the same isolated user-initiated shell
+PASS webkit: 20,000-line source loads, accepts caret editing and persists with a bounded scroll-synchronized gutter
+PASS webkit: Tablet/phone portrait and landscape switch panels without losing source or horizontal overflow
+PASS webkit: Reduced motion, persisted cloaking and cross-tab master gating retain choices and restore the correct identity

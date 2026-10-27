@@ -1,0 +1,57 @@
+{
+  "executed": "2026-10-26T12:44:15.592Z",
+  "input": "Playwright mouse/keyboard with browser clock and synthetic visibility; no physical devices.",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "ordinary first; real browser scheduler holds through13seconds and rotates once by13.6seconds with no unsolicited popup",
+        "hover, keyboard focus, hidden document, offscreen state and persisted explicit Pause compose; manual Next remains usable",
+        "headphone advice appears once per session; explicit Aura→Hardstyle/Hardtekk→Favorites exploration never autoopens Spotify; real anchor opens exact destination with null opener only on click",
+        "original character assets and keyboard dialogue work; seven short GIF dancers are nonmodal and pointer-transparent; Escape preserves input focus and auto completion removes the scene",
+        "modal keyboard boundaries restore the trigger; hidden, offscreen and page-transition lifecycle events close scenes while preserving explicit Pause",
+        "reduced motion uses only still assets; changing the preference cleans an active dance and rerenders the current fallback without waiting for rotation",
+        "published short, long and sticker messages keep a stable well at1440/820/390/320px with32px controls and no overlap or horizontal overflow",
+        "authored markup remains literal text and disabled preview navigation blocks primary and middle clicks",
+        "detaching the owner during a dance destroys its timer, observer-owned scene and all owned document/window/media listeners"
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "ordinary first; real browser scheduler holds through13seconds and rotates once by13.6seconds with no unsolicited popup",
+        "hover, keyboard focus, hidden document, offscreen state and persisted explicit Pause compose; manual Next remains usable",
+        "headphone advice appears once per session; explicit Aura→Hardstyle/Hardtekk→Favorites exploration never autoopens Spotify; real anchor opens exact destination with null opener only on click",
+        "original character assets and keyboard dialogue work; seven short GIF dancers are nonmodal and pointer-transparent; Escape preserves input focus and auto completion removes the scene",
+        "modal keyboard boundaries restore the trigger; hidden, offscreen and page-transition lifecycle events close scenes while preserving explicit Pause",
+        "reduced motion uses only still assets; changing the preference cleans an active dance and rerenders the current fallback without waiting for rotation",
+        "published short, long and sticker messages keep a stable well at1440/820/390/320px with32px controls and no overlap or horizontal overflow",
+        "authored markup remains literal text and disabled preview navigation blocks primary and middle clicks",
+        "detaching the owner during a dance destroys its timer, observer-owned scene and all owned document/window/media listeners"
+      ],
+      "errors": [],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "ordinary first; real browser scheduler holds through13seconds and rotates once by13.6seconds with no unsolicited popup",
+        "hover, keyboard focus, hidden document, offscreen state and persisted explicit Pause compose; manual Next remains usable",
+        "headphone advice appears once per session; explicit Aura→Hardstyle/Hardtekk→Favorites exploration never autoopens Spotify; real anchor opens exact destination with null opener only on click",
+        "original character assets and keyboard dialogue work; seven short GIF dancers are nonmodal and pointer-transparent; Escape preserves input focus and auto completion removes the scene",
+        "modal keyboard boundaries restore the trigger; hidden, offscreen and page-transition lifecycle events close scenes while preserving explicit Pause",
+        "reduced motion uses only still assets; changing the preference cleans an active dance and rerenders the current fallback without waiting for rotation",
+        "published short, long and sticker messages keep a stable well at1440/820/390/320px with32px controls and no overlap or horizontal overflow",
+        "authored markup remains literal text and disabled preview navigation blocks primary and middle clicks",
+        "detaching the owner during a dance destroys its timer, observer-owned scene and all owned document/window/media listeners"
+      ],
+      "errors": [],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

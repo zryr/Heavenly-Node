@@ -37,7 +37,7 @@ describe("Developer QA Panel, Loading Screen Redesign & Touch Drop Indicators", 
         for (const match of source.matchAll(/<\/?div\b[^>]*>/g)) {
           depth += match[0].startsWith('</') ? -1 : 1;
           if (!depth) return source.slice(0, match.index + match[0].length)
-            .replace(/Entering Heavenly\.\.\.|Initializing Heavenly\.\.\./g, 'Loading Heavenly...').replace(/\s+/g, ' ').trim();
+            .replace(/Entering Heavenly\.\.\.|Initializing Heavenly\.\.\.|Loading settings…/g, 'Loading Heavenly...').replace(/\s+/g, ' ').trim();
         }
         throw new Error('Loader markup is incomplete');
       }

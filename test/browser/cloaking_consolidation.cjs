@@ -46,7 +46,7 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   await page.locator('#qs-config-selectedPreset').selectOption('custom'); assert.equal(await page.locator('#qs-context-preview-title').innerText(), 'Study Custom');
   await page.locator('#qs-config-randomizePresetEachSession').check(); await page.locator('#qs-context-pool summary').click(); await chip('google').click();
   assert.equal(await page.locator('#qs-context-save').isDisabled(), false); assert.equal(await chip('google').getAttribute('aria-pressed'), 'false'); assert.equal(await chip('custom').getAttribute('aria-pressed'), 'true');
-  assert((await page.locator('#qs-context-pool-note').innerText()).includes('unavailable entries are kept')); const beforeCancel = await saved(); await cancel(); assert.deepEqual(await saved(), beforeCancel);
+  assert((await page.locator('#qs-context-pool-note').innerText()).includes('Unavailable saved presets are kept.')); const beforeCancel = await saved(); await cancel(); assert.deepEqual(await saved(), beforeCancel);
   pass('behavior/identity/pool edits stay staged, custom preview works and Cancel preserves every saved field');
 
   await open(); await page.locator('#qs-context-pool summary').click(); await chip('google').tap(); await save();
@@ -61,7 +61,7 @@ const pass = message => { checks++; console.log('PASS ' + message); };
 
   await open(); await page.locator('#qs-context-pool summary').click(); await page.locator('#qs-context-pool-all').click(); assert.equal(await chip('custom').getAttribute('aria-pressed'), 'true');
   await save(); assert((await saved()).randomPool.includes('unavailable')); assert((await saved()).randomPool.includes('custom'));
-  await open(); await page.locator('#qs-context-pool summary').click(); await page.locator('#qs-context-pool-none').click(); assert.equal(await page.locator('#qs-context-pool-count').innerText(), '0 selected'); assert((await page.locator('#qs-context-pool-note').innerText()).includes('uses all available presets')); await save(); assert.deepEqual((await saved()).randomPool, []);
+  await open(); await page.locator('#qs-context-pool summary').click(); await page.locator('#qs-context-pool-none').click(); assert.equal(await page.locator('#qs-context-pool-count').innerText(), '0 selected'); assert((await page.locator('#qs-context-pool-note').innerText()).includes('Random choice will use all available presets.')); await save(); assert.deepEqual((await saved()).randomPool, []);
   await open(); await page.locator('#qs-config-randomizePresetEachSession').check(); await save();
   assert.equal((await saved()).selectedPreset, 'docs'); assert.deepEqual((await saved()).randomPool, []); assert(await page.evaluate(() => !!sessionStorage.getItem('heavenly_session_preset')));
   pass('Select All retains saved unavailable/custom entries; Deselect All preserves the existing empty-pool fallback and never resets manual selection');

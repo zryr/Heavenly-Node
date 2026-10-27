@@ -1,0 +1,402 @@
+{
+  "engine": "webkit",
+  "executed": "2026-10-26T03:22:08.567Z",
+  "physicalDevices": [],
+  "checks": [
+    "one collapsed among expanded categories retains a usable full-width panel",
+    "all collapsed categories reclaim real center width, keep stable named controls, and disable resizing without changing saved intent",
+    "universal bookmark search still finds hidden category contents without changing saved state",
+    "real mouse dragging reorders independently collapsed category rail headers",
+    "keyboard expansion restores saved width and focus; separator remains usable after reopening",
+    "stable category collapse survives reload, moves, last-category hide and restore without replacing manual layout preferences",
+    "manual whole-sidebar collapse remains distinct from temporary category compaction",
+    "Chromebook, iPad portrait/landscape and narrow portrait/landscape emulation retain reachable full-label category controls without overflow",
+    "rapid reversals and reduced motion settle to the last requested state without width drift, overflow or gesture residue"
+  ],
+  "transitions": [
+    {
+      "width": 1366,
+      "scrollWidth": 1366,
+      "center": 840,
+      "actual": {
+        "compact": false,
+        "left": {
+          "open": true,
+          "width": 206,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": true,
+          "width": 256,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    },
+    {
+      "width": 820,
+      "scrollWidth": 820,
+      "center": 506,
+      "actual": {
+        "compact": false,
+        "left": {
+          "open": true,
+          "width": 206,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": false,
+          "width": 240,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    },
+    {
+      "width": 1180,
+      "scrollWidth": 1180,
+      "center": 654,
+      "actual": {
+        "compact": false,
+        "left": {
+          "open": true,
+          "width": 206,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": true,
+          "width": 256,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "center": 366,
+      "actual": {
+        "compact": true,
+        "left": {
+          "open": false,
+          "width": 206,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": false,
+          "width": 256,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    },
+    {
+      "width": 844,
+      "scrollWidth": 844,
+      "center": 530,
+      "actual": {
+        "compact": false,
+        "left": {
+          "open": true,
+          "width": 206,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": false,
+          "width": 240,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "center": 914,
+      "actual": {
+        "compact": false,
+        "left": {
+          "open": true,
+          "width": 206,
+          "empty": false,
+          "categoryCompact": true
+        },
+        "right": {
+          "open": true,
+          "width": 256,
+          "empty": false,
+          "categoryCompact": false
+        }
+      }
+    }
+  ],
+  "version": "26.5",
+  "compactTransition": [
+    {
+      "time": 0,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 37,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 42,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 61,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 76,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 78,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 85,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 95,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 142,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 292,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 1087,
+      "center": 864,
+      "track": 256
+    },
+    {
+      "time": 1586,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2153,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2584,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2591,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2658,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2659,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2672,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2689,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2706,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2741,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2758,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2774,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2790,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2838,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2854,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2886,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2892,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2946,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2962,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2978,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 2994,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3056,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3067,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3082,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3099,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3137,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3154,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3170,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3191,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3244,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3255,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3274,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3294,
+      "center": 914,
+      "track": 206
+    },
+    {
+      "time": 3341,
+      "center": 914,
+      "track": 206
+    }
+  ],
+  "pageErrors": [],
+  "finalState": {
+    "preferences": {
+      "version": 1,
+      "priority": "left",
+      "left": {
+        "width": 400,
+        "collapsed": false,
+        "compactOpen": true
+      },
+      "right": {
+        "width": 256,
+        "collapsed": false,
+        "compactOpen": false
+      },
+      "categoryCollapsed": {
+        "rail_b": true,
+        "rail_a": true
+      }
+    },
+    "actual": {
+      "compact": false,
+      "left": {
+        "open": true,
+        "width": 206,
+        "empty": false,
+        "categoryCompact": true
+      },
+      "right": {
+        "open": true,
+        "width": 256,
+        "empty": false,
+        "categoryCompact": false
+      }
+    }
+  }
+}

@@ -60,7 +60,7 @@ describe('Quick Settings customization model', function () {
     assert.strictEqual(item.href, undefined);
     assert.strictEqual(item.key, 'panicKeyEnable');
     assert.strictEqual(item.configure, 'panic');
-    assert(item.help.includes('does not trigger a panic redirect'));
+    assert(item.help.includes('This shortcut only turns the feature on or off.'));
   });
   it('adds Auto Tab Cloaking without enabling or reordering existing shortcuts on upgrade', function () {
     const item = model.items.find(item => item.id === 'pill-tab-cloak');

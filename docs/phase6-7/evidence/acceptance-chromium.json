@@ -1,0 +1,190 @@
+{
+  "executed": "2026-10-26T03:18:41.461Z",
+  "physicalDevices": [],
+  "participants": [],
+  "input": "Playwright mouse/keyboard and Chromium/WebKit touch emulation; Firefox uses desktop input. Linux WebKit is not Apple Safari. No student usability study.",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "fresh entry redirects to Academy; six responsive sizes, keyboard menu, real subpage and Terms return flow work",
+        "message next/pause work with keyboard/click; six responsive home sizes fit; navigation creates no unsolicited tab, dialog or autoplay media",
+        "focused tooltip and gold playlist modal stay usable on phone; three character scenes advance and dismiss; reduced-motion Ao Oni uses a still and normal dance cleans up on Escape"
+      ],
+      "viewports": [
+        {
+          "surface": "academy",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "academy",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "academy",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "academy",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "academy",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "academy",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        },
+        {
+          "surface": "home",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "home",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "home",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "home",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "home",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "home",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        },
+        {
+          "surface": "settings",
+          "label": "desktop",
+          "width": 1440,
+          "height": 1000,
+          "innerWidth": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "surface": "settings",
+          "label": "chromebook",
+          "width": 1366,
+          "height": 768,
+          "innerWidth": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "surface": "settings",
+          "label": "tablet-portrait",
+          "width": 820,
+          "height": 1180,
+          "innerWidth": 820,
+          "scrollWidth": 820
+        },
+        {
+          "surface": "settings",
+          "label": "tablet-landscape",
+          "width": 1180,
+          "height": 820,
+          "innerWidth": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "surface": "settings",
+          "label": "phone",
+          "width": 390,
+          "height": 844,
+          "innerWidth": 390,
+          "scrollWidth": 390
+        },
+        {
+          "surface": "settings",
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "innerWidth": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "screenshots": [
+        "after/academy-desktop.png",
+        "after/academy-tablet.png",
+        "after/academy-phone.png",
+        "after/academy-menu-phone.png",
+        "after/academy-programs-tablet.png",
+        "after/academy-program-section-phone.png",
+        "after/academy-coming-soon-phone.png",
+        "after/academy-terms-phone.png",
+        "after/academy-terms-zoom.png",
+        "after/home-desktop.png",
+        "after/home-phone.png",
+        "after/message-gradient-desktop.png",
+        "after/message-playlist-phone.png",
+        "after/message-side-eye-phone.png",
+        "after/message-khezu-phone.png",
+        "after/message-doggy-phone.png",
+        "after/message-ao-reduced-phone.png",
+        "after/message-ao-dialogue-phone.png",
+        "after/message-ao-dance.png",
+        "after/quick-settings-dialog-desktop.png",
+        "after/settings-desktop.png",
+        "after/settings-phone.png"
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "failed",
+      "failure": "AssertionError [ERR_ASSERTION]: Disable All Privacy Widget Overlays old search alias lost\n    at /workspace/Heavenly-Node/test/browser/phase6_7_acceptance.cjs:48:778"
+    }
+  ]
+}

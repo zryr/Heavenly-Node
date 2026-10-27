@@ -1,0 +1,18 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox: Sample HTML/CSS/JavaScript renders and responds in the isolated preview
+PASS firefox: Executed attack cannot read/write parent storage, parent/top DOM or frameElement; preview storage and popup blocked
+PASS firefox: Unregistered/wrong-token messages ignored and rerunning tears down old timers and diagnostic channel
+PASS firefox: Runtime, syntax and rejected-promise failures produce readable diagnostics; browser-redacted details have actionable guidance
+PASS firefox: All three view modes and Ctrl/Cmd+Enter preserve and execute current source
+PASS firefox: Mouse/keyboard splitter preference persists separately from exact source
+PASS firefox: Tab/multiline/Shift+Tab edits autosave; Escape then Tab leaves the editor
+PASS firefox: Clear persists intentional empty source; reload/Restore and sample replacement recover previous work
+PASS firefox: Simulated quota failure during Restore preserves the durable recovery copy and reports unsaved work
+PASS firefox: A denied initial source read followed by working writes never overwrites the unreadable saved document
+PASS firefox: Copy feedback follows actual clipboard completion
+PASS firefox: Fullscreen rejection has a visible fallback with Escape and focus restoration
+PASS firefox: User-initiated full-window preview has no opener and authored code remains opaque-origin isolated
+PASS firefox: Existing three-tier VUS launch reaches local fallback in the same isolated user-initiated shell
+PASS firefox: 20,000-line source loads, accepts caret editing and persists with a bounded scroll-synchronized gutter
+PASS firefox: Tablet/phone portrait and landscape switch panels without losing source or horizontal overflow
+PASS firefox: Reduced motion, persisted cloaking and cross-tab master gating retain choices and restore the correct identity

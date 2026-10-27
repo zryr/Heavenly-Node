@@ -1,0 +1,5 @@
+PASS chromium fresh entry redirects to Academy; six responsive sizes, keyboard menu, real subpage and Terms return flow work
+PASS chromium message next/pause work with keyboard/click; six responsive home sizes fit; navigation creates no unsolicited tab, dialog or autoplay media
+PASS chromium focused tooltip and gold playlist modal stay usable on phone; three character scenes advance and dismiss; reduced-motion Ao Oni uses a still and normal dance cleans up on Escape
+FAIL chromium AssertionError [ERR_ASSERTION]: Disable All Privacy Widget Overlays old search alias lost
+    at /workspace/Heavenly-Node/test/browser/phase6_7_acceptance.cjs:48:778

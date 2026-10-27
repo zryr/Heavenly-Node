@@ -5,7 +5,7 @@ const path = require('node:path');
 const playwright = require('playwright');
 const app = require('../../app');
 const engine = process.env.HEAVENLY_BROWSER || 'chromium';
-const out = path.resolve(__dirname, '../../docs/phase4-5/evidence');
+const out = process.env.HEAVENLY_EVIDENCE_DIR ? path.resolve(process.env.HEAVENLY_EVIDENCE_DIR) : path.resolve(__dirname, '../../docs/phase4-5/evidence');
 const result = {engine, emulatedDevices:true, physicalDevices:[], checks:[], errors:[]};
 let server, browser, context, activePage;
 (async () => {
@@ -96,7 +96,7 @@ let server, browser, context, activePage;
   assert((await page.locator('#preview-diagnostics').textContent()).match(/SyntaxError|Unexpected|hid the error details/));
   await run('<h1>Rejection feedback</h1><script>Promise.reject(new Error("Async practice error"));<\/script>');
   await page.locator('#preview-diagnostics').waitFor({state:'visible'});
-  assert((await page.locator('#preview-diagnostics').textContent()).match(/Async practice error|asynchronous operation was rejected|hid the error details/));
+  assert((await page.locator('#preview-diagnostics').textContent()).match(/Async practice error|background task failed|hid the error details/));
   check('Runtime, syntax and rejected-promise failures produce readable diagnostics; browser-redacted details have actionable guidance');
 
   const work = '<!doctype html>\n<h1>Keep this work</h1>\n<script>document.body.dataset.ran="yes";<\/script>';

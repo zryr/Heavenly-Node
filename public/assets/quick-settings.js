@@ -23,7 +23,7 @@
     modal.className = 'qs-editor-backdrop';
     modal.hidden = true;
     modal.innerHTML = '<section class="qs-editor-card" role="dialog" aria-modal="true" aria-labelledby="qs-editor-title" aria-describedby="qs-editor-description">' +
-      '<header class="qs-editor-header"><div><h2 id="qs-editor-title">Customize Quick Settings</h2><p id="qs-editor-description">Choose which shortcuts appear in Quick Settings. Hiding a shortcut keeps its setting unchanged. Categories follow their first shortcut; shortcuts stay in your chosen order within each category.</p></div><button type="button" data-editor-close aria-label="Cancel customization">×</button></header>' +
+      '<header class="qs-editor-header"><div><h2 id="qs-editor-title">Customize Quick Settings</h2><p id="qs-editor-description">Choose the shortcuts you see. Hiding one keeps its setting unchanged. The first shortcut sets its category’s position. Shortcuts keep your chosen order within each category.</p></div><button type="button" data-editor-close aria-label="Cancel customization">×</button></header>' +
       '<div class="qs-editor-body"><div id="qs-editor-conflict" role="status" hidden><p id="qs-editor-conflict-text"></p><div id="qs-editor-conflict-actions" hidden><button type="button" id="qs-editor-load">Load saved layout</button><button type="button" id="qs-editor-keep">Keep my draft</button></div></div>' +
       '<h3>Visible shortcuts</h3><ol id="qs-editor-visible" class="qs-editor-list"></ol><p id="qs-editor-empty" hidden>No shortcuts selected. Edit remains available.</p>' +
       '<details id="qs-editor-more"><summary>Add More Shortcuts</summary><ul id="qs-editor-available" class="qs-editor-list"></ul></details>' +
@@ -95,7 +95,7 @@
             if (item.configure === 'panic' && typeof latest.panicKey === 'string' && !latest.panicKey.trim()) { config.open('panic', pill); return; }
             patch[item.key] = item.inverted ? current.enabled : !current.enabled;
             if (!write(patch)) {
-              var status = doc.getElementById('qs-panel-status'); status.textContent = 'Could not save this setting. Browser storage may be unavailable.';
+              var status = doc.getElementById('qs-panel-status'); status.textContent = 'This setting could not be saved. Check this browser’s storage and try again.';
             }
           };
           unit.appendChild(pill);
@@ -115,7 +115,7 @@
       var status = doc.createElement('p'); status.id = 'qs-panel-status'; status.className = 'qs-panel-status'; status.setAttribute('role', 'status');
       var nav = root.HeavenlyNavigation.navigationSettings(settings);
       if (nav.showProxiedUrl && (nav.openBookmarksInAboutBlank || nav.openSearchInAboutBlank)) {
-        status.textContent = (nav.openBookmarksInAboutBlank && nav.openSearchInAboutBlank ? 'Bookmarks and search' : nav.openBookmarksInAboutBlank ? 'Bookmarks' : 'Search') + ': about:blank keeps the address inside Heavenly.';
+        status.textContent = (nav.openBookmarksInAboutBlank && nav.openSearchInAboutBlank ? 'Bookmarks and search' : nav.openBookmarksInAboutBlank ? 'Bookmarks' : 'Search') + ': about:blank shows the website address inside Heavenly.';
       }
       tray.appendChild(status);
       if (focusId) { var focused = doc.getElementById(focusId); if (focused && focused.getClientRects().length && !focused.disabled) focused.focus({ preventScroll: true }); else if (focusedInPanel) editorTrigger.focus({ preventScroll: true }); }
@@ -123,7 +123,7 @@
     function conflict(current) {
       externalLayout = true;
       doc.getElementById('qs-editor-conflict').hidden = false;
-      doc.getElementById('qs-editor-conflict-text').textContent = 'The shortcut layout changed in another tab. Your draft is kept. Load the saved layout or choose to save your draft instead.';
+      doc.getElementById('qs-editor-conflict-text').textContent = 'Another tab changed the shortcut layout. Your edits are kept. Load the saved layout or save your edits instead.';
       doc.getElementById('qs-editor-conflict-actions').hidden = false;
       doc.getElementById('qs-editor-save').disabled = true;
     }
@@ -137,7 +137,7 @@
         if (signature(model.layout(current)) !== baseline) conflict(current);
         else if (signature(current) !== lastSettings && !externalLayout) {
           doc.getElementById('qs-editor-conflict').hidden = false;
-          doc.getElementById('qs-editor-conflict-text').textContent = 'Other settings changed. Your shortcut draft is kept; Save only changes the shortcut layout.';
+          doc.getElementById('qs-editor-conflict-text').textContent = 'Other settings changed. Your edits are kept. Save changes only this shortcut layout.';
         }
         lastSettings = signature(current);
       }

@@ -1,0 +1,45 @@
+{
+  "purpose": "Isolated Blob navigation prototype; about:blank remains the shipped option",
+  "physicalDevices": [],
+  "engines": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "A real object URL opens with an explicit title and null opener; it can still read creator-origin storage",
+        "Absolute destination links, Back and reload work while the creator keeps the URL alive",
+        "Recorded fetch and reload behavior after revocation; lifecycle differs by engine"
+      ],
+      "version": "154.0.8037.57",
+      "relativeURL": "cannot resolve a relative URL against this Blob URL",
+      "revokedFetch": "blocked after revocation",
+      "revokedReload": "navigation rejected after revocation",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "A real object URL opens with an explicit title and null opener; it can still read creator-origin storage",
+        "Absolute destination links, Back and reload work while the creator keeps the URL alive",
+        "Recorded fetch and reload behavior after revocation; lifecycle differs by engine"
+      ],
+      "version": "153.0",
+      "relativeURL": "cannot resolve a relative URL against this Blob URL",
+      "revokedFetch": "blocked after revocation",
+      "revokedReload": "document retained by browser",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "A real object URL opens with an explicit title and null opener; it can still read creator-origin storage",
+        "Absolute destination links, Back and reload work while the creator keeps the URL alive",
+        "Recorded fetch and reload behavior after revocation; lifecycle differs by engine"
+      ],
+      "version": "26.5",
+      "relativeURL": "cannot resolve a relative URL against this Blob URL",
+      "revokedFetch": "unexpectedly fetched",
+      "revokedReload": "document retained by browser",
+      "status": "passed"
+    }
+  ]
+}

@@ -52,7 +52,7 @@
       <div class="loading-shimmer-line" aria-hidden="true">
         <div class="loading-shimmer-glow"></div>
       </div>
-      <div class="loading-subtitle">Initializing Heavenly...</div>
+      <div class="loading-subtitle">Loading settings…</div>
     </div>
   </div>
 
@@ -64,7 +64,7 @@
         <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img">
         <div>
           <h1>Settings & Privacy</h1>
-          <p class="page-subtitle">A few thoughtful adjustments. Make Heavenly feel like home.</p>
+          <p class="page-subtitle">Choose how Heavenly looks and works.</p>
         </div>
       </div>
         <a href="/" class="floating-back-btn" aria-label="Go Back Home">
@@ -75,7 +75,7 @@
     <div class="settings-workspace">
       <aside class="settings-sidebar" aria-label="Settings categories">
         <nav id="settings-category-nav" aria-label="Settings category navigation"></nav>
-        <p class="settings-local-note">Preferences stay in this browser. <a href="#settings-group-backup">Export a backup</a> before switching devices.</p>
+        <p class="settings-local-note">Bookmarks and settings stay in this browser. They do not sync automatically. <a href="#settings-group-backup">Save a backup</a> before clearing browser data or changing devices.</p>
       </aside>
       <div class="settings-main">
         <div class="settings-search-box" role="search" aria-label="Find a setting">
@@ -84,7 +84,7 @@
           <input id="settings-search" type="search" placeholder="Find a setting…" autocomplete="off" spellcheck="false" aria-describedby="settings-search-status" aria-controls="settings-content">
           <button type="button" id="settings-search-clear" aria-label="Clear settings search" hidden><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
         </div>
-        <p id="settings-search-status" role="status" aria-live="polite">Search names, descriptions, or shortcuts.</p>
+        <p id="settings-search-status" role="status" aria-live="polite">Search setting names, help, or shortcuts.</p>
         <p id="settings-save-status" role="status" aria-live="polite"></p>
         <div id="settings-search-empty" hidden>
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5M8 10.5h5"/></svg>
@@ -107,31 +107,31 @@
                 <svg style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; transition: transform 0.2s ease;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
               </span>
             </summary>
-            <p class="hero-card-desc" style="margin-top: 10px; margin-bottom: 12px;">Quick master toggles to completely turn off floating widgets, overlays, cloaking, or panic features across the entire app.</p>
+            <p class="hero-card-desc" style="margin-top: 10px; margin-bottom: 12px;">Pause groups of features at once. Your saved choices are kept.</p>
 
             <div class="cards-grid">
               <!-- Hero Card: Disable All Privacy & Widget Overlays -->
               <div class="hero-card" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(15, 23, 42, 0.8);">
                 <div class="hero-card-header">
-                  <label for="set-disable-all-features" class="hero-card-title" style="color: #fca5a5;">Disable All Privacy & Widget Overlays</label>
+                  <label for="set-disable-all-features" class="hero-card-title" style="color: #fca5a5;">Turn off cloaking, panic & widgets</label>
                   <label class="switch-toggle">
                     <input type="checkbox" id="set-disable-all-features" role="switch">
                     <span class="slider-knob"></span>
                   </label>
                 </div>
-                <p class="hero-card-desc">Completely disables all proxied page widgets as well as tab cloaking and panic overlays.</p>
+                <p class="hero-card-desc">Turn off tab disguises, panic shortcuts, and tools on proxy pages. Turn this off to use your saved choices again.</p>
               </div>
 
               <!-- Hero Card: Disable All Proxied Page Widgets -->
               <div class="hero-card" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(15, 23, 42, 0.8);">
                 <div class="hero-card-header">
-                  <label for="set-disable-all-widgets" class="hero-card-title">Disable All Proxied Page Widgets</label>
+                  <label for="set-disable-all-widgets" class="hero-card-title">Turn off all proxy page tools</label>
                   <label class="switch-toggle">
                     <input type="checkbox" id="set-disable-all-widgets" role="switch">
                     <span class="slider-knob"></span>
                   </label>
                 </div>
-                <p class="hero-card-desc">Completely disables and removes all floating widgets, dock bars, quick-save tools, and pagination overlays on proxied pages.</p>
+                <p class="hero-card-desc">Hide all tools on proxy pages, including the dock, Quick Save, and page controls. Their settings and positions are kept.</p>
               </div>
             </div>
           </details>
@@ -156,7 +156,7 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Automatically disguises your browser tab title and icon when you switch focus to another window or tab.</p>
+            <p class="hero-card-desc">Change the tab title and icon when you leave the tab. Restore them when you return.</p>
           </div>
 
           <!-- Hero Card: Persistent Cloak -->
@@ -168,7 +168,7 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Continuously keeps your browser tab title and favicon disguised regardless of tab visibility.</p>
+            <p class="hero-card-desc">Keep the chosen tab title and icon, even while you use the tab.</p>
           </div>
 
           <div class="hero-card">
@@ -176,7 +176,7 @@
               <label for="set-bookmarks-about-blank" class="hero-card-title">Bookmarks in about:blank</label>
               <label class="switch-toggle"><input type="checkbox" id="set-bookmarks-about-blank" role="switch"><span class="slider-knob"></span></label>
             </div>
-            <p class="hero-card-desc">Opens proxied bookmarks in a new about:blank tab. Your New Tab preference is remembered. Direct websites open normally for compatibility.</p>
+            <p class="hero-card-desc">Open proxy bookmarks inside a new about:blank tab. Direct links open normally. Your usual New Tab choice is kept.</p>
           </div>
 
           <div class="hero-card">
@@ -184,7 +184,7 @@
               <label for="set-search-about-blank" class="hero-card-title">Search in about:blank</label>
               <label class="switch-toggle"><input type="checkbox" id="set-search-about-blank" role="switch"><span class="slider-knob"></span></label>
             </div>
-            <p class="hero-card-desc">Opens main search/address bar navigation in a new about:blank tab, independently of bookmarks.</p>
+            <p class="hero-card-desc">Open searches and website addresses inside a new about:blank tab. This is separate from the bookmark setting.</p>
           </div>
 
           <div class="hero-card">
@@ -192,19 +192,19 @@
               <label for="set-show-proxied-url" class="hero-card-title">Show Proxied URL</label>
               <label class="switch-toggle"><input type="checkbox" id="set-show-proxied-url" role="switch"><span class="slider-knob"></span></label>
             </div>
-            <p class="hero-card-desc">Shows the real /proxy/ path in the browser address bar during normal browsing. Disable to use the Heavenly browsing page. about:blank keeps its own address and can show the path inside Heavenly. Open normally is always available if a site cannot load in a frame.</p>
+            <p class="hero-card-desc">Show the proxy website address in the browser bar. Turn this off to use Heavenly’s browsing page.</p><details class="settings-help"><summary>About proxy addresses and about:blank</summary><p>The proxy address includes /proxy/. In an about:blank tab, the browser bar stays about:blank and Heavenly can show the proxy address inside the page. Choose Open normally if a website cannot load inside the page. These options do not make browsing private or anonymous.</p></details>
           </div>
 
           <!-- Hero Card: Timed Decoy Auto-Unlock -->
           <div class="hero-card">
             <div class="hero-card-header">
-              <label for="set-decoy-auto-timer" class="hero-card-title">Timed Decoy Auto-Unlock</label>
+              <label for="set-decoy-auto-timer" class="hero-card-title">Open Heavenly after a short wait</label>
               <label class="switch-toggle">
                 <input type="checkbox" id="set-decoy-auto-timer" role="switch">
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Automatically opens Heavenly after a few seconds without clicking Terms of Service.</p>
+            <p class="hero-card-desc">Open Heavenly a few seconds after the school page appears. You can still use its Terms of Service link to enter.</p>
           </div>
 
           <!-- Hero Card: Session Random Preset & Pool Selector -->
@@ -216,7 +216,7 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Automatically selects a random cloaking preset from your selected pool each time you start a new browser session.</p>
+            <p class="hero-card-desc">Choose a saved tab disguise at random for each browser session.</p>
 
             <div id="random-pool-container" style="border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 12px; margin-top: 10px;">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
@@ -229,7 +229,7 @@
                   <button id="pool-deselect-all-btn" type="button" aria-label="Deselect all randomizer pool presets" style="padding: 4px 10px; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #cbd5e1; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Deselect All</button>
                 </div>
               </div>
-              <p class="hero-card-desc" style="margin-bottom: 10px; font-size: 0.8rem;">Click preset chips to toggle which specific identities are included in the random rotation pool:</p>
+              <p class="hero-card-desc" style="margin-bottom: 10px; font-size: 0.8rem;">Choose which saved tab disguises can be picked at random:</p>
               <p id="settings-random-gating" class="settings-help" hidden>Enable Randomize Preset Each Session to edit its pool.</p>
               <div id="random-pool-chips" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; max-height: 220px; overflow-y: auto; padding: 2px;"></div>
             </div>
@@ -239,7 +239,7 @@
           <div class="hero-card">
             <div style="margin-bottom: 8px;">
               <span class="hero-card-title" style="margin-bottom: 4px; display: block;">Cloak Preset</span>
-              <p class="hero-card-desc">Select an app identity to mimic in your browser tab.</p>
+              <p class="hero-card-desc">Choose a saved title and icon for your tab. This changes its appearance only.</p>
             </div>
 
             <!-- Custom Custom Cloak Select Dropdown Component -->
@@ -281,7 +281,7 @@
               </span>
               <span style="font-size: 0.75rem; padding: 3px 9px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; color: #38bdf8; font-weight: 600; letter-spacing: 0.02em;">Live Sync</span>
             </div>
-            <p class="hero-card-desc">Real-time mockup of how your active browser tab title & favicon appear when cloaked:</p>
+            <p class="hero-card-desc">See how the chosen tab title and icon will look:</p>
 
             <div class="browser-mockup">
               <div class="browser-header">
@@ -333,7 +333,7 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Opens search form submissions in a new browser tab.</p>
+            <p class="hero-card-desc">Open websites from the main search bar in a new tab.</p>
             <p id="settings-newtab-gating" class="settings-help" hidden>about:blank already opens a new tab. Your normal New Tab preference is remembered.</p>
 
             <div id="group-merge-go-newtab" style="display: none; border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 12px; margin-top: 10px;">
@@ -344,26 +344,26 @@
                   <span class="slider-knob"></span>
                 </label>
               </div>
-              <p class="hero-card-desc" style="font-size: 0.8rem; margin-top: 4px;">Hides the dedicated 'New Tab' button on the search bar and converts the primary button into 'Go (New Tab)'.</p>
+              <p class="hero-card-desc" style="font-size: 0.8rem; margin-top: 4px;">Use one Go (New Tab) button instead of separate Go and New Tab buttons.</p>
               <p id="settings-merge-gating" class="settings-help" hidden>Enable Open Search Results in New Tab to use this option.</p>
             </div>
           </div>
 
           <div class="hero-card" id="bookmark-display-settings">
             <h3 class="hero-card-title">Bookmark display counts</h3>
-            <p class="hero-card-desc">Auto fills one readable row in bottom sections and shows 5 bookmarks in side panels. Choose Custom for a fixed count. Your existing custom counts are preserved.</p>
+            <p class="hero-card-desc">Auto shows one row in bottom sections and 5 bookmarks in side panels. Choose Custom to set a number. Your custom numbers are kept.</p>
             <div class="bookmark-count-controls">
               <label for="set-bookmark-count-mode">Default display</label>
               <select id="set-bookmark-count-mode"><option value="auto">Auto · one bottom row, 5 in side panels</option><option value="custom">Custom · fixed bookmark count</option></select>
               <label for="set-bookmark-initial-limit">Default visible bookmarks (1–30)</label>
               <input type="number" id="set-bookmark-initial-limit" min="1" max="30" step="1" inputmode="numeric" value="5">
-              <label for="set-bookmark-limit-section">Category or subsection override</label>
+              <label for="set-bookmark-limit-section">Choose a category or sub-section</label>
               <select id="set-bookmark-limit-section"></select>
               <label for="set-bookmark-section-mode">Section display</label>
               <select id="set-bookmark-section-mode" disabled><option value="inherit">Use default</option><option value="auto">Auto</option><option value="custom">Custom</option></select>
               <label for="set-bookmark-section-limit">Custom visible bookmarks (1–30)</label>
               <input type="number" id="set-bookmark-section-limit" min="1" max="30" step="1" inputmode="numeric" disabled>
-              <button type="button" id="reset-bookmark-section-limit" disabled>Use global default</button>
+              <button type="button" id="reset-bookmark-section-limit" disabled>Use default count</button>
               <p id="bookmark-limit-status" role="status" aria-live="polite"></p>
             </div>
           </div>
@@ -377,7 +377,7 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">When enabled, clicking bookmark cards, test prompt actions, and sub-bookmarks opens target links in a new browser tab. When disabled, links open in the current tab.</p>
+            <p class="hero-card-desc">Open bookmarks and their saved links in a new tab. Turn this off to use the current tab.</p>
             <p id="settings-bookmark-newtab-gating" class="settings-help" hidden>about:blank already opens a new tab. Your normal New Tab preference is remembered.</p>
           </div>
 
@@ -386,7 +386,7 @@
               <summary style="cursor: pointer; list-style: none; font-size: 0.98rem; font-weight: 600; color: #f1f5f9; display: flex; align-items: center; justify-content: space-between; user-select: none;">
                 <span class="hero-card-title">
                   <svg style="width: 18px; height: 18px; fill: none; stroke: #38bdf8; stroke-width: 2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                  <span>Restore & Toggle Built-in Bookmarks</span>
+                  <span>Show or hide built-in bookmarks</span>
                 </span>
                 <span style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: #38bdf8; font-weight: 500;">
                   <span class="details-expand-text">Expand List</span>
@@ -394,7 +394,7 @@
                   <svg class="chevron-icon" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; transition: transform 0.2s ease;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </span>
               </summary>
-              <p class="hero-card-desc" style="margin-top: 10px;">Check or uncheck pre-made sections and built-in bookmarks to restore or hide them on your homepage.</p>
+              <p class="hero-card-desc" style="margin-top: 10px;">Check an item to show it on your homepage. Uncheck it to hide it.</p>
               <div id="bookmark-mgr-container" class="bookmark-mgr-list" style="padding: 4px 2px; margin-top: 12px;"></div>
               <div style="margin-top: 14px; border-top: 1px solid rgba(148, 163, 184, 0.15); padding-top: 14px;">
                 <button id="reset-builtin-bookmarks-btn" type="button" aria-label="Reset built-in bookmarks to default" style="width: 100%; padding: 12px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; color: #38bdf8; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
@@ -426,7 +426,7 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Instantly redirects your active session to a safe educational website when a key is pressed.</p>
+            <p class="hero-card-desc">Press your chosen key on a supported proxy page to open the website below. This does not erase browsing history.</p>
             <div style="display: flex; gap: 10px; align-items: center; margin-top: 6px;">
               <label for="set-panic-key" style="font-size: 0.85rem; color: #cbd5e1;">Panic Key:</label>
               <input type="text" id="set-panic-key" value="`" maxlength="10" aria-label="Panic key shortcut" style="width: 80px; text-align: center; padding: 6px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #38bdf8; font-weight: 700; font-size: 0.95rem;">
@@ -442,13 +442,13 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Displays a floating emergency panic button designed for quick tap access on touchscreen devices.</p>
+            <p class="hero-card-desc">Show a floating panic button on supported proxy pages. Tap it to open your chosen website.</p>
           </div>
 
           <!-- Hero Card: Panic URL -->
           <div class="hero-card">
             <label for="set-panic-url" class="hero-card-title" style="margin-bottom: 2px;">Panic Redirect URL</label>
-            <p class="hero-card-desc" style="margin-bottom: 8px;">Target URL to redirect to when panic controls are triggered.</p>
+            <p class="hero-card-desc" style="margin-bottom: 8px;">Website address to open when you use the panic key or button.</p>
             <input type="text" id="set-panic-url" value="https://classroom.google.com" aria-label="Panic redirect URL" style="width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 12px; color: #f8fafc; font-family: inherit; font-size: 0.88rem;">
           </div>
 
@@ -478,7 +478,7 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Displays a floating widget on proxied pages to toggle lock/unlock page scrolling.</p>
+            <p class="hero-card-desc">Show a button to stop page scrolling. Press it again to allow scrolling.</p>
           </div>
 
           <!-- Hero Card: Magnifier -->
@@ -490,7 +490,7 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Displays a interactive magnifying glass lens widget on proxied web pages.</p>
+            <p class="hero-card-desc">Show a movable lens that makes part of a proxy page larger.</p>
           </div>
 
           <!-- Hero Card: Navigation Bookmark Button -->
@@ -502,7 +502,7 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Includes a quick 'Bookmark Page' button on proxied page widgets and collapsible dock bar.</p>
+            <p class="hero-card-desc">Show a Bookmark Page button in the floating tools or dock.</p>
           </div>
 
           <!-- Hero Card: Quick Search Bar -->
@@ -514,7 +514,7 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Includes an inline search/URL bar inside the navigation widget on proxied pages.</p>
+            <p class="hero-card-desc">Show a search and website address field in the proxy page tools.</p>
           </div>
 
           <!-- Hero Card: Home Button -->
@@ -526,24 +526,24 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Includes a Home button in the floating widget to quickly return to Heavenly.</p>
+            <p class="hero-card-desc">Show a Home button in the proxy page tools to return to Heavenly.</p>
           </div>
 
           <!-- Hero Card: Collapsible Widget Dock Bar -->
           <div class="hero-card">
             <div class="hero-card-header">
-              <label for="set-use-widget-dock" class="hero-card-title">Enable Collapsible Widget Dock Bar</label>
+              <label for="set-use-widget-dock" class="hero-card-title">Group tools in a dock</label>
               <label class="switch-toggle">
                 <input type="checkbox" id="set-use-widget-dock" role="switch">
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Docks all active widgets inside a collapsible bar on the screen edge. Drag the tab to any viewport edge (left, right, top, bottom) to snap and position it.</p>
+            <p class="hero-card-desc">Keep tools together in a bar at the edge of the screen. Open or close it with the Tools handle.</p>
             <label for="set-dock-position" class="qs-context-field"><span>Dock edge</span><select id="set-dock-position"><option value="bottom">Bottom</option><option value="top">Top</option><option value="left">Left</option><option value="right">Right</option></select></label>
             <p id="settings-dock-gating" class="settings-help" hidden>Enable the widget dock to choose its edge. Your floating positions stay saved.</p>
             <div style="font-size: 0.78rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 6px 10px; margin-top: 4px; display: flex; align-items: center; gap: 6px; font-weight: 500;">
               <svg style="width: 14px; height: 14px; fill: none; stroke: #38bdf8; stroke-width: 2; flex-shrink: 0;" viewBox="0 0 24 24"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"></path></svg>
-              <span>Hint: You can click & drag the dock bar pull tab to any edge of your screen on proxied pages!</span>
+              <span>Drag the Tools handle to the top, bottom, left, or right edge of a proxy page.</span>
             </div>
 
             <!-- Live Sync Dock Bar Mockup Preview -->
@@ -555,7 +555,7 @@
                 </span>
                 <span style="font-size: 0.72rem; padding: 2px 8px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 10px; color: #38bdf8; font-weight: 600;">Live Sync</span>
               </div>
-              <p class="hero-card-desc" style="margin-bottom: 10px;">Preview how the dock bar renders based on your selected dock position:</p>
+              <p class="hero-card-desc" style="margin-bottom: 10px;">Try a dock position in this example:</p>
 
               <!-- Position Selector for Preview Test -->
               <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center;">
@@ -582,8 +582,8 @@
 
           <!-- Hero Card: Reset Widget Positions -->
           <div class="hero-card" style="align-items: center; text-align: center; background: rgba(56, 189, 248, 0.08); border-color: rgba(56, 189, 248, 0.3);">
-            <span class="hero-card-title" style="color: #38bdf8;">Widget Screen Position Reset</span>
-            <p class="hero-card-desc" style="margin-bottom: 8px;">Restores all widget floating positions back to the center of your screen.</p>
+            <span class="hero-card-title" style="color: #38bdf8;">Reset tool positions</span>
+            <p class="hero-card-desc" style="margin-bottom: 8px;">Move floating tools back to the middle of the screen. Keep their visibility, zoom, and dock settings.</p>
             <button id="reset-widget-pos-btn" type="button" aria-label="Reset all widget screen positions" style="width: 100%; padding: 12px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px; color: #38bdf8; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
               <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
               <span>Reset All Widget Positions</span>
@@ -606,8 +606,8 @@
 
         <div class="cards-grid">
           <div class="hero-card">
-            <span class="hero-card-title">Data Migration & Granular Backup</span>
-            <p class="hero-card-desc">Export your bookmarks, folders, categories, and settings to a JSON backup file, or import and selectively merge/overwrite data from a backup file.</p>
+            <span class="hero-card-title">Save or restore a backup</span>
+            <p class="hero-card-desc">Download a backup of chosen bookmarks, folders, categories, and settings. Import a backup to add items or replace saved items.</p>
             <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
               <button id="open-export-modal-btn" type="button" class="export-import-btn btn-export-primary" aria-label="Export bookmarks and settings" style="flex: 1;">
                 <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
@@ -618,7 +618,7 @@
                 <span>Import from File</span>
               </button>
             </div>
-            <p style="font-size:.78rem;color:#94a3b8;line-height:1.5">Personal notes stay on this device. Private bookmark backups include them. Public sharing includes notes only if you choose. Notes do not sync automatically.</p>
+            <p style="font-size:.78rem;color:#94a3b8;line-height:1.5">Bookmarks, notes, and settings do not sync automatically. Clearing browser data can erase them. Backups include personal notes; share links include notes only if you choose.</p>
             <div id="backup-status-msg" aria-live="polite" role="status" style="margin-top: 8px; font-size: 0.82rem; text-align: center; min-height: 1.2em; color: #38bdf8;"></div>
           </div>
         </div>
@@ -637,12 +637,12 @@
           <div class="modal-icon-badge">
             <svg style="width:20px;height:20px;fill:none;stroke:#38bdf8;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
           </div>
-          <span class="modal-title" id="export-modal-title">Export Backup Data</span>
+          <span class="modal-title" id="export-modal-title">Download a backup</span>
         </div>
         <button id="close-export-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
 
-      <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Select which categories, bookmarks, and settings you want to include in your backup file:</p>
+      <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Choose what to include in the backup file. It uses the JSON file format.</p>
 
       <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(148,163,184,0.15); padding-bottom: 10px;">
         <span style="font-size: 0.85rem; font-weight: 600; color: #e0f2fe;">Select Items to Export:</span>
@@ -668,20 +668,20 @@
           <div class="modal-icon-badge" style="background: linear-gradient(135deg, rgba(129, 140, 248, 0.25) 0%, rgba(168, 85, 247, 0.25) 100%); border-color: rgba(129, 140, 248, 0.4);">
             <svg style="width:20px;height:20px;fill:none;stroke:#818cf8;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           </div>
-          <span class="modal-title" id="import-modal-title">Import Backup Data</span>
+          <span class="modal-title" id="import-modal-title">Restore from a backup</span>
         </div>
         <button id="close-import-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
       </div>
 
       <!-- Step 1: File Selection -->
       <div id="import-step-1" style="display: flex; flex-direction: column; gap: 12px;">
-        <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Choose a Heavenly JSON backup file to restore bookmarks or settings:</p>
+        <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Choose a Heavenly backup file (.json) from your device.</p>
         <input type="file" id="import-file-input" accept=".json" style="padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px dashed rgba(56, 189, 248, 0.4); border-radius: 14px; color: #cbd5e1; font-size: 0.88rem; cursor: pointer; width: 100%;" />
       </div>
 
       <!-- Step 2: Granular Item Selection & Mode Selection -->
       <div id="import-step-2" style="display: none; flex-direction: column; gap: 12px;">
-        <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Select which items from the file you want to restore and choose how to apply them:</p>
+        <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Choose the items to import, then choose whether to add or replace data.</p>
 
         <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(148,163,184,0.15); padding-bottom: 8px;">
           <span style="font-size: 0.85rem; font-weight: 600; color: #e0f2fe;">Select Items to Import:</span>
@@ -696,8 +696,8 @@
         <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px solid rgba(148,163,184,0.15); padding-top: 10px;">
           <label for="import-mode-select" style="font-size: 0.85rem; font-weight: 600; color: #e0f2fe;">Import Mode:</label>
           <select id="import-mode-select" style="width: 100%; padding: 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #f8fafc; font-family: inherit; font-size: 0.88rem;">
-            <option value="merge">🔀 Merge with Existing Data (Add/update selected, keep current items)</option>
-            <option value="overwrite">⚠️ Overwrite Existing Data (Replace current categories/settings with selected items)</option>
+            <option value="merge">Merge: add or update chosen items; keep current items</option>
+            <option value="overwrite">Overwrite: replace current categories/settings with chosen items</option>
           </select>
         </div>
 
@@ -755,7 +755,7 @@
       } catch (e) {
         settingsStorageError = e;
         saved = {};
-        settingsSaveFeedback('Saved settings could not be read. They have been left untouched. Export a recovery copy before repairing this browser’s data.', true);
+        settingsSaveFeedback('Saved settings could not be read. They have been left untouched. Download a recovery backup before changing this browser’s data.', true);
       }
 
       return Object.assign(HeavenlyNavigation.navigationSettings(saved), {
@@ -802,7 +802,7 @@
         settingsSaveFeedback('Saved in this browser.', false);
         return true;
       } catch (e) {
-        settingsSaveFeedback('This browser could not save your change. Check available storage or browser permissions, then try again.', true);
+        settingsSaveFeedback('Your change could not be saved. Check this browser’s storage space and permissions, then try again.', true);
         return false;
       }
     }
@@ -1577,7 +1577,7 @@
             touchedPositions.push(key);
             localStorage.setItem(key, JSON.stringify({ left: midX, top: midY + (index === 0 ? -60 : index === 2 ? 60 : 0) }));
           });
-          settingsSaveFeedback('Widget positions reset to middle of screen!', false);
+          settingsSaveFeedback('Tools moved to the middle of the screen.', false);
         } catch (error) {
           var positionsRestored = true;
           touchedPositions.reverse().forEach(function (key) { try { if (previousPositions[key] === null) localStorage.removeItem(key); else localStorage.setItem(key, previousPositions[key]); } catch (_) { positionsRestored = false; } });
@@ -1615,7 +1615,7 @@
           renderBookmarkManager();
           var msgEl = $('bookmark-reset-msg');
           if (msgEl) {
-            msgEl.textContent = 'Built-in bookmarks reset to defaults. Your custom sections & bookmarks were preserved!';
+            msgEl.textContent = 'Built-in bookmarks reset. Your custom sections, bookmarks, and notes were kept.';
           }
         };
       }
@@ -1660,7 +1660,7 @@
         // Settings item
         var setCard = document.createElement('div');
         setCard.className = 'bookmark-mgr-item';
-        setCard.innerHTML = '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;width:100%;font-weight:600;font-size:0.9rem;color:#f8fafc;"><input type="checkbox" class="export-cb" data-type="settings" checked style="width:16px;height:16px;accent-color:#38bdf8;" /><span style="display:inline-flex;align-items:center;gap:6px;"><svg style="width:15px;height:15px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Heavenly App Settings & Cloaking Preferences</span></span></label>';
+        setCard.innerHTML = '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;width:100%;font-weight:600;font-size:0.9rem;color:#f8fafc;"><input type="checkbox" class="export-cb" data-type="settings" checked style="width:16px;height:16px;accent-color:#38bdf8;" /><span style="display:inline-flex;align-items:center;gap:6px;"><svg style="width:15px;height:15px;fill:none;stroke:#38bdf8;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Heavenly settings and tab disguises</span></span></label>';
         container.appendChild(setCard);
 
         // A private backup includes official identities and their personal layout.
@@ -1823,7 +1823,7 @@
           try {
             parsedImportData = JSON.parse(evt.target.result);
             if (!parsedImportData || (typeof parsedImportData !== 'object')) {
-              alert('Invalid JSON backup file.');
+              alert('This is not a Heavenly backup. Choose a Heavenly JSON file (.json).');
               return;
             }
 
@@ -1835,7 +1835,7 @@
             if (parsedImportData.settings) {
               var setCard = document.createElement('div');
               setCard.className = 'bookmark-mgr-item';
-              setCard.innerHTML = '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;width:100%;font-weight:600;font-size:0.9rem;color:#f8fafc;"><input type="checkbox" class="import-cb" data-type="settings" checked style="width:16px;height:16px;accent-color:#818cf8;" /><span style="display:inline-flex;align-items:center;gap:6px;"><svg style="width:15px;height:15px;fill:none;stroke:#818cf8;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Heavenly App Settings & Cloaking Preferences</span></span></label>';
+              setCard.innerHTML = '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;width:100%;font-weight:600;font-size:0.9rem;color:#f8fafc;"><input type="checkbox" class="import-cb" data-type="settings" checked style="width:16px;height:16px;accent-color:#818cf8;" /><span style="display:inline-flex;align-items:center;gap:6px;"><svg style="width:15px;height:15px;fill:none;stroke:#818cf8;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Heavenly settings and tab disguises</span></span></label>';
               container.appendChild(setCard);
             }
 
@@ -2022,7 +2022,7 @@
         closeImportModal();
 
         var msgEl = $('backup-status-msg');
-        if (msgEl) msgEl.textContent = '✅ Selected backup data imported (' + mode + ' mode) successfully!';
+        if (msgEl) msgEl.textContent = 'Chosen backup items imported (' + mode + ').';
       };
     }
 

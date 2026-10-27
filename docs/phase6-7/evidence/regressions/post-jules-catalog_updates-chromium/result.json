@@ -1,0 +1,12 @@
+{
+  "completed": "2026-10-26T12:53:51.810778+00:00",
+  "suite": "catalog_updates",
+  "engine": "chromium",
+  "status": "passed",
+  "exitCode": 0,
+  "groups": 21,
+  "log": "regressions/post-jules-catalog_updates-chromium/run.txt",
+  "scope": "After targeted Bolt PR #200 bookmark lookup adaptation and test-only Preferred animation observation reorder.",
+  "priorFailureLog": "regressions/post-jules-catalog_updates-chromium/prior-failure.txt",
+  "priorFailureResult": "regressions/post-jules-catalog_updates-chromium/prior-failure-result.json"
+}

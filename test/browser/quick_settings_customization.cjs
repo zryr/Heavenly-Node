@@ -150,9 +150,9 @@ const pass = message => { checks++; console.log('PASS ' + message); };
   assert.equal(await page.locator('#pill-search-newtab').isDisabled(), false);
   await page.locator('#quick-settings-info-btn').tap();
   await page.locator('[data-help-entry="pill-proxy-url"] summary').click();
-  assert((await page.locator('#qs-help-text').innerText()).includes('address bar stays about:blank'));
+  assert((await page.locator('#qs-help-text').innerText()).includes('browser bar stays about:blank'));
   await page.locator('[data-help-entry="pill-widgets"] summary').click();
-  assert((await page.locator('#qs-help-text').innerText()).includes('Refresh an already open proxied website'));
+  assert((await page.locator('#qs-help-text').innerText()).includes('Refresh an open proxy page to apply this change.'));
   await page.keyboard.press('Escape');
   pass('about:blank explains contextual URL presentation without disabling the independent URL setting');
 

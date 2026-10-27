@@ -1,0 +1,225 @@
+{
+  "executed": "2026-10-26T03:17:39.354Z",
+  "physicalDevices": [],
+  "jobs": [
+    {
+      "suite": "homepage_cross_browser",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 14.7,
+      "groups": 5,
+      "log": "regressions/homepage_cross_browser-chromium/run.txt"
+    },
+    {
+      "suite": "homepage_cross_browser",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 18.3,
+      "groups": 5,
+      "log": "regressions/homepage_cross_browser-firefox/run.txt"
+    },
+    {
+      "suite": "homepage_search_limits",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 19.5,
+      "groups": 8,
+      "log": "regressions/homepage_search_limits-chromium/run.txt"
+    },
+    {
+      "suite": "homepage_cross_browser",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 28.5,
+      "groups": 6,
+      "log": "regressions/homepage_cross_browser-webkit/run.txt"
+    },
+    {
+      "suite": "homepage_search_limits",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 24.8,
+      "groups": 8,
+      "log": "regressions/homepage_search_limits-firefox/run.txt"
+    },
+    {
+      "suite": "homepage_search_limits",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 28,
+      "groups": 8,
+      "log": "regressions/homepage_search_limits-webkit/run.txt"
+    },
+    {
+      "suite": "settings_celestial",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 49.3,
+      "groups": 16,
+      "log": "regressions/settings_celestial-chromium/run.txt"
+    },
+    {
+      "suite": "settings_celestial",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 61.2,
+      "groups": 16,
+      "log": "regressions/settings_celestial-firefox/run.txt"
+    },
+    {
+      "suite": "settings_celestial",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 41.1,
+      "groups": 16,
+      "log": "regressions/settings_celestial-webkit/run.txt"
+    },
+    {
+      "suite": "viewer_celestial",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 35.9,
+      "groups": 17,
+      "log": "regressions/viewer_celestial-chromium/run.txt"
+    },
+    {
+      "suite": "viewer_celestial",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 37,
+      "groups": 17,
+      "log": "regressions/viewer_celestial-firefox/run.txt"
+    },
+    {
+      "suite": "viewer_celestial",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 46.3,
+      "groups": 17,
+      "log": "regressions/viewer_celestial-webkit/run.txt"
+    },
+    {
+      "suite": "widgets_celestial",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 36,
+      "groups": 7,
+      "log": "regressions/widgets_celestial-chromium/run.txt"
+    },
+    {
+      "suite": "widgets_celestial",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 16,
+      "groups": 5,
+      "log": "regressions/widgets_celestial-firefox/run.txt"
+    },
+    {
+      "suite": "widgets_celestial",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 17.3,
+      "groups": 5,
+      "log": "regressions/widgets_celestial-webkit/run.txt"
+    },
+    {
+      "suite": "compact_rails",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 34.8,
+      "groups": 9,
+      "log": "regressions/compact_rails-chromium/run.txt"
+    },
+    {
+      "suite": "compact_rails",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 41.1,
+      "groups": 9,
+      "log": "regressions/compact_rails-firefox/run.txt"
+    },
+    {
+      "suite": "viewer_independent_security",
+      "engine": "all",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 55.7,
+      "groups": 15,
+      "log": "regressions/viewer_independent_security-all/run.txt"
+    },
+    {
+      "suite": "compact_rails",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 85,
+      "groups": 9,
+      "log": "regressions/compact_rails-webkit/run.txt"
+    },
+    {
+      "suite": "quick_settings_customization",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 114.7,
+      "groups": 23,
+      "log": "regressions/quick_settings_customization-chromium/run.txt"
+    },
+    {
+      "suite": "cloaking_consolidation",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 148.5,
+      "groups": 13,
+      "log": "regressions/cloaking_consolidation-chromium/run.txt"
+    },
+    {
+      "suite": "catalog_updates",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 28.0,
+      "groups": 21,
+      "log": "regressions/catalog_updates-chromium/run.txt",
+      "rerunAt": "2026-10-26T12:36:52.322574Z",
+      "priorFailureLog": "regressions/catalog_updates-chromium/prior-failure.txt"
+    },
+    {
+      "suite": "homepage_layout_touch",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 27.7,
+      "groups": 4,
+      "log": "regressions/homepage_layout_touch-chromium/run.txt"
+    },
+    {
+      "suite": "homepage_touch_drag",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 46.8,
+      "groups": 12,
+      "log": "regressions/homepage_touch_drag-chromium/run.txt"
+    }
+  ],
+  "postAdaptationVerification": "regressions/post-jules-summary.json"
+}

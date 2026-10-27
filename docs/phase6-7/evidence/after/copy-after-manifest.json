@@ -1,0 +1,14 @@
+{
+  "captured": "2026-10-26T03:21:37.413Z",
+  "fixture": "Known ENOTFOUND passed through the actual error middleware; no live destination failure is implied",
+  "screenshots": [
+    "settings-cloaking-desktop.png",
+    "error-desktop.png"
+  ],
+  "checks": [
+    "Legacy persistent terminology reaches the existing tab appearance control",
+    "Actionable 502 copy preserves direct destination, null-opener link policy and optional sanitized technical details"
+  ],
+  "physicalDevices": [],
+  "engine": "154.0.8037.57"
+}

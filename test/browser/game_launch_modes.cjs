@@ -104,7 +104,7 @@ const pass = text => { checks++; console.log('PASS ' + text); };
       assert.equal(frame.url(), embedded);
     } else {
       assert(page.frames().some(frame => frame.url() === remote + '/escaped'));
-      if (page.url() === 'about:blank') await page.locator('#heavenly-wrapper-status').filter({ hasText: 'could not load in a frame' }).waitFor();
+      if (page.url() === 'about:blank') await page.locator('#heavenly-wrapper-status').filter({ hasText: 'could not load here' }).waitFor();
     }
     console.log('OBSERVATION ' + engine + ' ' + path + ' parent navigation: ' + kind);
     return kind;

@@ -29,8 +29,8 @@
     if (!dirty) return true;
     if (sourceReadFailed) {
       saveFailed = true;
-      storageWarning('Saved source could not be read and has been left untouched. Your edits are only in this tab. Copy them before leaving, then reload to recover the saved document.');
-      updateEditorStatus('Unsaved changes; saved source unreadable', 'busy');
+      storageWarning('Your saved code could not be read and has been left untouched. Your edits are only in this tab. Copy them before leaving, then reload to try opening the saved code again.');
+      updateEditorStatus('Unsaved changes; saved code could not be read', 'busy');
       return false;
     }
     try {
@@ -42,7 +42,7 @@
       return true;
     } catch (_) {
       saveFailed = true;
-      storageWarning('Your latest changes could not be saved in this browser. Copy your source before leaving; free some browser storage and edit again to retry.');
+      storageWarning('Your latest changes could not be saved. Copy your code before leaving. Check this browser’s storage space, then edit again to retry.');
       updateEditorStatus('Unsaved changes', 'busy');
       return false;
     }
@@ -73,7 +73,7 @@
     var code = input.value;
     lineCount = 1;
     for (var i = 0; i < code.length; i++) if (code.charCodeAt(i) === 10) lineCount++;
-    $('char-count').textContent = code.length.toLocaleString() + ' chars · ' + lineCount.toLocaleString() + (lineCount === 1 ? ' line' : ' lines');
+    $('char-count').textContent = code.length.toLocaleString() + ' characters · ' + lineCount.toLocaleString() + (lineCount === 1 ? ' line' : ' lines');
     $('editor-container').style.setProperty('--gutter-width', Math.max(44, String(lineCount).length * 9 + 22) + 'px');
     syncScroll();
   }
@@ -92,20 +92,20 @@
     }
     parent.postMessage({type:'heavenly-preview-connect', token:token}, '*', [channel.port2]);
     addEventListener('error', function (event) {
-      if (event.target !== window) report('resource', 'A script, image or other resource did not load. The browser may not expose the cause.');
+      if (event.target !== window) report('resource', 'A script, image, or other file did not load. The browser may not tell us why.');
       else {
         var hidden = !event.message || event.message === 'Script error.';
-        report('error', hidden ? 'A script failed. This browser hid the error details in the isolated preview. Check your source or open the browser console.' : event.message,
+        report('error', hidden ? 'A script failed. This browser hid the error details in the isolated preview. Check your code or open the browser console.' : event.message,
           hidden ? 0 : event.filename === 'about:srcdoc' ? Math.max(1, event.lineno - lineOffset) : event.lineno);
       }
     }, true);
     addEventListener('unhandledrejection', function (event) {
-      var text = 'An asynchronous operation was rejected.';
+      var text = 'A background task failed (unhandled promise rejection).';
       try { text = event.reason && event.reason.message || String(event.reason || text); } catch (_) {}
       report('error', text);
     });
     addEventListener('securitypolicyviolation', function (event) {
-      report('blocked', 'Blocked by preview policy: ' + event.violatedDirective + '. Popups, browser storage, workers and device APIs are restricted.');
+      report('blocked', 'Blocked by preview rules (policy): ' + event.violatedDirective + '. The sandbox limits popups, browser storage, background workers, and device access.');
     });
     ['error', 'warn'].forEach(function (level) {
       var original = console[level].bind(console);
@@ -190,37 +190,37 @@
       if (session.loads > 1) {
         if (session.port) session.port.close();
         previewStatus('Document navigated', 'idle');
-        addDiagnostic(session, 'This preview navigated to another document. Choose Run Code to reset it and reconnect diagnostics.');
+        addDiagnostic(session, 'This preview opened another page. Choose Run Code to restart your code and its error notices.');
       }
     });
-    frame.addEventListener('error', function () { addDiagnostic(session, 'The preview could not load. Run again or check your source and browser restrictions.', 'error'); });
+    frame.addEventListener('error', function () { addDiagnostic(session, 'The preview could not load. Run again or check your code and browser restrictions.', 'error'); });
     session.timer = setTimeout(function () {
-      if (previewSession === session && !session.ready) addDiagnostic(session, 'The document has not reported ready. A script or resource may still be pending. Run again to reset; reload this tab if a script stops responding.');
+      if (previewSession === session && !session.ready) addDiagnostic(session, 'The preview has not reported that it is ready. Code or a file may still be loading. Run again to restart it. Reload or close this tab if code stops it from responding.');
     }, 6000);
     frame.srcdoc = buildDocument(input.value, session.token);
     // Set the new document before insertion, so cloned srcdoc never executes.
     // Removing the old browsing context stops its timers and listeners.
     previous.replaceWith(frame);
-    if (!saveFailed) updateEditorStatus('Preview Executed', '');
+    if (!saveFailed) updateEditorStatus('Code run', '');
     if (narrow.matches && mode !== 'preview') setViewMode('preview', false);
   }
 
   function recoveryNotice(text) {
     $('recovery-notice').hidden = !recovery;
-    $('recovery-text').textContent = text || 'A previous version of your source is available.';
+    $('recovery-text').textContent = text || 'Your previous code is available to restore.';
   }
   function replaceSource(next, label) {
-    if (next === input.value) { updateEditorStatus('Source is already ' + (next ? 'the sample' : 'empty'), 'idle'); return; }
+    if (next === input.value) { updateEditorStatus('Code is already ' + (next ? 'the sample' : 'empty'), 'idle'); return; }
     var previous = {code:input.value, time:Date.now()};
     try { localStorage.setItem(RECOVERY_KEY, JSON.stringify(previous)); }
     catch (_) {
-      if (!window.confirm('A recovery copy could not be saved. Replace this source anyway? Copy your work first if you need it.')) return;
+      if (!window.confirm('The previous version could not be saved for recovery. Replace this code anyway? Copy your work first if you need it.')) return;
     }
     recovery = previous;
     input.value = next;
     input.scrollTop = 0;
     changed(true);
-    recoveryNotice(label + '. Your previous source can be restored.');
+    recoveryNotice(label + '. You can restore your previous code.');
     if (label === 'Editor Cleared') {
       runCode();
       if (!saveFailed) updateEditorStatus('Editor Cleared', 'idle');
@@ -239,8 +239,8 @@
     if (!saveFailed) {
       recovery = {code:previous,time:Date.now()};
       try { localStorage.setItem(RECOVERY_KEY, JSON.stringify(recovery)); } catch (_) {}
-      recoveryNotice('Previous source restored. You can switch back if needed.');
-    } else recoveryNotice('Source restored in this tab. The saved recovery copy is unchanged. Copy your work before leaving.');
+      recoveryNotice('Previous code restored. You can switch back if needed.');
+    } else recoveryNotice('Code restored in this tab. The saved recovery copy is unchanged. Copy your work before leaving.');
     runCode();
     if (narrow.matches) setViewMode('editor', false);
     input.focus();
@@ -503,13 +503,13 @@
   window.addEventListener('beforeunload', function (e) { persistSource(); if (dirty && saveFailed) { e.preventDefault(); e.returnValue = ''; } });
   window.addEventListener('storage', function (e) {
     if (e.key === 'heavenly_settings') applyCloak();
-    if (e.key === SOURCE_KEY && e.newValue !== input.value) storageWarning('Another tab changed the saved source. This editor still contains your work; copy it before reloading.');
+    if (e.key === SOURCE_KEY && e.newValue !== input.value) storageWarning('Another tab changed the saved code. This editor still has your work. Copy it before reloading.');
   });
 
   try { saved = localStorage.getItem(SOURCE_KEY); }
   catch (_) {
     sourceReadFailed = true; saveFailed = true;
-    storageWarning('Saved source could not be read and has been left untouched. Copy any new work before leaving, then reload to recover the saved document.');
+    storageWarning('Your saved code could not be read and has been left untouched. Copy any new work before leaving, then reload to try opening the saved code again.');
   }
   try {
     var storedMode = localStorage.getItem(MODE_KEY);
@@ -518,7 +518,7 @@
     if (storedSplit >= 25 && storedSplit <= 75) split = storedSplit;
     var storedRecovery = JSON.parse(localStorage.getItem(RECOVERY_KEY) || 'null');
     if (storedRecovery && typeof storedRecovery.code === 'string') recovery = storedRecovery;
-  } catch (_) { if (!sourceReadFailed) storageWarning('Browser storage is unavailable. Copy your source before leaving this page.'); }
+  } catch (_) { if (!sourceReadFailed) storageWarning('This browser’s storage is unavailable. Copy your code before leaving this page.'); }
   input.value = saved === null ? SAMPLE_STARTER_CODE : saved;
   setViewMode(mode, false);
   setSplit(split, false);

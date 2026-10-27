@@ -580,6 +580,17 @@ svg {
   max-width: 65ch;
   text-align: right;
 }
+.isolation-note details {
+  margin-top: 8px;
+  text-align: left;
+}
+.isolation-note summary {
+  cursor: pointer;
+  color: var(--hn-text, #edf5ff);
+}
+.isolation-note details p {
+  margin-top: 8px;
+}
 .recovery-notice {
   display: flex;
   align-items: center;

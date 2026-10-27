@@ -7,7 +7,7 @@ const path = require('node:path');
 let playwright; try { playwright = require('playwright'); } catch (_) { playwright = require('/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'); }
 const app = require('../../app');
 const engine = process.env.HEAVENLY_BROWSER || 'chromium';
-const output = path.resolve(__dirname, '../../docs/phase4-5/evidence');
+const output = process.env.HEAVENLY_EVIDENCE_DIR ? path.resolve(process.env.HEAVENLY_EVIDENCE_DIR) : path.resolve(__dirname, '../../docs/phase4-5/evidence');
 const summary = { engine, captured: new Date().toISOString(), physicalDevices: [], groups: [], errors: [], screenshots: [] };
 let browser, server;
 const ids = ['set-disable-all-features','set-disable-all-widgets','set-auto-cloak','set-persistent-cloak','set-bookmarks-about-blank','set-search-about-blank','set-show-proxied-url','set-decoy-auto-timer','set-randomize-preset-session','pool-select-all-btn','pool-deselect-all-btn','preset-select','custom-preset-btn','custom-title','custom-icon','save-custom-preset-btn','delete-custom-preset-btn','reset-branding-btn','customize-quick-settings-btn','set-search-new-tab','set-merge-go-newtab','set-bookmark-count-mode','set-bookmark-initial-limit','set-bookmark-limit-section','set-bookmark-section-mode','set-bookmark-section-limit','reset-bookmark-section-limit','set-bookmarks-new-tab','reset-builtin-bookmarks-btn','set-panic-key-enable','set-panic-key','set-touch-panic','set-panic-url','set-show-scroll-lock','set-show-magnifier','set-show-nav-bookmark','set-show-nav-search','set-show-nav-home','set-use-widget-dock','set-dock-position','preview-dock-pos-select','reset-widget-pos-btn','open-export-modal-btn','open-import-modal-btn','close-export-modal-btn','export-select-all-btn','export-deselect-all-btn','download-export-btn','close-import-modal-btn','import-file-input','import-select-all-btn','import-deselect-all-btn','import-mode-select','apply-import-btn'];
@@ -164,7 +164,7 @@ async function readDownload(download) { return JSON.parse(fs.readFileSync(await 
     await reveal(page, 'cloaking');
     const before = await page.evaluate(() => { window.__settingsOriginalWrite = Storage.prototype.setItem; Storage.prototype.setItem = function(key,value) { if (key === 'heavenly_settings') throw new DOMException('Quota exceeded','QuotaExceededError'); return window.__settingsOriginalWrite.call(this,key,value); }; return localStorage.getItem('heavenly_settings'); });
     await page.locator('#set-auto-cloak').click();
-    assert.equal(await page.evaluate(() => localStorage.getItem('heavenly_settings')),before); assert.match(await page.locator('#settings-save-status').textContent(),/could not save/); assert(await page.locator('#set-auto-cloak').isChecked());
+    assert.equal(await page.evaluate(() => localStorage.getItem('heavenly_settings')),before); assert.match(await page.locator('#settings-save-status').textContent(),/could not be saved/); assert(await page.locator('#set-auto-cloak').isChecked());
     await page.evaluate(() => { Storage.prototype.setItem = window.__settingsOriginalWrite; delete window.__settingsOriginalWrite; });
   });
   await group('malformed stored settings survive toggles and recovery export byte-for-byte', async () => {

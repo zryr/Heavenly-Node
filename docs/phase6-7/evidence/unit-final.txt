@@ -1,0 +1,931 @@
+
+> nodeunblocker.com@1.0.0 test
+> mocha
+
+
+
+  index.html accessibility and ARIA attributes
+    ✔ should have an aria-label on the main url search input
+    ✔ should have a direct link to settings.html on open-settings-btn
+    ✔ should include focus-visible CSS rules for interactive elements
+    ✔ should set aria-label attribute on history delete button
+    ✔ should configure history cards with keyboard navigation and ARIA attributes
+    ✔ should configure search bar input arrow key and delete key navigation for history
+    ✔ should include custom scrollbar styling for history dropdown matching Heavenly theme
+    ✔ should configure url input with aria-expanded, aria-controls, and handle Escape key to close history dropdown
+    ✔ should configure add-modal dialog with ARIA semantics, close button label, Escape key dismissal, and focus restoration
+    ✔ should configure focus management and restoration across share, notes, and test modals
+    ✔ should configure bookmark search clear button with aria-label, title, and Escape key dismiss handling
+    ✔ should configure category quick-add and folder expand buttons with descriptive aria-label attributes
+    ✔ should configure drag handles and reorder bar with ARIA attributes and keyboard accessibility
+    ✔ should configure Icon Source tab buttons with tablist and tab ARIA attributes and sync aria-selected
+
+  Production-safe Advanced Details
+    ✔ renders collapsed public details in hosted production without enabling developer diagnostics
+    ✔ redacts every path, query, credential, header, body and unknown exception field before copying
+    ✔ reports only supported DNS, TLS, timeout and invalid-target distinctions
+    ✔ does not turn an upstream 404 into a proxy error page
+    ✔ has a storage-free clipboard fallback that selects only the sanitized report
+
+  Embedded and responsive resource resolution
+    ✔ honors a document base for loader, data, wasm, images and fetch URLs
+    ✔ reads a changed base on subsequent requests without changing native URL semantics
+    ✔ retains data-URL commas, image URL commas and responsive descriptors
+
+  Proxy host and native element handling regressions
+    ✔ drops the proxy development port when constructing a remote URL
+
+  Invalid targets fail before outbound proxy requests
+    ✔ returns a classified 400 for /proxy/https://
+    ✔ returns a classified 400 for /proxy/https://%
+    ✔ returns a classified 400 for /proxy/file:///private/file
+    ✔ returns a classified 400 for /proxy/javascript:alert(1)
+
+  Safe bookmark reconciliation: index.html
+    ✔ places Coolmath after all existing built-in Games defaults
+    ✔ appends Coolmath once after existing game order, preserving personalized data and hidden settings (40ms)
+    ✔ keeps an existing custom Coolmath homepage without adding a duplicate default
+    ✔ migrates shipped icon paths once and preserves custom FMHY icons
+
+  Safe bookmark reconciliation: settings.html
+    ✔ places Coolmath after all existing built-in Games defaults
+    ✔ appends Coolmath once after existing game order, preserving personalized data and hidden settings
+    ✔ keeps an existing custom Coolmath homepage without adding a duplicate default
+    ✔ migrates shipped icon paths once and preserves custom FMHY icons
+
+  Coolmath intentional launch boundary
+    ✔ matches only the two actual hostnames
+    ✔ reuses one existing blank wrapper, retains full URL, and does not change preferences
+    ✔ keeps Direct and explicit normal proxy recovery outside wrappers
+    ✔ performs one popup attempt and supports accepted or cancelled blocked-popup fallback
+    ✔ also wraps an explicit Coolmath proxy action from the existing outbound-link dialogs
+    ✔ deduplicates saved game URLs including nested entries without collapsing query or fragment
+
+  Published bookmark assets
+    ✔ keeps the legacy artic URL usable without duplicate files
+    ✔ keeps the legacy aether URL usable without duplicate files
+    ✔ keeps the legacy doc-of-docs URL usable without duplicate files
+    ✔ keeps the legacy nexus URL usable without duplicate files
+    ✔ keeps the legacy opium URL usable without duplicate files
+    ✔ serves both local site icons
+
+  Active mirrors and explicit note sharing
+    ✔ prefers a working user mirror, deduplicates URLs and preserves canonical identity
+    ✔ keeps all-broken destinations identifiable rather than inventing a working fallback
+    ✔ excludes notes by default and includes nested plain text only for explicit opt-in
+    ✔ keeps conflicting local notes unless replacement is explicit and never touches unrelated records
+    ✔ classifies genuine upstream 526 separately from transport TLS failures
+
+  Bookmark management and saved ordering
+    ✔ stages moves before and after sections without changing saved section objects
+    ✔ leaves ordering intact for self drops and missing sections
+    ✔ keeps built-in bookmark reordering and destination sections on repeated loads
+    ✔ fills missing legacy section IDs using defaults without overwriting user moves
+    ✔ preserves ordering and built-in moves when settings and the proxy bookmark widget read the same storage
+    ✔ shares exactly checked bookmarks and the category metadata needed to import them
+
+  Bookmark Mirror Modal Upgrades Tests
+    ✔ should define Click-to-Copy URL Pill styling and copy handler in index.html
+    ✔ should render Active Site header card and support auto-failover promotion
+    ✔ should render Collapsible Available Mirrors sections with + Add Custom Mirror form
+
+  Public bookmark eligibility
+    ✔ excludes every catalog record even if its builtIn flag is false or removed
+    ✔ extracts custom mirrors and saved pages without the official parent or its notes
+    ✔ filters official descendants inside custom folders and preserves eligible nested notes only on opt-in
+    ✔ enforces exclusion at the direct encoder and safely reads legacy built-in payloads
+    ✔ does not mutate private backup data or local notes when public records are filtered
+
+  Shared Quick Save preference and matching
+    ✔ supports Coolmath without changing its bookmark type or creating a bookmark
+    ✔ finds the selected Coolmath game preference before the general homepage even when disabled
+    ✔ rejects lookalike Coolmath hosts and preserves ordinary folder matching
+    ✔ does not re-create a deleted bookmark or accept unsupported settings
+
+  Local plain-text bookmark notes
+    ✔ saves, edits and clears built-in notes without changing official metadata or unrelated data
+    ✔ uses stable nested identities and the latest saved collection
+    ✔ keeps notes during legacy imports and transfers explicit notes through private backups
+    ✔ preserves the latest note when an unrelated editor saves an older snapshot
+    ✔ strips notes recursively from public payloads without mutating private bookmarks
+    ✔ never resurrects deleted notes and propagates storage failures without losing the saved note
+    ✔ bounds notes and discards malformed imported note metadata
+
+  Notes and Quick Save survive every built-in reader
+    ✔ public/index.html
+    ✔ public/settings.html
+    ✔ custom-client/unblocker-client.js
+
+  Homepage bookmark view preferences and visible collection search
+    ✔ inherits sparse subsection and category limits without copying global values
+    ✔ rejects invalid, fractional and excessive initial counts
+    ✔ uses measured complete bottom rows by default while side panels keep five
+    ✔ preserves legacy custom counts and explicit per-section precedence across Auto changes
+    ✔ searches built-in and custom entries using category, subsection and folder context without exposing hidden ancestors
+
+  Reviewed official catalogs and personal layout
+    ✔ fresh browser installs latest without pending review
+    ✔ existing browser detects stable verifiable changes, not an unrelated version label
+    ✔ applies reviewed additions once
+    ✔ skips without changing collection or letting another reader merge optional entries
+    ✔ later is a read-only review; repeated loads do not apply optional content
+    ✔ preserves every existing relative bookmark order
+    ✔ keeps moved built-ins in a user category and section
+    ✔ preserves hidden categories, sections and entries
+    ✔ appends sections without moving Your Bookmarks or custom sections
+    ✔ preserves category columns and appends in its intended column
+    ✔ preserves custom bookmarks and personal notes
+    ✔ preserves custom mirrors, saved priority, active, preferred, launches and Quick Save
+    ✔ keeps intentional field customizations and surfaces conflicts
+    ✔ preserves broken reports across official URL changes, including SVG/CDN destinations
+    ✔ retains retired folders, notes and user children instead of deleting
+    ✔ keeps empty custom sections untouched and preserves deletion intent after retirement
+    ✔ records explicit deletion intent and does not recreate records
+    ✔ adopts pre-version installations without falsely offering every installed default
+    ✔ offers only missing legacy entries without silently importing them
+    ✔ repairs legacy section IDs and known icon paths even after Skip
+    ✔ keeps skipped additions skipped under later version labels and offers unrelated new content
+    ✔ offers a skipped record again only when it meaningfully changes
+    ✔ discloses minimal skipped parent dependencies for a genuinely new child
+    ✔ imports older backups without destroying customized built-ins
+    ✔ roundtrips full backups with skipped decisions and mirror notes
+    ✔ does not let a partial import overwrite unrelated local review decisions
+    ✔ selective import honors exact skipped changes without suppressing unrelated future changes
+    ✔ failed writes leave collection and decision together unchanged
+    ✔ migrates ID-less legacy mirrors and their URL-based preferences exactly once
+    ✔ malformed import metadata reconstructs a safe baseline instead of suppressing updates
+    ✔ invalid saved data is never overwritten
+    ✔ rejects a stale review and duplicate identities without writes
+    ✔ does not mutate a prepared source while planning a merge
+    ✔ all readers load the shared engine and the proxy bundle contains its canonical definition
+
+  unblocker-client.js fixUrl
+    Nullish and type handling
+      ✔ returns null when urlStr is null
+      ✔ returns undefined when urlStr is undefined
+      ✔ coerces object values with toString()
+    Early returns and fast-paths
+      ✔ returns already proxied root-relative URLs unmodified
+      ✔ returns javascript: URIs unmodified
+      ✔ returns data: URIs unmodified
+      ✔ returns about: URIs unmodified
+      ✔ returns blob: URIs unmodified
+      ✔ returns mailto: URIs unmodified
+      ✔ returns tel: URIs unmodified
+    Relative URL resolution
+      ✔ resolves relative path when location.pathname is proxied
+      ✔ falls back to config.url when location.pathname is not proxied
+      ✔ handles query and hash parameters in relative inputs
+    Absolute and host matching handling
+      ✔ returns already proxied absolute URLs unmodified
+      ✔ returns non-HTTP/HTTPS URLs unmodified (e.g. ftp)
+      ✔ rewrites host and protocol when url.hostname matches location.hostname
+      ✔ correctly proxies standard absolute HTTP and HTTPS URLs
+
+  unblocker-client.js Heavenly Widgets
+Error initializing Heavenly widgets: TypeError: miniButton.getAttribute is not a function
+    at attachWidgetBehaviors (/workspace/Heavenly-Node/custom-client/unblocker-client.js:2144:61)
+    at injectUI (/workspace/Heavenly-Node/custom-client/unblocker-client.js:3233:11)
+    at initHeavenlyWidgets (/workspace/Heavenly-Node/custom-client/unblocker-client.js:3414:9)
+    at Object.initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4321:5)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/client.test.js:254:25)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+    ✔ scroll lock toggle button toggles active state and updates UI
+
+  Cloudflare & Redirect Response Middleware
+    cloudflareMiddleware
+      ✔ should inject referer and origin for generic Cloudflare /cdn-cgi/ requests
+      ✔ should preserve existing referer when present for Cloudflare requests
+      ✔ should normalize sec-fetch-site header for Cloudflare requests
+      ✔ should not modify headers for non-Cloudflare URLs
+    responseRedirectMiddleware
+      ✔ should rewrite relative Location headers into proxied URLs
+      ✔ should normalize single-slash proxied Location headers
+      ✔ should handle absolute Location headers correctly
+      ✔ should do nothing if Location header is missing or non-string
+      ✔ should strip duplicate nested proxy prefixes from absolute or relative Location headers
+
+  Heavenly Custom Error Page & Error Middlewares
+    renderHeavenlyErrorPage HTML generator
+      ✔ should generate valid Heavenly-themed HTML with status code and title
+      ✔ should sanitize HTML special characters in errorType, target URL and details
+    serverErrorResponseMiddleware (5xx response interceptor)
+      ✔ should replace stream with Heavenly error page for 5xx HTML responses
+      ✔ should NOT intercept non-5xx responses
+      ✔ should NOT intercept non-HTML 5xx responses (e.g. JSON API or image)
+    heavenlyErrorMiddleware (Express error handler)
+      ✔ should handle ENOTFOUND errors and return 502 with Heavenly error page
+      ✔ should handle ECONNREFUSED errors and return 502 with Heavenly error page
+      ✔ should handle ETIMEDOUT errors and return 504 with Heavenly error page
+      ✔ should handle EAI_AGAIN DNS lookup error and return 502 with Heavenly error page
+      ✔ should handle ESOCKETTIMEDOUT error and return 504 with Heavenly error page
+      ✔ should handle ECONNRESET error and return 502 with Heavenly error page
+      ✔ should handle EPIPE broken pipe error and return 502 with Heavenly error page
+      ✔ should handle err.status in range 400-599 and return custom status and message
+      ✔ should fallback to err.errno when err.code is undefined
+      ✔ uses a generic category without exposing unknown exception messages
+      ✔ should fallback to default details string when err has no message and unknown error code
+      ✔ should delegate error handling to next(err) if res.headersSent is true
+      ✔ should explain a missing server without inserting an empty target address
+    End-to-End HTTP requests to non-existent target URL
+      ✔ should return Heavenly-themed HTML error page instead of plain text Internal Server Error (5056ms)
+
+  Developer QA Panel, Loading Screen Redesign & Touch Drop Indicators
+    Touch Drag Precision & Colored Drop Indicators
+      ✔ uses one restrained insertion space, with distinct category and bookmark identity
+      ✔ uses stable shared measurements and animated neighboring items
+      ✔ should use the shared adaptive preview renderer with actual input context
+    Shared Heavenly Loading Screen
+      ✔ uses the same accessible celestial mark and shimmer on home and Settings
+      ✔ keeps the mark still, limits repeated motion and supplies a bounded fallback
+    Codex Developer HQ command and safe QA tools
+      ✔ opens the local workshop from the codex command
+      ✔ uses scoped data operations and preserves bookmark recovery
+
+  Codex Developer HQ official content model
+    ✔ creates a complete valid identity-based source without touching personal catalog data
+    ✔ moves a category between sidebars and keeps consecutive positions in both groups
+    ✔ reorders sections and nested links using stable identities
+    ✔ moves a root container with its entire subtree to a compatible official destination
+    ✔ rejects missing/duplicate identities and incompatible schema/version imports
+    ✔ rejects invalid destinations, parent changes, circular nesting and order conflicts
+    ✔ exports deterministic repository source with an explicit newer catalog release version
+    ✔ round-trips an exported ranking through the real repository generator and fresh catalog (115ms)
+    ✔ exports validated Picks as a real safe UMD asset while public recommendations remain empty
+    ✔ refuses a reviewed bridge that reparents a nested link before the generator can redefine its expected tree
+    ✔ refuses unsafe URLs, malformed Picks and duplicate stable recommendation IDs
+
+  Developer HQ reviewed message drafts
+    ✔ edits registered wording and appearance without changing the published data
+    ✔ reorders complete entries and retains stable IDs, enabled states and dialogue
+    ✔ refuses unknown, missing, duplicate or reclassified registered entries
+    ✔ keeps actions registered while allowing safe dialogue editing
+    ✔ checks the actual destination field on every preview/save/export candidate
+    ✔ rejects invalid weight, unbounded dialogue, arbitrary CSS and executable fields
+    ✔ requires an explicit review and newer version for a deterministic JSON source export
+    ✔ restores compatible local drafts and refuses stale or corrupt stored copies without altering them
+    ✔ keeps the validated JSON source and generated browser bundle deterministic and current
+    ✔ serializes authored markup and script separators safely without changing the browser data
+
+  Academy standalone document and navigation boundary
+    ✔ removes the mounted school overlay and gates before loading Heavenly assets
+    ✔ contains literal academic content without the Heavenly app beneath it
+    ✔ commits complete documents generated from the shared source templates
+    ✔ reserves every page before upstream Referer recovery
+    ✔ every local link resolves to an existing document, file or valid section
+    ✔ planned services are honest Coming Soon content with alternatives, not 503 outages
+    ✔ returns a branded 404 for unknown documents and real 503 only after a requested file read fails
+    ✔ keeps real terms, software authorship and licensed photo attribution accessible
+
+  Academy trusted information launch preferences
+    ✔ only permits its own five trusted information documents
+    ✔ uses Search same-tab defaults even when bookmark launch is enabled
+    ✔ opens normal tabs with a severed opener using the saved Search choice
+    ✔ keeps real navigation working when popup creation or browser storage is denied
+    ✔ reuses only a shell that owns this exact trusted frame
+
+  Academy presentation session continuity
+    ✔ redirects a locked homepage before rendering, without mutating saved settings
+    ✔ keeps an unlocked session on Heavenly and preserves its URL
+    ✔ Terms unlocks only the established session flag
+    ✔ provides a one-navigation fallback if session storage is unavailable
+    ✔ only enables the existing timer for an explicit true preference
+
+  index.html checkError security fix
+    ✔ should display decoded error message when valid error parameter is present
+    ✔ should handle HTML tags as plain text without XSS risk
+    ✔ should handle malformed URI percent-encoding gracefully without throwing error
+    ✔ should not display error container when no error query param is present
+    ✔ should fall back to manual parameter extraction when URLSearchParams is unavailable
+
+  FMHY Bookmarks & Link Interception
+    ✔ provides both FMHY destinations through the shared client catalog
+    ✔ should contain openFmhyLinkModal and isFmhyPage functions in unblocker-client.js
+    ✔ should exclude clicks originating from FMHY search containers
+
+  Google Analytics support
+    ✔ should inject GA4 gtag.js snippet into HTML when GA_ID is set
+    ✔ should handle uppercase </BODY> tag and missing body tag when injecting GA snippet
+    ✔ should not modify HTML when GA_ID is not set
+    ✔ should process stream in googleAnalyticsMiddleware when content type is text/html
+    ✔ should not transform stream in googleAnalyticsMiddleware when content type is not text/html
+
+  headersMiddleware request middleware
+    Fast-path guards
+      ✔ should do nothing if data.url is missing or falsy
+      ✔ should do nothing if data.headers is missing or falsy
+      ✔ should do nothing if both referer and origin are missing
+    Referer header cleaning and normalization
+      ✔ should preserve valid absolute Referer URLs
+      ✔ should normalize single-slash scheme in Referer URLs
+      ✔ should strip single proxy prefix from Referer URL
+      ✔ should strip single proxy prefix with single-slash scheme from Referer URL
+      ✔ should strip multiple nested proxy prefixes from Referer URL
+      ✔ should strip host-prefixed proxy prefix from Referer URL
+    Origin header rewriting
+      ✔ should rewrite Origin header to target origin from URL string
+      ✔ should rewrite Origin header using pre-parsed data.uri
+    Combined headers & Error handling
+      ✔ should clean Referer and rewrite Origin together
+      ✔ should handle invalid URLs gracefully without throwing an exception
+      ✔ should handle uppercase scheme single-slash normalization in Referer
+      ✔ should handle empty string header values correctly
+      ✔ should preserve other unrelated headers intact when modifying referer and origin
+      ✔ should handle multiple nested proxy prefixes with mixed single and double slashes
+
+  upstream security restrictions
+    ✔ preserves framing, CSP and MIME restrictions verbatim
+    ✔ leaves existing restrictions unchanged without a remoteResponse
+
+  Express routes X-Frame-Options header removal
+    ✔ should not include X-Frame-Options header on GET /
+(node:49784) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+    ✔ should not include X-Frame-Options header on GET /no-js
+    ✔ should prevent routes or middleware from setting X-Frame-Options via res.setHeader
+
+  Content-sized homepage layout
+    ✔ protects center width across viewport, saved width and manual intent combinations
+    ✔ restores intended expanded state after pressure and prioritizes explicitly opened side
+    ✔ derives category rails without changing saved widths or manual intent
+    ✔ validates stored widths without touching any bookmark data
+    ✔ removes empty side tracks from pressure without erasing saved manual intent
+    ✔ keeps sparse stable category collapse separate from automatic layout pressure
+
+  html-viewer.html & VUS Fallback Waterfall
+    ✔ should serve public/html-viewer.html via express static server
+    ✔ should serve public/vendor/vus.html local fallback asset
+    ✔ should contain HTML Viewer navigation button in public/index.html and not in settings.html
+    ✔ should configure layout view switcher tabs with ARIA attributes in public/html-viewer.html
+    ✔ should configure code textarea, action buttons, and status indicator with accessible ARIA attributes
+    ✔ should support Ctrl/Cmd+Enter keyboard execution shortcut and dynamic updateEditorStatus announcements
+
+  HTML Viewer deployed execution boundary
+    ✔ serves the shared workspace assets
+    ✔ defaults preview to an opaque scripted sandbox with no popup or top-navigation grants
+
+  Bolt #200 bookmark lookup adaptation
+    ✔ retains canonical destinations, object identity and nested-before-later-parent order
+    ✔ skips sparse parent and child slots without losing a later match
+    ✔ does not visit entries appended during an in-progress parent or child traversal
+
+  Reviewed Bolt navigation optimizations
+    ✔ preserves canonical remote destinations and exact asset links
+    ✔ retains uppercase, encoded-host and URL-object compatibility rejected by the proposed raw substring guard
+    ✔ uses one URL parse for common bookmark identity resolution
+
+  Launch Preference & Scoped Edit Modal Tests
+    ✔ should contain long-press CSS classes and discovery hint in builtin-test-modal
+    ✔ should contain Launch Mode control in form-add-bm in public/index.html
+    ✔ should implement long-press listener, bookmark launchPreference persistence, and direct launch bypass in index.html
+    ✔ should use threshold timers before adding pressing class to prevent fill animation on quick clicks
+    ✔ should scope edit modal UI by hiding action tabs when editing an existing bookmark
+
+  Opt-in development loading diagnostics
+    ✔ installs no instrumentation or loading view without the tab opt-in
+    ✔ counts an error flood with a fixed storage budget and never suppresses console calls
+    ✔ preserves successful fetch responses, HTTP errors and rejection identity
+    ✔ reports only bounded coarse resource observations, never resource names
+    ✔ distinguishes subsequent frame loads from errors without inferring an unexpected redirect
+    ✔ does not install another wrapper, observer or listener when loaded twice
+    ✔ inspects at most eight immediate frames and allowlists copied child counters
+
+  Heavenly structured messages
+    ✔ validates the reviewed data without mutating source, including all four exact Spotify destinations
+    ✔ rejects executable fields, unsafe destinations, uncontrolled styling, and unknown actions
+    ✔ bounds complete datasets, text, IDs, weights, segments, and dialogue steps
+    ✔ keeps inline links out of action buttons and requires focusable tooltip anchors
+    ✔ starts with ordinary copy and keeps one 12–15 second timer regardless of elapsed invisible time
+    ✔ composes hover, focus, hidden, dialog and explicit pause reasons without a premature resume
+    ✔ never automatically opens a special experience or selects specials consecutively (82ms)
+    ✔ gives enabled equal-weight copy fair turns and never repeats immediately when another ordinary entry is eligible
+    ✔ honors disabled and session-dismissed eligibility without changing ordinary data
+    ✔ applies author weights while still giving every eligible ordinary message a turn
+    ✔ keeps manual Next usable while paused and destroys the scheduler idempotently
+    ✔ reproduces selection with injected seeded randomness and clock rather than wall-time waits
+
+  Persistent mirror choices
+    ✔ chooses and persists any eligible preferred destination, including the original
+    ✔ retains the fallback through restoration and refresh without losing the preference
+    ✔ orders eligible entries by saved IDs while leaving shipped child records intact
+    ✔ keeps a working active site when order or broken non-active entries change
+    ✔ explains all-broken state without inventing a working destination or repeated promotions
+    ✔ does not switch or promote merely on restoring an all-broken collection
+    ✔ retains order and intentional asset-style destinations without rewriting saved URLs
+    ✔ respects explicit exclusions and rejects invalid or unsafe URLs independently of extension
+    ✔ handles legacy URLs without IDs and newly reconciled entries without duplicates
+    ✔ keeps choices out of public shares, preserves them across stale ordinary writes
+    ✔ preserves complex catalog choices during index.html reconciliation
+    ✔ preserves complex catalog choices during settings.html reconciliation
+
+  Navigation settings compatibility
+    ✔ uses consistent defaults and inherits explicit legacy about:blank preferences
+    ✔ retains unrelated and future settings when changing a preference
+    ✔ handles invalid settings objects without throwing
+    ✔ keeps bookmark and search decisions independent, including explicit New Tab
+    ✔ keeps index.html usable when the browser denies access to the storage object itself
+    ✔ retains unknown preferences through the index.html settings reader
+    ✔ keeps settings.html usable when the browser denies access to the storage object itself
+    ✔ retains unknown preferences through the settings.html settings reader
+
+  Safe launch and wrapper recovery
+    ✔ opens proxied pages in about:blank even if the remembered New Tab setting is off
+    ✔ opens direct bookmarks normally instead of putting incompatible external sites in frames
+    ✔ lets users cancel a blocked popup without navigating or recording a visit
+    ✔ falls back to the current tab when the user accepts the blocked-popup recovery
+    ✔ navigates the new tab normally when wrapper initialization is unsupported
+    ✔ retains the wrapper and offers explicit recovery on an iframe error
+    ✔ restores hosted browsing without putting the target URL in the address
+    ✔ falls back to normal navigation when session storage is unavailable
+    ✔ rejects unsafe schemes without opening a new window
+    ✔ updates recovery links and saved sessions after in-frame navigation
+
+  History normalization and persistence
+    ✔ keeps the history dropdown usable when access to storage is denied
+    ✔ keeps valid legacy entries and metadata while rejecting malformed entries and duplicates
+    ✔ preserves query, fragment, and legitimate remote /proxy/ paths
+    ✔ normalizes stored proxied URLs to the real target instead of nesting proxies on reopening
+    ✔ deduplicates revisits, keeps metadata, persists titles, and retains the existing 20-item limit
+    ✔ does not resurrect cleared or deleted entries when a title changes
+    ✔ updates metadata without reordering history or discarding existing fields
+
+  Native History API and navigation recording
+Error initializing Heavenly Cloak & Panic: TypeError: window.document.getElementById is not a function
+    at initHeavenlyCloakAndPanic (/workspace/Heavenly-Node/custom-client/unblocker-client.js:819:63)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4320:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:238:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+Error initializing Heavenly widgets: TypeError: window.document.getElementById is not a function
+    at /workspace/Heavenly-Node/custom-client/unblocker-client.js:1901:54
+    at Array.forEach (<anonymous>)
+    at initHeavenlyWidgets (/workspace/Heavenly-Node/custom-client/unblocker-client.js:1900:109)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4321:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:238:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+    ✔ records URL-only navigation even when widgets and cloaking are disabled
+Error initializing Heavenly Cloak & Panic: TypeError: window.document.getElementById is not a function
+    at initHeavenlyCloakAndPanic (/workspace/Heavenly-Node/custom-client/unblocker-client.js:819:63)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4320:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:244:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+Error initializing Heavenly widgets: TypeError: window.document.getElementById is not a function
+    at /workspace/Heavenly-Node/custom-client/unblocker-client.js:1901:54
+    at Array.forEach (<anonymous>)
+    at initHeavenlyWidgets (/workspace/Heavenly-Node/custom-client/unblocker-client.js:1900:109)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4321:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:244:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+    ✔ preserves state-only calls and does not add meaningless history entries
+Error initializing Heavenly Cloak & Panic: TypeError: window.document.getElementById is not a function
+    at initHeavenlyCloakAndPanic (/workspace/Heavenly-Node/custom-client/unblocker-client.js:819:63)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4320:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:253:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+Error initializing Heavenly widgets: TypeError: window.document.getElementById is not a function
+    at /workspace/Heavenly-Node/custom-client/unblocker-client.js:1901:54
+    at Array.forEach (<anonymous>)
+    at initHeavenlyWidgets (/workspace/Heavenly-Node/custom-client/unblocker-client.js:1900:109)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4321:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:253:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+    ✔ records replaceState and back/forward without duplicating existing URLs
+Error initializing Heavenly Cloak & Panic: TypeError: window.document.getElementById is not a function
+    at initHeavenlyCloakAndPanic (/workspace/Heavenly-Node/custom-client/unblocker-client.js:819:63)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4320:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:262:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+Error initializing Heavenly widgets: TypeError: window.document.getElementById is not a function
+    at /workspace/Heavenly-Node/custom-client/unblocker-client.js:1901:54
+    at Array.forEach (<anonymous>)
+    at initHeavenlyWidgets (/workspace/Heavenly-Node/custom-client/unblocker-client.js:1900:109)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4321:5)
+    at proxyWindow (/workspace/Heavenly-Node/test/navigation_history.test.js:45:3)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/navigation_history.test.js:262:17)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+    ✔ leaves rejected history changes out of the recorded history
+
+  New default bookmarks
+    ✔ bm_sitesdotcom
+    ✔ bm_grind1
+    ✔ bm_gn_math
+
+  Newgrounds request middleware
+    ✔ should inject referer and origin headers for newgrounds.com URLs
+    ✔ should preserve existing newgrounds.com page referer when set
+    ✔ should inject referer and origin headers for ngfiles.com CDN URLs
+    ✔ should inject referer and origin headers for ungrounded.net URLs
+    ✔ should not modify headers for non-Newgrounds URLs
+    ✔ should inject x-requested-with and normalize sec-fetch-site for inner pagination requests
+    ✔ should NOT inject x-requested-with for top-level document navigations with offset parameter
+
+  GET /no-js
+    ✔ should redirect to /proxy/<site> when url parameter is provided
+    ✔ should correctly handle URL encoded query parameters
+    ✔ should redirect to / when url parameter is empty
+    ✔ should redirect to / when url parameter is missing
+    ✔ should automatically prepend https:// for raw domains
+    ✔ should convert plain search queries into google search urls
+    ✔ should strip leading slashes and protocol relative URLs to prevent open redirect
+    ✔ should strip leading backslashes to prevent bypasses
+    ✔ should redirect javascript: pseudo-protocol queries safely to search
+    ✔ should handle array query parameters by picking the first url
+    ✔ should redirect to / when url parameter contains only whitespace
+    ✔ should redirect to / when url parameter contains only invalid characters or dots
+    ✔ should strip leading dots from domain name
+    ✔ should redirect unsupported protocols like ftp:// to google search
+    ✔ should preserve http:// scheme when provided
+
+  normalizeProxyUrl middleware
+    Unit Tests - Direct invocation with mock objects
+      ✔ should do nothing and call next() if req.url is missing or undefined
+      ✔ should do nothing and call next() if req.url is an empty string
+      ✔ should leave non-proxy URLs intact and call next()
+      ✔ should leave standard double-slash proxied URLs unmodified
+      ✔ should normalize single-slash scheme in proxied URLs
+      ✔ should handle case-insensitive scheme single-slash normalization
+      ✔ should strip nested proxy prefixes and normalize remaining URL
+      ✔ should handle trailing incomplete single-slash scheme ending in slash
+    Integration Tests - Express app request flow
+      ✔ should run normalizeProxyUrl in the middleware pipeline when handling requests
+
+  OP Websites Category, Bookmarks & Advice Modals
+    ✔ defines OP Websites and its sections once
+    ✔ registers all OP websites
+    ✔ keeps destination-specific icons
+    ✔ disables quick save for both project documents
+    ✔ keeps all 22 Opium mirrors and canonical destination
+    ✔ keeps legitimate SVG and proxied icons
+    ✔ should contain Distrosea modal, recommendations, direct/proxy buttons, and responsive side column CSS in index.html
+    ✔ removes the optional UBGDir product credit while preserving authorship and license notices
+
+  Phase 3 Newgrounds compatibility: mandatory migration matrix
+    ✔ 1. fresh installation has one normal official Newgrounds
+    ✔ 2. both legacy records consolidate by stable identity without installing optional games
+    ✔ 3. old Syshi alone retains saved notes and original position
+    ✔ 4. normal legacy record alone is promoted in place with its existing personal placement
+    ✔ 5. notes on both records survive, including two maximum-length notes in recovery
+    ✔ 6. custom children on both sides survive once; different identities sharing a URL stay distinct
+    ✔ 7. hiding either legacy record keeps the consolidated bookmark hidden
+    ✔ 8. custom placement wins over defaults, with deterministic canonical priority for conflicts
+    ✔ 9. both mirror sets and valid active/preferred/order choices survive conservatively
+    ✔ 10. an imported older private backup keeps notes, children, and prior skipped decisions
+    ✔ 11. Skip performs the required compatibility repair but never installs optional additions
+    ✔ 12. repeated update application neither duplicates games nor resurrects the retired alias
+    ✔ 13. repeated browser loads produce a byte-stable migrated collection
+    ✔ 14. invalid saved data fails safely without overwriting the original
+    ✔ 15. a localStorage write failure preserves the original collection, decisions, and external broken map
+    ✔ 16. unrelated personal Newgrounds URLs retain every identity and customization
+
+  Phase 3 official additions and preservation
+    ✔ ships exact destinations, stable identities, bundled fallbacks, and Dancing Bunny immediately before Gamebois
+    ✔ Apply appends to customized saved order and preserves launch and Quick Save choices
+    ✔ keeps conflicting icons and launch settings recoverable and migration archives out of public sharing
+    ✔ recognizes the retired shipped alias in old public-share inputs while preserving its personal children
+    ✔ records official ranking changes for review while Apply preserves existing numeric order
+    ✔ loads the browser order bridge and the same generated defaults in the proxy bundle
+
+  Accepted official order restoration
+    ✔ section restore changes only eligible ordering and preserves personal records and all nonlayout fields
+    ✔ global restore restores accepted category sides and official section order around custom sections
+    ✔ skipped rankings and absent official entries are never installed or used by restore
+    ✔ restores the most recently accepted official ranking without moving builtins to different destinations
+    ✔ preview cancellation is read-only, stale previews fail, and failed writes are atomic
+    ✔ validates section scopes and preserves unrelated nested arrays
+
+  Additional Newgrounds migration audit: nested personal layouts
+    ✔ preserves a canonical Newgrounds moved directly under its retired alias
+    ✔ preserves a retired alias moved directly under canonical Newgrounds
+    ✔ preserves a canonical Newgrounds moved deep inside a personal folder under its retired alias
+    ✔ preserves a retired alias moved deep inside a personal folder under canonical Newgrounds
+
+  Framework URL validation and widget helpers
+    ✔ passes the Next.js origin-validation contract for canonical and collapsed proxy paths
+    ✔ reproduces the old constructor defect independently of a missing script or a redirect
+    ✔ repairs collapsed paths at rewriting boundaries without changing canonical absolute presentation
+    ✔ renders shared presets, unknown-preset fallback and custom URL selection
+    ✔ keeps blank-load races and frame errors in the wrapper, and Home leaves for Heavenly
+
+  Local upstream redirect attribution and security
+    ✔ does not emit 308s for canonical or collapsed document/static-resource requests
+    ✔ preserves an upstream 308 status while rewriting its relative Location exactly once
+    ✔ keeps MIME blocking and third-party framing restrictions
+
+  Sanitized development diagnostics and error classification
+    ✔ classifies DNS, temporary DNS, connection, TLS, timeout, response and unknown errors distinctly
+    ✔ rejects diagnostics access unless explicitly enabled on a local development server: {"NODE_ENV":"production","HEAVENLY_DEV_DIAGNOSTICS":"1"}
+    ✔ rejects diagnostics access unless explicitly enabled on a local development server: {"NODE_ENV":"development"}
+    ✔ rejects diagnostics access unless explicitly enabled on a local development server: {"NODE_ENV":"development","HEAVENLY_DEV_DIAGNOSTICS":"1","VERCEL":"1"}
+    ✔ rejects diagnostics access unless explicitly enabled on a local development server: {"HEAVENLY_DEV_DIAGNOSTICS":"1"}
+    ✔ serves the dev asset without caching and sanitizes copied metadata with an allowlist
+    ✔ does not render arbitrary exception messages and retries only on explicit action
+    ✔ captures no events without tab opt-in, and bounds sanitized events across reloads
+
+  Heavenly route ownership and wrapper controls
+    ✔ serves Home, Settings and own assets with a proxied Referer
+    ✔ accepts Home messages only from the registered same-origin frame
+    ✔ commits an initially empty blank document once before mounting, without rewriting its address
+
+  proxy deployment runtime compatibility
+    ✔ keeps the verified HTTPS toolbar runtime and feedback frame on their own origin
+    ✔ does not exempt remote 404 paths, unrelated Vercel pages, lookalikes or insecure origins
+    ✔ preserves relative resources, fragments and already-proxied navigation
+Error initializing Heavenly Cloak & Panic: TypeError: window.document.getElementById is not a function
+    at initHeavenlyCloakAndPanic (/workspace/Heavenly-Node/custom-client/unblocker-client.js:819:63)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4320:5)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/proxy_runtime.test.js:33:5)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+Error initializing Heavenly widgets: TypeError: window.document.getElementById is not a function
+    at /workspace/Heavenly-Node/custom-client/unblocker-client.js:1901:54
+    at Array.forEach (<anonymous>)
+    at initHeavenlyWidgets (/workspace/Heavenly-Node/custom-client/unblocker-client.js:1900:109)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4321:5)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/proxy_runtime.test.js:33:5)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+    ✔ keeps a duplicate cached initializer from installing handlers or wrapping history again
+    ✔ injects once into a real head across chunk boundaries and ignores header/custom elements
+    ✔ leaves documents without head and non-HTML responses untouched
+    ✔ does not inject markup from URL metadata and preserves trailing partial tags
+
+  Quick Settings customization model
+    ✔ defaults to five existing shortcuts with info icons off without altering settings
+    ✔ accepts an intentionally empty panel and normalizes invalid/duplicate identifiers
+    ✔ recovers malformed legacy layouts with safe defaults
+    ✔ preserves unknown future layout fields and identifiers when saving known shortcuts
+    ✔ resetting layout keeps feature preferences, tabs, bookmarks and history untouched
+    ✔ about:blank overrides New Tab presentation without modifying either saved preference or URL visibility
+    ✔ widget master controls pause shortcuts while retaining saved feature values
+    ✔ Panic Key reuses the stored shortcut ID and existing activation preference without redirecting
+    ✔ adds Auto Tab Cloaking without enabling or reordering existing shortcuts on upgrade
+    ✔ contextual widget patches update only edited existing settings
+    ✔ choosing a cloak preset changes neither Auto nor Persistent Cloaking
+    ✔ collects interleaved shortcuts into unique groups without changing saved layout or visibility
+    ✔ shows effective Persistent state without changing the Auto toggle or master preference
+    ✔ reports a missing panic key as setup rather than active while preserving legacy default
+    ✔ disabling either panic feature saves only its activation flag and retains key and destination
+    ✔ migrates a visible retired shortcut in place without changing underlying settings or future layout fields
+    ✔ retains an already visible Tab Cloaking position and never reveals either hidden cloak shortcut
+    ✔ compares staged pool arrays by value and writes only deliberate edits
+    ✔ shares existing defaults and preserves saved custom/unavailable pool entries during individual edits
+
+  Quick Settings & Auto-Hide Broken Bookmarks Tests
+    ✔ should mount the shared Quick Settings registry in the homepage
+    ✔ should define initQuickSettingsTray with state persistence and pill click handlers
+    ✔ should contain Auto-Hide broken bookmark container and action button in builtin-test-modal
+    ✔ should render single-URL broken link toggle button and check if all versions are broken in openBuiltinTestModal
+    ✔ should define micro-animation keyframes and classes for Mark as Working/Broken and smooth transition on search newtab button
+
+  responseLinkHeaderMiddleware
+    ✔ should rewrite single string Link header with absolute target URL
+    ✔ should resolve and rewrite relative target URLs against data.url
+    ✔ should not rewrite URLs that already begin with prefix
+    ✔ should handle array of Link headers
+    ✔ should safely retain original target match if URL parsing throws an error
+    ✔ should do nothing if data has no headers or no link header
+    ✔ should do nothing if link header is neither string nor array
+
+  Safe return to the originating homepage
+    ✔ focuses the registered homepage and closes only its exact script-opened child
+    ✔ rejects unrelated windows, forged origins, invalid tokens and tabs navigated elsewhere
+    ✔ does not close a child when the browser refuses homepage focus
+    ✔ navigates manual tabs home without opening another tab
+    ✔ falls back in the current tab when the opener is inaccessible or does not respond
+    ✔ routes sandboxed child Home through its registered wrapper
+
+  Script-safe streaming HTML URL prefixing
+    ✔ leaves configuration URLs and script strings intact while proxying actual resource attributes
+    ✔ preserves the same result with tags and URLs split at every possible chunk boundary
+    ✔ streams script bodies instead of retaining whole documents, and resumes HTML rewriting after each script
+    ✔ retains the original CSS URL prefixing behavior
+    ✔ preserves SVG namespaces in CSS icons across every stream boundary
+    ✔ still serves the bundled client as JavaScript
+
+  settings.html standalone page
+    ✔ should serve settings.html via express static server
+    ✔ should have a back button linking to homepage
+    ✔ should contain all essential setting controls and inputs
+    ✔ should associate labels with form inputs using for attributes in settings.html
+    ✔ should have accessible aria-labels on settings form controls
+    ✔ should include accessible aria-live status notification element in settings.html
+    ✔ should assign role="switch" to switch toggle checkboxes in settings.html
+    ✔ should configure Timed Decoy Auto-Unlock setting card and default decoyAutoTimer to false
+    ✔ should attach Enter key event listener to custom preset title and icon inputs
+    ✔ should configure delete button disabled state and tooltip for built-in presets
+    ✔ uses the same current defaults and protects customized icons
+    ✔ should deduplicate bookmarks and categories on reset in settings.html
+    ✔ should attach keydown Escape key listener to close export/import modals and custom preset dropdown menu
+    ✔ should configure heavenly-logo.png as site favicon and header brand mark across public files and app.js
+    ✔ should contain full tab cloaking presets, randomizer pool controls, and reset branding button
+    ✔ should configure modal focus tracking and restoration for export and import modals in settings.html
+
+  Shared settings write safety
+    ✔ never replaces unreadable saved preferences when changing one control
+    ✔ propagates read and write failures and preserves unrelated valid preferences
+
+  Bolt srcset optimization compatibility
+    ✔ retains all JavaScript whitespace separators, including Unicode and vertical tabs
+
+  Sub-Sections Functionality & Data Model
+    ✔ defines Nae-Nae as a collapsed built-in section
+    ✔ keeps the Nae-Nae destinations in their section
+    ✔ repairs a missing legacy section without adding optional content
+    ✔ should configure accordion sections and synchronized toggle logic in Preset Bookmark Manager
+    ✔ should default tab cloaking randomizer pool to 7 specific tools
+    ✔ should support adding custom sub-sections in index.html form and empty-state bookmark creation
+    ✔ should configure desktop hover-reveal CSS and subsec-edit-btn class for collapsed sub-sections
+
+  Syshi's Notes, Isshonime Bookmark & De-emphasized Broken Links
+    ✔ should contain Isshonime link only in Syshi's Notes modal in index.html and not in default bookmarks
+    ✔ should contain Syshi's Notes button, modal, and tip content in index.html
+    ✔ should apply de-emphasized styling for broken mirror links in index.html
+
+  Bookmark touch scrolling and deliberate handle dragging
+    ✔ allows native vertical scrolling on cards and lists, reserving only the handle for dragging
+    ✔ cancels a fast vertical handle swipe before the hold without blocking its events
+    ✔ cancels a fast horizontal handle swipe before the hold without blocking its events
+    ✔ tolerates 8px of movement during a hold, then keeps confirmed vertical dragging active
+    ✔ does not drag on a tap or a stationary long press
+    ✔ cleans up a pending hold on touchcancel without dropping
+    ✔ cleans up a confirmed drag on touchcancel without dropping
+    ✔ cancels when another finger joins, including a finger outside the handle
+    ✔ ignores another contact ending instead of dropping the tracked finger
+    ✔ cleans up on blur, hidden documents, and rerender interruption
+    ✔ suppresses compatibility clicks after a drop even if the original handle was replaced
+    ✔ keeps keyboard clicks and real mouse clicks usable after a touch drag
+    ✔ suppresses a cancelled swipe click even when the finger remains down for more than 800ms
+    ✔ cancels touch state when switching to a real mouse without treating compatibility events as mouse input
+    ✔ recognizes a fresh real mouse pointer when sourceCapabilities is unavailable
+    ✔ recognizes compatibility mouse input during a long touch when sourceCapabilities is unavailable
+    ✔ cancels card press timers and press states on movement without suppressing native scrolling
+    ✔ prevents native HTML5 touch drags from card bodies without changing mouse dragging
+    ✔ keeps modal section handles on the touch path without starting a duplicate native drag
+
+  unblocker-client.js DOM element rewriting & click interception
+    Native Location and URL compatibility
+      ✔ preserves native URL and Location semantics for framework routers
+    fixUrl & fixSrcset
+      ✔ should correctly proxy relative and absolute URLs
+      ✔ should leave unproxied bypass URLs unmodified in fixUrl and window.open
+      ✔ should correctly proxy srcset candidates
+    XMLHttpRequest & Fetch proxying
+      ✔ should wrap window.XMLHttpRequest while preserving prototype and static constants
+      ✔ should proxy fetch calls accepting URL objects
+    DOM element prototype getter/setter & click interception
+      ✔ should proxy href getter and setAttribute for anchors
+    Heavenly Browsing History
+      ✔ should save history up to 20 items and filter out cloaked preset titles
+    Live Page Icon Picker Resiliency & SPA Handling
+Error initializing Heavenly Cloak & Panic: TypeError: window.document.querySelectorAll is not a function
+    at applyCloak (/workspace/Heavenly-Node/custom-client/unblocker-client.js:881:47)
+    at syncCloak (/workspace/Heavenly-Node/custom-client/unblocker-client.js:908:11)
+    at initHeavenlyCloakAndPanic (/workspace/Heavenly-Node/custom-client/unblocker-client.js:913:7)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4320:5)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/unblocker-client.test.js:330:7)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+Error initializing Heavenly widgets: TypeError: Cannot read properties of undefined (reading 'add')
+    at injectUI (/workspace/Heavenly-Node/custom-client/unblocker-client.js:2896:29)
+    at initHeavenlyWidgets (/workspace/Heavenly-Node/custom-client/unblocker-client.js:3414:9)
+    at initForWindow (/workspace/Heavenly-Node/custom-client/unblocker-client.js:4321:5)
+    at Context.<anonymous> (/workspace/Heavenly-Node/test/unblocker-client.test.js:330:7)
+    at callFn (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:360:23)
+    at Test.run (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runnable.js:348:7)
+    at Runner.runTest (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:809:10)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:949:12
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:724:14)
+    at file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:734:7
+    at next (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:595:14)
+    at Immediate._onImmediate (file:///workspace/Heavenly-Node/node_modules/mocha/lib/runner.js:702:5)
+    at process.processImmediate (node:internal/timers:534:21)
+      ✔ should normalize URLs with trailing slashes and /proxy/ prefixes for pending icon picker matching
+      ✔ should retry mounting overlay until document.body is available on heavy async SPAs (152ms)
+    Live privacy preferences
+      ✔ honors live keyboard enable, disable, key/code and destination changes without reinitializing
+      ✔ retains external master changes while the upstream document is still loading
+      ✔ attaches privacy handlers while initially paused, retaining choices and honoring master changes
+    Draggable Touch Panic Overlay
+      ✔ should inject panic overlay, handle mouse & touch dragging, clamp bounds, and persist position
+    about:blank Tab Cloaking Launcher & Wrapper Support
+      isTopOrAboutBlankIframe
+        ✔ should return true for a top window
+        ✔ should return true for an iframe embedded in an about:blank parent
+        ✔ should return false for an iframe inside a regular page
+        ✔ should return false safely when cross-origin access throws an error
+      openAboutBlankLauncher
+        ✔ preserves the blank document and builds its iframe through DOM APIs
+        ✔ should alert user when popups are blocked (window.open returns null)
+      Launcher Buttons in Dock & Nav Bar
+        ✔ should include #dock-blank-btn in dock mode and trigger launcher on click
+        ✔ should include #nav-blank-btn in floating nav mode and trigger launcher on click
+      Widget support inside about:blank iframe wrapper
+        ✔ should initialize Heavenly widgets when running inside an about:blank iframe wrapper
+
+  Scoped VitePress route adaptation
+    ✔ resolves a proxied document and history destination to real pages without changing browser identity
+    ✔ leaves unknown runtime shapes and ordinary application JavaScript unchanged
+    ✔ adapts one recognized dynamic page import and leaves static imports alone
+    ✔ handles split response chunks with the same bounded adapter
+
+
+  549 passing (7s)

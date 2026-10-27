@@ -1,0 +1,22 @@
+PASS chromium fresh entry redirects to Academy; six responsive sizes, keyboard menu, real subpage and Terms return flow work
+PASS chromium production Academy route handler returns branded 503 on a real missing document; Retry, Resources and Home recovery work; unknown pages return branded 404
+PASS chromium message next/pause work with keyboard/click; six responsive home sizes fit; navigation creates no unsolicited tab, dialog or autoplay media
+PASS chromium focused tooltip and gold playlist modal stay usable on phone; three character scenes advance and dismiss; reduced-motion Ao Oni uses a still and normal dance cleans up on Escape
+PASS chromium Settings and HTML Viewer fit six sizes; authored HTML actually runs in its isolated preview
+PASS chromium actual injected widget dock fits desktop and phone local host pages without blocking the host control
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox fresh entry redirects to Academy; six responsive sizes, keyboard menu, real subpage and Terms return flow work
+PASS firefox production Academy route handler returns branded 503 on a real missing document; Retry, Resources and Home recovery work; unknown pages return branded 404
+PASS firefox message next/pause work with keyboard/click; six responsive home sizes fit; navigation creates no unsolicited tab, dialog or autoplay media
+PASS firefox focused tooltip and gold playlist modal stay usable on phone; three character scenes advance and dismiss; reduced-motion Ao Oni uses a still and normal dance cleans up on Escape
+PASS firefox Settings and HTML Viewer fit six sizes; authored HTML actually runs in its isolated preview
+PASS firefox actual injected widget dock fits desktop and phone local host pages without blocking the host control
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit fresh entry redirects to Academy; six responsive sizes, keyboard menu, real subpage and Terms return flow work
+PASS webkit production Academy route handler returns branded 503 on a real missing document; Retry, Resources and Home recovery work; unknown pages return branded 404
+PASS webkit message next/pause work with keyboard/click; six responsive home sizes fit; navigation creates no unsolicited tab, dialog or autoplay media
+FAIL webkit AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert(await page.locator('#url').evaluate(n=>n===document.activeElement))
+
+    at /workspace/Heavenly-Node/test/browser/phase6_7_acceptance.cjs:47:688

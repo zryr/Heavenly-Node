@@ -18,12 +18,12 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
             assert.ok(html.includes('https://example-down-site.com'), 'Should display target URL');
             assert.ok(html.includes('Heavenly could not resolve the server address.'), 'Should display error details');
             assert.ok(html.includes('Try Again'), 'Should include Try Again button');
-            assert.ok(html.includes('Test Direct Connection (No Proxy)'), 'Should include Test Direct Connection button');
+            assert.ok(html.includes('Open website directly'), 'Should include Test Direct Connection button');
             assert.ok(html.includes('<link rel="icon" type="image/png" href="/assets/heavenly-logo.png">'), 'Should include valid favicon link in head');
             assert.ok(html.includes('src="/assets/heavenly-logo.png"') && html.includes('class="brand-logo-img"'), 'Should render logo image with absolute path');
             assert.ok(html.includes('id="fallback-svg-logo"'), 'Should provide fallback inline SVG logo');
-            assert.ok(html.includes('Return to Heavenly Home'), 'Should include Return Home button');
-            assert.ok(html.includes("Return to Heavenly Home"), 'Return Home button should be present');
+            assert.ok(html.includes('Return to Heavenly'), 'Should include Return Home button');
+            assert.ok(html.includes("Return to Heavenly"), 'Return Home button should be present');
             assert.ok(html.includes('href="/"') && html.includes('HeavenlyNavigation.returnHome(window)'), 'Return Home button should redirect to root URL');
             assert.ok(html.includes('#030712'), 'Should use Heavenly dark theme background color');
         });
@@ -204,7 +204,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                     assert.ok(body.includes('Heavenly - Error 502'));
                     assert.ok(body.includes('Temporary DNS Failure'));
                     assert.ok(body.includes('https://temp-dns-fail.com/'));
-                    assert.ok(body.includes('temporarily failed'));
+                    assert.ok(body.includes('could not look up this website’s address right now'));
                     done();
                 }
             };
@@ -232,7 +232,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                     assert.strictEqual(this.statusCode, 504);
                     assert.ok(body.includes('Heavenly - Error 504'));
                     assert.ok(body.includes('Connection Timed Out'));
-                    assert.ok(body.includes('The connection to https://laggy-stream.com/ timed out before a response was received.'));
+                    assert.ok(body.includes('The website took too long to reply. Try again in a moment.'));
                     done();
                 }
             };
@@ -260,7 +260,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                     assert.strictEqual(this.statusCode, 502);
                     assert.ok(body.includes('Heavenly - Error 502'));
                     assert.ok(body.includes('Connection Reset'));
-                    assert.ok(body.includes('The connection to the target website was unexpectedly reset.'));
+                    assert.ok(body.includes('The connection closed before the website could load. Try again.'));
                     done();
                 }
             };
@@ -288,7 +288,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                     assert.strictEqual(this.statusCode, 502);
                     assert.ok(body.includes('Heavenly - Error 502'));
                     assert.ok(body.includes('Connection Reset'));
-                    assert.ok(body.includes('The connection to the target website was unexpectedly reset.'));
+                    assert.ok(body.includes('The connection closed before the website could load. Try again.'));
                     done();
                 }
             };
@@ -342,7 +342,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                 send: function(body) {
                     assert.strictEqual(this.statusCode, 502);
                     assert.ok(body.includes('Connection Refused'));
-                    assert.ok(body.includes('The target server at https://refused-server.com/ refused the connection.'));
+                    assert.ok(body.includes('The website’s server did not accept Heavenly’s connection.'));
                     done();
                 }
             };
@@ -393,7 +393,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                 },
                 send: function(body) {
                     assert.strictEqual(this.statusCode, 502);
-                    assert.ok(body.includes('An error occurred while connecting to the requested website through Heavenly Proxy.'));
+                    assert.ok(body.includes('Heavenly could not connect to this website. Check the address or try again later.'));
                     done();
                 }
             };
@@ -414,7 +414,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
             });
         });
 
-        it('should substitute "this website" in error details when targetUrl is missing or empty', function(done) {
+        it('should explain a missing server without inserting an empty target address', function(done) {
             var err = new Error('ENOTFOUND');
             err.code = 'ENOTFOUND';
 
@@ -432,7 +432,7 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                 },
                 send: function(body) {
                     assert.strictEqual(this.statusCode, 502);
-                    assert.ok(body.includes('Heavenly could not connect or resolve the server address at this website.'));
+                    assert.ok(body.includes('Heavenly could not find this website’s server.'));
                     done();
                 }
             };
@@ -454,9 +454,9 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
                     assert.ok(res.text.includes('Server Not Found'));
                     assert.ok(res.text.includes('https://invalid-nonexistent-domain-test12345.com/'));
                     assert.ok(res.text.includes('Try Again'));
-                    assert.ok(res.text.includes('Test Direct Connection (No Proxy)'));
-                    assert.ok(res.text.includes('Return to Heavenly Home'));
-                    assert.ok(res.text.includes('Return to Heavenly Home'));
+                    assert.ok(res.text.includes('Open website directly'));
+                    assert.ok(res.text.includes('Return to Heavenly'));
+                    assert.ok(res.text.includes('Return to Heavenly'));
                     done();
                 });
         });

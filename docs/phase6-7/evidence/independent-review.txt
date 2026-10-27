@@ -1,0 +1,20 @@
+chromium PASS safe DOM, destination validation and external attributes
+chromium PASS hidden and focused tooltip bounds at 320 and 390 pixels
+chromium PASS focused inline link survives live reduced-motion change
+chromium PASS dialogue control and close return focus survive reduced-motion change
+chromium PASS nonmodal dance preserves unrelated input focus on live reduced motion
+chromium PASS detaching a mounted message host destroys its scheduler
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+firefox PASS safe DOM, destination validation and external attributes
+firefox PASS hidden and focused tooltip bounds at 320 and 390 pixels
+firefox PASS focused inline link survives live reduced-motion change
+firefox PASS dialogue control and close return focus survive reduced-motion change
+firefox PASS nonmodal dance preserves unrelated input focus on live reduced motion
+firefox PASS detaching a mounted message host destroys its scheduler
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+webkit PASS safe DOM, destination validation and external attributes
+webkit PASS hidden and focused tooltip bounds at 320 and 390 pixels
+webkit PASS focused inline link survives live reduced-motion change
+webkit PASS dialogue control and close return focus survive reduced-motion change
+webkit PASS nonmodal dance preserves unrelated input focus on live reduced motion
+webkit PASS detaching a mounted message host destroys its scheduler

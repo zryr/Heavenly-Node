@@ -1,0 +1,788 @@
+{
+  "executed": "2026-10-26T03:23:19.881Z",
+  "scope": "Chromium CDP emulated pinch scale and Linux WebKit mobile/touch viewport profiles. This does not establish native OS browser zoom, physical iPad behavior, or Apple Safari compatibility.",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        {
+          "page": "about",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "about",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "about",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "accessibility",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "accessibility",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "accessibility",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "admissions",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "admissions",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "admissions",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "calendar",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "calendar",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "calendar",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "credits",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "credits",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "credits",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "home",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "home",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "home",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "privacy",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "privacy",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "privacy",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "programs",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "programs",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "programs",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "resources",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "resources",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "resources",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "status",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "status",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "status",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "students",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "students",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "students",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "terms",
+          "profile": 0.5,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": false
+        },
+        {
+          "page": "terms",
+          "profile": 2,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 720,
+          "viewportHeight": 500,
+          "scale": 2,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        },
+        {
+          "page": "terms",
+          "profile": 1,
+          "innerWidth": 1440,
+          "innerHeight": 1000,
+          "scrollWidth": 1440,
+          "viewportWidth": 1440,
+          "viewportHeight": 1000,
+          "scale": 1,
+          "dpr": 1,
+          "requestedScaleApplied": true
+        }
+      ],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        {
+          "page": "about",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "about",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "accessibility",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "accessibility",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "admissions",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "admissions",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "calendar",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "calendar",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "credits",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "credits",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "home",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "home",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "privacy",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "privacy",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "programs",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "programs",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "resources",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "resources",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "status",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "status",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "students",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "students",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "terms",
+          "profile": {
+            "width": 820,
+            "height": 1180
+          },
+          "innerWidth": 820,
+          "innerHeight": 1180,
+          "scrollWidth": 820,
+          "viewportWidth": 820,
+          "viewportHeight": 1180,
+          "scale": 1,
+          "dpr": 2
+        },
+        {
+          "page": "terms",
+          "profile": {
+            "width": 1180,
+            "height": 820
+          },
+          "innerWidth": 1180,
+          "innerHeight": 820,
+          "scrollWidth": 1180,
+          "viewportWidth": 1180,
+          "viewportHeight": 820,
+          "scale": 1,
+          "dpr": 2
+        }
+      ],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

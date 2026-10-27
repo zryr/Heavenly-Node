@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const playwright=require('playwright'),app=require('../../app');
 const engine=process.env.HEAVENLY_BROWSER||'chromium';
-const output=path.resolve(__dirname,'../../docs/phase4-5/evidence');
+const output=process.env.HEAVENLY_EVIDENCE_DIR?path.resolve(process.env.HEAVENLY_EVIDENCE_DIR):path.resolve(__dirname,'../../docs/phase4-5/evidence');
 let server,browser;
 const result={engine,executed:new Date().toISOString(),physicalDevices:[],checks:[],transitions:[]};
 const pass=message=>{result.checks.push(message);console.log('PASS '+message)};

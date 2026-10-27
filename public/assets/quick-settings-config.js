@@ -10,7 +10,7 @@
     modal.innerHTML = '<section class="qs-editor-card qs-context-card" role="dialog" aria-modal="true" aria-labelledby="qs-context-title" aria-describedby="qs-context-description">' +
       '<header class="qs-editor-header"><div><h2 id="qs-context-title"></h2><p id="qs-context-description"></p></div><button type="button" data-dialog-close aria-label="Cancel configuration">×</button></header>' +
       '<div class="qs-editor-body"><div id="qs-context-conflict" role="status" hidden><p>These settings changed elsewhere. Your edits are kept. Load the saved values or choose to keep your edits.</p><button type="button" id="qs-context-load">Load saved settings</button><button type="button" id="qs-context-keep">Keep my changes</button></div>' +
-      '<p id="qs-context-master" class="qs-context-notice" role="status" hidden></p><a id="qs-context-master-link" href="/settings.html#master-controls" hidden>Manage master controls</a><div id="qs-context-controls"></div><div id="qs-context-preview" class="qs-cloak-preview" hidden><span class="qs-group-label">Selected preset preview</span><div><img id="qs-context-icon" alt="" width="20" height="20"><span id="qs-context-preview-title"></span></div></div>' +
+      '<p id="qs-context-master" class="qs-context-notice" role="status" hidden></p><a id="qs-context-master-link" href="/settings.html#master-controls" hidden>Open feature controls</a><div id="qs-context-controls"></div><div id="qs-context-preview" class="qs-cloak-preview" hidden><span class="qs-group-label">Selected preset preview</span><div><img id="qs-context-icon" alt="" width="20" height="20"><span id="qs-context-preview-title"></span></div></div>' +
       '<details id="qs-context-pool" hidden><summary>Randomizer Preset Pool <span id="qs-context-pool-count"></span></summary><div class="qs-pool-actions"><button type="button" id="qs-context-pool-all">Select All</button><button type="button" id="qs-context-pool-none">Deselect All</button></div><div id="qs-context-pool-chips"></div><p id="qs-context-pool-note" class="qs-editor-note"></p></details>' +
       '<p id="qs-context-note" class="qs-editor-note"></p><p id="qs-context-error" role="alert" hidden></p></div>' +
       '<footer class="qs-editor-footer"><a id="qs-context-advanced" href="/settings.html">Advanced settings</a><div><button type="button" data-dialog-close>Cancel</button><button type="button" id="qs-context-save" class="qs-primary">Save</button></div></footer></section>';
@@ -42,10 +42,10 @@
       var definitions = model.configurations[kind], controls = get('controls'), allPresets = presets(settings);
       var focusedKey = doc.activeElement && doc.activeElement.getAttribute('data-config-field');
       if (rebuild) controls.textContent = '';
-      if (rebuild && kind === 'cloaking') { var heading = doc.createElement('h3'); heading.className = 'qs-context-group-title'; heading.textContent = 'Cloaking Behavior'; controls.appendChild(heading); }
+      if (rebuild && kind === 'cloaking') { var heading = doc.createElement('h3'); heading.className = 'qs-context-group-title'; heading.textContent = 'When the tab disguise is used'; controls.appendChild(heading); }
       definitions.forEach(function (field) {
         if (field.type === 'pool') return;
-        if (rebuild && kind === 'cloaking' && field.key === 'selectedPreset') { var heading = doc.createElement('h3'); heading.className = 'qs-context-group-title'; heading.textContent = 'Cloaking Identity'; controls.appendChild(heading); }
+        if (rebuild && kind === 'cloaking' && field.key === 'selectedPreset') { var heading = doc.createElement('h3'); heading.className = 'qs-context-group-title'; heading.textContent = 'Tab title and icon'; controls.appendChild(heading); }
         var input = controls.querySelector('[data-config-field="' + field.key + '"]');
         if (!input) {
           var label = doc.createElement('label'); label.className = 'qs-context-field';
@@ -84,8 +84,8 @@
       });
       get('master-link').hidden = !settings.disableAllFeatures;
       get('master').hidden = !settings.disableAllFeatures && !(kind === 'widgets' && draft.disableAllWidgets);
-      get('master').textContent = settings.disableAllFeatures ? 'Disable All Privacy & Widget Overlays pauses these controls. Your saved choices are kept; manage the master control in advanced settings.' : 'Proxied Widgets is off. Individual widget and dock choices are kept for when widgets are enabled.';
-      get('note').textContent = kind === 'widgets' ? 'Refresh an already open proxied website to apply widget changes. Saved floating positions are kept. These controls change features, not shortcut visibility.' : kind === 'panic' ? 'Use an existing key name (such as Escape) or keyboard code (such as Backquote). Configuring these values never redirects you. Disabling Panic Key keeps the key and destination. Refresh an open proxied page to apply Touch Panic Overlay visibility changes.' : 'Changing the preset keeps Auto and Persistent Cloaking unchanged. Create or edit custom presets in advanced settings.' + ' Randomization chooses from your saved pool for each applicable session and takes precedence over the manual preset while enabled. The manual choice and pool are kept when it is off.';
+      get('master').textContent = settings.disableAllFeatures ? 'These controls are paused by the switch to turn off cloaking, panic & widgets. Your choices are kept. Open feature controls to turn them back on.' : 'Proxied Widgets is off. Your tool and dock choices are kept for when you turn it on.';
+      get('note').textContent = kind === 'widgets' ? 'Refresh an open proxy page to apply tool changes. Your saved positions are kept. To show or hide these shortcuts, use Edit in Quick Settings.' : kind === 'panic' ? 'Enter a key name such as Escape or a keyboard code such as Backquote. Saving does not open the panic website. Turning Panic Key off keeps your key and website. Refresh an open proxy page after changing the touch panic button.' : 'Choosing a preset does not turn Auto or Persistent Cloaking on or off. Create custom titles and icons in advanced settings.' + ' When random choice is on, it picks a disguise from your saved pool each session instead of using the manual preset. Turning it off keeps your manual choice and pool.';
       get('conflict').hidden = conflicts.length === 0; get('save').disabled = conflicts.length !== 0;
       updatePreview(settings);
       if (kind === 'cloaking') {
@@ -94,7 +94,7 @@
         if (get('pool').open) pool.render(get('pool-chips'), allPresets, draft.randomPool, function (next) { draft.randomPool = next; get('error').hidden = true; refresh(); });
         var selected = pool.selected(draft.randomPool, allPresets);
         var unavailable = draft.randomPool.some(function (key) { return pool.keys(allPresets).indexOf(key) === -1; });
-        get('pool-note').textContent = (selected ? 'Only selected presets are eligible.' : 'No matching selections: the existing randomizer uses all available presets.') + (unavailable ? ' Saved unavailable entries are kept.' : '') + ' Editing the pool never enables randomization.';
+        get('pool-note').textContent = (selected ? 'Only selected presets can be chosen.' : 'No saved selections match. Random choice will use all available presets.') + (unavailable ? ' Unavailable saved presets are kept.' : '') + ' Changing the pool does not turn random choice on.';
       }
       if (rebuild && focusedKey) { var focused = controls.querySelector('[data-config-field="' + focusedKey + '"]'); if (focused && !focused.disabled) focused.focus(); }
     }
@@ -113,7 +113,7 @@
       if (options.beforeOpen) options.beforeOpen();
       kind = mode; var current = read(); baseline = model.configValues(kind, current); draft = Object.assign({}, baseline); conflicts = [];
       get('title').textContent = kind === 'widgets' ? 'Widget settings' : kind === 'panic' ? 'Panic Controls' : 'Tab Cloaking';
-      get('description').textContent = kind === 'widgets' ? 'Configure the existing dock and proxied-page widgets.' : kind === 'panic' ? 'Configure the existing keyboard shortcut and touch button.' : 'Choose when to cloak tabs and which saved preset to use.';
+      get('description').textContent = kind === 'widgets' ? 'Choose the dock and tools shown on proxy pages.' : kind === 'panic' ? 'Choose a panic key, touch button, and website to open.' : 'Choose when the tab title and icon change, and which preset to use.';
       get('pool').hidden = kind !== 'cloaking'; get('pool').open = false; get('pool-chips').textContent = '';
       get('preview').hidden = kind !== 'cloaking'; get('error').hidden = true;
       get('advanced').href = '/settings.html#' + (kind === 'widgets' ? 'widget-settings' : kind === 'panic' ? 'panic-controls' : 'tab-cloaking');
@@ -140,7 +140,7 @@
       }
       var patch = model.configPatch(kind, baseline, draft);
       var paused = model.configurations[kind].some(function (field) { return field.key in patch && field.key !== 'selectedPreset' && field.type !== 'pool' && !(kind === 'panic' && field.type === 'text') && (current.disableAllFeatures || (kind === 'widgets' && field.key !== 'disableAllWidgets' && current.disableAllWidgets && !dirty('disableAllWidgets'))); });
-      if (paused) { get('error').hidden = false; get('error').textContent = 'A master control pauses an edited feature. Enable the feature or use advanced settings before saving; your draft is kept.'; return; }
+      if (paused) { get('error').hidden = false; get('error').textContent = 'A feature you edited is paused in Settings. Turn it on or open advanced settings before saving. Your edits are kept.'; return; }
       if (patch.selectedPreset && !presets(current)[patch.selectedPreset]) { get('error').hidden = false; get('error').textContent = 'This preset is no longer available. Choose another preset; your other edits are kept.'; return; }
       saving = true;
       var success = !Object.keys(patch).length || options.write(patch);
