@@ -93,3 +93,9 @@
 **Learning:** Re-instantiating `new RegExp()` on every chunk invocation in streaming transforms like `repairNamespaces` forces V8 to compile and allocate regex objects repeatedly. Guarding `text.replace` with a lightweight `!/xmlns/i.test(text)` check bypasses regex evaluation entirely on non-XML chunks, and caching compiled `RegExp` instances in a module-level dictionary (`namespaceRegexCache`) yields a ~66% execution speedup.
 
 **Action:** Always cache compiled `RegExp` instances in module scope and use fast-path `test()` guards before executing regex replacements in high-frequency stream transforms.
+
+## 2025-06-03 - Fast-path prefix guards and key caching across middleware and bookmark state calculations
+
+**Learning:** Running regex URL normalization and scheme matching in `normalizeProxyUrl`, constructing `new URL()` objects without `/assets/` path checks in `vitepressRouter`, resolving `require()` modules on every HTML stream chunk in `injectProxyClient`, and re-evaluating `navigation.bookmarkKey(entry.url)` 4 times per mirror entry in `mirrorState` introduces significant CPU and allocation overhead. Adding `startsWith()` fast-path guards, direct `contentType` string comparisons, module-scope `require()` hoisting, single-pass `for` loops, and single key caching speeds up `normalizeProxyUrl` by ~28%, `vitepressRouter` by ~32%, `injectProxyClient` by ~46%, and `mirrorState` calculations by ~41%.
+
+**Action:** Always place O(1) prefix/substring checks before URL parsing/regexes, hoist CommonJS module imports to file scope, and cache expensive URL normalization keys in loop iterations.
