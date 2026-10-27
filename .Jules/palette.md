@@ -25,3 +25,7 @@
 ## 2026-10-19 - Batch Action & Selection Control Accessibility
 **Learning:** Action buttons in settings and modal overlays (such as batch "Select All", "Import", "Export", and "Reset" buttons) should have descriptive `aria-label` attributes when their context or full action target is ambiguous to screen readers.
 **Action:** Always add descriptive, context-rich `aria-label` attributes to batch action and selection buttons in settings and data management interfaces.
+
+## 2026-10-24 - Custom Listbox Menu Keyboard Navigation & Focus Trapping
+**Learning:** Custom listbox dropdown menus without `ArrowUp`/`ArrowDown`/`Home`/`End` key listeners and active modal dialogs that allow `Tab` key focus to leak out into the background page break keyboard navigation and accessibility standards.
+**Action:** Always add keyboard arrow/Home/End navigation to custom listbox menu options and enforce strict focus trapping within active modal overlays.

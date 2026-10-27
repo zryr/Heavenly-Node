@@ -112,4 +112,29 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('btnPreset.setAttribute(\'aria-selected\', mode === \'preset\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnPreset');
         assert.ok(html.includes('btnManual.setAttribute(\'aria-selected\', mode === \'manual\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnManual');
     });
+
+    it('should configure global modal dialog keyboard focus trapping in heavenly-dialogs.js', function() {
+        var dialogsJs = fs.readFileSync(path.join(__dirname, '../public/assets/heavenly-dialogs.js'), 'utf8');
+        assert.ok(dialogsJs.includes("e.key !== 'Tab'"), 'heavenly-dialogs.js should check for Tab key');
+        assert.ok(dialogsJs.includes("querySelectorAll('.modal-backdrop.active')"), 'heavenly-dialogs.js should query active modal backdrops');
+        assert.ok(dialogsJs.includes("focusables[0]") && dialogsJs.includes("focusables[focusables.length - 1]"), 'heavenly-dialogs.js should track first and last focusable elements');
+    });
+
+    it('should configure cloak preset listbox arrow key and home/end navigation in settings.html', function() {
+        var settingsHtml = fs.readFileSync(path.join(__dirname, '../public/settings.html'), 'utf8');
+        assert.ok(settingsHtml.includes("e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Home' || e.key === 'End'"), 'optItem should handle listbox arrow keys');
+        assert.ok(settingsHtml.includes("customBtn.onkeydown = function (e)"), 'customBtn should handle keydown event for dropdown toggle');
+    });
+
+    it('should configure HTML Viewer tools menu focusout auto-close listener in heavenly-viewer.js', function() {
+        var viewerJs = fs.readFileSync(path.join(__dirname, '../public/assets/heavenly-viewer.js'), 'utf8');
+        assert.ok(viewerJs.includes("$('viewer-tools').addEventListener('focusout'"), 'viewer-tools should listen for focusout');
+        assert.ok(viewerJs.includes("!menu.contains(e.relatedTarget)"), 'viewer-tools should check if focus moved outside menu');
+    });
+
+    it('should synchronize aria-checked attribute on Quick Save switch in index.html', function() {
+        assert.ok(html.includes('id="builtin-quick-save-toggle" type="checkbox" role="switch"'), 'builtin-quick-save-toggle should specify role="switch"');
+        assert.ok(html.includes('id="coolmath-quick-save-toggle" type="checkbox" role="switch"'), 'coolmath-quick-save-toggle should specify role="switch"');
+        assert.ok(html.includes("input.setAttribute('aria-checked', String(input.checked))"), 'bindQuickSaveSetting should set aria-checked on toggle input');
+    });
 });

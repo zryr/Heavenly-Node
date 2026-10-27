@@ -451,6 +451,12 @@
       if (restoreFocus) menu.querySelector('summary').focus();
     });
   });
+  $('viewer-tools').addEventListener('focusout', function (e) {
+    var menu = $('viewer-tools');
+    if (menu.open && e.relatedTarget && !menu.contains(e.relatedTarget)) {
+      menu.open = false;
+    }
+  });
   document.addEventListener('click', function (e) { if (!$('viewer-tools').contains(e.target)) $('viewer-tools').open = false; });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;

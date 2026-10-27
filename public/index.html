@@ -2931,7 +2931,7 @@
       </div>
       <div id="coolmath-quick-save-container" class="bookmark-quick-save">
         <div><label for="coolmath-quick-save-toggle">Enable Quick Save Widget</label><p>Show a floating quick-save button on supported proxied pages.</p><span class="bookmark-setting-status" role="status"></span></div>
-        <label class="switch-toggle"><input id="coolmath-quick-save-toggle" type="checkbox" aria-label="Enable Quick Save Widget" /><span class="slider-knob"></span></label>
+        <label class="switch-toggle"><input id="coolmath-quick-save-toggle" type="checkbox" role="switch" aria-label="Enable Quick Save Widget" /><span class="slider-knob"></span></label>
       </div>
       <div class="bookmark-launch-actions">
         <button id="coolmath-proxy-btn" type="button" class="modal-submit-btn">Open with Proxy</button>
@@ -3154,7 +3154,7 @@
       </div>
       <div id="builtin-quick-save-container" class="bookmark-quick-save">
         <div><label for="builtin-quick-save-toggle">Enable Quick Save Widget</label><p>Show a floating quick-save button on supported proxied pages.</p><span class="bookmark-setting-status" role="status"></span></div>
-        <label class="switch-toggle"><input id="builtin-quick-save-toggle" type="checkbox" aria-label="Enable Quick Save Widget" /><span class="slider-knob"></span></label>
+        <label class="switch-toggle"><input id="builtin-quick-save-toggle" type="checkbox" role="switch" aria-label="Enable Quick Save Widget" /><span class="slider-knob"></span></label>
       </div>
       <div id="builtin-alt-versions-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;"></div>
       <div id="builtin-hide-container" style="display: none; padding: 10px 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 14px; margin-bottom: 12px; flex-direction: column; gap: 8px; align-items: center; text-align: center;">
@@ -6607,12 +6607,14 @@
       var paused = settings.disableAllWidgets || settings.disableAllFeatures;
       container.hidden = prefix === 'builtin' && !supported;
       input.checked = supported && bookmark.disableQuickSaveWidget !== true;
+      input.setAttribute('aria-checked', String(input.checked));
       input.disabled = !supported || paused;
       var status = container.querySelector('[role="status"]');
       status.textContent = paused ? 'Widgets are paused in Settings. Your preference is kept.' : !supported ? 'Available for saved, supported bookmarks.' : '';
       input.onchange = function () {
+        input.setAttribute('aria-checked', String(input.checked));
         try { HeavenlyBookmarks.setQuickSavePreference(localStorage, bookmark.id, input.checked); status.textContent = 'Preference saved.'; }
-        catch (e) { input.checked = !input.checked; status.textContent = 'Could not save the preference. Please try again.'; }
+        catch (e) { input.checked = !input.checked; input.setAttribute('aria-checked', String(input.checked)); status.textContent = 'Could not save the preference. Please try again.'; }
       };
     }
 
