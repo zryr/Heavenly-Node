@@ -57,6 +57,14 @@ const pass=text=>{results.checks.push(text);console.log('PASS '+text)};
  // Real management interaction still exposes functional move choices.
  await a.locator('.section-header .drag-dots-handle').click();assert(await page.locator('#reorder-bar').isVisible());assert((await page.locator('#bar-close').boundingBox()).height>=44);assert.equal(await page.locator('#reorder-bar').evaluate(n=>getComputedStyle(n).backdropFilter),'none');await page.locator('#bar-close').click();
  pass('iPad-like portrait/landscape, Chromebook and phone widths retain state; four-dot management stays legible and usable');
+ await b.locator('.category-resize').focus();await page.keyboard.press('Home');for(let i=0;i<4;i++)await page.keyboard.press('Shift+ArrowRight');await settle();
+ const first=await a.boundingBox(),second=await b.boundingBox();assert(Math.abs(first.y-second.y)<1,'resized categories should share a row when they fit');
+ await a.locator('.section-header .drag-dots-handle').scrollIntoViewIfNeeded();const pickup=await a.locator('.section-header .drag-dots-handle').boundingBox(),drop=await b.boundingBox();
+ await page.mouse.move(pickup.x+pickup.width/2,pickup.y+pickup.height/2);await page.mouse.down();await page.mouse.move(drop.x+drop.width*.85,drop.y+35,{steps:20});await page.mouse.up();await settle();
+ const order=()=>page.evaluate(()=>loadBookmarkData().categories.filter(c=>!c.hidden&&c.side==='bottom').sort((a,b)=>a.order-b.order).map(c=>c.id));assert.deepEqual(await order(),['width_b','width_a']);await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.HeavenlyLayout?.getState);await settle();assert.deepEqual(await order(),['width_b','width_a']);assert.equal((await prefs()).categoryWidths.width_a,saved);
+ await a.scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,engine+'-bottom-desktop.png')});
+ pass('two resized bottom categories share a row and real horizontal mouse reorder persists with both widths after reload');
+
  await page.evaluate(()=>{const d=loadBookmarkData();d.categories.find(c=>c.id==='width_a').side='left';saveBookmarkData(d);renderBookmarksUI();HeavenlyLayout.refresh()});await settle();assert.equal((await prefs()).categoryWidths.width_a,saved);assert.equal(await page.locator('#left-column [data-category-id="width_a"] .category-resize').count(),0);
  await page.evaluate(()=>{const d=loadBookmarkData();d.categories.find(c=>c.id==='width_a').side='bottom';saveBookmarkData(d);renderBookmarksUI();HeavenlyLayout.refresh()});await settle();assert(Math.abs(await width()-saved)<1);
  pass('moving a category to a side and back retains its width identity without exposing bottom-only controls on the side');
