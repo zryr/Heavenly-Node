@@ -1,0 +1,114 @@
+{
+  "executed": "2026-10-27T13:24:39.053Z",
+  "physicalDevices": [],
+  "jobs": [
+    {
+      "suite": "homepage_cross_browser",
+      "engine": "firefox",
+      "status": "failed",
+      "exitCode": 1,
+      "elapsedSeconds": 31.8,
+      "groups": 2,
+      "log": "regressions/homepage_cross_browser-firefox/run.txt"
+    },
+    {
+      "suite": "homepage_cross_browser",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 34.9,
+      "groups": 5,
+      "log": "regressions/homepage_cross_browser-chromium/run.txt"
+    },
+    {
+      "suite": "homepage_cross_browser",
+      "engine": "webkit",
+      "status": "failed",
+      "exitCode": 1,
+      "elapsedSeconds": 31,
+      "groups": 1,
+      "log": "regressions/homepage_cross_browser-webkit/run.txt"
+    },
+    {
+      "suite": "settings_celestial",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 69.5,
+      "groups": 16,
+      "log": "regressions/settings_celestial-chromium/run.txt"
+    },
+    {
+      "suite": "settings_celestial",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 117.1,
+      "groups": 16,
+      "log": "regressions/settings_celestial-firefox/run.txt"
+    },
+    {
+      "suite": "settings_celestial",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 98.1,
+      "groups": 16,
+      "log": "regressions/settings_celestial-webkit/run.txt"
+    },
+    {
+      "suite": "viewer_celestial",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 48.1,
+      "groups": 17,
+      "log": "regressions/viewer_celestial-chromium/run.txt"
+    },
+    {
+      "suite": "viewer_celestial",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 36.9,
+      "groups": 17,
+      "log": "regressions/viewer_celestial-firefox/run.txt"
+    },
+    {
+      "suite": "viewer_celestial",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 34.9,
+      "groups": 17,
+      "log": "regressions/viewer_celestial-webkit/run.txt"
+    },
+    {
+      "suite": "widgets_celestial",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 28.3,
+      "groups": 7,
+      "log": "regressions/widgets_celestial-chromium/run.txt"
+    },
+    {
+      "suite": "widgets_celestial",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 13.8,
+      "groups": 5,
+      "log": "regressions/widgets_celestial-firefox/run.txt"
+    },
+    {
+      "suite": "widgets_celestial",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 10,
+      "groups": 5,
+      "log": "regressions/widgets_celestial-webkit/run.txt"
+    }
+  ]
+}

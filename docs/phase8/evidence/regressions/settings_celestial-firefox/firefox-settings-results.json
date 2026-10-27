@@ -1,0 +1,25 @@
+{
+  "engine": "firefox",
+  "captured": "2026-10-27T13:25:44.711Z",
+  "physicalDevices": [],
+  "groups": [
+    "all 54 established controls survive; seven categories and no overflow",
+    "desktop category navigation and stored toggle across reloads and tabs",
+    "search actual name, alias, description, ranked results and empty state",
+    "search restores category, every disclosure, scroll, focus, preferences and control identity",
+    "keyboard result navigation, Enter to setting, Escape restoration",
+    "all established deep links reveal target and support Back/Forward",
+    "master gating is semantic, explained, synchronized, and preserves individual choices",
+    "new-tab prerequisites and advanced pool are discoverable without changing preferences",
+    "real backup download, focus trap, focus restoration, notes and unknown preferences",
+    "granular import and overwrite confirmation preserve unrelated data and saved preferences",
+    "storage write failure reports failure and retains actual stored value",
+    "malformed stored settings survive toggles and recovery export byte-for-byte",
+    "injected markup in backup titles stays inert in preview and saved manager",
+    "reset actions require intent and failed position writes roll back",
+    "phone/tablet searchable accordion, portrait/landscape, and reduced motion"
+  ],
+  "errors": [],
+  "screenshots": [],
+  "version": "153.0"
+}

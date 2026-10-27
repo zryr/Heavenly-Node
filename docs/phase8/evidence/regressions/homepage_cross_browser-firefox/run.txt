@@ -1,0 +1,4 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox: independent collapse controls, central search and keyboard results retain layout
+PASS firefox: separator keyboard min/max, mouse resize and local persistence work independently
+FAIL firefox: narrow-phone search-newtab-btn unusable

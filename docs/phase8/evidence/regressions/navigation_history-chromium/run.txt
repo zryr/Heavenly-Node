@@ -1,0 +1,21 @@
+PASS grouped Quick Settings retain unrelated preferences, bookmarks and tabs; multi-selection is absent
+PASS native proxy path, displayed URL, URL-only SPA navigation, state-only calls, replaceState, titles, fragments and browser back/forward
+PASS history reopening, keyboard deletion without navigation, refresh persistence and clearing
+PASS legacy about:blank preferences split independently and Settings preserves unrelated fields
+PASS about:blank remains blank, redirects and in-frame navigation update history/URL, clearing stays cleared, recovery opens the current page
+PASS hidden URL mode uses a stable Heavenly page, follows navigation, restores on refresh and preserves recovery
+PASS hidden URL New Tab sessions restore independently and enabling Show Proxied URL returns existing hosted sessions to native navigation
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+page.waitForEvent: Timeout 8000ms exceeded while waiting for event "popup"
+=========================== logs ===========================
+waiting for event "popup"
+============================================================
+    at /workspace/Heavenly-Node/test/browser/navigation_history.cjs:212:28 {
+  log: [],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0

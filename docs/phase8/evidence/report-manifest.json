@@ -1,0 +1,260 @@
+{
+  "baseline": "2725f32369bb609bcd0cf8c8d51e272f9a420009",
+  "images": [
+    {
+      "file": "before/home-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 228081,
+      "label": "Before · Desktop homepage"
+    },
+    {
+      "file": "after/home-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 240483,
+      "label": "After · Desktop homepage"
+    },
+    {
+      "file": "before/home-phone.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 86622,
+      "label": "Before · Phone homepage"
+    },
+    {
+      "file": "after/home-phone.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 90882,
+      "label": "After · Phone homepage"
+    },
+    {
+      "file": "after/ocean-note-phone.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 91867,
+      "label": "Ocean-gradient note"
+    },
+    {
+      "file": "after/inline-reaction-phone.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 92710,
+      "label": "Small end-of-text angry reaction"
+    },
+    {
+      "file": "music-shortcut-desktop.png",
+      "width": 1366,
+      "height": 768,
+      "bytes": 150718,
+      "label": "Compact Monochrome panel"
+    },
+    {
+      "file": "save-heavenly-desktop.png",
+      "width": 1366,
+      "height": 768,
+      "bytes": 130530,
+      "label": "Browser-owned bookmark instructions"
+    },
+    {
+      "file": "before/msg_ao_oni.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 99647,
+      "label": "Before · Ao Oni on phone"
+    },
+    {
+      "file": "after/msg_ao_oni.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 60710,
+      "label": "After · Ao Oni on phone"
+    },
+    {
+      "file": "before/msg_khezu.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 98647,
+      "label": "Before · Khezu on phone"
+    },
+    {
+      "file": "after/msg_khezu.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 62637,
+      "label": "After · Khezu on phone"
+    },
+    {
+      "file": "before/msg_doggy.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 106144,
+      "label": "Before · Doggy on phone"
+    },
+    {
+      "file": "after/msg_doggy.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 107741,
+      "label": "After · Doggy on phone"
+    },
+    {
+      "file": "messages/retro-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 167819,
+      "label": "Retro desktop box and portrait slot"
+    },
+    {
+      "file": "messages/novel-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 236758,
+      "label": "Soft visual-novel presentation"
+    },
+    {
+      "file": "after/ao-dance.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 68040,
+      "label": "Bounded local Ao Oni dance"
+    },
+    {
+      "file": "touch/baseline-portrait.png",
+      "width": 1640,
+      "height": 2360,
+      "bytes": 418692,
+      "label": "Before · Tablet handle swipe"
+    },
+    {
+      "file": "touch/scroll-fixed-portrait.png",
+      "width": 1640,
+      "height": 2360,
+      "bytes": 359955,
+      "label": "After · Tablet handle swipe"
+    },
+    {
+      "file": "touch/held-portrait.png",
+      "width": 1640,
+      "height": 2360,
+      "bytes": 406245,
+      "label": "Deliberate handle pickup"
+    },
+    {
+      "file": "chromium-bottom-desktop.png",
+      "width": 1366,
+      "height": 912,
+      "bytes": 104507,
+      "label": "Individually resized bottom categories"
+    },
+    {
+      "file": "chromium-bottom-phone.png",
+      "width": 320,
+      "height": 740,
+      "bytes": 39905,
+      "label": "Bottom category at narrow width"
+    },
+    {
+      "file": "before/hq-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 302253,
+      "label": "Before · Message workshop"
+    },
+    {
+      "file": "after/hq-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 318820,
+      "label": "After · Message workshop"
+    },
+    {
+      "file": "chromium-hq-live-homepage-chromebook.png",
+      "width": 1366,
+      "height": 768,
+      "bytes": 202642,
+      "label": "Temporary actual-homepage draft"
+    },
+    {
+      "file": "chromium-hq-live-homepage-phone.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 94635,
+      "label": "Phone draft with temporary controls"
+    },
+    {
+      "file": "chromium-hq-live-retro.png",
+      "width": 1366,
+      "height": 900,
+      "bytes": 184210,
+      "label": "Actual scene and image placement from a draft"
+    },
+    {
+      "file": "before/academy-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 783404,
+      "label": "Before · Academy landing"
+    },
+    {
+      "file": "after/academy-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 783404,
+      "label": "After · Academy landing"
+    },
+    {
+      "file": "before/error-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 440570,
+      "label": "Before · Website recovery"
+    },
+    {
+      "file": "after/error-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 184897,
+      "label": "After · Website recovery"
+    },
+    {
+      "file": "document-workspace-1440.png",
+      "width": 1440,
+      "height": 1307,
+      "bytes": 132882,
+      "label": "Local document appearance"
+    },
+    {
+      "file": "document-workspace-320.png",
+      "width": 320,
+      "height": 1637,
+      "bytes": 105801,
+      "label": "Document at 320px"
+    },
+    {
+      "file": "after/academy-phone.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 202611,
+      "label": "Isolated Academy on phone"
+    }
+  ],
+  "recordings": [
+    {
+      "file": "after/scenes-phone.webm",
+      "label": "Tap-to-reveal, advance, local burst and fade",
+      "bytes": 461991
+    },
+    {
+      "file": "touch/touch-portrait.webm",
+      "label": "Scroll before pickup, then deliberate touch drag",
+      "bytes": 1487066
+    },
+    {
+      "file": "hq-live-preview-clip.webm",
+      "label": "Temporary homepage workshop preview",
+      "bytes": 1160820
+    }
+  ]
+}

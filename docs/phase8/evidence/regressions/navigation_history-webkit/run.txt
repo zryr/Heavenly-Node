@@ -1,0 +1,60 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS grouped Quick Settings retain unrelated preferences, bookmarks and tabs; multi-selection is absent
+PASS native proxy path, displayed URL, URL-only SPA navigation, state-only calls, replaceState, titles, fragments and browser back/forward
+PASS history reopening, keyboard deletion without navigation, refresh persistence and clearing
+PASS legacy about:blank preferences split independently and Settings preserves unrelated fields
+PASS about:blank remains blank, redirects and in-frame navigation update history/URL, clearing stays cleared, recovery opens the current page
+PASS hidden URL mode uses a stable Heavenly page, follows navigation, restores on refresh and preserves recovery
+PASS hidden URL New Tab sessions restore independently and enabling Show Proxied URL returns existing hosted sessions to native navigation
+locator.click: Timeout 8000ms exceeded.
+Call log:
+[2m  - waiting for locator('[data-bm-id="test_proxy"] .bookmark-title')[22m
+[2m    - locator resolved to <span class="bookmark-title" title="Proxied fixture">Proxied fixture</span>[22m
+[2m  - attempting click action[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is not visible[22m
+[2m    - retrying click action[22m
+[2m    - waiting 20ms[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is not visible[22m
+[2m    - retrying click action[22m
+[2m      - waiting 100ms[22m
+[2m    11 × waiting for element to be visible, enabled and stable[22m
+[2m       - element is not visible[22m
+[2m     - retrying click action[22m
+[2m       - waiting 500ms[22m
+
+    at /workspace/Heavenly-Node/test/browser/navigation_history.cjs:213:67 {
+  log: [
+    `  - waiting for locator('[data-bm-id="test_proxy"] .bookmark-title')`,
+    '    - locator resolved to <span class="bookmark-title" title="Proxied fixture">Proxied fixture</span>',
+    '  - attempting click action',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is not visible',
+    '    - retrying click action',
+    '    - waiting 20ms',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is not visible',
+    '    - retrying click action',
+    '      - waiting 100ms',
+    '    11 × waiting for element to be visible, enabled and stable',
+    '       - element is not visible',
+    '     - retrying click action',
+    '       - waiting 500ms'
+  ],
+  name: 'TimeoutError'
+}
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+page.waitForEvent: Timeout 8000ms exceeded while waiting for event "popup"
+=========================== logs ===========================
+waiting for event "popup"
+============================================================
+    at /workspace/Heavenly-Node/test/browser/navigation_history.cjs:212:28 {
+  log: [],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0

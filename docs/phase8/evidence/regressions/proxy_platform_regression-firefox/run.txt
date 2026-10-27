@@ -1,0 +1,7 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+TRACE {"docs":["http://127.0.0.1:33879/proxy/http://127.0.0.1:43521/redirect","https://vercel.live/_next-live/feedback/feedback.html"],"feedback404":0}
+PASS preview feedback retains its own origin; redirect stabilizes without recursive upstream 404 frames or duplicate initialization
+PASS relative module imports, JavaScript bytes and SRI attributes are preserved; valid signed code executes while mismatched code remains blocked
+PASS relative navigation, history push/back and ordinary page loads work alongside the deployment runtime
+PASS genuine upstream 404 remains a single stable error response with no automatic retries
+4 proxy platform checks passed in firefox

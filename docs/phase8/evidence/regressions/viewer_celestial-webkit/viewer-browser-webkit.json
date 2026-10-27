@@ -1,0 +1,54 @@
+{
+  "engine": "webkit",
+  "emulatedDevices": true,
+  "physicalDevices": [],
+  "checks": [
+    "Sample HTML/CSS/JavaScript renders and responds in the isolated preview",
+    "Executed attack cannot read/write parent storage, parent/top DOM or frameElement; preview storage and popup blocked",
+    "Unregistered/wrong-token messages ignored and rerunning tears down old timers and diagnostic channel",
+    "Runtime, syntax and rejected-promise failures produce readable diagnostics; browser-redacted details have actionable guidance",
+    "All three view modes and Ctrl/Cmd+Enter preserve and execute current source",
+    "Mouse/keyboard splitter preference persists separately from exact source",
+    "Tab/multiline/Shift+Tab edits autosave; Escape then Tab leaves the editor",
+    "Clear persists intentional empty source; reload/Restore and sample replacement recover previous work",
+    "Simulated quota failure during Restore preserves the durable recovery copy and reports unsaved work",
+    "A denied initial source read followed by working writes never overwrites the unreadable saved document",
+    "Copy feedback follows actual clipboard completion",
+    "Fullscreen rejection has a visible fallback with Escape and focus restoration",
+    "User-initiated full-window preview has no opener and authored code remains opaque-origin isolated",
+    "Existing three-tier VUS launch reaches local fallback in the same isolated user-initiated shell",
+    "20,000-line source loads, accepts caret editing and persists with a bounded scroll-synchronized gutter",
+    "tablet 820×1180 Editor/Preview, source preserved, no overflow",
+    "tablet-landscape 1180×820 Editor/Preview, source preserved, no overflow",
+    "phone 390×844 Editor/Preview, source preserved, no overflow",
+    "phone-landscape 844×390 Editor/Preview, source preserved, no overflow",
+    "Tablet/phone portrait and landscape switch panels without losing source or horizontal overflow",
+    "Reduced motion, persisted cloaking and cross-tab master gating retain choices and restore the correct identity"
+  ],
+  "errors": [],
+  "version": "26.5",
+  "isolation": {
+    "storage": "SecurityError",
+    "dom": "SecurityError",
+    "frame": "null",
+    "top": "SecurityError",
+    "ownStorage": "SecurityError",
+    "popup": "blocked"
+  },
+  "runtimeDetails": "browser-redacted",
+  "newTabIsolation": {
+    "storage": "SecurityError",
+    "dom": "SecurityError",
+    "frame": "null",
+    "top": "SecurityError",
+    "ownStorage": "SecurityError",
+    "popup": "blocked"
+  },
+  "expectedAuthoredErrors": [
+    "Blocked a frame at \"null\" from accessing a frame at \"http://127.0.0.1:40489\".  The frame requesting access is sandboxed and lacks the \"allow-same-origin\" flag.",
+    "Try fixing this line",
+    "Unexpected token ';'",
+    "Error: Async practice error",
+    "Blocked a frame at \"null\" from accessing a frame at \"http://127.0.0.1:40489\".  The frame requesting access is sandboxed and lacks the \"allow-same-origin\" flag."
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "executed": "2026-10-27T18:41:41.161Z",
+  "physicalDevices": [],
+  "engines": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "Private settings backup downloads exact dialogue completion, appearance count and explicit choice",
+        "Merge retains greater progress, unrelated scenes and this browser’s explicit automatic-open choice",
+        "Older backups and deselected Settings leave dialogue state unchanged",
+        "Explicit settings overwrite restores normalized dialogue state",
+        "Unsupported state rejects before writes; failed progress write rolls back collection, preferences and layout"
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "Private settings backup downloads exact dialogue completion, appearance count and explicit choice",
+        "Merge retains greater progress, unrelated scenes and this browser’s explicit automatic-open choice",
+        "Older backups and deselected Settings leave dialogue state unchanged",
+        "Explicit settings overwrite restores normalized dialogue state",
+        "Unsupported state rejects before writes; failed progress write rolls back collection, preferences and layout"
+      ],
+      "errors": [],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "Private settings backup downloads exact dialogue completion, appearance count and explicit choice",
+        "Merge retains greater progress, unrelated scenes and this browser’s explicit automatic-open choice",
+        "Older backups and deselected Settings leave dialogue state unchanged",
+        "Explicit settings overwrite restores normalized dialogue state",
+        "Unsupported state rejects before writes; failed progress write rolls back collection, preferences and layout"
+      ],
+      "errors": [],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

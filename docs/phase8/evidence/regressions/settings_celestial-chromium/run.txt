@@ -1,0 +1,16 @@
+PASS chromium: all 54 established controls survive; seven categories and no overflow
+PASS chromium: desktop category navigation and stored toggle across reloads and tabs
+PASS chromium: search actual name, alias, description, ranked results and empty state
+PASS chromium: search restores category, every disclosure, scroll, focus, preferences and control identity
+PASS chromium: keyboard result navigation, Enter to setting, Escape restoration
+PASS chromium: all established deep links reveal target and support Back/Forward
+PASS chromium: master gating is semantic, explained, synchronized, and preserves individual choices
+PASS chromium: new-tab prerequisites and advanced pool are discoverable without changing preferences
+PASS chromium: real backup download, focus trap, focus restoration, notes and unknown preferences
+PASS chromium: granular import and overwrite confirmation preserve unrelated data and saved preferences
+PASS chromium: storage write failure reports failure and retains actual stored value
+PASS chromium: malformed stored settings survive toggles and recovery export byte-for-byte
+PASS chromium: injected markup in backup titles stays inert in preview and saved manager
+PASS chromium: reset actions require intent and failed position writes roll back
+PASS chromium: phone/tablet searchable accordion, portrait/landscape, and reduced motion
+PASS chromium: 15 Settings interaction groups; no page errors.

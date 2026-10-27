@@ -1,0 +1,177 @@
+{
+  "executed": "2026-10-27T13:23:02.590Z",
+  "physicalDevices": [],
+  "jobs": [
+    {
+      "suite": "navigation_history",
+      "engine": "chromium",
+      "status": "failed",
+      "exitCode": 1,
+      "elapsedSeconds": 60.7,
+      "groups": 7,
+      "log": "regressions/navigation_history-chromium/run.txt"
+    },
+    {
+      "suite": "navigation_history",
+      "engine": "firefox",
+      "status": "failed",
+      "exitCode": 1,
+      "elapsedSeconds": 83.1,
+      "groups": 7,
+      "log": "regressions/navigation_history-firefox/run.txt"
+    },
+    {
+      "suite": "navigation_history",
+      "engine": "webkit",
+      "status": "failed",
+      "exitCode": 1,
+      "elapsedSeconds": 44.2,
+      "groups": 7,
+      "log": "regressions/navigation_history-webkit/run.txt"
+    },
+    {
+      "suite": "quick_settings_customization",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 85.2,
+      "groups": 23,
+      "log": "regressions/quick_settings_customization-chromium/run.txt"
+    },
+    {
+      "suite": "quick_settings_customization",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 111.4,
+      "groups": 20,
+      "log": "regressions/quick_settings_customization-firefox/run.txt"
+    },
+    {
+      "suite": "cloaking_consolidation",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 67.6,
+      "groups": 13,
+      "log": "regressions/cloaking_consolidation-chromium/run.txt"
+    },
+    {
+      "suite": "quick_settings_customization",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 153.1,
+      "groups": 20,
+      "log": "regressions/quick_settings_customization-webkit/run.txt"
+    },
+    {
+      "suite": "cloaking_consolidation",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 41.2,
+      "groups": 13,
+      "log": "regressions/cloaking_consolidation-firefox/run.txt"
+    },
+    {
+      "suite": "viewer_independent_security",
+      "engine": "all",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 17.3,
+      "groups": 15,
+      "log": "regressions/viewer_independent_security-all/run.txt"
+    },
+    {
+      "suite": "proxy_platform_regression",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 5.2,
+      "groups": 4,
+      "log": "regressions/proxy_platform_regression-chromium/run.txt"
+    },
+    {
+      "suite": "proxy_platform_regression",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 7.4,
+      "groups": 4,
+      "log": "regressions/proxy_platform_regression-firefox/run.txt"
+    },
+    {
+      "suite": "cloaking_consolidation",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 36,
+      "groups": 13,
+      "log": "regressions/cloaking_consolidation-webkit/run.txt"
+    },
+    {
+      "suite": "proxy_platform_regression",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 4.7,
+      "groups": 4,
+      "log": "regressions/proxy_platform_regression-webkit/run.txt"
+    },
+    {
+      "suite": "catalog_updates",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 34.5,
+      "groups": 21,
+      "log": "regressions/catalog_updates-chromium/run.txt"
+    },
+    {
+      "suite": "catalog_updates",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 34.7,
+      "groups": 21,
+      "log": "regressions/catalog_updates-firefox/run.txt"
+    },
+    {
+      "suite": "homepage_search_limits",
+      "engine": "chromium",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 10,
+      "groups": 8,
+      "log": "regressions/homepage_search_limits-chromium/run.txt"
+    },
+    {
+      "suite": "homepage_search_limits",
+      "engine": "firefox",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 12.7,
+      "groups": 8,
+      "log": "regressions/homepage_search_limits-firefox/run.txt"
+    },
+    {
+      "suite": "catalog_updates",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 29.9,
+      "groups": 21,
+      "log": "regressions/catalog_updates-webkit/run.txt"
+    },
+    {
+      "suite": "homepage_search_limits",
+      "engine": "webkit",
+      "status": "passed",
+      "exitCode": 0,
+      "elapsedSeconds": 9,
+      "groups": 8,
+      "log": "regressions/homepage_search_limits-webkit/run.txt"
+    }
+  ]
+}

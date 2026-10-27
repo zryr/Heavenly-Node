@@ -1,0 +1,17 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox: all 54 established controls survive; seven categories and no overflow
+PASS firefox: desktop category navigation and stored toggle across reloads and tabs
+PASS firefox: search actual name, alias, description, ranked results and empty state
+PASS firefox: search restores category, every disclosure, scroll, focus, preferences and control identity
+PASS firefox: keyboard result navigation, Enter to setting, Escape restoration
+PASS firefox: all established deep links reveal target and support Back/Forward
+PASS firefox: master gating is semantic, explained, synchronized, and preserves individual choices
+PASS firefox: new-tab prerequisites and advanced pool are discoverable without changing preferences
+PASS firefox: real backup download, focus trap, focus restoration, notes and unknown preferences
+PASS firefox: granular import and overwrite confirmation preserve unrelated data and saved preferences
+PASS firefox: storage write failure reports failure and retains actual stored value
+PASS firefox: malformed stored settings survive toggles and recovery export byte-for-byte
+PASS firefox: injected markup in backup titles stays inert in preview and saved manager
+PASS firefox: reset actions require intent and failed position writes roll back
+PASS firefox: phone/tablet searchable accordion, portrait/landscape, and reduced motion
+PASS firefox: 15 Settings interaction groups; no page errors.

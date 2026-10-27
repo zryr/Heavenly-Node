@@ -1,0 +1,23 @@
+{
+  "captured": "2026-10-27T18:42:45.308Z",
+  "baseline": "2725f32369bb609bcd0cf8c8d51e272f9a420009",
+  "screenshots": [
+    "after/home-desktop.png",
+    "after/home-phone.png",
+    "after/ocean-note-phone.png",
+    "after/inline-reaction-phone.png",
+    "after/msg_ao_oni.png",
+    "after/msg_khezu.png",
+    "after/msg_doggy.png",
+    "after/academy-phone.png",
+    "after/academy-desktop.png",
+    "after/settings-desktop.png",
+    "after/error-desktop.png",
+    "after/hq-desktop.png",
+    "after/ao-dance.png"
+  ],
+  "errors": [],
+  "physicalDevices": [],
+  "version": "154.0.8037.57",
+  "recording": "after/scenes-phone.webm"
+}
