@@ -44,3 +44,43 @@
 @media (forced-colors: active) {
   .qs-homepage .is-category-compact .section-card { border-color: ButtonText; }
 }
+
+/* Bottom sections keep their own width intent; viewport pressure only caps the
+   rendered width. The existing auto-row observer measures these exact grids. */
+.qs-homepage .bottom-section-container { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+.qs-homepage .bottom-section-container > .section-card { flex: 0 0 auto; box-sizing: border-box; width: 100%; max-width: 100%; min-width: 0; container: bottom-category / inline-size; }
+.qs-homepage .bottom-section-container .subsection-content { --bookmark-row-min: 220px; }
+.category-size-controls { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 2px; min-height: 44px; color: var(--hn-muted, #a5b4c8); }
+.category-width-fit { min-height: 44px; padding: 8px 12px; border: 1px solid #34485f; border-radius: 9px; background: transparent; color: #bad4e8; font: inherit; font-size: 12px; cursor: pointer; }
+.category-width-fit:hover:enabled { background: #1b2d44; border-color: #58718e; }
+.category-width-fit:disabled { opacity: .45; cursor: default; }
+.category-resize { display: inline-flex; align-items: center; justify-content: center; width: 44px; min-height: 44px; flex: none; border: 1px solid #34485f; border-radius: 9px; background: #142238; color: #adcfe2; cursor: col-resize; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.category-resize:hover, .category-resize:active, .is-resizing .category-resize { background: #223950; border-color: #7aaec6; color: #e5f8ff; }
+.category-resize:focus-visible, .category-width-fit:focus-visible { outline: 2px solid #94d9ed; outline-offset: 3px; }
+@container bottom-category (max-width: 380px) {
+  .qs-homepage .section-header { flex-wrap: wrap; }
+  .qs-homepage .section-header-title { flex-basis: 100%; }
+  .qs-homepage .category-actions { margin-left: auto; }
+}
+/* Four-dot management uses the same quiet solid surface as the home controls. */
+.qs-homepage .reorder-action-bar { box-sizing: border-box; width: max-content; max-width: calc(100vw - 24px); max-height: calc(100dvh - 32px); overflow: auto; padding: 10px; gap: 8px; border: 1px solid var(--hn-border, #354b65); border-radius: 14px; background: #142139; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 12px 32px #050b1670; }
+.qs-homepage .reorder-action-bar.active { bottom: max(12px, env(safe-area-inset-bottom)); }
+.qs-homepage .reorder-action-bar .bar-btn { min-height: 44px; padding: 9px 12px; border: 1px solid #3a526d; border-radius: 9px; color: #d1e5f3; background: #1a2c43; transition: background-color 140ms ease, border-color 140ms ease; }
+.qs-homepage .reorder-action-bar .bar-btn:hover:enabled { background: #263d56; border-color: #6888a5; transform: none; }
+.qs-homepage .reorder-action-bar .bar-btn:active:enabled { background: #304a65; }
+.qs-homepage .reorder-action-bar .bar-btn:focus-visible { outline: 2px solid #9be0f2; outline-offset: 3px; }
+.qs-homepage .reorder-action-bar .bar-btn-danger { color: #ffc1c1; border-color: #6c4856; background: #382737; }
+.qs-homepage .reorder-action-bar .bar-btn-danger:hover:enabled { background: #533044; border-color: #b8758a; }
+.qs-homepage .reorder-action-bar .bar-btn:disabled { opacity: .4; cursor: default; }
+.qs-homepage .reorder-action-bar .bar-info { max-width: 100%; overflow-wrap: anywhere; color: #c2d6e7; }
+@media (max-width: 500px) {
+  .qs-homepage .reorder-action-bar { width: calc(100vw - 24px); }
+  .qs-homepage .reorder-action-bar .bar-info { flex-basis: 100%; border-right: 0; text-align: center; }
+  .qs-homepage .reorder-action-bar .bar-btn { flex: 1 1 auto; justify-content: center; }
+}
+.qs-homepage .section-order-row { flex-wrap: wrap; border-color: #354b65; background: #142139; border-radius: 11px; }
+.qs-homepage .section-order-row .section-order-name { flex: 1 1 120px; color: #d2e1ee; }
+.qs-homepage .section-order-row .drag-dots-handle, .qs-homepage .section-order-step { min-width: 44px; min-height: 44px; border-radius: 8px; }
+.qs-homepage .section-order-step { background: #20354e; border: 1px solid #48617c; color: #c6e2f3; }
+.qs-homepage .section-order-step:hover:enabled { background: #2a425e; transform: none; }
+.qs-homepage .section-order-step:focus-visible { outline: 2px solid #9be0f2; outline-offset: 3px; }

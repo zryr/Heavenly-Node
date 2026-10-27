@@ -1,0 +1,13 @@
+{
+  "engine": "firefox",
+  "checks": [
+    "actual private backup download includes normalized side and bottom widths with settings selected",
+    "merge restores imported widths while preserving unrelated personal widths",
+    "overwrite restores the selected layout; older backups without layout leave existing widths untouched",
+    "unsupported layout backup is rejected before any saved collection or setting changes",
+    "layout storage failure rolls back bookmarks, settings and width intent as one import"
+  ],
+  "errors": [],
+  "physicalDevices": [],
+  "version": "153.0"
+}

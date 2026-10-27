@@ -1,0 +1,14 @@
+{
+  "engine": "firefox",
+  "checks": [
+    "keyboard separators adapt the actual category container from one to two bookmark columns with a 44px target",
+    "refresh, phone pressure and return preserve the intentional width and avoid horizontal overflow",
+    "mouse resizing commits on release; Escape cancels the draft width and cleans ownership",
+    "iPad-like portrait/landscape, Chromebook and phone widths retain state; four-dot management stays legible and usable",
+    "moving a category to a side and back retains its width identity without exposing bottom-only controls on the side",
+    "Fit width restores automatic sizing without touching bookmarks or category order"
+  ],
+  "physicalDevices": [],
+  "errors": [],
+  "version": "153.0"
+}

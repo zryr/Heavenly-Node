@@ -5,9 +5,9 @@
   else root.HeavenlyLayout = factory(root);
 })(typeof window !== 'undefined' ? window : this, function (root) {
   'use strict';
-  var KEY = 'heavenly_home_layout_v1', MIN = 240, MAX = 400, CENTER = 440, RAIL = 44, GAP = 16, CATEGORY_MIN = 152, CATEGORY_MAX = 208;
+  var KEY = 'heavenly_home_layout_v1', MIN = 240, MAX = 400, CENTER = 440, RAIL = 44, GAP = 16, CATEGORY_MIN = 152, CATEGORY_MAX = 208, BOTTOM_MIN = 260, BOTTOM_MAX = 1536;
   var sides = ['left', 'right'];
-  function defaults() { return { version: 1, priority: 'left', left: { width: 256, collapsed: false, compactOpen: false }, right: { width: 256, collapsed: false, compactOpen: false }, categoryCollapsed: {} }; }
+  function defaults() { return { version: 1, priority: 'left', left: { width: 256, collapsed: false, compactOpen: false }, right: { width: 256, collapsed: false, compactOpen: false }, categoryCollapsed: {}, categoryWidths: {} }; }
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
   function normalize(value) {
     var result = defaults();
@@ -15,6 +15,10 @@
     if (value.priority === 'right') result.priority = 'right';
     if (value.categoryCollapsed && typeof value.categoryCollapsed === 'object' && !Array.isArray(value.categoryCollapsed)) Object.keys(value.categoryCollapsed).forEach(function (id) {
       if (value.categoryCollapsed[id] === true) Object.defineProperty(result.categoryCollapsed, id, { value: true, enumerable: true, configurable: true, writable: true });
+    });
+    if (value.categoryWidths && typeof value.categoryWidths === 'object' && !Array.isArray(value.categoryWidths)) Object.keys(value.categoryWidths).forEach(function (id) {
+      var width = value.categoryWidths[id];
+      if (typeof width === 'number' && isFinite(width)) Object.defineProperty(result.categoryWidths, id, { value: clamp(width, BOTTOM_MIN, BOTTOM_MAX), enumerable: true, configurable: true, writable: true });
     });
     sides.forEach(function (side) {
       var saved = value[side];
@@ -25,10 +29,19 @@
     });
     return result;
   }
+  function merge(saved, incoming) {
+    saved = normalize(saved); incoming = normalize(incoming);
+    ['categoryWidths', 'categoryCollapsed'].forEach(function (field) {
+      var combined = saved[field];
+      Object.keys(incoming[field]).forEach(function (id) { Object.defineProperty(combined, id, { value: incoming[field][id], enumerable: true, configurable: true, writable: true }); });
+      incoming[field] = combined;
+    });
+    return incoming;
+  }
   // Pure layout calculation, also used by the keyboard separator's limits.
   function customized(preferences) {
     preferences = normalize(preferences);
-    return Object.keys(preferences.categoryCollapsed).length > 0 || sides.some(function (side) { return preferences[side].width !== 256 || preferences[side].collapsed || preferences[side].compactOpen; });
+    return Object.keys(preferences.categoryCollapsed).length > 0 || Object.keys(preferences.categoryWidths).length > 0 || sides.some(function (side) { return preferences[side].width !== 256 || preferences[side].collapsed || preferences[side].compactOpen; });
   }
   function calculate(available, preferences, priority, eligible, categoryWidths) {
     preferences = normalize(preferences);
@@ -52,7 +65,8 @@
     });
     return result;
   }
-  var api = { defaults: defaults, normalize: normalize, calculate: calculate, customized: customized, key: KEY, min: MIN, max: MAX };
+  var api = { defaults: defaults, normalize: normalize, merge: merge, calculate: calculate, customized: customized, key: KEY, min: MIN, max: MAX };
+  api.bottomMin = BOTTOM_MIN; api.bottomMax = BOTTOM_MAX;
   api.resizeTip = 'You can resize the left and right bookmark panels by dragging their inner edges.';
   if (!root || !root.document) return api;
   function init() {
@@ -60,7 +74,7 @@
     if (!layout) return;
     var preferences;
     try { preferences = normalize(JSON.parse(root.localStorage.getItem(KEY))); } catch (e) { preferences = defaults(); }
-    var current, priority = preferences.priority, resize = null, pendingFrame = 0, viewportFrame = 0, lastWidth = 0;
+    var current, priority = preferences.priority, resize = null, bottomResize = null, pendingFrame = 0, viewportFrame = 0, lastWidth = 0;
     var status = doc.getElementById('layout-status');
     var menuTrigger = doc.getElementById('layout-options-trigger'), menu = doc.getElementById('layout-options-menu'), resetButton = doc.getElementById('reset-home-layout');
     function save() { try { root.localStorage.setItem(KEY, JSON.stringify(preferences)); } catch (e) {} }
@@ -110,6 +124,77 @@
         });
       });
     }
+    var bottom = doc.getElementById('bottom-container');
+    function bottomLimit() { return Math.max(1, Math.min(BOTTOM_MAX, bottom.clientWidth)); }
+    function intendedWidth(id) { return Object.prototype.hasOwnProperty.call(preferences.categoryWidths, id) ? preferences.categoryWidths[id] : null; }
+    function setBottomWidth(id, width) {
+      if (width === null) delete preferences.categoryWidths[id];
+      else Object.defineProperty(preferences.categoryWidths, id, { value: clamp(width, BOTTOM_MIN, BOTTOM_MAX), enumerable: true, configurable: true, writable: true });
+    }
+    function cleanupBottomResize(state) {
+      try { if (state.handle.hasPointerCapture(state.pointerId)) state.handle.releasePointerCapture(state.pointerId); } catch (e) {}
+      state.card.classList.remove('is-resizing'); doc.body.classList.remove('homepage-resizing');
+      if (root.HeavenlyGestures) root.HeavenlyGestures.release('category-resize');
+    }
+    function cancelBottomResize() {
+      if (!bottomResize) return;
+      var previous = bottomResize; bottomResize = null;
+      setBottomWidth(previous.id, previous.saved); cleanupBottomResize(previous); schedule();
+    }
+    function bindBottomCategories() {
+      if (!bottom) return;
+      if (bottomResize && !bottomResize.card.isConnected) cancelBottomResize();
+      bottom.querySelectorAll(':scope > .section-card[data-category-id]').forEach(function (card) {
+        var id = card.dataset.categoryId, width = intendedWidth(id), controls = card.querySelector('.category-size-controls');
+        if (!controls) {
+          controls = doc.createElement('div'); controls.className = 'category-size-controls';
+          var fit = doc.createElement('button'); fit.type = 'button'; fit.className = 'category-width-fit'; fit.textContent = 'Fit width'; fit.title = 'Use the full available width';
+          fit.setAttribute('aria-label', 'Fit ' + card.dataset.categoryTitle + ' to available width');
+          fit.addEventListener('click', function (event) { event.stopPropagation(); if (root.HeavenlyGestures && root.HeavenlyGestures.owner) return; setBottomWidth(id, null); save(); apply(); announce(card.dataset.categoryTitle + ' fits the available width.'); });
+          var handle = doc.createElement('div'); handle.className = 'category-resize'; handle.tabIndex = 0;
+          handle.setAttribute('role', 'separator'); handle.setAttribute('aria-orientation', 'vertical'); handle.setAttribute('aria-label', 'Resize ' + card.dataset.categoryTitle);
+          handle.title = 'Drag to resize. Arrow keys adjust width; Home and End set limits. Delete restores full width.';
+          var grip = doc.createElement('span'); grip.setAttribute('aria-hidden', 'true'); grip.textContent = '↔'; handle.appendChild(grip);
+          controls.append(fit, handle); card.appendChild(controls);
+          handle.addEventListener('touchstart', function (event) { if (bottomResize && event.touches.length === 1 && event.cancelable) event.preventDefault(); }, { passive: false });
+          handle.addEventListener('pointerdown', function (event) {
+            if (event.button !== 0 || event.isPrimary === false) return;
+            if (root.HeavenlyGestures && !root.HeavenlyGestures.acquire('category-resize', cancelBottomResize)) return;
+            event.preventDefault(); event.stopPropagation();
+            bottomResize = { id: id, pointerId: event.pointerId, x: event.clientX, start: card.getBoundingClientRect().width, saved: intendedWidth(id), card: card, handle: handle };
+            card.classList.add('is-resizing'); doc.body.classList.add('homepage-resizing');
+            try { handle.setPointerCapture(event.pointerId); } catch (e) {}
+          });
+          handle.addEventListener('pointermove', function (event) {
+            if (!bottomResize || event.pointerId !== bottomResize.pointerId) return;
+            event.preventDefault(); setBottomWidth(id, Math.min(bottomLimit(), bottomResize.start + event.clientX - bottomResize.x)); schedule();
+          });
+          handle.addEventListener('pointerup', function (event) {
+            if (!bottomResize || event.pointerId !== bottomResize.pointerId) return;
+            var previous = bottomResize; bottomResize = null; cleanupBottomResize(previous); save(); apply();
+            announce(card.dataset.categoryTitle + ' width ' + Math.round(card.getBoundingClientRect().width) + ' pixels.');
+          });
+          handle.addEventListener('pointercancel', cancelBottomResize);
+          handle.addEventListener('lostpointercapture', function () { if (bottomResize) cancelBottomResize(); });
+          handle.addEventListener('keydown', function (event) {
+            if (root.HeavenlyGestures && root.HeavenlyGestures.owner) return;
+            var next = card.getBoundingClientRect().width;
+            if (event.key === 'ArrowLeft') next -= event.shiftKey ? 64 : 24;
+            else if (event.key === 'ArrowRight') next += event.shiftKey ? 64 : 24;
+            else if (event.key === 'Home') next = BOTTOM_MIN;
+            else if (event.key === 'End') next = bottomLimit();
+            else if (event.key === 'Delete' || event.key === 'Backspace') next = null;
+            else return;
+            event.preventDefault(); event.stopPropagation(); setBottomWidth(id, next === null ? null : Math.min(bottomLimit(), next)); save(); apply();
+          });
+        }
+        card.style.width = width === null ? '100%' : Math.min(width, bottomLimit()) + 'px';
+        var handle = controls.querySelector('.category-resize'), actual = Math.min(width || bottomLimit(), bottomLimit());
+        handle.setAttribute('aria-valuemin', String(Math.min(BOTTOM_MIN, bottomLimit()))); handle.setAttribute('aria-valuemax', String(bottomLimit()));
+        handle.setAttribute('aria-valuenow', String(Math.round(actual))); handle.setAttribute('aria-valuetext', Math.round(actual) + ' pixels' + (width === null ? ', automatic' : ''));
+        controls.querySelector('.category-width-fit').disabled = width === null;
+      });
+    }
     function syncReset() {
       if (resetButton) { resetButton.disabled = !customized(preferences); resetButton.title = resetButton.disabled ? 'Layout already uses its defaults' : 'Restore panel widths and panel/category collapse states'; }
     }
@@ -133,7 +218,7 @@
     function apply() {
       pendingFrame = 0;
       var width = layout.clientWidth;
-      bindCategories();
+      bindCategories(); bindBottomCategories();
       var eligible = {}, categoryWidths = {};
       sides.forEach(function (side) {
         eligible[side] = !!doc.getElementById(side + '-column').querySelector('.section-card[data-category-id]');
@@ -256,7 +341,7 @@
     });
     if (resetButton) resetButton.addEventListener('click', function () {
       if (root.HeavenlyGestures && root.HeavenlyGestures.owner) return;
-      preferences = defaults(); priority = 'left'; save(); apply(); closeMenu(true); announce('Panel widths and collapse states reset.');
+      preferences = defaults(); priority = 'left'; save(); apply(); closeMenu(true); announce('Panel and category widths and collapse states reset.');
     });
     function closeMenu(focus) { if (!menu) return; menu.hidden = true; menuTrigger.setAttribute('aria-expanded', 'false'); if (focus) menuTrigger.focus({ preventScroll: true }); }
     if (menuTrigger && menu) {
@@ -272,19 +357,22 @@
       layout.classList.add('layout-viewport-changing');
       root.cancelAnimationFrame(viewportFrame);
       if (resize) cancelResize();
+      cancelBottomResize();
       if (root.HeavenlyGestures && root.HeavenlyGestures.owner === 'bookmark-drag') root.HeavenlyGestures.cancel();
       schedule();
       viewportFrame = root.requestAnimationFrame(function () { viewportFrame = root.requestAnimationFrame(function () { layout.classList.remove('layout-viewport-changing'); viewportFrame = 0; }); });
     }
     if (root.ResizeObserver) new root.ResizeObserver(function () { if (Math.abs(layout.clientWidth - lastWidth) > 1) viewportChanged(); }).observe(layout);
     if (root.MutationObserver) sides.forEach(function (side) { new root.MutationObserver(schedule).observe(doc.getElementById(side + '-column'), { childList: true }); });
+    if (bottom && root.MutationObserver) new root.MutationObserver(schedule).observe(bottom, { childList: true });
     root.addEventListener('resize', viewportChanged);
     root.addEventListener('orientationchange', viewportChanged);
-    root.addEventListener('blur', cancelResize);
-    doc.addEventListener('visibilitychange', function () { if (doc.hidden) cancelResize(); });
-    doc.addEventListener('keydown', function (event) { if (event.key === 'Escape') cancelResize(); });
-    doc.addEventListener('pointerdown', function (event) { if (resize && event.pointerId !== resize.id) cancelResize(); }, true);
-    root.addEventListener('storage', function (event) { if (event.key === KEY) { cancelResize(); try { preferences = normalize(JSON.parse(event.newValue)); } catch (e) { preferences = defaults(); } priority = preferences.priority; apply(); } });
+    root.addEventListener('blur', cancelResize); root.addEventListener('blur', cancelBottomResize);
+    root.addEventListener('pagehide', cancelBottomResize);
+    doc.addEventListener('visibilitychange', function () { if (doc.hidden) { cancelResize(); cancelBottomResize(); } });
+    doc.addEventListener('keydown', function (event) { if (event.key === 'Escape') { cancelResize(); cancelBottomResize(); } });
+    doc.addEventListener('pointerdown', function (event) { if (resize && event.pointerId !== resize.id) cancelResize(); if (bottomResize && event.pointerId !== bottomResize.pointerId) cancelBottomResize(); }, true);
+    root.addEventListener('storage', function (event) { if (event.key === KEY) { cancelResize(); cancelBottomResize(); try { preferences = normalize(JSON.parse(event.newValue)); } catch (e) { preferences = defaults(); } priority = preferences.priority; apply(); } });
     apply();
     if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(schedule);
     layout.classList.add('layout-grip-intro');

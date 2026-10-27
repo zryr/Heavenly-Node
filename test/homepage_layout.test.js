@@ -75,3 +75,33 @@ describe('Content-sized homepage layout', function () {
     assert.equal(Object.getPrototypeOf(special.categoryCollapsed),Object.prototype);
   });
 });
+
+describe('Bottom category width preferences', function () {
+  it('migrates existing v1 preferences without changing sides or collapse and accepts sparse width identities', function () {
+    const old={version:1,priority:'right',left:{width:368,collapsed:true},right:{width:288,compactOpen:true},categoryCollapsed:{personal:true}};
+    const before=JSON.stringify(old),normalized=layout.normalize(old);
+    assert.equal(JSON.stringify(old),before);
+    assert.deepEqual(normalized.categoryWidths,{});assert.equal(normalized.left.width,368);assert(normalized.left.collapsed);assert(normalized.right.compactOpen);assert(normalized.categoryCollapsed.personal);
+    const next=layout.normalize({...old,categoryWidths:{small:12,wide:1800,valid:548,bad:'420',nil:null,nonfinite:Infinity}});
+    assert.deepEqual(next.categoryWidths,{small:260,wide:1536,valid:548});assert(layout.customized(next));
+    for(const width of [320,560,768,1024,1440])layout.calculate(width,next);
+    assert.equal(next.categoryWidths.valid,548,'viewport pressure must preserve intended category width');
+  });
+  it('stores hostile-looking stable IDs as own data properties without prototype assignment', function () {
+    const parsed=layout.normalize(JSON.parse('{"version":1,"categoryWidths":{"__proto__":540,"constructor":600,"stable/category":480}}'));
+    assert.equal(Object.getPrototypeOf(parsed.categoryWidths),Object.prototype);
+    assert.equal(parsed.categoryWidths.__proto__,540);assert.equal(parsed.categoryWidths.constructor,600);assert.equal(parsed.categoryWidths['stable/category'],480);
+    assert.deepEqual(layout.normalize(JSON.parse(JSON.stringify(parsed))),parsed);
+  });
+});
+
+describe('Private layout backup merging', function () {
+  it('merges sparse widths and collapse states by own stable identity while selected side preferences use the backup', function () {
+    const saved=layout.normalize(JSON.parse('{"version":1,"left":{"width":300},"categoryWidths":{"__proto__":540,"personal":600},"categoryCollapsed":{"personal":true}}'));
+    const incoming=layout.normalize(JSON.parse('{"version":1,"left":{"width":360},"categoryWidths":{"constructor":480,"personal":720},"categoryCollapsed":{"backup":true}}'));
+    const before=JSON.stringify(saved),result=layout.merge(saved,incoming);
+    assert.equal(JSON.stringify(saved),before);assert.equal(result.left.width,360);
+    assert.equal(result.categoryWidths.__proto__,540);assert.equal(result.categoryWidths.constructor,480);assert.equal(result.categoryWidths.personal,720);
+    assert.equal(Object.getPrototypeOf(result.categoryWidths),Object.prototype);assert.deepEqual(result.categoryCollapsed,{personal:true,backup:true});
+  });
+});
