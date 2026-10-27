@@ -96,7 +96,11 @@
     brokenMap = brokenMap || {};
     var original = { title: bookmark ? bookmark.title : title, url: bookmark && bookmark.url || url, source: 'main', mirrorEligible: bookmark && bookmark.mirrorEligible, catalogPreviousUrls: bookmark && bookmark.catalogPreviousUrls };
     var seen = Object.create(null), brokenKeys = Object.create(null);
-    Object.keys(brokenMap).forEach(function (url) { if (brokenMap[url]) brokenKeys[navigation.bookmarkKey(url)] = true; });
+    for (var urlKey in brokenMap) {
+      if (Object.prototype.hasOwnProperty.call(brokenMap, urlKey) && brokenMap[urlKey]) {
+        brokenKeys[navigation.bookmarkKey(urlKey)] = true;
+      }
+    }
     var entries = [original].concat(bookmark && bookmark.subBookmarks || []).filter(function (entry) {
       var key = navigation.bookmarkKey(entry.url);
       if (!key || seen[key]) return false;

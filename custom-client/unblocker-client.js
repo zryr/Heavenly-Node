@@ -138,7 +138,7 @@
       }
       if (location.pathname.startsWith(prefix)) {
         currentRemoteHref =
-          location.pathname.substr(prefixLen) +
+          location.pathname.slice(prefixLen) +
           location.search +
           location.hash;
       } else {
@@ -173,7 +173,7 @@
     // check if it's already proxied (absolute)
     if (
       url.origin === location.origin &&
-      url.pathname.substr(0, prefixLen) === prefix
+      url.pathname.startsWith(prefix)
     ) {
       return urlStr.replace(/(\/proxy\/https?:\/)([^/])/i, "$1/$2");
     }
@@ -453,7 +453,7 @@
 
             // EverythingMoe Link Interception
             if (isEverythingMoePage(window, config)) {
-              if (rawHref.substr(0, 11) !== "javascript:" && rawHref.substr(0, 1) !== "#") {
+              if (!rawHref.startsWith("javascript:") && !rawHref.startsWith("#")) {
                 e.preventDefault();
                 e.stopPropagation();
                 openEverythingMoeLinkModal(window, config, rawHref, proxiedHref);
@@ -465,7 +465,7 @@
             if (isFmhyPage(window, config)) {
               // Exclude internal clicks originating from FMHY search or container elements
               if (!target.closest('.shell') && !target.closest('.search-bar') && !target.closest('#localsearch-input') && !target.closest('.results')) {
-                if (rawHref.substr(0, 11) !== "javascript:" && rawHref.substr(0, 1) !== "#") {
+                if (!rawHref.startsWith("javascript:") && !rawHref.startsWith("#")) {
                   var extractedTarget = extractTargetRemoteUrl(rawHref, window, config);
                   try {
                     var parsedTarget = new URL(extractedTarget);
@@ -3128,7 +3128,7 @@
               if (!searchInput) return;
               var val = searchInput.value.trim();
               if (!val) return;
-              if (val.substr(0, 4) !== "http") {
+              if (!val.startsWith("http")) {
                 if (val.includes('.') && !val.includes(' ')) {
                   val = "https://" + val;
                 } else {
@@ -3351,7 +3351,7 @@
             var val = input.value.trim();
             if (!val) return;
 
-            if (val.substr(0, 4) !== "http") {
+            if (!val.startsWith("http")) {
               if (val.includes('.') && !val.includes(' ')) {
                 val = "https://" + val;
               } else {

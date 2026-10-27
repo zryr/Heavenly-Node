@@ -21,11 +21,11 @@ app.set('trust proxy', true);
 
 // Strip X-Frame-Options on Express app routes so Heavenly pages can embed inside the about:blank iframe
 app.use((req, res, next) => {
-    if (req.url.indexOf('/proxy/') === 0) return next();
+    if (req.url.startsWith('/proxy/')) return next();
     res.removeHeader('X-Frame-Options');
     var origSetHeader = res.setHeader;
     res.setHeader = function(name, val) {
-        if (typeof name === 'string' && name.toLowerCase() === 'x-frame-options') {
+        if (typeof name === 'string' && (name === 'X-Frame-Options' || name === 'x-frame-options' || name.toLowerCase() === 'x-frame-options')) {
             return;
         }
         return origSetHeader.apply(this, arguments);
