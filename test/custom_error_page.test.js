@@ -25,7 +25,9 @@ describe('Heavenly Custom Error Page & Error Middlewares', function() {
             assert.ok(html.includes('Return to Heavenly'), 'Should include Return Home button');
             assert.ok(html.includes("Return to Heavenly"), 'Return Home button should be present');
             assert.ok(html.includes('href="/"') && html.includes('HeavenlyNavigation.returnHome(window)'), 'Return Home button should redirect to root URL');
-            assert.ok(html.includes('#030712'), 'Should use Heavenly dark theme background color');
+            assert.ok(html.includes('/assets/heavenly-tokens.css') && html.includes('/assets/heavenly-error.css'), 'Should use the shared Heavenly palette and static recovery stylesheet');
+            assert.ok(html.includes('<main class="error-container" aria-labelledby="error-title">'), 'Should expose a named recovery landmark');
+            assert.ok(!html.includes('glow-orb'), 'Should avoid animated decorative recovery layers');
         });
 
         it('should sanitize HTML special characters in errorType, target URL and details', function() {

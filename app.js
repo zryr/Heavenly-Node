@@ -396,149 +396,12 @@ function renderHeavenlyErrorPage(opts) {
 '  <link rel="preconnect" href="https://fonts.googleapis.com">\n' +
 '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
 '  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">\n' +
-'  <style type="text/css">\n' +
-'    * { box-sizing: border-box; margin: 0; padding: 0; }\n' +
-'    body {\n' +
-'      font-family: \'Outfit\', -apple-system, BlinkMacSystemFont, sans-serif;\n' +
-'      background-color: #030712;\n' +
-'      background-image:\n' +
-'        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.14) 0px, transparent 50%),\n' +
-'        radial-gradient(at 100% 0%, rgba(239, 68, 68, 0.16) 0px, transparent 50%),\n' +
-'        radial-gradient(at 50% 100%, rgba(129, 140, 248, 0.12) 0px, transparent 50%);\n' +
-'      color: #f8fafc;\n' +
-'      min-height: 100vh;\n' +
-'      display: flex;\n' +
-'      align-items: center;\n' +
-'      justify-content: center;\n' +
-'      padding: 32px 16px;\n' +
-'      overflow-x: hidden;\n' +
-'    }\n' +
-'    @keyframes floatOrb {\n' +
-'      0%, 100% { transform: translate(-50%, 0) scale(1); }\n' +
-'      50% { transform: translate(-50%, 15px) scale(1.05); }\n' +
-'    }\n' +
-'    @keyframes pulseGlow {\n' +
-'      0%, 100% { opacity: 0.6; }\n' +
-'      50% { opacity: 0.9; }\n' +
-'    }\n' +
-'    .glow-orb {\n' +
-'      position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;\n' +
-'    }\n' +
-'    .glow-orb-1 {\n' +
-'      top: -120px; left: 50%; transform: translateX(-50%); width: 550px; height: 320px;\n' +
-'      background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, rgba(99, 102, 241, 0.15) 60%, transparent 100%);\n' +
-'      animation: floatOrb 10s ease-in-out infinite;\n' +
-'    }\n' +
-'    .glow-orb-2 {\n' +
-'      bottom: -100px; right: 10%; width: 450px; height: 320px;\n' +
-'      background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%);\n' +
-'      animation: pulseGlow 8s ease-in-out infinite;\n' +
-'    }\n' +
-'    .error-container {\n' +
-'      position: relative; z-index: 1; width: 100%; max-width: 620px;\n' +
-'      background: rgba(15, 23, 42, 0.88);\n' +
-'      backdrop-filter: blur(28px);\n' +
-'      -webkit-backdrop-filter: blur(28px);\n' +
-'      border: 1px solid rgba(239, 68, 68, 0.35);\n' +
-'      border-radius: 28px;\n' +
-'      box-shadow:\n' +
-'        0 0 0 1px rgba(255, 255, 255, 0.08) inset,\n' +
-'        0 30px 70px -15px rgba(0, 0, 0, 0.85),\n' +
-'        0 0 50px -10px rgba(239, 68, 68, 0.25);\n' +
-'      padding: 44px 36px 36px 36px;\n' +
-'      text-align: center;\n' +
-'      display: flex; flex-direction: column; align-items: center; gap: 22px;\n' +
-'    }\n' +
-'    .brand-badge {\n' +
-'      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;\n' +
-'      background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35);\n' +
-'      border-radius: 20px; color: #fca5a5; font-size: 0.82rem; font-weight: 700;\n' +
-'      letter-spacing: 0.03em; text-transform: uppercase;\n' +
-'    }\n' +
-'    .brand-logo-img {\n' +
-'      width: 64px; height: 64px; object-fit: contain;\n' +
-'      filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.85));\n' +
-'    }\n' +
-'    h1 {\n' +
-'      font-family: \'Space Grotesk\', sans-serif; font-size: 2.35rem; font-weight: 700;\n' +
-'      letter-spacing: -0.02em;\n' +
-'      background: linear-gradient(135deg, #ffffff 0%, #fca5a5 40%, #38bdf8 100%);\n' +
-'      -webkit-background-clip: text; -webkit-text-fill-color: transparent;\n' +
-'      line-height: 1.15;\n' +
-'    }\n' +
-'    .details-box {\n' +
-'      width: 100%; background: rgba(30, 41, 59, 0.55);\n' +
-'      border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 18px; padding: 18px 20px;\n' +
-'      display: flex; flex-direction: column; gap: 12px; text-align: left;\n' +
-'    }\n' +
-'    .target-url-header {\n' +
-'      display: flex; align-items: center; gap: 6px;\n' +
-'      font-size: 0.78rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;\n' +
-'    }\n' +
-'    .target-url-val {\n' +
-'      font-family: monospace; font-size: 0.88rem; color: #38bdf8; word-break: break-all;\n' +
-'      background: rgba(15, 23, 42, 0.75); padding: 10px 14px; border-radius: 12px;\n' +
-'      border: 1px solid rgba(56, 189, 248, 0.28);\n' +
-'    }\n' +
-'    .error-desc {\n' +
-'      font-size: 0.92rem; color: #cbd5e1; line-height: 1.55;\n' +
-'    }\n' +
-'    .actions-group {\n' +
-'      display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 6px;\n' +
-'    }\n' +
-'    .btn-action {\n' +
-'      width: 100%; padding: 14px 22px; border-radius: 16px; font-size: 0.95rem; font-weight: 600;\n' +
-'      font-family: inherit; cursor: pointer; display: inline-flex; align-items: center;\n' +
-'      justify-content: center; gap: 10px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);\n' +
-'      text-decoration: none; border: none; outline: none;\n' +
-'    }\n' +
-'    .btn-action svg {\n' +
-'      width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2;\n' +
-'      stroke-linecap: round; stroke-linejoin: round;\n' +
-'    }\n' +
-'    .btn-primary {\n' +
-'      background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);\n' +
-'      color: #030712; font-weight: 700;\n' +
-'      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.38);\n' +
-'    }\n' +
-'    .btn-primary:hover {\n' +
-'      transform: translateY(-2px); box-shadow: 0 8px 28px rgba(56, 189, 248, 0.55);\n' +
-'      background: linear-gradient(135deg, #7dd3fc 0%, #60a5fa 100%);\n' +
-'    }\n' +
-'    .btn-secondary {\n' +
-'      background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.4);\n' +
-'      color: #38bdf8;\n' +
-'    }\n' +
-'    .btn-secondary:hover {\n' +
-'      background: rgba(56, 189, 248, 0.25); color: #ffffff; border-color: #38bdf8;\n' +
-'      transform: translateY(-2px); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.25);\n' +
-'    }\n' +
-'    .btn-outline {\n' +
-'      background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(148, 163, 184, 0.3);\n' +
-'      color: #e2e8f0;\n' +
-'    }\n' +
-'    .btn-outline:hover {\n' +
-'      background: rgba(30, 41, 59, 0.95); color: #ffffff; border-color: rgba(148, 163, 184, 0.5);\n' +
-'      transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);\n' +
-'    }\n' +
-'    .advanced-details { font-size: 0.85rem; min-width: 0; }\n' +
-'    .advanced-details summary { cursor: pointer; padding: 10px 0; min-height: 44px; font-weight: 600; }\n' +
-'    .diagnostic-grid { display: grid; grid-template-columns: minmax(70px, 1fr) minmax(0, 2fr); gap: 8px 12px; }\n' +
-'    .diagnostic-grid dt { color: #94a3b8; } .diagnostic-grid dd { margin: 0; overflow-wrap: anywhere; }\n' +
-'    .advanced-details textarea { width: 100%; min-width: 0; min-height: 220px; resize: vertical; white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; color: #e2e8f0; background: #0f172a; border: 1px solid #334155; border-radius: 10px; font: 12px/1.6 monospace; }\n' +
-'    .advanced-details button[hidden] { display: none; }\n' +
-'    .advanced-details textarea:focus-visible, summary:focus-visible, .btn-action:focus-visible { outline: 2px solid #38bdf8; outline-offset: 3px; }\n' +
-'    @media (max-width: 480px) { .error-container { padding: 28px 18px; } .details-box { padding: 14px; } }\n' +
-'    .footer-note {\n' +
-'      font-size: 0.82rem; color: #64748b; margin-top: 4px;\n' +
-'    }\n' +
-'  </style>\n' +
+'  <link rel="stylesheet" href="/assets/heavenly-tokens.css">\n' +
+'  <link rel="stylesheet" href="/assets/heavenly-error.css">\n' +
 '<link rel="stylesheet" href="/assets/error-details.css">\n' +
 '</head>\n' +
-'<body>\n' +
-'  <div class="glow-orb glow-orb-1"></div>\n' +
-'  <div class="glow-orb glow-orb-2"></div>\n' +
-'  <div class="error-container">\n' +
+'<body class="hn-page error-page">\n' +
+'  <main class="error-container" aria-labelledby="error-title">\n' +
 '    <div style="display: flex; align-items: center; justify-content: center; gap: 14px;">\n' +
 '      <img src="/assets/heavenly-logo.png" alt="Heavenly Logo" class="brand-logo-img" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src=(window.location.origin||\'\')+\'/assets/heavenly-logo.png\';}else{this.style.display=\'none\';var fb=document.getElementById(\'fallback-svg-logo\');if(fb){fb.style.display=\'inline-block\';}}">\n' +
 '      <svg id="fallback-svg-logo" class="brand-logo-img" style="display:none;width:64px;height:64px;color:#38bdf8;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>\n' +
@@ -547,7 +410,7 @@ function renderHeavenlyErrorPage(opts) {
 '      <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>\n' +
     '      Heavenly Web Proxy &bull; ' + safeErrorType + '\n' +
 '    </span>\n' +
-'    <h1>This website could not load</h1>\n' +
+'    <h1 id="error-title">This website could not load</h1>\n' +
 '    <div class="details-box">\n' +
 (safeTargetUrl ? '      <div class="target-url-header">\n' +
 '        <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>\n' +
@@ -573,8 +436,8 @@ function renderHeavenlyErrorPage(opts) {
 '    </div>\n' +
 (safeDirectTargetUrl ? '<p class="error-desc">Opening directly uses your browser without Heavenly. Your network may still block the website.</p>' : '') +
 advancedPanel + developerPanel +
-'    <div class="footer-note">Heavenly Web Proxy &bull; Ethereal &bull; Streamlined</div>\n' +
-'  </div>\n' +
+'    <div class="footer-note">Heavenly · A little help finding your way back</div>\n' +
+'  </main>\n' +
 '</body>\n' +
 '</html>';
 }
@@ -595,7 +458,7 @@ unblockerConfig.responseMiddleware[prefixerIndex] = require('./lib/script-safe-u
 // Reserve Heavenly's own routes before Unblocker's Referer-based recovery.
 // Otherwise Home (and our logo/scripts) becomes the upstream site's root/assets
 // whenever the request comes from a proxied document.
-var heavenlyPages = { '/': 'index.html', '/index.html': 'index.html', '/settings.html': 'settings.html', '/browse.html': 'browse.html', '/html-viewer.html': 'html-viewer.html' };
+var heavenlyPages = { '/': 'index.html', '/index.html': 'index.html', '/settings.html': 'settings.html', '/browse.html': 'browse.html', '/html-viewer.html': 'html-viewer.html', '/study-workspace.html': 'study-workspace.html' };
 // Academy is a separate document, reserved before proxy Referer recovery.
 // These are content pages; planned features intentionally return 200, not 503.
 app.get(['/academy', '/academy/', '/academy.html', '/academy/:page'], require('./lib/academy-routes').createHandler());

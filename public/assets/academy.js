@@ -72,9 +72,9 @@
   var service = document.getElementById('academy-service-name');
   if (service) {
     var services = {
-      'student-portal': ['Student portal', 'Student accounts and assignments are planned for a future version. There is no sign-in service or student record system on this demonstration site.'],
-      'family-portal': ['Family portal', 'Family accounts are planned for a future version. This demonstration site does not collect family details or provide student records.'],
-      'applications': ['Applications', 'Morrowfield is a fictional academy. Applications and campus visits are not being accepted. You can explore the learning pathways and use the free study resources today.'],
+      'student-portal': ['Student portal', 'Student accounts and assignments are planned for a future version. There is no sign-in service or student record system on this site.'],
+      'family-portal': ['Family portal', 'Family accounts are planned for a future version. This site does not collect family details or provide student records.'],
+      'applications': ['Applications', 'Applications and campus visits are not available through this site. You can explore the learning pathways and use the free study resources today.'],
       'clubs': ['Clubs & societies', 'A fuller collection of independent project guides is being prepared. Explore the student hub for activities you can try now.']
     };
     var selected = services[new URLSearchParams(window.location.search).get('service')] || ['More learning tools', 'This feature is planned for a future version. The learning pathways, resource library and student guides are available now.'];

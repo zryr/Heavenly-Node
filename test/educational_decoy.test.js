@@ -39,6 +39,7 @@ describe('Academy standalone document and navigation boundary', function () {
       assert(!html.includes('id="codex-dev-modal"'), file);
       assert(!html.includes('/assets/heavenly-home.css'), file);
       assert(!html.includes('Atlanta Classical Academy'), file);
+      assert(!/fictional|demonstration|not a real school/i.test(html), file + ': unwanted Academy copy');
       assert(!/href="(?:#|javascript:|)"/.test(html), file + ': dead link');
       assert(html.includes('viewport-fit=cover'), file + ': safe area viewport');
       assert(!/[→☰]/.test(html), file + ': font-dependent decorative icon');
@@ -105,11 +106,13 @@ describe('Academy standalone document and navigation boundary', function () {
   });
   it('keeps real terms, software authorship and licensed photo attribution accessible', function () {
     const terms = fs.readFileSync(path.join(publicDir, 'academy/terms.html'), 'utf8');
-    assert(terms.includes('GNU Affero General Public License'));
-    assert(terms.includes('Nathan Friedly'));
-    assert(terms.includes('Syshi'));
+    assert(!terms.includes('This landing experience is part of Heavenly Node'));
+    assert(terms.includes('/academy/credits#software'));
     assert(terms.includes('id="academy-home-return"'));
     const credits = fs.readFileSync(path.join(publicDir, 'academy/credits.html'), 'utf8');
+    assert(credits.includes('GNU Affero General Public License'));
+    assert(credits.includes('Nathan Friedly'));
+    assert(credits.includes('Syshi'));
     assert(credits.includes('Matthew Petroff'));
     assert(credits.includes('creativecommons.org/licenses/by-sa/3.0/'));
     assert(credits.includes('does not depict a Morrowfield campus'));

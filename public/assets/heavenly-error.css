@@ -1,0 +1,28 @@
+/* Recovery belongs to the same quiet celestial surfaces as Settings and home. */
+* { box-sizing: border-box; }
+.error-page { margin:0; min-height:100vh; min-height:100dvh; display:grid; align-items:center; padding:32px 16px; background:var(--hn-bg); background-image:radial-gradient(ellipse at 15% 0%, #1b345440, transparent 65%); color:var(--hn-text); font:400 1rem/1.6 var(--hn-font); }
+.error-container { width:100%; max-width:620px; min-width:0; margin:auto; padding:36px; display:flex; flex-direction:column; align-items:center; gap:20px; border:1px solid var(--hn-border); border-radius:var(--hn-radius-lg); background:var(--hn-surface); box-shadow:var(--hn-shadow); text-align:center; }
+.error-container h1 { margin:0; max-width:18ch; color:var(--hn-text); font:600 clamp(1.65rem, 4vw, 2.25rem)/1.2 var(--hn-heading); letter-spacing:-.035em; }
+.brand-logo-img { width:56px; height:56px; object-fit:contain; }
+.brand-badge { display:inline-flex; align-items:center; justify-content:center; gap:8px; max-width:100%; color:var(--hn-muted); font-size:.82rem; overflow-wrap:anywhere; }
+.brand-badge svg { flex:0 0 14px; color:var(--hn-error); }
+.details-box { display:flex; flex-direction:column; gap:12px; width:100%; min-width:0; padding:18px; border:1px solid var(--hn-border); border-radius:var(--hn-radius-md); background:var(--hn-inset); text-align:left; }
+.target-url-header { display:flex; align-items:center; gap:8px; font-size:.8rem; color:var(--hn-muted); }
+.target-url-val { padding:10px 12px; border-radius:var(--hn-radius-sm); background:var(--hn-surface); color:var(--hn-accent); font:.84rem/1.6 var(--hn-code); overflow-wrap:anywhere; user-select:text; }
+.error-desc { margin:0; color:var(--hn-muted); font-size:.92rem; line-height:1.6; overflow-wrap:anywhere; }
+.actions-group { display:flex; flex-direction:column; gap:10px; width:100%; }
+.btn-action { display:inline-flex; align-items:center; justify-content:center; gap:10px; width:100%; min-height:46px; padding:12px 18px; border:1px solid var(--hn-control-border); border-radius:var(--hn-radius-sm); background:var(--hn-raised); color:var(--hn-text); font:500 .92rem/1.4 var(--hn-font); text-decoration:none; cursor:pointer; transition:background-color var(--hn-duration-fast), border-color var(--hn-duration-fast); }
+.btn-action svg { width:18px; height:18px; flex:0 0 18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.btn-action:hover { background:#233b55; border-color:#7194b5; }
+.btn-action:active { background:#2b4662; }
+.btn-primary { color:#081a2a; background:var(--hn-accent); border-color:transparent; font-weight:600; }
+.btn-primary:hover { background:#b5edfa; border-color:transparent; }
+.btn-secondary { color:var(--hn-accent); }
+.btn-outline { background:var(--hn-inset); }
+.error-container :is(summary, textarea, button, a):focus-visible { outline:var(--hn-focus); outline-offset:3px; }
+.diagnostic-grid dt { color:var(--hn-muted); }
+.diagnostic-grid dd { margin:0; overflow-wrap:anywhere; }
+.advanced-details button[hidden] { display:none; }
+.footer-note { margin-top:2px; color:var(--hn-muted); font-size:.78rem; }
+@media(max-width:480px) { .error-page { padding:20px 12px; } .error-container { padding:26px 18px; gap:18px; } .details-box { padding:14px; } }
+@media(forced-colors:active) { .error-container, .details-box, .btn-action { border:1px solid CanvasText; } }
