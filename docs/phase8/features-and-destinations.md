@@ -13,7 +13,7 @@ Baseline: merged main `2725f32` after #202. Budsin Games, the separate Monochrom
 
 ## Validation
 
-`npx mocha test/unblocker-client.test.js test/phase8_features.test.js test/catalog_updates.test.js test/launch_preference.test.js --reporter dot`: **66 passing**. This includes an actual merged-main catalog loaded in a VM, then review/apply into customized saved data, proving preferred mirrors, notes, order and a personal bookmark survive the new release.
+`npx mocha test/unblocker-client.test.js test/phase8_features.test.js test/catalog_updates.test.js test/launch_preference.test.js test/quick_settings.test.js test/quick_settings_and_autohide.test.js --reporter dot`: **91 passing**. This includes an actual merged-main catalog loaded in a VM, then review/apply into customized saved data, proving preferred mirrors, notes, order and a personal bookmark survive the new release.
 
 `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=1 node test/browser/phase8_features.cjs` exercises real rendered controls in Chromium, Firefox and Linux WebKit. It covers the exact music tip/link, Escape/focus return, Save instructions, clean drag anchor, actual settings visibility and reload persistence, Palette keyboard navigation, the actual injected panic key and touch button, editable formatting, and unchanged saved-website panic behavior. It measures the workspace at 1440×1000, 1366×768, 820×1180, 1180×820, 390×844, and 320×740. Final result: **7 groups in each of Chromium 154, Firefox 153 and Linux WebKit 26.5, all passing with zero page errors; six measured workspace sizes per engine**. Detailed actual results are in `evidence/features-results.json`; genuine Chromium screenshots include `music-shortcut-desktop.png`, `save-heavenly-desktop.png` and `document-workspace-{1440,820,320}.png`.
 
@@ -22,3 +22,9 @@ The first cross-browser run exposed a real local-route integration bug, fixed by
 `evidence/external-links.json` records bounded HEAD requests, following at most four redirects with a 20-second limit. Budsin and both exact mirrors returned **HTTP 200**. Monochrome returned **HTTP 503** in this environment; the requested link is retained, and playback/service availability remains unverified. No third-party page scripts were executed.
 
 No physical iPad, Chromebook, phone, Apple Safari, native bookmark-bar drop, browser menu, hardware keyboard, or virtual keyboard was tested. Linux WebKit is browser automation, not Apple Safari. Basic rich-text formatting uses the browser's native editing commands; no editor library was introduced. The document is intentionally not a cloud storage or permanent drafting feature.
+
+## Panic destination security review
+
+Independent review identified the pre-existing raw Panic URL assignment as unsafe for imported `javascript:` or `data:` values. `HeavenlyNavigation.safePanicUrl` now accepts only full HTTP(S) addresses without credentials or control characters. Both key and touch dispatch fall back to the existing default website when a saved/imported value is unsafe; the original preference stays untouched for recovery. Full Settings and the compact panic configuration reject unsafe new edits with an accessible explanation and keep the saved URL. Selecting document appearance remains independent of the saved website.
+
+`PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=1 node test/browser/phase8_panic_security.cjs` tests real input and actual script refusal with a session-storage execution sentinel. The default destination is an intercepted owned HTTP fixture, so the test does not execute third-party school pages. Actual results and engine versions/status are in `evidence/panic-security.json`.

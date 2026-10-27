@@ -441,6 +441,19 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
       assert.strictEqual(press('different', 'F8').defaultPrevented, true); assert.strictEqual(win.location.href, saved.panicUrl);
       assert.strictEqual(listeners.keydown.length, 1);
     });
+    it('refuses script/data/credential destinations without changing imported saved preferences', function () {
+      const saved = { panicKeyEnable: true, panicKey: 'F8', touchPanic: false, disableAllWidgets: true };
+      const { win, listeners } = client(saved);
+      for (const value of ['javascript:globalThis.panicExecuted=true', 'data:text/html,<script>alert(1)</script>', 'https://user:pass@example.com/', '//example.com/', 'not a URL', 'https://example.com/\nunsafe']) {
+        saved.panicUrl = value;
+        listeners.keydown[0]({ key: 'F8', preventDefault() {} });
+        assert.strictEqual(win.location.href, 'https://classroom.google.com');
+        assert.strictEqual(saved.panicUrl, value, 'The original imported preference must remain available for recovery');
+      }
+      saved.panicUrl = 'http://localhost:8080/home?class=river#notes';
+      listeners.keydown[0]({ key: 'F8', preventDefault() {} });
+      assert.strictEqual(win.location.href, saved.panicUrl);
+    });
     it('retains external master changes while the upstream document is still loading', function () {
       const saved = { persistentCloak: true, selectedPreset: 'google', touchPanic: false, disableAllWidgets: true };
       const { win, listeners } = client(saved, 'loading');

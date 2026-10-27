@@ -1,0 +1,39 @@
+{
+  "executed": "2026-10-27T18:38:16.436Z",
+  "input": "Playwright keyboard automation; no physical devices.",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "Actual Settings refuses script and credential URL edits, preserves saved value, accepts a valid HTTP(S) correction",
+        "Compact panic configuration also refuses non-web destinations without publishing its draft",
+        "Actual imported javascript: panic value does not execute; dispatch reaches the safe default while preserving original stored preference",
+        "Document appearance remains independent of unsafe saved website preferences"
+      ],
+      "pageErrors": [],
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "Actual Settings refuses script and credential URL edits, preserves saved value, accepts a valid HTTP(S) correction",
+        "Compact panic configuration also refuses non-web destinations without publishing its draft",
+        "Actual imported javascript: panic value does not execute; dispatch reaches the safe default while preserving original stored preference",
+        "Document appearance remains independent of unsafe saved website preferences"
+      ],
+      "pageErrors": [],
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "Actual Settings refuses script and credential URL edits, preserves saved value, accepts a valid HTTP(S) correction",
+        "Compact panic configuration also refuses non-web destinations without publishing its draft",
+        "Actual imported javascript: panic value does not execute; dispatch reaches the safe default while preserving original stored preference",
+        "Document appearance remains independent of unsafe saved website preferences"
+      ],
+      "pageErrors": [],
+      "status": "passed"
+    }
+  ]
+}

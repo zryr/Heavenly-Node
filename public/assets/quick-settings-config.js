@@ -135,7 +135,11 @@
       var current = read();
       if (kind === 'panic') {
         if (dirty('panicKey')) draft.panicKey = draft.panicKey.trim();
-        if (dirty('panicUrl')) draft.panicUrl = draft.panicUrl.trim() || 'https://classroom.google.com';
+        if (dirty('panicUrl')) {
+          var safePanic = root.HeavenlyNavigation.safePanicUrl(draft.panicUrl.trim() || 'https://classroom.google.com');
+          if (!safePanic) { get('error').hidden = false; get('error').textContent = 'Use a full HTTP or HTTPS website address without a username or password. Your saved address has been kept.'; get('controls').querySelector('[data-config-field="panicUrl"]').focus(); return; }
+          draft.panicUrl = safePanic;
+        }
         if (draft.panicKeyEnable && !draft.panicKey.trim()) { get('error').hidden = false; get('error').textContent = 'Choose a panic key before enabling the keyboard shortcut.'; get('controls').querySelector('[data-config-field="panicKey"]').focus(); return; }
       }
       var patch = model.configPatch(kind, baseline, draft);

@@ -983,7 +983,7 @@
             if (previous.origin === workspace.origin) window.sessionStorage.setItem('heavenly_panic_return', previous.pathname + previous.search + previous.hash);
           } catch (error) {}
           window.location.href = workspace.href;
-        } else window.location.href = current.panicUrl || 'https://classroom.google.com';
+        } else window.location.href = navigation.safePanicUrl(current.panicUrl) || 'https://classroom.google.com';
       }
 
       // 3. Panic Key Shortcut
