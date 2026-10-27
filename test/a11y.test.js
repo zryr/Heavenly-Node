@@ -112,4 +112,31 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('btnPreset.setAttribute(\'aria-selected\', mode === \'preset\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnPreset');
         assert.ok(html.includes('btnManual.setAttribute(\'aria-selected\', mode === \'manual\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnManual');
     });
+
+    it('should set descriptive aria-label and title on sub-bookmark edit and delete buttons', function() {
+        assert.ok(html.includes('editBtn.setAttribute(\'aria-label\', \'Edit sub-bookmark \' + sub.title)'), 'editBtn should set aria-label');
+        assert.ok(html.includes('editBtn.title = \'Edit sub-bookmark \' + sub.title'), 'editBtn should set title');
+        assert.ok(html.includes('delBtn.setAttribute(\'aria-label\', \'Delete sub-bookmark \' + sub.title)'), 'delBtn should set aria-label');
+        assert.ok(html.includes('delBtn.title = \'Delete sub-bookmark \' + sub.title'), 'delBtn should set title');
+    });
+
+    it('should configure aria-pressed on preset icon buttons', function() {
+        assert.ok(html.includes('btn.setAttribute(\'aria-pressed\', selectedPresetIconId === item.id ? \'true\' : \'false\')'), 'renderPresetIconPicker should set aria-pressed');
+        assert.ok(html.includes('btn.setAttribute(\'aria-pressed\', selectedSubSecIconId === item.id ? \'true\' : \'false\')'), 'renderSubSecIconPicker should set aria-pressed');
+    });
+
+    it('should shift focus to main search input when Educational Decoy is unlocked', function() {
+        assert.ok(html.includes('var mainUrlInput = $(\'url\');'), 'unlockAcademyDecoy should reference mainUrlInput');
+        assert.ok(html.includes('try { mainUrlInput.focus(); } catch (e) {}'), 'unlockAcademyDecoy should focus mainUrlInput');
+    });
+
+    it('should configure bookmark note textarea aria-label with bookmark title and live status announcement', function() {
+        assert.ok(html.includes('input.setAttribute(\'aria-label\', \'Personal note for \' + (bookmark.title || \'bookmark\'))'), 'mountBookmarkNoteEditor should set aria-label with bookmark title');
+        assert.ok(html.includes('status.setAttribute(\'aria-live\', \'polite\')'), 'mountBookmarkNoteEditor status element should have aria-live="polite"');
+    });
+
+    it('should set descriptive aria-label and title on notice modal action buttons in openEverythingMoeNoticeModal', function() {
+        assert.ok(html.includes('okBtn.setAttribute(\'aria-label\', \'Open \' + pendingEverythingMoeNotice.title + \' with Proxy\')'), 'okBtn should set aria-label with title');
+        assert.ok(html.includes('directBtn.setAttribute(\'aria-label\', \'Test \' + pendingEverythingMoeNotice.title + \' Direct Site\')'), 'directBtn should set aria-label with title');
+      });
 });

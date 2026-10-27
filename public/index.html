@@ -3368,6 +3368,10 @@
         document.documentElement.classList.add('decoy-bypassed');
       }
       hideLoadingScreen();
+      var mainUrlInput = $('url');
+      if (mainUrlInput && (!document.activeElement || document.activeElement === document.body || (decoy && decoy.contains(document.activeElement)))) {
+        try { mainUrlInput.focus(); } catch (e) {}
+      }
     }
 
     function initAcademyDecoy() {
@@ -5925,6 +5929,7 @@
         btn.style.cursor = 'pointer';
         btn.title = item.name;
         btn.setAttribute('aria-label', 'Preset icon ' + item.name);
+        btn.setAttribute('aria-pressed', selectedPresetIconId === item.id ? 'true' : 'false');
 
         var svgWrap = document.createElement('div');
         svgWrap.style.width = '20px';
@@ -6072,6 +6077,8 @@
         editBtn.type = 'button';
         editBtn.style.cssText = 'background:rgba(56, 189, 248, 0.15); color:#38bdf8; border:1px solid rgba(56, 189, 248, 0.3); padding:3px 6px; border-radius:6px; font-size:0.72rem; cursor:pointer;';
         editBtn.textContent = 'Edit';
+        editBtn.setAttribute('aria-label', 'Edit sub-bookmark ' + sub.title);
+        editBtn.title = 'Edit sub-bookmark ' + sub.title;
         editBtn.onclick = function () {
           var newTitle = prompt('Edit sub-bookmark title:', sub.title);
           if (newTitle === null) return;
@@ -6086,6 +6093,8 @@
         delBtn.type = 'button';
         delBtn.style.cssText = 'background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.3); padding:3px 6px; border-radius:6px; font-size:0.72rem; cursor:pointer;';
         delBtn.textContent = '✕';
+        delBtn.setAttribute('aria-label', 'Delete sub-bookmark ' + sub.title);
+        delBtn.title = 'Delete sub-bookmark ' + sub.title;
         delBtn.onclick = function () {
           modalSubBookmarks.splice(idx, 1);
           renderModalSubBookmarksList();
@@ -6332,6 +6341,17 @@
       var titleEl = $('everythingmoe-modal-title');
       if (titleEl) titleEl.textContent = pendingEverythingMoeNotice.title;
 
+      var okBtn = $('everythingmoe-ok-btn');
+      var directBtn = $('everythingmoe-direct-btn');
+      if (okBtn) {
+        okBtn.setAttribute('aria-label', 'Open ' + pendingEverythingMoeNotice.title + ' with Proxy');
+        okBtn.title = 'Open ' + pendingEverythingMoeNotice.title + ' with Proxy';
+      }
+      if (directBtn) {
+        directBtn.setAttribute('aria-label', 'Test ' + pendingEverythingMoeNotice.title + ' Direct Site');
+        directBtn.title = 'Test ' + pendingEverythingMoeNotice.title + ' Direct Site';
+      }
+
       var modal = $('everythingmoe-modal');
       if (modal) HeavenlyDialogs.open(modal);
       setTimeout(function () {
@@ -6562,11 +6582,11 @@
       var body = document.createElement('div'); body.className = 'bookmark-note-body';
       var input = document.createElement('textarea');
       input.id = modalId + '-note-text'; input.maxLength = 4000; input.rows = 4;
-      input.setAttribute('aria-label', 'My Note'); input.placeholder = 'Add a note about this website...'; input.value = saved;
+      input.setAttribute('aria-label', 'Personal note for ' + (bookmark.title || 'bookmark')); input.placeholder = 'Add a note about this website...'; input.value = saved;
       var hint = document.createElement('p'); hint.className = 'bookmark-note-hint';
       hint.textContent = 'Saved on this device. Private backups can transfer notes; public sharing includes them only if you choose. Notes do not sync automatically.';
       var actions = document.createElement('div'); actions.className = 'bookmark-note-actions';
-      var status = document.createElement('p'); status.className = 'bookmark-setting-status'; status.setAttribute('role', 'status');
+      var status = document.createElement('p'); status.className = 'bookmark-setting-status'; status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
       function refresh() { preview.textContent = saved ? saved.replace(/\s+/g, ' ').slice(0, 100) : 'Optional'; }
       function button(label, action) {
         var button = document.createElement('button'); button.type = 'button'; button.textContent = label;
@@ -7737,6 +7757,7 @@
         btn.style.cursor = 'pointer';
         btn.title = item.name;
         btn.setAttribute('aria-label', 'Sub-section icon ' + item.name);
+        btn.setAttribute('aria-pressed', selectedSubSecIconId === item.id ? 'true' : 'false');
 
         var svgWrap = document.createElement('div');
         svgWrap.style.width = '20px';
