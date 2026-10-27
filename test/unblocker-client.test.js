@@ -429,16 +429,16 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
     it('honors live keyboard enable, disable, key/code and destination changes without reinitializing', function () {
       const saved = { panicKeyEnable: false, panicKey: 'p', touchPanic: false, disableAllWidgets: true };
       const { win, listeners } = client(saved);
-      const press = (key, code) => listeners.keydown.forEach(listener => listener({ key, code }));
+      const press = (key, code) => { const event = { key, code, defaultPrevented: false, preventDefault() { this.defaultPrevented = true; } }; listeners.keydown.forEach(listener => listener(event)); return event; };
       const original = win.location.href;
-      press('p', 'KeyP'); assert.strictEqual(win.location.href, original);
+      assert.strictEqual(press('p', 'KeyP').defaultPrevented, false); assert.strictEqual(win.location.href, original);
       Object.assign(saved, { panicKeyEnable: true, panicUrl: 'https://example.com/panic' });
-      press('p', 'KeyP'); assert.strictEqual(win.location.href, saved.panicUrl);
+      assert.strictEqual(press('p', 'KeyP').defaultPrevented, true); assert.strictEqual(win.location.href, saved.panicUrl);
       win.location.href = original; saved.panicKeyEnable = false;
-      press('p', 'KeyP'); assert.strictEqual(win.location.href, original);
+      assert.strictEqual(press('p', 'KeyP').defaultPrevented, false); assert.strictEqual(win.location.href, original);
       Object.assign(saved, { panicKeyEnable: true, panicKey: 'F8', panicUrl: 'https://example.com/updated' });
-      press('p', 'KeyP'); assert.strictEqual(win.location.href, original);
-      press('different', 'F8'); assert.strictEqual(win.location.href, saved.panicUrl);
+      assert.strictEqual(press('p', 'KeyP').defaultPrevented, false); assert.strictEqual(win.location.href, original);
+      assert.strictEqual(press('different', 'F8').defaultPrevented, true); assert.strictEqual(win.location.href, saved.panicUrl);
       assert.strictEqual(listeners.keydown.length, 1);
     });
     it('retains external master changes while the upstream document is still loading', function () {
@@ -459,9 +459,10 @@ describe('unblocker-client.js DOM element rewriting & click interception', funct
     it('attaches privacy handlers while initially paused, retaining choices and honoring master changes', function () {
       const saved = { disableAllFeatures: true, panicKeyEnable: true, panicKey: 'p', panicUrl: 'https://example.com/panic', touchPanic: false, disableAllWidgets: true };
       const { win, listeners } = client(saved), original = win.location.href;
-      listeners.keydown[0]({ key: 'p' }); assert.strictEqual(win.location.href, original);
+      const event = { key: 'p', defaultPrevented: false, preventDefault() { this.defaultPrevented = true; } };
+      listeners.keydown[0](event); assert.strictEqual(win.location.href, original); assert.strictEqual(event.defaultPrevented, false);
       saved.disableAllFeatures = false;
-      listeners.keydown[0]({ key: 'p' }); assert.strictEqual(win.location.href, saved.panicUrl);
+      listeners.keydown[0](event); assert.strictEqual(win.location.href, saved.panicUrl); assert.strictEqual(event.defaultPrevented, true);
       win.location.href = original; saved.panicKey = '';
       listeners.keydown[0]({ key: '`' }); assert.strictEqual(win.location.href, original);
       assert.strictEqual(saved.panicKeyEnable, true);

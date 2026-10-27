@@ -8,7 +8,7 @@
   var definitions = [
     { source: 2, id: 'bookmarks', title: 'Bookmarks & shortcuts', description: 'Choose how bookmarks open and how many you see.', icon: 'M5 3h14v18l-7-4-7 4z', hash: 'bookmark-display-settings' },
     { source: 1, id: 'cloaking', title: 'Tab cloaking', description: 'Change the tab title, icon, and how pages open.', icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', hash: 'tab-cloaking' },
-    { source: 3, id: 'panic', title: 'Panic controls', description: 'Choose a key or button to open another website.', icon: 'M12 3 2 21h20L12 3z M12 9v5 M12 17v1', hash: 'panic-controls' },
+    { source: 3, id: 'panic', title: 'Panic controls', description: 'Choose a key or button, and what it opens.', icon: 'M12 3 2 21h20L12 3z M12 9v5 M12 17v1', hash: 'panic-controls' },
     { source: 4, id: 'widgets', title: 'Widgets & dock', description: 'Choose the tools shown on proxy pages.', icon: 'M3 4h7v7H3z M14 4h7v7h-7z M3 15h7v6H3z M14 15h7v6h-7z', hash: 'widget-settings' },
     { source: 0, id: 'features', title: 'Feature controls', description: 'Turn groups of tools and tab disguises off.', icon: 'M4 7h16 M4 17h16 M8 4v6 M16 14v6', hash: 'master-controls' },
     { source: 6, id: 'backup', title: 'Backup & transfer', description: 'Download a backup or restore one from a file.', icon: 'M4 15v6h16v-6 M12 3v13 M7 8l5-5 5 5', hash: 'settings-group-backup' },
@@ -90,6 +90,8 @@
     'set-panic-key-enable': 'panic keyboard shortcut hotkey emergency redirect',
     'set-touch-panic': 'panic touch gesture emergency',
     'set-panic-url': 'panic destination redirect url address',
+    'set-panic-appearance': 'panic document workspace editor schoolwork appearance',
+    'set-show-music-shortcut': 'music monochrome note shortcut homepage show hide',
     'set-use-widget-dock': 'dock toolbar edge position floating widgets top bottom left right enable collapsible widget dock bar',
     'set-show-magnifier': 'magnifier magnify lens zoom size dimensions',
     'set-show-scroll-lock': 'scroll lock scrolling unlock',

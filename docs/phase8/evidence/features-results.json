@@ -1,0 +1,129 @@
+{
+  "executed": "2026-10-27T13:25:31.406Z",
+  "input": "Automated Playwright keyboard, mouse and touch emulation; no physical iPad, Chromebook or Apple Safari.",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "Compact Monochrome shortcut is opt-in, exact tip/link and accessible close/focus work",
+        "Discreet Save Heavenly opens honest desktop bookmark instructions and a clean native drag link",
+        "Show Music Shortcut and document appearance are searchable actual settings, save and survive refresh",
+        "Adapted Palette preset option Arrow/Home/End keyboard navigation works",
+        "Actual injected panic key opens local editable workspace; return destination, editing, formatting and user settings remain intact",
+        "Workspace fits desktop, Chromebook, tablet portrait/landscape and 320/390px phone; actual emulated touch panic and return work",
+        "Existing saved-website panic mode still navigates to its configured destination"
+      ],
+      "viewports": [
+        {
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "width": 1366,
+          "height": 768
+        },
+        {
+          "width": 820,
+          "height": 1180
+        },
+        {
+          "width": 1180,
+          "height": 820
+        },
+        {
+          "width": 390,
+          "height": 844
+        },
+        {
+          "width": 320,
+          "height": 740
+        }
+      ],
+      "pageErrors": [],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "Compact Monochrome shortcut is opt-in, exact tip/link and accessible close/focus work",
+        "Discreet Save Heavenly opens honest desktop bookmark instructions and a clean native drag link",
+        "Show Music Shortcut and document appearance are searchable actual settings, save and survive refresh",
+        "Adapted Palette preset option Arrow/Home/End keyboard navigation works",
+        "Actual injected panic key opens local editable workspace; return destination, editing, formatting and user settings remain intact",
+        "Workspace fits desktop, Chromebook, tablet portrait/landscape and 320/390px phone; actual emulated touch panic and return work",
+        "Existing saved-website panic mode still navigates to its configured destination"
+      ],
+      "viewports": [
+        {
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "width": 1366,
+          "height": 768
+        },
+        {
+          "width": 820,
+          "height": 1180
+        },
+        {
+          "width": 1180,
+          "height": 820
+        },
+        {
+          "width": 390,
+          "height": 844
+        },
+        {
+          "width": 320,
+          "height": 740
+        }
+      ],
+      "pageErrors": [],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "Compact Monochrome shortcut is opt-in, exact tip/link and accessible close/focus work",
+        "Discreet Save Heavenly opens honest desktop bookmark instructions and a clean native drag link",
+        "Show Music Shortcut and document appearance are searchable actual settings, save and survive refresh",
+        "Adapted Palette preset option Arrow/Home/End keyboard navigation works",
+        "Actual injected panic key opens local editable workspace; return destination, editing, formatting and user settings remain intact",
+        "Workspace fits desktop, Chromebook, tablet portrait/landscape and 320/390px phone; actual emulated touch panic and return work",
+        "Existing saved-website panic mode still navigates to its configured destination"
+      ],
+      "viewports": [
+        {
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "width": 1366,
+          "height": 768
+        },
+        {
+          "width": 820,
+          "height": 1180
+        },
+        {
+          "width": 1180,
+          "height": 820
+        },
+        {
+          "width": 390,
+          "height": 844
+        },
+        {
+          "width": 320,
+          "height": 740
+        }
+      ],
+      "pageErrors": [],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

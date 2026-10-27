@@ -1,0 +1,18 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),cp=require('node:child_process');
+const catalog=require('../public/assets/heavenly-catalog');
+const clone=v=>JSON.parse(JSON.stringify(v));
+describe('Phase 8 reviewed destinations and workspace',function(){
+ it('adds one Budsin identity and exact mirrors under the existing Arctic identity',function(){
+  const d=catalog.fresh(),budsin=d.bookmarks.filter(i=>i.url==='https://games.budsin.dev/#/');assert.equal(budsin.length,1);assert.equal(budsin[0].categoryId,'cat_games');const arctic=d.bookmarks.find(i=>i.id==='bm_arctic');assert.equal(d.bookmarks.filter(i=>/arctic|artic/i.test(i.title)).length,1);for(const url of ['https://site-sgyfu5dd.myoxypages.com/','https://share.htmlput.com/p/7o9hcsiopd']){assert.equal(arctic.subBookmarks.filter(i=>i.url===url).length,1);assert.equal(new URL(url).protocol,'https:');}
+ });
+ it('offers reviewed updates without replacing saved Arctic choices, notes, order or personal data',function(){
+  const context={HeavenlyNavigation:require('../public/assets/heavenly-navigation'),HeavenlyOfficialOrder:JSON.parse(cp.execFileSync('git',['show','2725f32:public/assets/heavenly-official-order.json'],{encoding:'utf8'}))};context.self=context;vm.runInNewContext(cp.execFileSync('git',['show','2725f32:public/assets/heavenly-catalog.js'],{encoding:'utf8'}),context);const prior=context.HeavenlyCatalog.release,data=clone(context.HeavenlyCatalog.fresh());const arctic=data.bookmarks.find(i=>i.id==='bm_arctic');arctic.personalNote='My own note';arctic.order=93;arctic.mirrorPreferences={preferred:'id:sub_arctic_2',active:'id:sub_arctic_2',order:['id:sub_arctic_2','main']};data.bookmarks.push({id:'mine',title:'My project',url:'https://example.com/',categoryId:'cat_games',subSectionId:'user',order:99,personalNote:'Keep'});const before=JSON.stringify(data);const review=catalog.pending(data);assert(review.changes.some(c=>c.key==='bookmark:bm_budsin_games'));assert(review.changes.some(c=>c.key==='bookmark:sub_arctic_myoxy'));assert.equal(JSON.stringify(data),before);const merged=catalog.merge(data,null,'applied'),updated=merged.bookmarks.find(i=>i.id==='bm_arctic');assert.equal(updated.personalNote,'My own note');assert.equal(updated.order,93);assert.deepEqual(updated.mirrorPreferences,arctic.mirrorPreferences);assert.deepEqual(merged.bookmarks.find(i=>i.id==='mine'),data.bookmarks.find(i=>i.id==='mine'));assert.equal(updated.subBookmarks.filter(i=>i.id==='sub_arctic_myoxy').length,1);assert.equal(catalog.pending(merged).changes.length,0);assert(prior.version!==catalog.release.version);
+ });
+ it('retains existing settings and redirect default while exposing one local document mode',function(){
+  const settings=fs.readFileSync('public/settings.html','utf8'),client=fs.readFileSync('custom-client/unblocker-client.js','utf8');assert(settings.includes('Show Music Shortcut'));assert(settings.includes('value="website">Open saved website'));assert(settings.includes('value="document">Document workspace'));assert(client.includes("panicAppearance: saved.panicAppearance === 'document' ? 'document' : 'website'"));assert(client.includes("new URL('/study-workspace.html', origin)"));assert(client.includes('openPanicDestination(current)'));
+ });
+ it('renders an original local document without third party frames or sign in fields',function(){
+  const html=fs.readFileSync('public/study-workspace.html','utf8');assert(!/<iframe|type="password"|https:\/\//i.test(html));assert(html.includes('Return to Heavenly'));assert(html.includes('Local workspace'));assert(html.includes('contenteditable="true"'));
+ });
+});

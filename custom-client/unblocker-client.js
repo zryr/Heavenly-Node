@@ -792,6 +792,7 @@
       panicKey: typeof saved.panicKey === 'string' ? saved.panicKey : '`',
       touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
       panicUrl: saved.panicUrl || 'https://classroom.google.com',
+      panicAppearance: saved.panicAppearance === 'document' ? 'document' : 'website',
       showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
       showMagnifier: saved.showMagnifier !== undefined ? saved.showMagnifier : true,
       showNavBookmark: saved.showNavBookmark !== undefined ? saved.showNavBookmark : true,
@@ -973,12 +974,25 @@
         });
       }
 
+      function openPanicDestination(current) {
+        if (current.panicAppearance === 'document') {
+          var origin = config && config.proxyOrigin || window.location.origin;
+          var workspace = new URL('/study-workspace.html', origin);
+          try {
+            var previous = new URL(window.location.href);
+            if (previous.origin === workspace.origin) window.sessionStorage.setItem('heavenly_panic_return', previous.pathname + previous.search + previous.hash);
+          } catch (error) {}
+          window.location.href = workspace.href;
+        } else window.location.href = current.panicUrl || 'https://classroom.google.com';
+      }
+
       // 3. Panic Key Shortcut
       window.addEventListener('keydown', function (e) {
         var current = loadHeavenlySettings(window);
         if (!current.disableAllFeatures && current.panicKeyEnable && current.panicKey &&
             (e.key === current.panicKey || e.code === current.panicKey)) {
-          window.location.href = current.panicUrl || 'https://classroom.google.com';
+          e.preventDefault();
+          openPanicDestination(current);
         }
       }, true);
 
@@ -1067,7 +1081,7 @@
 
           function triggerPanic() {
             var current = loadHeavenlySettings(window);
-            if (!current.disableAllFeatures && current.touchPanic) window.location.href = current.panicUrl || 'https://classroom.google.com';
+            if (!current.disableAllFeatures && current.touchPanic) openPanicDestination(current);
           }
 
           var onDown = function (e) {
@@ -1132,6 +1146,7 @@
           if (btn && typeof btn.addEventListener === 'function') {
             btn.addEventListener('mousedown', onDown);
             btn.addEventListener('touchstart', onDown);
+            btn.addEventListener('click', function (event) { if (event.detail === 0) triggerPanic(); });
           }
         }
 
