@@ -93,3 +93,9 @@
 **Learning:** Re-instantiating `new RegExp()` on every chunk invocation in streaming transforms like `repairNamespaces` forces V8 to compile and allocate regex objects repeatedly. Guarding `text.replace` with a lightweight `!/xmlns/i.test(text)` check bypasses regex evaluation entirely on non-XML chunks, and caching compiled `RegExp` instances in a module-level dictionary (`namespaceRegexCache`) yields a ~66% execution speedup.
 
 **Action:** Always cache compiled `RegExp` instances in module scope and use fast-path `test()` guards before executing regex replacements in high-frequency stream transforms.
+
+## 2025-10-28 - Bypassing Array.prototype.slice allocations in hot client wrapper functions
+
+**Learning:** Invoking `Array.prototype.slice.call(arguments)` inside high-frequency client wrapper functions (`window.open`, `XMLHttpRequest.prototype.open`, `ProxyXMLHttpRequest.open`, `history.pushState`/`replaceState`) creates temporary array allocations on the heap on every call. Using explicit `arguments.length` checks with direct `.call()` forwarding bypasses heap array allocations and eliminates `.apply()` invocation overhead for standard parameter counts while preserving exact forwarding semantics.
+
+**Action:** Use explicit `arguments.length` guards and direct `.call()` invocations in high-frequency function wrappers rather than converting `arguments` to a sliced array.

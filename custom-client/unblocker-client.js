@@ -282,10 +282,13 @@
       var _winOpen = window.open;
       window.__nativeWinOpen = _winOpen;
       window.open = function (url) {
+        if (arguments.length === 0) return window.__nativeWinOpen.call(window);
+        var u = arguments[0] ? fixUrl(arguments[0], config, window.location) : arguments[0];
+        if (arguments.length === 1) return window.__nativeWinOpen.call(window, u);
+        if (arguments.length === 2) return window.__nativeWinOpen.call(window, u, arguments[1]);
+        if (arguments.length === 3) return window.__nativeWinOpen.call(window, u, arguments[1], arguments[2]);
         var args = Array.prototype.slice.call(arguments);
-        if (args[0]) {
-          args[0] = fixUrl(args[0], config, window.location);
-        }
+        args[0] = u;
         return window.__nativeWinOpen.apply(window, args);
       };
     }
@@ -497,10 +500,14 @@
 
     if (_open) {
       _XMLHttpRequest.prototype.open = function () {
+        if (arguments.length <= 1) return _open.apply(this, arguments);
+        var u = arguments[1] ? fixUrl(arguments[1], config, window.location) : arguments[1];
+        if (arguments.length === 2) return _open.call(this, arguments[0], u);
+        if (arguments.length === 3) return _open.call(this, arguments[0], u, arguments[2]);
+        if (arguments.length === 4) return _open.call(this, arguments[0], u, arguments[2], arguments[3]);
+        if (arguments.length === 5) return _open.call(this, arguments[0], u, arguments[2], arguments[3], arguments[4]);
         var args = Array.prototype.slice.call(arguments);
-        if (args[1]) {
-          args[1] = fixUrl(args[1], config, window.location);
-        }
+        args[1] = u;
         return _open.apply(this, args);
       };
     }
@@ -509,10 +516,14 @@
       var xhr = new _XMLHttpRequest(opts);
       var instanceOpen = xhr.open;
       xhr.open = function () {
+        if (arguments.length <= 1) return instanceOpen.apply(xhr, arguments);
+        var u = arguments[1] ? fixUrl(arguments[1], config, window.location) : arguments[1];
+        if (arguments.length === 2) return instanceOpen.call(xhr, arguments[0], u);
+        if (arguments.length === 3) return instanceOpen.call(xhr, arguments[0], u, arguments[2]);
+        if (arguments.length === 4) return instanceOpen.call(xhr, arguments[0], u, arguments[2], arguments[3]);
+        if (arguments.length === 5) return instanceOpen.call(xhr, arguments[0], u, arguments[2], arguments[3], arguments[4]);
         var args = Array.prototype.slice.call(arguments);
-        if (args[1]) {
-          args[1] = fixUrl(args[1], config, window.location);
-        }
+        args[1] = u;
         return instanceOpen.apply(xhr, args);
       };
       return xhr;
@@ -666,11 +677,18 @@
       var native = window.history[method];
       if (!native) return;
       window.history[method] = function () {
-        var args = Array.prototype.slice.call(arguments);
-        if (args.length > 2 && args[2] !== null && args[2] !== undefined && args[2] !== '') {
-          args[2] = fixUrl(args[2], config, window.location);
+        var state = arguments[0];
+        var title = arguments[1];
+        var url = arguments.length > 2 ? arguments[2] : undefined;
+        if (arguments.length > 2 && url !== null && url !== undefined && url !== '') {
+          url = fixUrl(url, config, window.location);
         }
-        var result = native.apply(window.history, args);
+        var result;
+        if (arguments.length <= 2) {
+          result = native.call(window.history, state, title);
+        } else {
+          result = native.call(window.history, state, title, url);
+        }
         // Update only after native history accepts the URL. Omitted URLs still update state.
         var remote = navigation.currentRemoteUrl(window, config);
         if (remote) config.url = remote;
