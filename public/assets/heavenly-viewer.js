@@ -451,8 +451,18 @@
       if (restoreFocus) menu.querySelector('summary').focus();
     });
   });
+  $('viewer-tools').addEventListener('focusout', function () {
+    var menu = $('viewer-tools');
+    if (!menu.open) return;
+    setTimeout(function () {
+      if (menu.open && !menu.contains(document.activeElement)) {
+        menu.open = false;
+      }
+    }, 10);
+  });
   document.addEventListener('click', function (e) { if (!$('viewer-tools').contains(e.target)) $('viewer-tools').open = false; });
   document.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); return; }
     if (e.key !== 'Escape') return;
     if ($('viewer-tools').open) { $('viewer-tools').open = false; $('viewer-tools').querySelector('summary').focus(); }
     var pane = document.querySelector('.preview-pane');

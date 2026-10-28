@@ -168,4 +168,12 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes("var closeBtn = $('close-import-modal-btn');"), 'import modal open handler should query close button');
         assert.ok(html.includes('lastFocusedElement = document.activeElement;'), 'modal open handlers should record trigger element');
     });
+
+    it('should configure search focus restoration and details summary chevron rotation in settings scripts/styles', function() {
+        var settingsJs = fs.readFileSync(path.join(__dirname, '../public/assets/heavenly-settings.js'), 'utf8');
+        var settingsCss = fs.readFileSync(path.join(__dirname, '../public/assets/heavenly-settings.css'), 'utf8');
+
+        assert.ok(settingsJs.includes('if (restoreFocus) search.focus({ preventScroll: true });'), 'restoreSearch should focus search when restoreFocus is true');
+        assert.ok(settingsCss.includes('details[open] > summary svg[style*="transition"]'), 'heavenly-settings.css should rotate summary transition chevrons');
+    });
 });

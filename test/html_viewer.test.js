@@ -64,6 +64,7 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
     assert.ok(html.includes('id="btn-run"') && html.includes('aria-label="Run your code in the preview"'), 'btn-run should specify descriptive aria-label');
     assert.ok(html.includes('id="btn-clear"') && html.includes('aria-label="Clear all code from the editor"'), 'btn-clear should specify descriptive aria-label');
     assert.ok(html.includes('class="status-indicator" aria-live="polite"'), 'status-indicator should specify aria-live="polite"');
+    assert.ok(html.includes('id="btn-fullscreen-preview"') && html.includes('aria-pressed="false"'), 'btn-fullscreen-preview should specify aria-pressed="false"');
   });
 
   it('should support Ctrl/Cmd+Enter keyboard execution shortcut and dynamic updateEditorStatus announcements', function() {
@@ -71,6 +72,8 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
 
     assert.ok(html.includes('function updateEditorStatus'), 'should define updateEditorStatus helper');
     assert.ok(html.includes('(e.ctrlKey || e.metaKey) && e.key === \'Enter\''), 'code-input should handle Ctrl/Cmd+Enter shortcut');
+    assert.ok(html.includes('document.addEventListener(\'keydown\', function (e) {'), 'should attach document keydown listener for global workspace shortcuts');
+    assert.ok(html.includes('focusout'), 'should attach focusout listener to viewer-tools for focus dismissal');
     assert.ok(html.includes('updateEditorStatus(\'Code run\''), 'runCode should announce Code run');
     assert.ok(html.includes('updateEditorStatus(\'Editor Cleared\''), 'clearCode should announce Editor Cleared');
   });

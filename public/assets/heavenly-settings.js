@@ -161,7 +161,10 @@
     records.forEach(function (record) { record.node.hidden = false; record.node.style.removeProperty('order'); });
     groups.forEach(function (group) { group.node.hidden = false; group.node.style.removeProperty('order'); });
     clear.hidden = true; empty.hidden = true; status.textContent = 'Search setting names, help, or shortcuts.';
-    if (!snapshot) return;
+    if (!snapshot) {
+      if (restoreFocus) search.focus({ preventScroll: true });
+      return;
+    }
     var currentDetails = Array.from(sections.querySelectorAll('details'));
     snapshot.details.forEach(function (state) { var node = state.node.isConnected ? state.node : currentDetails.find(function (entry) { return detailsKey(entry) === state.key; }); if (node) node.open = state.open; });
     var previousGroup = groups.find(function (group) { return group.definition.id === snapshot.selected; });
