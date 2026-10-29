@@ -437,9 +437,12 @@
   });
   document.querySelector('.view-switcher').addEventListener('keydown', function (e) {
     if (!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
+    var activeChip = document.activeElement ? document.activeElement.closest('.view-chip') : null;
+    if (!activeChip) return;
     e.preventDefault();
     var names = narrow.matches ? ['editor','preview'] : ['split','editor','preview'];
-    var current = names.indexOf(document.activeElement.id.replace('view-',''));
+    var current = names.indexOf(activeChip.id.replace('view-',''));
+    if (current === -1) current = 0;
     var next = e.key === 'Home' ? 0 : e.key === 'End' ? names.length - 1 : (current + (e.key === 'ArrowRight' ? 1 : -1) + names.length) % names.length;
     setViewMode(names[next]); $('view-' + names[next]).focus();
   });

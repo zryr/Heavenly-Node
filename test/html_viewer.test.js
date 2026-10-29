@@ -74,6 +74,15 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
     assert.ok(html.includes('updateEditorStatus(\'Code run\''), 'runCode should announce Code run');
     assert.ok(html.includes('updateEditorStatus(\'Editor Cleared\''), 'clearCode should announce Editor Cleared');
   });
+
+  it('should safely handle view switcher tab keydown events using activeElement.closest', function() {
+    var js = fs.readFileSync(path.join(__dirname, '../public/assets/heavenly-viewer.js'), 'utf8');
+    var css = fs.readFileSync(path.join(__dirname, '../public/assets/heavenly-viewer.css'), 'utf8');
+
+    assert.ok(js.includes('document.activeElement.closest(\'.view-chip\')'), 'view-switcher should resolve active tab via closest');
+    assert.ok(css.includes('.code-textarea:focus-visible'), 'code-textarea should specify explicit :focus-visible outline');
+    assert.ok(css.includes('.isolation-note summary:hover'), 'summary should specify interactive hover styles');
+  });
 });
 
 
