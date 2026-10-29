@@ -91,12 +91,12 @@
     for (var i = 0; i < count; i++) {
       if (!(i in bookmarks)) continue;
       var bookmark = bookmarks[i];
-      if (bookmarkKey(bookmark.url) === key) return bookmark;
+      if (bookmark.url === key || bookmarkKey(bookmark.url) === key) return bookmark;
       var children = bookmark.subBookmarks || [], childCount = children.length;
       for (var j = 0; j < childCount; j++) {
         if (!(j in children)) continue;
         var child = children[j];
-        if (bookmarkKey(child.url) === key) return child;
+        if (child.url === key || bookmarkKey(child.url) === key) return child;
       }
     }
     return null;

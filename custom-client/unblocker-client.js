@@ -103,6 +103,9 @@
     // Performance optimization: Use String.prototype.startsWith instead of substr() slicing
     // to avoid creating temporary string slice allocations on hot URL rewriter paths (~60% speedup)
     if (urlStr.startsWith(prefix)) {
+      if (urlStr.startsWith('/proxy/http://') || urlStr.startsWith('/proxy/https://')) {
+        return urlStr;
+      }
       return urlStr.replace(/^(\/proxy\/https?:\/)([^/])/i, "$1/$2");
     }
 

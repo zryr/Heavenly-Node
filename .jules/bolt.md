@@ -93,3 +93,9 @@
 **Learning:** Re-instantiating `new RegExp()` on every chunk invocation in streaming transforms like `repairNamespaces` forces V8 to compile and allocate regex objects repeatedly. Guarding `text.replace` with a lightweight `!/xmlns/i.test(text)` check bypasses regex evaluation entirely on non-XML chunks, and caching compiled `RegExp` instances in a module-level dictionary (`namespaceRegexCache`) yields a ~66% execution speedup.
 
 **Action:** Always cache compiled `RegExp` instances in module scope and use fast-path `test()` guards before executing regex replacements in high-frequency stream transforms.
+
+## 2025-06-03 - Single-pass bookmark key evaluation, module require hoisting, and fast-path string checks in URL proxy rewriter
+
+**Learning:** Re-evaluating `navigation.bookmarkKey(entry.url)` up to 4 times per bookmark in `.map()` during `mirrorState` calculations and re-resolving `require('./proxy-diagnostics')` on every HTML response stream creates significant garbage collection and CPU overhead. Computing `bookmarkKey` once per entry, hoisting module `require()` statements to file scope, and using $O(1)$ prefix guards (`urlStr.startsWith('/proxy/http://') || urlStr.startsWith('/proxy/https://')`) in `fixUrl` avoids redundant regex execution and module resolution overhead.
+
+**Action:** Compute key normalizations once per iteration step, hoist static CommonJS module requires to top-level scope, and place $O(1)$ prefix guards before regex normalization passes on hot client rewriter paths.
