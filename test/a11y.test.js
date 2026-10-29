@@ -112,4 +112,26 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('btnPreset.setAttribute(\'aria-selected\', mode === \'preset\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnPreset');
         assert.ok(html.includes('btnManual.setAttribute(\'aria-selected\', mode === \'manual\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnManual');
     });
+
+    it('should configure share modal controls with descriptive aria-labels and live region status', function() {
+        assert.ok(html.includes('id="share-select-all-btn"') && html.includes('aria-label="Select all bookmarks for sharing"'), 'share-select-all-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="share-deselect-all-btn"') && html.includes('aria-label="Deselect all bookmarks for sharing"'), 'share-deselect-all-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="copy-share-code-btn"') && html.includes('aria-label="Copy share code"'), 'copy-share-code-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="copy-share-link-btn"') && html.includes('aria-label="Copy share link"'), 'copy-share-link-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="share-copy-status"') && html.includes('role="status"') && html.includes('aria-live="polite"'), 'share-copy-status should specify role="status" and aria-live="polite"');
+        assert.ok(html.includes('id="apply-share-code-btn"') && html.includes('aria-label="Import shared bookmarks"'), 'apply-share-code-btn should have descriptive aria-label');
+    });
+
+    it('should configure modal action buttons with descriptive aria-labels across dialogs', function() {
+        assert.ok(html.includes('id="subsec-delete-trigger-btn"') && html.includes('aria-label="Delete this sub-section"'), 'subsec-delete-trigger-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="cancel-subsec-delete-btn"') && html.includes('aria-label="Cancel sub-section deletion"'), 'cancel-subsec-delete-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="confirm-subsec-delete-btn"') && html.includes('aria-label="Confirm delete sub-section"'), 'confirm-subsec-delete-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="sub-bm-delete-btn"') && html.includes('aria-label="Delete sub-bookmark"'), 'sub-bm-delete-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="sub-bm-save-btn"') && html.includes('aria-label="Save sub-bookmark changes"'), 'sub-bm-save-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="builtin-hide-bm-btn"') && html.includes('aria-label="Hide this bookmark from homepage"'), 'builtin-hide-bm-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="syshi-open-isshonime-btn"') && html.includes('aria-label="Open Isshonime anime website"'), 'syshi-open-isshonime-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="syshi-open-anilist-btn"') && html.includes('aria-label="Open AniList website"'), 'syshi-open-anilist-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="distrosea-direct-btn"') && html.includes('aria-label="Open Distrosea directly"'), 'distrosea-direct-btn should have descriptive aria-label');
+        assert.ok(html.includes('id="distrosea-proxy-btn"') && html.includes('aria-label="Open Distrosea with proxy"'), 'distrosea-proxy-btn should have descriptive aria-label');
+    });
 });

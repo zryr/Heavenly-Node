@@ -64,6 +64,7 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
     assert.ok(html.includes('id="btn-run"') && html.includes('aria-label="Run your code in the preview"'), 'btn-run should specify descriptive aria-label');
     assert.ok(html.includes('id="btn-clear"') && html.includes('aria-label="Clear all code from the editor"'), 'btn-clear should specify descriptive aria-label');
     assert.ok(html.includes('class="status-indicator" aria-live="polite"'), 'status-indicator should specify aria-live="polite"');
+    assert.ok(html.includes('id="preview-status-dot"') && html.includes('aria-live="polite"'), 'preview pane status-indicator should specify aria-live="polite"');
   });
 
   it('should support Ctrl/Cmd+Enter keyboard execution shortcut and dynamic updateEditorStatus announcements', function() {

@@ -66,6 +66,8 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes('aria-label="Delete selected custom preset"'), 'delete-custom-preset-btn should have aria-label');
         assert.ok(html.includes('aria-label="Reset to Heavenly default branding"'), 'reset-branding-btn should have aria-label');
         assert.ok(html.includes('aria-label="Reset built-in bookmarks to default"'), 'reset-builtin-bookmarks-btn should have aria-label');
+        assert.ok(html.includes('aria-label="Reset custom visible bookmark count for selected section"'), 'reset-bookmark-section-limit should have aria-label');
+        assert.ok(html.includes('aria-label="Review bookmark updates"'), 'data-bookmark-updates should have aria-label');
         assert.ok(html.includes('aria-label="Reset all widget screen positions"'), 'reset-widget-pos-btn should have aria-label');
         assert.ok(html.includes('aria-label="Export bookmarks and settings"'), 'open-export-modal-btn should have aria-label');
         assert.ok(html.includes('aria-label="Import bookmarks and settings from file"'), 'open-import-modal-btn should have aria-label');

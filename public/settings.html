@@ -363,7 +363,7 @@
               <select id="set-bookmark-section-mode" disabled><option value="inherit">Use default</option><option value="auto">Auto</option><option value="custom">Custom</option></select>
               <label for="set-bookmark-section-limit">Custom visible bookmarks (1–30)</label>
               <input type="number" id="set-bookmark-section-limit" min="1" max="30" step="1" inputmode="numeric" disabled>
-              <button type="button" id="reset-bookmark-section-limit" disabled>Use default count</button>
+              <button type="button" id="reset-bookmark-section-limit" aria-label="Reset custom visible bookmark count for selected section" disabled>Use default count</button>
               <p id="bookmark-limit-status" role="status" aria-live="polite"></p>
             </div>
           </div>
@@ -595,7 +595,7 @@
         </div>
       </div>
 
-      <div class="hero-card" id="bookmark-updates"><button type="button" data-bookmark-updates aria-haspopup="dialog">Bookmark Updates</button><p style="margin-top:10px;color:#94a3b8;font-size:.82rem;line-height:1.6">Review new official links while keeping your personal layout.</p><p id="catalog-update-status" role="status" aria-live="polite"></p></div>
+      <div class="hero-card" id="bookmark-updates"><button type="button" data-bookmark-updates aria-haspopup="dialog" aria-label="Review bookmark updates">Bookmark Updates</button><p style="margin-top:10px;color:#94a3b8;font-size:.82rem;line-height:1.6">Review new official links while keeping your personal layout.</p><p id="catalog-update-status" role="status" aria-live="polite"></p></div>
 
       <!-- Section 5: Granular Backup, Export & Import -->
       <div>
