@@ -1,0 +1,21 @@
+{
+  "images": 34,
+  "recordings": [
+    {
+      "label": "Tap-to-reveal, advance, local burst and fade",
+      "duration": 6.88,
+      "currentTime": 0.120432
+    },
+    {
+      "label": "Scroll before pickup, then deliberate touch drag",
+      "duration": 20.2,
+      "currentTime": 0.12042
+    },
+    {
+      "label": "Temporary homepage workshop preview",
+      "duration": 11,
+      "currentTime": 0.120526
+    }
+  ],
+  "errors": []
+}

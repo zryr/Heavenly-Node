@@ -1,0 +1,1773 @@
+{
+  "executed": "2026-10-27T13:22:45.928Z",
+  "scope": "Linux browser automation, emulated viewport/touch and CSS zoom; no physical iPad, Chromebook or Apple Safari test.",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "12 Academy documents remain isolated at six viewport sizes and CSS zoom 200%/67%; all visible/metadata copy corrected",
+        "Terms link reaches retained software/photo attribution and unknown page has Academy-only recovery",
+        "Recovery fits six sizes, 44px actions, real retry/direct popup, selectable sanitized diagnostics and reduced-motion static surface"
+      ],
+      "layouts": [
+        {
+          "name": "about",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "about",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "about",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "about",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "about",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "about",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "about",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "about",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "accessibility",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "accessibility",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "accessibility",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "accessibility",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "accessibility",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "accessibility",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "accessibility",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "accessibility",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "admissions",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "admissions",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "admissions",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "admissions",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "admissions",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "admissions",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "admissions",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "admissions",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "calendar",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "calendar",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "calendar",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "calendar",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "calendar",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "calendar",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "calendar",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "calendar",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "credits",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "credits",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "credits",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "credits",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "credits",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "credits",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "credits",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "credits",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "home",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "home",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "home",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "home",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "home",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "home",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "home",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "home",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "privacy",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "privacy",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "privacy",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "privacy",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "privacy",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "privacy",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "privacy",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "privacy",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "programs",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "programs",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "programs",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "programs",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "programs",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "programs",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "programs",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "programs",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "resources",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "resources",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "resources",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "resources",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "resources",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "resources",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "resources",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "resources",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "status",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "status",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "status",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "status",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "status",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "status",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "status",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "status",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "students",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "students",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "students",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "students",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "students",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "students",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "students",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "students",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "terms",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "terms",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "terms",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "terms",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "terms",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "terms",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "terms",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "terms",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        }
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "12 Academy documents remain isolated at six viewport sizes and CSS zoom 200%/67%; all visible/metadata copy corrected",
+        "Terms link reaches retained software/photo attribution and unknown page has Academy-only recovery",
+        "Recovery fits six sizes, 44px actions, real retry/direct popup, selectable sanitized diagnostics and reduced-motion static surface"
+      ],
+      "layouts": [
+        {
+          "name": "about",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "about",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "about",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "about",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "about",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "about",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "about",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "about",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "accessibility",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "accessibility",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "accessibility",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "accessibility",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "accessibility",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "accessibility",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "accessibility",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "accessibility",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "admissions",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "admissions",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "admissions",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "admissions",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "admissions",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "admissions",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "admissions",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "admissions",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "calendar",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "calendar",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "calendar",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "calendar",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "calendar",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "calendar",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "calendar",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "calendar",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "credits",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "credits",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "credits",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "credits",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "credits",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "credits",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "credits",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "credits",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "home",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "home",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "home",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "home",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "home",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "home",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "home",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "home",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "privacy",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "privacy",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "privacy",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "privacy",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "privacy",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "privacy",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "privacy",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "privacy",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "programs",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "programs",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "programs",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "programs",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "programs",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "programs",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "programs",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "programs",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "resources",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "resources",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "resources",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "resources",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "resources",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "resources",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "resources",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "resources",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "status",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "status",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "status",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "status",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "status",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "status",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "status",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "status",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "students",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "students",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "students",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "students",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "students",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "students",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "students",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "students",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "terms",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "terms",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "terms",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "terms",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "terms",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "terms",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "terms",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "terms",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        }
+      ],
+      "errors": [],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "12 Academy documents remain isolated at six viewport sizes and CSS zoom 200%/67%; all visible/metadata copy corrected",
+        "Terms link reaches retained software/photo attribution and unknown page has Academy-only recovery",
+        "Recovery fits six sizes, 44px actions, real retry/direct popup, selectable sanitized diagnostics and reduced-motion static surface"
+      ],
+      "layouts": [
+        {
+          "name": "about",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "about",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "about",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "about",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "about",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "about",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "about",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "about",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "accessibility",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "accessibility",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "accessibility",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "accessibility",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "accessibility",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "accessibility",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "accessibility",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "accessibility",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "admissions",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "admissions",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "admissions",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "admissions",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "admissions",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "admissions",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "admissions",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "admissions",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "calendar",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "calendar",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "calendar",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "calendar",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "calendar",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "calendar",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "calendar",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "calendar",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "credits",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "credits",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "credits",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "credits",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "credits",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "credits",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "credits",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "credits",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "home",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "home",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "home",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "home",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "home",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "home",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "home",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "home",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "privacy",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "privacy",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "privacy",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "privacy",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "privacy",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "privacy",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "privacy",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "privacy",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "programs",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "programs",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "programs",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "programs",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "programs",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "programs",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "programs",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "programs",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "resources",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "resources",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "resources",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "resources",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "resources",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "resources",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "resources",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "resources",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "status",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "status",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "status",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "status",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "status",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "status",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "status",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "status",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "students",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "students",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "students",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "students",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "students",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "students",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "students",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "students",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "terms",
+          "label": "desktop",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "terms",
+          "label": "chromebook",
+          "width": 1366,
+          "scrollWidth": 1366
+        },
+        {
+          "name": "terms",
+          "label": "ipad-portrait",
+          "width": 820,
+          "scrollWidth": 820
+        },
+        {
+          "name": "terms",
+          "label": "ipad-landscape",
+          "width": 1180,
+          "scrollWidth": 1180
+        },
+        {
+          "name": "terms",
+          "label": "phone",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "name": "terms",
+          "label": "narrow-phone",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "name": "terms",
+          "zoom": 2,
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "name": "terms",
+          "zoom": 0.67,
+          "width": 1440,
+          "scrollWidth": 1440
+        }
+      ],
+      "errors": [],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

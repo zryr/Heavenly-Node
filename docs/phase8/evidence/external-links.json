@@ -1,0 +1,46 @@
+{
+  "executed": "2026-10-27T13:24:20.541375+00:00",
+  "limit": "Bounded HTTP HEAD follows at most 4 redirects; no third-party HTML or scripts executed. Status does not establish gameplay or music availability.",
+  "results": [
+    {
+      "url": "https://games.budsin.dev/#/",
+      "method": "HEAD",
+      "exitCode": 0,
+      "httpStatus": "200",
+      "effectiveUrl": "https://games.budsin.dev/#/",
+      "contentType": "text/html; charset=utf-8",
+      "error": null,
+      "scriptExecution": false
+    },
+    {
+      "url": "https://site-sgyfu5dd.myoxypages.com/",
+      "method": "HEAD",
+      "exitCode": 0,
+      "httpStatus": "200",
+      "effectiveUrl": "https://site-sgyfu5dd.myoxypages.com/",
+      "contentType": "text/html; charset=utf-8",
+      "error": null,
+      "scriptExecution": false
+    },
+    {
+      "url": "https://share.htmlput.com/p/7o9hcsiopd",
+      "method": "HEAD",
+      "exitCode": 0,
+      "httpStatus": "200",
+      "effectiveUrl": "https://share.htmlput.com/p/7o9hcsiopd",
+      "contentType": "text/html;charset=UTF-8",
+      "error": null,
+      "scriptExecution": false
+    },
+    {
+      "url": "https://monochrome.tf/",
+      "method": "HEAD",
+      "exitCode": 0,
+      "httpStatus": "503",
+      "effectiveUrl": "https://monochrome.tf/",
+      "contentType": "text/html; charset=utf-8",
+      "error": null,
+      "scriptExecution": false
+    }
+  ]
+}

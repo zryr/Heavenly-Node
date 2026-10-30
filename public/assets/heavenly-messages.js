@@ -6,9 +6,9 @@
   'use strict';
   var choices = {
     themes:['default','purple','music','gold','warm','cutoff'], animations:['none','soft','sheen'],
-    icons:['none','spark','headphones','cloud','paw'], gradients:['none','heavenly','monochrome','gold'],
+    icons:['none','spark','headphones','cloud','paw'], gradients:['none','heavenly','monochrome','gold','ocean'],
     playlists:['aura','hardstyle','hardtekk','favorites'], scenes:['purple-hulk','ao-oni','khezu','doggy'],
-    speakers:['You','Cloudy','Heavenly'], assets:['none','ao-side','ao-dance','khezu','doggy','anger']
+    speakers:['You','Cloudy','Heavenly','Hunter'], assets:['none','ao-side','ao-dance','khezu','doggy','anger','player','cloudy','cloudy-angry','hunter'], imagePlacements:['left','right','inline']
   };
   var playlists = {
     aura:{title:'Aura Phonk',url:'https://open.spotify.com/playlist/5h7adrSdyEOPJJN0PljioK'},
@@ -17,6 +17,10 @@
     favorites:{title:'Favorite Songs',url:'https://open.spotify.com/playlist/5lDrWA2Ty2YTemqQ4OEMUj'}
   };
   var assets = {'ao-side':'ao-side.webp','ao-dance':'ao-dance.gif',khezu:'khezu.webp',doggy:'doggy.webp',anger:'anger.webp'};
+  // Reversible catalog visibility; retained playlists remain editable in HQ.
+  var config = {musicNotes:false};
+  var portraitSlots = {player:'player-neutral.png',cloudy:'cloudy-neutral.png','cloudy-angry':'cloudy-angry.png',hunter:'hunter-smug.png'};
+  var approvedPortraits = Object.create(null);
   function fail(message) { throw new Error(message); }
   function clone(value) { return JSON.parse(JSON.stringify(value)); }
   function exact(value, keys, label) {
@@ -32,7 +36,7 @@
     try { var url = new URL(value); return url.protocol === 'https:' && !!url.hostname && !url.username && !url.password; } catch (error) { return false; }
   }
   function validateItem(item) {
-    exact(item,['id','kind','enabled','weight','theme','animation','icon','reducedMotionText','segments','action'],'message');
+    exact(item,['id','kind','enabled','weight','theme','animation','icon','reducedMotionText','segments','action','noteImage'],'message');
     if (typeof item.id !== 'string' || !/^[A-Za-z][A-Za-z0-9_-]{0,79}$/.test(item.id)) fail('Messages need stable IDs.');
     one(item.kind,['ordinary','special'],'message kind');
     if (typeof item.enabled !== 'boolean' || !Number.isFinite(item.weight) || item.weight < .1 || item.weight > 10) fail('Use an enabled state and a weight from 0.1 to 10.');
@@ -48,6 +52,7 @@
       if (segment.tooltip !== undefined) { bounded(segment.tooltip,160,'Tooltip'); if (!segment.link) fail('Tooltips require a focusable link.'); }
     });
     if (length > 320) fail('A message may contain at most 320 characters.');
+    if (item.noteImage !== undefined) { exact(item.noteImage,['asset','imagePlacement'],'note image'); one(item.noteImage.asset,choices.assets,'note asset'); one(item.noteImage.imagePlacement,choices.imagePlacements,'image placement'); }
     if (item.action === null) return true;
     if (!item.action || typeof item.action !== 'object') fail('Action must be null or a supported action.');
     if (item.kind !== 'special') fail('Interactive actions belong to special messages.');
@@ -56,7 +61,7 @@
     else if (item.action.type === 'scene') {
       exact(item.action,['type','scene','steps'],'scene action'); one(item.action.scene,choices.scenes,'scene');
       if (!Array.isArray(item.action.steps) || !item.action.steps.length || item.action.steps.length > 8) fail('Scenes need 1–8 dialogue steps.');
-      item.action.steps.forEach(function (step) { exact(step,['speaker','text','asset'],'dialogue step'); one(step.speaker,choices.speakers,'speaker'); bounded(step.text,240,'Dialogue'); one(step.asset,choices.assets,'scene asset'); });
+      item.action.steps.forEach(function (step) { exact(step,['speaker','text','asset','imagePlacement'],'dialogue step'); one(step.speaker,choices.speakers,'speaker'); bounded(step.text,240,'Dialogue'); one(step.asset,choices.assets,'scene asset'); if (step.imagePlacement !== undefined) one(step.imagePlacement,choices.imagePlacements,'image placement'); });
     } else fail('Unsupported message action.');
     return true;
   }
@@ -73,6 +78,40 @@
     var number = 2166136261; String(seed).split('').forEach(function (letter) { number = Math.imul(number ^ letter.charCodeAt(0),16777619); });
     return function () { number += 0x6D2B79F5; var value = number; value = Math.imul(value ^ value >>> 15,value | 1); value ^= value + Math.imul(value ^ value >>> 7,value | 61); return ((value ^ value >>> 14) >>> 0) / 4294967296; };
   }
+  function cleanSceneRecord(value) { value = value && typeof value === 'object' ? value : {}; return {discovered:value.discovered === true,completed:value.completed === true,appearances:Number.isSafeInteger(value.appearances) && value.appearances >= 0 ? Math.min(value.appearances,1000000) : 0,autoOpen:value.autoOpen !== false,autoChoiceMade:value.autoChoiceMade === true}; }
+  function normalizeSceneState(value) {
+    if (!value || typeof value !== 'object' || Array.isArray(value) || value.schema !== 1 || !value.scenes || typeof value.scenes !== 'object' || Array.isArray(value.scenes)) fail('Unsupported dialogue state schema.');
+    exact(value,['schema','scenes'],'dialogue state');
+    var normalized = {schema:1,scenes:Object.create(null)};
+    Object.keys(value.scenes).forEach(function (id) {
+      one(id,choices.scenes,'dialogue scene'); var record = value.scenes[id]; exact(record,['discovered','completed','appearances','autoOpen','autoChoiceMade'],'dialogue record');
+      ['discovered','completed','autoOpen','autoChoiceMade'].forEach(function (field) { if (Object.prototype.hasOwnProperty.call(record,field) && typeof record[field] !== 'boolean') fail('Dialogue flags must be true or false.'); });
+      if (record.appearances !== undefined && (!Number.isSafeInteger(record.appearances) || record.appearances < 0 || record.appearances > 1000000)) fail('Dialogue appearances must be a bounded whole number.');
+      normalized.scenes[id] = cleanSceneRecord(record);
+    });
+    return normalized;
+  }
+  function createSceneStore(storage) {
+    var records = Object.create(null), pending = Object.create(null), observed, observedOnce = false, writeBlocked = false, key = 'heavenly_dialogue_state_v1';
+    function refresh() {
+      try {
+        var raw = storage.getItem(key); if (observedOnce && raw === observed) return;
+        var fresh;
+        try { fresh = raw ? normalizeSceneState(JSON.parse(raw)).scenes : Object.create(null); }
+        catch (invalidState) { writeBlocked = true; observed = raw; observedOnce = true; return; }
+        if (writeBlocked) pending = Object.create(null);
+        writeBlocked = false;
+        // A denied write still has a usable local result; retain it while adopting
+        // other scenes written by another tab or an explicit settings import.
+        Object.keys(pending).forEach(function (id) { fresh[id] = cleanSceneRecord(pending[id]); });
+        records = fresh; observed = raw; observedOnce = true;
+      } catch (error) {}
+    }
+    function read(id) { one(id,choices.scenes,'scene'); refresh(); return cleanSceneRecord(records[id]); }
+    function update(id,changes) { var record = read(id); ['discovered','completed','autoOpen','autoChoiceMade'].forEach(function (field) { if (typeof changes[field] === 'boolean') record[field] = changes[field]; }); if (changes.appearance) record.appearances = Math.min(record.appearances+1,1000000); records[id] = record; if (writeBlocked) { pending[id] = clone(record); return clone(record); } try { var serialized = JSON.stringify({schema:1,scenes:records}); storage.setItem(key,serialized); observed = serialized; observedOnce = true; pending = Object.create(null); } catch (error) { pending[id] = clone(record); } return clone(record); }
+    return {read:read,update:update};
+  }
+  function ordinaryEligible(item) { return config.musicNotes || !(item.action && item.action.type === 'playlist' || item.theme === 'music' || item.icon === 'headphones'); }
   function createController(options) {
     options = options || {}; validateData(options.data);
     var items = clone(options.data.items), random = options.random || Math.random, clock = options.now || Date.now;
@@ -82,7 +121,7 @@
     function state() { return {id:current && current.id,kind:current && current.kind,paused:Object.keys(pauses).length > 0,reasons:Object.keys(pauses),remaining:timer === null ? remaining : Math.max(0,remaining-(clock()-started)),changes:changes,counts:clone(counts),destroyed:destroyed}; }
     function stop() { if (timer !== null) { clearTimer(timer); timer = null; remaining = Math.max(0,remaining-(clock()-started)); } }
     function schedule() { if (destroyed || timer !== null || Object.keys(pauses).length) return; started = clock(); timer = setTimer(function () { timer = null; remaining = 0; advance(); },remaining); }
-    function eligible(kind) { return items.filter(function (item) { return item.enabled && item.kind === kind && (!options.isEligible || options.isEligible(item)); }); }
+    function eligible(kind) { return items.filter(function (item) { return item.enabled && item.kind === kind && ordinaryEligible(item) && (!options.isEligible || options.isEligible(item)); }); }
     function select(kind) {
       var pool = eligible(kind);
       if (pool.length > 1 && current) pool = pool.filter(function (item) { return item.id !== current.id; });
@@ -124,17 +163,27 @@
     var svg = doc.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('aria-hidden','true');
     var path = doc.createElementNS(svg.namespaceURI,'path'); path.setAttribute('d',paths[name] || paths.spark); svg.appendChild(path); return svg;
   }
+  function sceneImage(doc,asset,speaker,className,reduced) {
+    if (!asset || asset === 'none') return null;
+    var src = assets[asset], label = {player:'You',cloudy:'Cloudy','cloudy-angry':'Cloudy',hunter:'Hunter'}[asset] || speaker || '';
+    if (portraitSlots[asset]) src = approvedPortraits[asset] ? 'portraits/'+portraitSlots[asset] : null;
+    if (asset === 'ao-dance') src = reduced ? 'ao-still.webp' : assets[asset];
+    if (!src) { var fallback = element(doc,'span',className+' hm-portrait-fallback',label); fallback.setAttribute('role','img'); fallback.setAttribute('aria-label',label+' portrait pending artwork'); return fallback; }
+    var image = element(doc,'img',className); image.src = '/assets/messages/'+src; image.alt = {anger:'angry reaction','ao-side':'Ao Oni giving a side-eye',doggy:'Syshi’s orange and white Doggy plush',khezu:'Khezu plush','ao-dance':'Ao Oni dance'}[asset] || label; image.width = 192; image.height = 192; image.decoding = 'async';
+    image.addEventListener('error',function () { var fallback = element(doc,'span',className+' hm-portrait-fallback',label); fallback.setAttribute('role','img'); fallback.setAttribute('aria-label',label+' portrait unavailable'); image.replaceWith(fallback); },{once:true});
+    return image;
+  }
   function renderCopy(container,item,options) {
     validateItem(item); options = options || {}; var doc = container.ownerDocument;
     container.replaceChildren(); container.dataset.messageId = item.id; container.dataset.messageKind = item.kind; container.dataset.messageTheme = item.theme;
     container.classList.add('hm-message'); container.dataset.messageAnimation = motionReduced(options) ? 'none' : item.animation;
     var copy = element(doc,item.action?'button':'span','hm-copy'); copy.dataset.messageText = ''; if (item.action) { copy.type = 'button'; copy.setAttribute('aria-haspopup','dialog'); }
     if (item.action && item.action.type === 'scene') {
-      var sticker = element(doc,'img','hm-sticker'), firstAsset = item.action.steps.find(function (step) { return step.asset !== 'none'; });
-      sticker.src = '/assets/messages/'+(firstAsset && firstAsset.asset !== 'ao-dance' ? assets[firstAsset.asset] : 'ao-still.webp'); sticker.alt = ''; sticker.width = 44; sticker.height = 44; sticker.decoding = 'async'; sticker.loading = 'lazy'; copy.appendChild(sticker);
+      var stickerAsset = item.action.scene === 'doggy' ? 'doggy' : item.action.scene === 'khezu' ? 'khezu' : 'ao-side';
+      var sticker = sceneImage(doc,stickerAsset,'','hm-sticker',true); sticker.alt = ''; sticker.loading = 'lazy'; copy.appendChild(sticker);
     } else if (item.icon !== 'none') copy.appendChild(icon(doc,item.icon));
     var words = element(doc,'span','hm-words');
-    var segments = motionReduced(options) && !item.segments.some(function (segment) { return !!segment.link; }) ? [{text:item.reducedMotionText}] : item.segments;
+    var segments = motionReduced(options) && item.reducedMotionText !== item.segments.map(function (segment) { return segment.text; }).join('') && !item.segments.some(function (segment) { return !!segment.link; }) ? [{text:item.reducedMotionText}] : item.segments;
     segments.forEach(function (segment,index) {
       var wrapper = segment.tooltip ? element(doc,'span','hm-tooltip-wrap') : null;
       var part = element(doc,segment.link?'a':segment.emphasis?'strong':'span','hm-segment',segment.text);
@@ -143,22 +192,30 @@
       if (wrapper) { var tip = element(doc,'span','hm-tooltip',segment.tooltip); tip.id = 'hm-tip-'+item.id+'-'+index+'-'+(++renderCopy.sequence); tip.setAttribute('role','tooltip'); part.setAttribute('aria-describedby',tip.id); wrapper.append(part,tip); words.appendChild(wrapper); }
       else words.appendChild(part);
     });
-    copy.appendChild(words); container.appendChild(copy);
+    copy.appendChild(words);
+    if (item.noteImage && item.noteImage.asset !== 'none') { var reaction = sceneImage(doc,item.noteImage.asset,'','hm-note-image',true); reaction.dataset.imagePlacement = item.noteImage.imagePlacement; if (item.noteImage.imagePlacement === 'inline') words.appendChild(reaction); else if (item.noteImage.imagePlacement === 'left') copy.prepend(reaction); else copy.appendChild(reaction); }
+    container.appendChild(copy);
     if (item.action) copy.addEventListener('click',function () { if (options.onAction) options.onAction(item,copy); });
     return copy;
   }
   renderCopy.sequence = 0;
   function openExperience(host,item,options) {
-    options = options || {}; validateItem(item); var doc = host.ownerDocument, isPreview = !!options.preview, reduced = motionReduced(options);
-    var focusBefore = doc.activeElement, dialog = element(doc,isPreview?'section':'dialog','hm-dialog'), closed = false, timer = null, burst = null, stepIndex = 0, burstMode = false, headphonesDismissed = options.headphoneAdvice === false;
+    options = options || {}; validateItem(item); var doc = host.ownerDocument, isPreview = !!options.preview, reduced = motionReduced(options), isScene = item.action.type === 'scene';
+    var focusBefore = doc.activeElement, dialog = element(doc,isPreview?'section':'dialog','hm-dialog'), closed = false, finishing = false, timer = null, typingTimer = null, fadeTimer = null, burst = null, stepIndex = 0, burstMode = false, typing = false, line = null, typedCopy = null, box = null, fullText = '', headphonesDismissed = options.headphoneAdvice === false;
+    var replay = !!options.completed, presentation = isScene && ['ao-oni','khezu'].indexOf(item.action.scene) >= 0 ? 'retro' : 'novel';
     dialog.dataset.messageTheme = item.theme; dialog.id = isPreview ? '' : 'heavenly-message-dialog';
-    dialog.setAttribute('aria-label',item.action.type === 'playlist' ? 'Playlist suggestion' : 'Heavenly character scene');
+    if (isScene) { dialog.dataset.presentation = presentation; dialog.dataset.sceneName = item.action.scene; dialog.dataset.sceneReplay = String(replay); }
+    dialog.setAttribute('aria-label',isScene ? 'Heavenly character scene' : 'Playlist suggestion');
     if (isPreview) { dialog.classList.add('hm-dialog-preview'); dialog.setAttribute('role','region'); }
     var header = element(doc,'div','hm-dialog-header'), title = element(doc,'h2','hm-dialog-title'), close = element(doc,'button','hm-close','Close'); close.type = 'button'; close.dataset.sceneClose = '';
     header.append(title,close); var content = element(doc,'div','hm-dialog-content'), actions = element(doc,'div','hm-dialog-actions'); dialog.append(header,content,actions); host.appendChild(dialog);
+    close.hidden = isScene && !replay;
+    function stopTyping() { if (typingTimer !== null) { clearTimeout(typingTimer); typingTimer = null; } typing = false; dialog.dataset.typing = 'false'; }
     function clearBurst() { if (timer !== null) { clearTimeout(timer); timer = null; } if (burst) { burst.remove(); burst = null; } }
-    function finish() {
-      if (closed) return; closed = true; dismissHeadphones(); clearBurst(); doc.removeEventListener('visibilitychange',hidden); doc.removeEventListener('keydown',keyboard,true);
+    function finish(immediate) {
+      if (closed) return;
+      if (!immediate && isScene && !reduced && !isPreview && !finishing) { finishing = true; stopTyping(); clearBurst(); dialog.classList.add('hm-fading'); fadeTimer = setTimeout(function () { finish(true); },200); return; }
+      closed = true; stopTyping(); clearBurst(); if (fadeTimer !== null) clearTimeout(fadeTimer); dismissHeadphones(); doc.removeEventListener('visibilitychange',hidden); doc.removeEventListener('keydown',keyboard,true);
       if (media && media.removeEventListener) media.removeEventListener('change',preference);
       var activeBeforeClose = doc.activeElement, returnFocus = !burstMode || dialog.contains(activeBeforeClose);
       if (dialog.open) dialog.close(); dialog.remove();
@@ -167,8 +224,9 @@
       if (returnFocus && returnTarget && returnTarget.isConnected && !isPreview) returnTarget.focus({preventScroll:true});
       else if (burstMode && activeBeforeClose && activeBeforeClose.isConnected && activeBeforeClose !== doc.body && !isPreview) activeBeforeClose.focus({preventScroll:true});
     }
-    function hidden() { if (doc.visibilityState === 'hidden') finish(); }
-    function preference() { if (media.matches) { reduced = true; clearBurst(); if (item.action.type === 'scene') { var active = doc.activeElement, focusedNext = active && active.hasAttribute('data-scene-next'), focusedSkip = active && active.hasAttribute('data-scene-skip'); if (burstMode) renderBurst(); else renderStep(); if (focusedNext || focusedSkip) { var replacement = actions.querySelector(focusedSkip?'[data-scene-skip]':'[data-scene-next]'); if (replacement) replacement.focus({preventScroll:true}); } } } }
+    function complete() { if (options.onComplete) options.onComplete(); if (item.action.scene === 'ao-oni') renderBurst(); else finish(false); }
+    function hidden() { if (doc.visibilityState === 'hidden') finish(true); }
+    function preference() { if (media.matches) { reduced = true; stopTyping(); if (burstMode) renderBurst(); else if (typedCopy) { typedCopy.textContent = fullText; line.dataset.complete = 'true'; } } }
     var media = root && root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)');
     if (media && media.addEventListener) media.addEventListener('change',preference);
     function button(label,callback,key) { var node = element(doc,'button','hm-button',label); node.type = 'button'; if (key) node.dataset[key] = ''; node.addEventListener('click',callback); actions.appendChild(node); return node; }
@@ -190,47 +248,69 @@
           button('Explore '+playlists[nextKey].title,function () { renderPlaylist(nextKey); if (!isPreview) actions.firstChild.focus(); },'playlistNext');
         });
       }
-      if (isPreview && !options.allowExternal) { open.removeAttribute('href'); open.setAttribute('aria-disabled','true'); open.title = 'External navigation is disabled in this preview'; }
+      if ((isPreview || options.temporary) && !options.allowExternal) { open.removeAttribute('href'); open.setAttribute('aria-disabled','true'); open.title = 'External navigation is disabled in this preview'; }
       else open.addEventListener('click',function () { if (options.onPlaylistOpen) options.onPlaylistOpen(key); if (key === 'favorites') { dismissHeadphones(); timer = setTimeout(finish,0); } else if (!followups) explore(); });
       var proceed = button('Continue Without Opening',explore,'sceneSkip');
     }
     function renderBurst() {
-      var enteringBurst = !burstMode;
-      clearBurst(); burstMode = true; content.replaceChildren(element(doc,'p','hm-dialog-line',reduced?'Cloudy’s tiny dance break.':'You know ball now.')); actions.replaceChildren();
-      // Only the initial transition leaves the modal. Refreshing an existing
-      // nonmodal burst for reduced motion must not rerun native dialog focus.
-      if (!isPreview && enteringBurst) { dialog.close(); dialog.classList.add('hm-burst-controls'); dialog.show(); if (focusBefore && focusBefore.isConnected) focusBefore.focus({preventScroll:true}); }
-      if (reduced) { var still = element(doc,'img','hm-scene-image'); still.src = '/assets/messages/ao-still.webp'; still.alt = 'Ao Oni taking a dance break'; still.width = 192; still.height = 192; content.appendChild(still); }
-      else {
-        burst = element(doc,'div','hm-dance-burst'); burst.setAttribute('aria-hidden','true');
-        for (var index = 0; index < (isPreview?3:7); index++) { var dancer = element(doc,'img','hm-dancer'); dancer.src = '/assets/messages/ao-dance.gif'; dancer.alt = ''; dancer.width = 192; dancer.height = 192; dancer.style.setProperty('--hm-index',index); burst.appendChild(dancer); }
-        (isPreview?content:doc.body).appendChild(burst); timer = setTimeout(finish,2400);
-      }
-      button(reduced?'Done':'Skip dance',finish,'sceneSkip');
+      if (closed || finishing) return;
+      stopTyping(); clearBurst(); burstMode = true; content.replaceChildren(); actions.replaceChildren();
+      dialog.classList.add('hm-burst-scene'); dialog.dataset.typing = 'false';
+      content.appendChild(element(doc,'p','hm-dialog-line','you know ball now'));
+      burst = element(doc,'div','hm-dance-burst'); burst.setAttribute('aria-hidden','true');
+      if (reduced) { var still = sceneImage(doc,'ao-dance','','hm-scene-image',true); burst.appendChild(still); }
+      else for (var index = 0; index < 5; index++) { var dancer = sceneImage(doc,'ao-dance','','hm-dancer',false); dancer.alt = ''; dancer.style.setProperty('--hm-index',index); burst.appendChild(dancer); }
+      content.appendChild(burst);
+      timer = setTimeout(function () { finish(false); },reduced ? 1100 : 2300);
+    }
+    function reveal() { stopTyping(); typedCopy.textContent = fullText; line.dataset.complete = 'true'; }
+    function advance() {
+      if (closed || finishing || burstMode) return;
+      if (typing) { reveal(); return; }
+      if (stepIndex < item.action.steps.length-1) { stepIndex++; renderStep(); if (!isPreview) box.focus({preventScroll:true}); }
+      else complete();
+    }
+    function typeLine() {
+      stopTyping(); typedCopy.textContent = ''; line.dataset.complete = 'false';
+      if (reduced) { reveal(); return; }
+      var letters = Array.from(fullText), at = 0; typing = true; dialog.dataset.typing = 'true';
+      function tick() { if (closed || finishing || !typing) return; at = Math.min(at+1,letters.length); typedCopy.textContent = letters.slice(0,at).join(''); if (at >= letters.length) { stopTyping(); line.dataset.complete = 'true'; } else typingTimer = setTimeout(tick,27); }
+      tick();
     }
     function renderStep() {
-      clearBurst(); var step = item.action.steps[stepIndex]; title.textContent = item.action.scene === 'purple-hulk' ? 'Purple Hulk?' : item.action.scene === 'doggy' ? 'A moment with Doggy' : item.action.scene === 'khezu' ? 'Khezu has a boundary' : 'A Cloudy conversation';
-      content.replaceChildren(); content.classList.add('hm-retro-dialogue');
-      if (step.asset !== 'none') { var image = element(doc,'img','hm-scene-image'); image.src = '/assets/messages/'+(step.asset === 'ao-dance' && reduced ? 'ao-still.webp' : assets[step.asset]); image.alt = step.asset === 'ao-side' ? 'A purple Ao Oni giving a side-eye' : step.asset === 'ao-dance' ? 'Ao Oni dancing' : step.asset === 'doggy' ? 'Syshi’s soft orange and white dog plush' : step.asset === 'khezu' ? 'A white Khezu plush' : 'A playful angry red face'; image.width = 192; image.height = 192; image.decoding = 'async'; content.appendChild(image); }
-      var speech = element(doc,'div','hm-speech'); speech.setAttribute('aria-live','polite'); speech.append(element(doc,'strong','hm-speaker',step.speaker),element(doc,'p','hm-dialog-line',step.text),element(doc,'span','hm-step-count','Step '+(stepIndex+1)+' of '+item.action.steps.length)); content.appendChild(speech); actions.replaceChildren();
-      dialog.dataset.sceneName = item.action.scene; dialog.dataset.sceneStep = String(stepIndex);
-      if (step.asset === 'ao-dance' && !reduced) timer = setTimeout(function () { timer = null; var animated = content.querySelector('img'); if (animated) animated.src = '/assets/messages/ao-still.webp'; },2400);
-      button(stepIndex < item.action.steps.length-1 ? 'Next' : item.action.scene === 'ao-oni' ? 'Tiny dance break' : 'Done',function () { if (stepIndex < item.action.steps.length-1) { stepIndex++; renderStep(); if (!isPreview) actions.firstChild.focus(); } else if (item.action.scene === 'ao-oni') renderBurst(); else finish(); },'sceneNext');
-      button('Skip scene',finish,'sceneSkip');
+      stopTyping(); clearBurst(); var step = item.action.steps[stepIndex], placement = step.imagePlacement || (step.asset === 'ao-side' ? 'right' : 'left');
+      title.textContent = item.action.scene === 'purple-hulk' ? 'Purple Hulk?' : item.action.scene === 'doggy' ? 'A moment with Doggy' : item.action.scene === 'khezu' ? 'More than a Khezu…' : 'oh look its ao oni';
+      content.replaceChildren(); actions.replaceChildren(); dialog.dataset.sceneStep = String(stepIndex);
+      box = element(doc,'button','hm-scene-box'); box.type = 'button'; box.dataset.sceneAdvance = ''; box.setAttribute('aria-label',step.speaker+': '+step.text+' · Reveal current line or continue dialogue'); box.dataset.imagePlacement = placement;
+      var speech = element(doc,'span','hm-speech'), name = element(doc,'span','hm-speaker',step.speaker);
+      line = element(doc,'span','hm-dialog-line'); fullText = step.text; typedCopy = element(doc,'span','hm-typed-copy'); line.appendChild(typedCopy);
+      var lineStack = element(doc,'span','hm-line-stack'), reserve = element(doc,'span','hm-text-reserve',fullText); reserve.setAttribute('aria-hidden','true'); lineStack.append(reserve,line);
+      // Assistive technology receives the complete line once, rather than every character.
+      line.setAttribute('aria-hidden','true'); var accessibleLine = element(doc,'span','hm-sr',fullText); accessibleLine.setAttribute('aria-live','polite'); accessibleLine.setAttribute('aria-atomic','true');
+      speech.append(name,lineStack,accessibleLine);
+      var image = sceneImage(doc,step.asset,step.speaker,'hm-scene-image',reduced);
+      if (image) image.dataset.imagePlacement = placement;
+      if (image) { if (placement === 'inline') { image.classList.add('hm-inline-reaction'); line.appendChild(image); } else if (placement === 'right') { box.appendChild(speech); box.appendChild(image); } else box.appendChild(image); }
+      if (!speech.parentNode) box.appendChild(speech);
+      // The arrow shares the entire generous box target. No nested button or debug Next.
+      var arrow = element(doc,'span','hm-advance-arrow'); arrow.setAttribute('aria-hidden','true'); box.appendChild(arrow);
+      box.addEventListener('click',advance); content.appendChild(box);
+      var hint = element(doc,'p','hm-scene-hint','Tap to reveal or continue · Esc to return'); content.appendChild(hint);
+      typeLine();
+      if (image && placement === 'inline') { var reserveImage = element(doc,'span','hm-inline-reaction'); reserve.appendChild(reserveImage); }
     }
-    if (item.action.type === 'playlist') renderPlaylist(item.action.playlist); else renderStep();
+    if (!isScene) renderPlaylist(item.action.playlist); else renderStep();
     function keyboard(event) {
       if (closed || isPreview || !dialog.open) return;
-      // The brief dance is nonmodal. Escape retires it without consuming the
-      // same key from an unrelated tool the person may already have opened.
-      if (burstMode) { if (event.key === 'Escape') finish(); return; }
-      if (event.key === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); finish(); }
-      if (event.key === 'Tab') { var nodes = Array.prototype.slice.call(dialog.querySelectorAll('button,a[href]')).filter(function (node) { return !node.disabled && node.getClientRects().length; }), first = nodes[0], last = nodes[nodes.length-1]; if (event.shiftKey && (doc.activeElement === first || !dialog.contains(doc.activeElement))) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && (doc.activeElement === last || !dialog.contains(doc.activeElement))) { event.preventDefault(); first.focus(); } }
+      if (event.key === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); finish(true); return; }
+      // Enter/Space are native button activation only: never a global shortcut.
+      if (event.key === 'Tab') { var nodes = Array.prototype.slice.call(dialog.querySelectorAll('button,a[href]')).filter(function (node) { return !node.hidden && !node.disabled && node.getClientRects().length; }), first = nodes[0], last = nodes[nodes.length-1]; if (event.shiftKey && doc.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && doc.activeElement === last) { event.preventDefault(); first.focus(); } }
     }
-    close.addEventListener('click',finish); dialog.addEventListener('cancel',function (event) { event.preventDefault(); finish(); }); dialog.addEventListener('click',function (event) { if (event.target === dialog) { var rect = dialog.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) finish(); } });
+    close.addEventListener('click',function () { finish(false); }); dialog.addEventListener('cancel',function (event) { event.preventDefault(); finish(true); });
+    dialog.addEventListener('click',function (event) { if (event.target === dialog) { var rect = dialog.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) finish(true); } });
     doc.addEventListener('visibilitychange',hidden); doc.addEventListener('keydown',keyboard,true);
-    if (!isPreview) { dialog.showModal(); close.focus(); }
-    return {destroy:finish};
+    if (!isPreview) { dialog.showModal(); (isScene ? box : close).focus({preventScroll:true}); }
+    return {destroy:function () { finish(true); }};
   }
   function renderPreview(container,item,options) {
     options = options || {}; validateItem(item); var owned = element(container.ownerDocument,'div','hm-preview'), scene = null;
@@ -243,13 +323,16 @@
   }
   function mount(container,options) {
     options = options || {}; var doc = container.ownerDocument, data = options.data || root.HeavenlyMessagesData; validateData(data);
-    var storage = options.storage, session = options.sessionStorage, controller, scene = null, destroyed = false, dismissed = {}, userPaused = false, headphonesDismissed = false, listeners = [], observer, mutation;
+    var storage = options.storage, session = options.sessionStorage, controller, scene = null, destroyed = false, dismissed = {}, userPaused = false, headphonesDismissed = false, listeners = [], observer, mutation, previewItem = null, previewOptions = null;
     try { storage = storage || root.localStorage; userPaused = storage.getItem('heavenly_messages_paused') === 'true'; } catch (error) {}
     try { session = session || root.sessionStorage; headphonesDismissed = session.getItem('heavenly_messages_headphones_dismissed_v1') === 'true'; var saved = JSON.parse(session.getItem('heavenly_messages_dismissed_v1') || '[]'); if (Array.isArray(saved)) saved.slice(0,100).forEach(function (id) { if (typeof id === 'string') dismissed[id] = true; }); } catch (error) {}
+    var sceneStore = createSceneStore(storage);
     container.classList.add('hm-host'); container.setAttribute('aria-label','Heavenly messages'); container.replaceChildren();
     var line = element(doc,'div','hm-message-slot'), controls = element(doc,'div','hm-controls'), next = element(doc,'button','','Next'), pause = element(doc,'button','','Pause'), status = element(doc,'span','hm-sr');
     next.type = pause.type = 'button'; next.dataset.messageNext = ''; pause.dataset.messagePause = ''; next.setAttribute('aria-label','Next homepage message'); pause.setAttribute('aria-label','Pause homepage messages'); status.setAttribute('role','status'); status.setAttribute('aria-live','polite'); controls.append(next,pause); container.append(line,controls,status);
     function listen(node,name,callback,settings) { node.addEventListener(name,callback,settings); listeners.push(function () { node.removeEventListener(name,callback,settings); }); }
+    function blockPreviewNavigation(event) { if (previewItem && event.target.closest('a[href]')) event.preventDefault(); }
+    listen(line,'click',blockPreviewNavigation); listen(line,'auxclick',blockPreviewNavigation);
     function update(state) {
       var paused = state.reasons.indexOf('user') >= 0, label = paused?'Resume':'Pause', pressed = String(paused), anyPause = String(state.paused);
       // Preserve the current text node during pointer/focus transitions. WebKit
@@ -260,11 +343,29 @@
       if (container.dataset.messagePaused !== anyPause) container.dataset.messagePaused = anyPause;
     }
     function dismiss(id) { dismissed[id] = true; try { session.setItem('heavenly_messages_dismissed_v1',JSON.stringify(Object.keys(dismissed))); } catch (error) {} }
-    function activate() {
-      if (destroyed || scene) return; var item = controller.getCurrent(); if (!item.action) return;
-      controller.setPaused('dialog',true); scene = openExperience(doc.body,item,{returnFocus:function () { return line.querySelector('[data-message-text]'); },headphoneAdvice:!headphonesDismissed,onHeadphoneDismiss:function () { headphonesDismissed = true; try { session.setItem('heavenly_messages_headphones_dismissed_v1','true'); } catch (error) {} },onPlaylistVisit:function (key) { data.items.forEach(function (entry) { if (entry.action && entry.action.type === 'playlist' && entry.action.playlist === key) dismiss(entry.id); }); },onClose:function () { scene = null; dismiss(item.id); controller.setPaused('dialog',false); },onPlaylistOpen:function () { status.textContent = 'Playlist opened in Spotify.'; }});
+    function render(item,state) {
+      var current = previewItem || item;
+      renderCopy(line,current,{reducedMotion:previewOptions && previewOptions.reducedMotion,onAction:activate});
+      if (!previewItem && current.action && current.action.type === 'scene') {
+        var savedScene = sceneStore.read(current.action.scene);
+        if (!savedScene.discovered) { line.classList.add('hm-discovery'); sceneStore.update(current.action.scene,{discovered:true}); }
+        else line.classList.remove('hm-discovery');
+      } else line.classList.remove('hm-discovery');
+      update(state);
     }
-    controller = createController({data:data,random:options.random,now:options.now,setTimeout:options.setTimeout,clearTimeout:options.clearTimeout,isEligible:function (item) { return item.kind !== 'special' || !dismissed[item.id]; },onChange:function (item,state) { renderCopy(line,item,{onAction:activate}); update(state); },onState:update});
+    function activate() {
+      if (destroyed || scene) return; var item = previewItem || controller.getCurrent(); if (!item.action) return;
+      var temporary = !!previewItem, savedScene = item.action.type === 'scene' ? sceneStore.read(item.action.scene) : null;
+      if (savedScene && !temporary) sceneStore.update(item.action.scene,{appearance:true});
+      controller.setPaused('dialog',true);
+      scene = openExperience(doc.body,item,{temporary:temporary,allowExternal:!temporary,completed:savedScene && savedScene.completed,reducedMotion:temporary && previewOptions.reducedMotion,returnFocus:function () { return line.querySelector('[data-message-text]'); },headphoneAdvice:!headphonesDismissed,
+        onComplete:function () { if (!temporary && item.action.type === 'scene') sceneStore.update(item.action.scene,{completed:true}); },
+        onHeadphoneDismiss:function () { if (temporary) return; headphonesDismissed = true; try { session.setItem('heavenly_messages_headphones_dismissed_v1','true'); } catch (error) {} },
+        onPlaylistVisit:function (key) { if (!temporary) data.items.forEach(function (entry) { if (entry.action && entry.action.type === 'playlist' && entry.action.playlist === key) dismiss(entry.id); }); },
+        onClose:function () { scene = null; if (!temporary && item.action.type === 'playlist') dismiss(item.id); controller.setPaused('dialog',false); },
+        onPlaylistOpen:function () { status.textContent = 'Playlist opened in Spotify.'; }});
+    }
+    controller = createController({data:data,random:options.random,now:options.now,setTimeout:options.setTimeout,clearTimeout:options.clearTimeout,isEligible:function (item) { return item.kind !== 'special' || item.action && item.action.type === 'scene' || !dismissed[item.id]; },onChange:render,onState:update});
     function visible() { controller.setPaused('hidden',doc.visibilityState === 'hidden'); }
     function detached() { if (!container.isConnected) api.destroy(); }
     listen(next,'click',function () { controller.next(); status.textContent = controller.getCurrent().segments.map(function (segment) { return segment.text; }).join(''); });
@@ -272,14 +373,18 @@
     listen(container,'mouseenter',function () { controller.setPaused('hover',true); }); listen(container,'mouseleave',function () { controller.setPaused('hover',false); });
     listen(container,'focusin',function () { controller.setPaused('focus',true); }); listen(container,'focusout',function (event) { if (!container.contains(event.relatedTarget)) controller.setPaused('focus',false); });
     listen(doc,'visibilitychange',visible); listen(root,'pagehide',function () { if (scene) scene.destroy(); controller.setPaused('page',true); }); listen(root,'pageshow',function () { controller.setPaused('page',false); });
-    var media = root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)'); if (media) { var preference = function () { var active = doc.activeElement, hadFocus = line.contains(active); renderCopy(line,controller.getCurrent(),{onAction:activate}); if (hadFocus) { var target = active.tagName === 'A' ? Array.prototype.find.call(line.querySelectorAll('a'),function (link) { return link.getAttribute('href') === active.getAttribute('href'); }) : line.querySelector('[data-message-text]'); if (target) target.focus({preventScroll:true}); } }; if (media.addEventListener) listen(media,'change',preference); }
+    var media = root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)'); if (media) { var preference = function () { var active = doc.activeElement, hadFocus = line.contains(active); render(previewItem || controller.getCurrent(),controller.getState()); if (hadFocus) { var target = active.tagName === 'A' ? Array.prototype.find.call(line.querySelectorAll('a'),function (link) { return link.getAttribute('href') === active.getAttribute('href'); }) : line.querySelector('[data-message-text]'); if (target) target.focus({preventScroll:true}); } }; if (media.addEventListener) listen(media,'change',preference); }
     if (root.IntersectionObserver) { observer = new root.IntersectionObserver(function (entries) { entries.forEach(function (entry) { if (entry.target === container) { controller.setPaused('offscreen',!entry.isIntersecting); if (!entry.isIntersecting && scene) scene.destroy(); } }); }); observer.observe(container); }
     if (root.MutationObserver) { mutation = new root.MutationObserver(detached); mutation.observe(doc.documentElement,{childList:true,subtree:true}); }
     controller.setPaused('user',userPaused); visible();
-    var api = {next:controller.next,pause:function () { userPaused = true; controller.pause(); try { storage.setItem('heavenly_messages_paused','true'); } catch (error) {} },resume:function () { userPaused = false; controller.resume(); try { storage.setItem('heavenly_messages_paused','false'); } catch (error) {} },show:function (id) { if (scene) scene.destroy(); controller.show(id); },activate:activate,getState:controller.getState,getCurrent:controller.getCurrent,setPaused:controller.setPaused,destroy:function () { if (destroyed) return; destroyed = true; if (scene) scene.destroy(); controller.destroy(); listeners.forEach(function (off) { off(); }); if (observer) observer.disconnect(); if (mutation) mutation.disconnect(); container.replaceChildren(); }};
+    function restorePreview() { if (!previewItem) return; if (scene) scene.destroy(); previewItem = null; previewOptions = null; controller.setPaused('preview',false); render(controller.getCurrent(),controller.getState()); }
+    var api = {next:controller.next,pause:function () { userPaused = true; controller.pause(); try { storage.setItem('heavenly_messages_paused','true'); } catch (error) {} },resume:function () { userPaused = false; controller.resume(); try { storage.setItem('heavenly_messages_paused','false'); } catch (error) {} },show:function (id) { if (scene) scene.destroy(); controller.show(id); },activate:activate,getState:controller.getState,getCurrent:controller.getCurrent,setPaused:controller.setPaused,
+      getSceneState:function (id) { return sceneStore.read(id); },
+      preview:function (item,settings) { validateItem(item); restorePreview(); previewItem = clone(item); previewOptions = settings || {}; controller.setPaused('preview',true); render(previewItem,controller.getState()); var done = false; return {activate:activate,destroy:function () { if (done) return; done = true; restorePreview(); }}; },
+      destroy:function () { if (destroyed) return; destroyed = true; if (scene) scene.destroy(); controller.destroy(); listeners.forEach(function (off) { off(); }); if (observer) observer.disconnect(); if (mutation) mutation.disconnect(); container.replaceChildren(); }};
     return api;
   }
-  var api = {choices:choices,playlists:playlists,validateData:validateData,validateItem:validateItem,safeLink:safeLink,clone:clone,createSeededRandom:createSeededRandom,createController:createController,renderPreview:renderPreview,mount:mount};
-  if (root && root.document) { var init = function () { var node = root.document.getElementById('heavenly-messages'); if (node && !root.heavenlyMessages && root.HeavenlyMessagesData) { try { root.heavenlyMessages = mount(node); } catch (error) { node.textContent = 'Everything I do is Heavenly.'; } } }; if (root.document.readyState === 'loading') root.document.addEventListener('DOMContentLoaded',init,{once:true}); else init(); }
+  var api = {choices:choices,playlists:playlists,config:config,portraitSlots:portraitSlots,createSceneStore:createSceneStore,normalizeSceneState:normalizeSceneState,previewLive:function (item,options) { if (!root || !root.heavenlyMessages) fail('Homepage messages are not ready.'); return root.heavenlyMessages.preview(item,options); },validateData:validateData,validateItem:validateItem,safeLink:safeLink,clone:clone,createSeededRandom:createSeededRandom,createController:createController,renderPreview:renderPreview,mount:mount};
+  if (root && root.document) { if (root.fetch) root.fetch('/assets/messages/portraits/manifest.json').then(function (response) { return response.ok ? response.json() : {}; }).then(function (manifest) { Object.keys(portraitSlots).forEach(function (key) { approvedPortraits[key] = manifest[key] === portraitSlots[key]; }); }).catch(function () {}); var init = function () { var node = root.document.getElementById('heavenly-messages'); if (node && !root.heavenlyMessages && root.HeavenlyMessagesData) { try { root.heavenlyMessages = mount(node); } catch (error) { node.textContent = 'Everything I do is Heavenly.'; } } }; if (root.document.readyState === 'loading') root.document.addEventListener('DOMContentLoaded',init,{once:true}); else init(); }
   return api;
 }));

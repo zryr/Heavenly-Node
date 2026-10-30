@@ -1,0 +1,22 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS upgrades retain preferences, five default pills and centralized help with individual icons off
+PASS Cancel discards staged visibility and info-icon changes without touching settings
+PASS visibility, keyboard ordering and optional icons persist without changing hidden feature values or user data
+PASS unified cloaking toggles Auto independently and configures Persistent without losing the original title
+PASS Settings and homepage use the same saved editor; removal of the prompt control retains panic and legacy values
+PASS external feature changes preserve an open draft and are retained on layout Save
+PASS external layout conflicts retain drafts and require explicit Keep or Load before saving
+PASS Reset is staged and restores only default layout and info-icon preference
+PASS Panic Key toggles existing activation and its gear configures without redirecting or changing the saved key
+PASS widget toggles preserve positions/preferences, distinguish master overrides, and sync between tabs
+PASS about:blank explains contextual URL presentation without disabling the independent URL setting
+PASS phone editor and info fit the viewport; keyboard focus is contained and Escape dismisses
+PASS iPad portrait editor and info fit the viewport; keyboard focus is contained and Escape dismisses
+PASS iPad landscape editor and info fit the viewport; keyboard focus is contained and Escape dismisses
+PASS Chromebook editor and info fit the viewport; keyboard focus is contained and Escape dismisses
+PASS desktop editor and info fit the viewport; keyboard focus is contained and Escape dismisses
+PASS mouse handle drag and Move buttons change the draft order and Cancel preserves saved order
+PASS interrupted handle gestures do not reorder or save shortcuts
+PASS failed storage writes keep the draft open, report the failure and preserve saved preferences
+PASS reduced motion is respected and browsers report no script errors
+20 customization checks passed in webkit

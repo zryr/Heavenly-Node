@@ -10,7 +10,7 @@ The library-640.webp, library-960.webp and library-1600.webp files are resized
 WebP versions of the source photograph, made for this website. The displayed
 photograph may be cropped by the page layout. These image derivatives remain
 available under CC BY-SA 3.0. No endorsement by the photographer or the depicted
-library is implied. The photograph illustrates a fictional educational demo;
-it does not depict a facility owned by that fictional organization.
+library is implied. The photograph illustrates open learning resources;
+it does not depict a facility owned by Morrowfield Academy or imply affiliation.
 
 The rest of this project retains its own licenses.

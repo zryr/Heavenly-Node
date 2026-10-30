@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "catalogVersion": "2026.10.24.1",
+  "catalogVersion": "2026.10.27.1",
   "categories": [
     {
       "id": "cat_movies",
@@ -911,6 +911,27 @@
       "categoryId": "cat_op_websites",
       "subSectionId": "docs_games",
       "order": 4
+    },
+    {
+      "id": "bm_budsin_games",
+      "parentId": null,
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "order": 25
+    },
+    {
+      "id": "sub_arctic_myoxy",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 11
+    },
+    {
+      "id": "sub_arctic_htmlput",
+      "parentId": "bm_arctic",
+      "categoryId": "cat_op_websites",
+      "subSectionId": "browser_games",
+      "order": 12
     }
   ]
 }

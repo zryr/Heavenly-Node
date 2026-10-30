@@ -781,8 +781,9 @@
       border-radius: 8px;
       opacity: 0.5;
       transition: all 0.2s ease;
-      /* Only the dedicated handle reserves touch movement for deliberate dragging. */
-      touch-action: none;
+      /* Let an early handle swipe scroll; the active hold cancels touchmove locally. */
+      touch-action: pan-y;
+      -webkit-touch-callout: none;
     }
 
     .drag-dots-handle:hover,
@@ -1592,6 +1593,8 @@
   <link rel="stylesheet" href="/assets/heavenly-home.css" />
   <link rel="stylesheet" href="/assets/heavenly-adaptive.css" />
   <script src="/assets/heavenly-layout.js" defer></script>
+  <script src="/assets/heavenly-home-extras.js" defer></script>
+  <link rel="stylesheet" href="/assets/heavenly-home-extras.css">
   <link rel="stylesheet" href="/assets/heavenly-loading.css" />
 </head>
 
@@ -1625,7 +1628,6 @@
         <div id="layout-options-menu" class="layout-options-menu" hidden>
           <button type="button" id="reset-home-layout" aria-describedby="layout-reset-scope" disabled>Reset layout</button>
           <p id="layout-reset-scope">Reset panel widths and which panels and categories are open.</p>
-          <p class="layout-resize-tip">Drag the inside edge of a side panel to change its width.</p>
         </div>
       </div>
       <span id="layout-status" class="layout-status" role="status" aria-live="polite"></span>
@@ -2966,7 +2968,7 @@
 
     var expandedCategories = {};
     var expandedFolders = {};
-    var expandedSubSections = HeavenlyNavigation.readSettings(localStorage).bookmarkExpandedSections || {};
+    var expandedSubSections = loadSettings().bookmarkExpandedSections || {};
     if (typeof expandedSubSections !== 'object' || Array.isArray(expandedSubSections)) expandedSubSections = {};
     var collapsedSubSections = {}; // e.g. { "cat_anime_builtin": true }
     var selectedIconMode = 'favicon'; // 'favicon' | 'preset' | 'custom'
@@ -3080,7 +3082,7 @@
         var position = nearestPlacement(Array.from(column.children).filter(function (n) { return n.classList.contains('section-card') && n.dataset.categoryId !== sourceId; }), x, y, grid || wrappedTabs);
         // Compact category tabs share a row. Expanded side categories still
         // use their vertical midpoint for before/after placement.
-        if (position && wrappedTabs && !grid && !position.node.classList.contains('is-category-collapsed')) {
+        if (position && wrappedTabs && !grid && column.id !== 'bottom-container' && !position.node.classList.contains('is-category-collapsed')) {
           position.after = insertionAfter(position.rect, x, y, false); position.grid = false;
         }
         return Object.assign(position || { node: column, rect: column.getBoundingClientRect(), after: true }, { type: type, target: position && position.node.dataset.categoryId, side: column.id === 'right-column' ? 'right' : column.id === 'bottom-container' ? 'bottom' : 'left' });
@@ -3640,6 +3642,8 @@
       bookmarkTouchInProgress = false;
     }
     window.addEventListener('blur', interruptBookmarkTouch);
+    window.addEventListener('pagehide', interruptBookmarkTouch);
+    window.addEventListener('popstate', interruptBookmarkTouch);
     window.addEventListener('orientationchange', interruptBookmarkTouch);
     window.addEventListener('resize', interruptBookmarkTouch);
     document.addEventListener('visibilitychange', function () {
@@ -3704,28 +3708,29 @@
       bookmarkEdgeFrame = requestAnimationFrame(step);
     }
 
-    // Pointer Events own modern touch/pen input. Touch Events below are a fallback
-    // only: letting both pipelines run made browser cancellation and native iOS
-    // long-press dragging able to tear down an otherwise valid handle gesture.
+    // Mouse/pen keep pointer capture. Touch owns a single TouchEvent stream: a
+    // passive scroll may cancel PointerEvents on iOS, and touch-action:none
+    // would prevent scrolling even before the hold activates. Cancel only the
+    // active touchmove, after the deliberate hold, rather than reserving a pan.
     function bindPenHandle(handle, hold, move, end, cancelDrag) {
       if (!window.PointerEvent) return;
       handle.addEventListener('pointerdown', function (event) {
         var sectionMouse = event.pointerType === 'mouse' && handle.closest('.section-order-row');
-        if ((!sectionMouse && event.pointerType !== 'pen' && event.pointerType !== 'touch') || event.button !== 0 || !event.isPrimary) return;
+        if ((!sectionMouse && event.pointerType !== 'pen') || event.button !== 0 || !event.isPrimary) return;
         if (!acquireBookmarkGesture()) return;
         event.stopPropagation(); event.preventDefault(); cancelActiveBookmarkTouch();
         // cancelActiveBookmarkTouch may release a preceding gesture of our kind.
         if (!acquireBookmarkGesture()) return;
         var pointer = event.pointerId, input = event.pointerType;
         var start = { clientX: event.clientX, clientY: event.clientY };
-        var held = input !== 'touch', dragging = false, finished = false, timer = 0;
+        var dragging = false, finished = false;
         var observer = null;
         bookmarkGestureSource = 'handle';
         bookmarkInputType = input;
         handle.classList.add('heavenly-hold-pending');
         function detach() {
           if (finished) return;
-          finished = true; clearTimeout(timer);
+          finished = true;
           document.removeEventListener('pointermove', moved, true);
           document.removeEventListener('pointerup', ended, true);
           document.removeEventListener('pointercancel', canceled, true);
@@ -3747,23 +3752,17 @@
         function additional(e) { if (e.pointerId !== pointer) cancel(); }
         function activate() {
           if (finished || !handle.isConnected) { cancel(); return; }
-          held = true;
           handle.classList.remove('heavenly-hold-pending');
           handle.classList.add('heavenly-hold-ready');
           hold(start);
         }
-        if (input === 'touch') timer = setTimeout(activate, 420);
         function moved(e) {
           if (e.pointerId !== pointer || finished) return;
           if (!handle.isConnected) { cancel(); return; }
           var distance = Math.hypot(e.clientX - start.clientX, e.clientY - start.clientY);
-          if (!held) {
-            if (distance > 10) { suppressBookmarkClickUntil = Date.now() + 800; cancel(); }
-            return;
-          }
           if (!dragging && distance < 5) return;
           if (!dragging) {
-            if (input !== 'touch') activate();
+            activate();
             closeReorderBar(); dragging = true;
           }
           bookmarkGestureSource = 'drag'; suppressBookmarkClickUntil = Date.now() + 800;
@@ -3805,61 +3804,95 @@
 
     function bindBookmarkTouchHandle(handle, hold, move, end, cancelDrag) {
       bindPenHandle(handle, hold, move, end, cancelDrag);
-      handle.addEventListener('touchstart', function (e) {
-        if (window.PointerEvent) return;
-        e.stopPropagation();
-        if (e.touches.length !== 1) return;
-        var start = e.touches[0];
-        var held = false, dragging = false;
-        // Cancel any previous gesture before installing this hold timer.
+      handle.addEventListener('touchstart', function (event) {
+        if (event.touches.length !== 1) return;
+        event.stopPropagation();
         cancelActiveBookmarkTouch();
         if (!acquireBookmarkGesture()) return;
-        bookmarkGestureSource = 'handle';
-        var timer = setTimeout(function () { held = true; hold(start); }, 500);
-        trackBookmarkTouch(e, {
-          passive: false,
-          move: function (event, touch, cancel) {
-            var moved = Math.abs(touch.clientX - start.clientX) > 8 || Math.abs(touch.clientY - start.clientY) > 8;
-            if (!held && moved) {
-              suppressBookmarkClickUntil = Infinity;
-              cancel();
-              return;
-            }
-            if (!held || (!dragging && !moved)) return;
-            if (!dragging) closeReorderBar();
-            dragging = true;
-            bookmarkGestureSource = 'drag';
-            suppressBookmarkClickUntil = Date.now() + 800;
-            if (event.cancelable) event.preventDefault();
-            move(event);
-            if (!activePopoutAvatar) createPopoutAvatar(handle.closest('.section-order-row,.bookmark-card,.section-card'), touch.clientX, touch.clientY);
-            updatePopoutAvatar(touch.clientX, touch.clientY);
-            scrollBookmarkEdge(handle, touch.clientX, touch.clientY, move);
-          },
-          end: function (event) {
-            bookmarkGestureSource = '';
-            releaseBookmarkGesture();
-            clearTimeout(timer);
-            if (dragging) {
-              suppressBookmarkClickUntil = Date.now() + 800;
-              if (event.cancelable) event.preventDefault();
-              end(event);
-              removePopoutAvatar();
-            } else {
-              cancelDrag();
-            }
-          },
-          cancel: function () {
-            bookmarkGestureSource = '';
-            releaseBookmarkGesture();
-            clearTimeout(timer);
-            if (dragging) suppressBookmarkClickUntil = Date.now() + 800;
-            if (held) closeReorderBar();
-            cancelDrag();
-            removePopoutAvatar();
+        var contact = event.touches[0], identifier = contact.identifier;
+        var start = { clientX:contact.clientX, clientY:contact.clientY };
+        var held = false, dragging = false, finished = false, timer = 0, observer = null;
+        bookmarkInputType = 'touch'; bookmarkGestureSource = 'handle';
+        handle.classList.add('heavenly-hold-pending');
+        function findTouch(contacts) {
+          return Array.prototype.find.call(contacts, function (touch) { return touch.identifier === identifier; });
+        }
+        function detach() {
+          if (finished) return;
+          finished = true; clearTimeout(timer);
+          document.removeEventListener('touchmove', moved, true);
+          document.removeEventListener('touchend', ended, true);
+          document.removeEventListener('touchcancel', canceled, true);
+          document.removeEventListener('pointercancel', pointerCanceled, true);
+          document.removeEventListener('touchstart', additional, true);
+          if (observer) observer.disconnect();
+          if (cancelBookmarkTouchGesture === cancel) cancelBookmarkTouchGesture = null;
+          handle.classList.remove('heavenly-hold-pending', 'heavenly-hold-ready', 'selected');
+          releaseBookmarkGesture();
+        }
+        function cancel() {
+          if (finished) return;
+          detach(); bookmarkGestureSource = '';
+          suppressBookmarkClickUntil = Date.now() + 800;
+          cancelDrag(); removePopoutAvatar();
+        }
+        function canceled(e) { if (!e || findTouch(e.changedTouches)) cancel(); }
+        function pointerCanceled(e) { if (e.pointerType === 'touch' && handle.contains(e.target)) cancel(); }
+        function additional(e) { if (e.touches.length !== 1) cancel(); }
+        function activate() {
+          if (finished || !handle.isConnected) { cancel(); return; }
+          held = true;
+          handle.classList.remove('heavenly-hold-pending');
+          handle.classList.add('heavenly-hold-ready');
+          hold(start);
+        }
+        function moved(e) {
+          var touch = findTouch(e.touches);
+          if (finished) return;
+          if (!touch || e.touches.length !== 1 || !handle.isConnected) { cancel(); return; }
+          var distance = Math.hypot(touch.clientX - start.clientX, touch.clientY - start.clientY);
+          if (!held) {
+            // Do not preventDefault here: this same movement must start native scrolling.
+            if (distance > 10) cancel();
+            return;
           }
-        });
-      }, { passive: true });
+          if (!dragging && distance < 5) return;
+          // A browser-owned/noncancelable pan cannot become a drag after the fact.
+          if (!e.cancelable) { cancel(); return; }
+          e.preventDefault();
+          if (!dragging) { closeReorderBar(); dragging = true; }
+          bookmarkGestureSource = 'drag'; suppressBookmarkClickUntil = Date.now() + 800;
+          move(e);
+          if (!activePopoutAvatar) createPopoutAvatar(handle.closest('.section-order-row,.bookmark-card,.section-card'), touch.clientX, touch.clientY);
+          updatePopoutAvatar(touch.clientX, touch.clientY);
+          scrollBookmarkEdge(handle, touch.clientX, touch.clientY, move);
+        }
+        function ended(e) {
+          var touch = findTouch(e.changedTouches);
+          if (!touch || finished) return;
+          var committed = dragging;
+          // Detach before saving: a successful drop rerenders the source handle.
+          detach(); bookmarkGestureSource = '';
+          if (committed) {
+            suppressBookmarkClickUntil = Date.now() + 800;
+            if (e.cancelable) e.preventDefault();
+            end({ changedTouches:[touch] });
+          } else cancelDrag();
+          removePopoutAvatar();
+          // A quick tap retains exactly one native click for the management action.
+        }
+        cancelBookmarkTouchGesture = cancel;
+        timer = setTimeout(activate, 420);
+        document.addEventListener('touchmove', moved, { capture:true, passive:false });
+        document.addEventListener('touchend', ended, { capture:true, passive:false });
+        document.addEventListener('touchcancel', canceled, { capture:true, passive:true });
+        document.addEventListener('pointercancel', pointerCanceled, true);
+        document.addEventListener('touchstart', additional, { capture:true, passive:true });
+        if (window.MutationObserver) {
+          observer = new MutationObserver(function () { if (!handle.isConnected) cancel(); });
+          observer.observe(document.body, { childList:true, subtree:true });
+        }
+      }, { passive:false });
     }
 
     function watchBookmarkCardPress(e, cancelPress) {
@@ -3953,7 +3986,7 @@
       bottomCol.innerHTML = '';
 
       // Column content stays stable while central search results update independently.
-      var bookmarkViewSettings = HeavenlyNavigation.readSettings(localStorage);
+      var bookmarkViewSettings = loadSettings();
 
       var cats = data.categories.filter(function (c) { return !c.hidden; });
       cats.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
@@ -4895,6 +4928,7 @@
         btn.style.cursor = 'pointer';
         btn.title = item.name;
         btn.setAttribute('aria-label', 'Preset icon ' + item.name);
+        btn.setAttribute('aria-pressed', String(selectedPresetIconId === item.id));
 
         var svgWrap = document.createElement('div');
         svgWrap.style.width = '20px';
@@ -5042,6 +5076,7 @@
         editBtn.type = 'button';
         editBtn.style.cssText = 'background:rgba(56, 189, 248, 0.15); color:#38bdf8; border:1px solid rgba(56, 189, 248, 0.3); padding:3px 6px; border-radius:6px; font-size:0.72rem; cursor:pointer;';
         editBtn.textContent = 'Edit';
+        editBtn.setAttribute('aria-label', 'Edit sub-bookmark ' + sub.title);
         editBtn.onclick = function () {
           var newTitle = prompt('Edit sub-bookmark title:', sub.title);
           if (newTitle === null) return;
@@ -5056,6 +5091,7 @@
         delBtn.type = 'button';
         delBtn.style.cssText = 'background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.3); padding:3px 6px; border-radius:6px; font-size:0.72rem; cursor:pointer;';
         delBtn.textContent = '✕';
+        delBtn.setAttribute('aria-label', 'Delete sub-bookmark ' + sub.title);
         delBtn.onclick = function () {
           modalSubBookmarks.splice(idx, 1);
           renderModalSubBookmarksList();
@@ -6707,6 +6743,7 @@
         btn.style.cursor = 'pointer';
         btn.title = item.name;
         btn.setAttribute('aria-label', 'Sub-section icon ' + item.name);
+        btn.setAttribute('aria-pressed', String(selectedSubSecIconId === item.id));
 
         var svgWrap = document.createElement('div');
         svgWrap.style.width = '20px';
@@ -6826,7 +6863,7 @@
     function initBookmarksManager() {
       initBookmarkLaunchPopups();
       HeavenlyPicksUI.configure({ launch:function (url, mode) { return openTargetUrlWithSetting(mode === 'proxy' ? location.origin + '/proxy/' + url : url); } });
-      HeavenlyRestoreUI.configure({ data:loadBookmarkData, storage:localStorage, returnFocus:function () { return $('add-modal').classList.contains('active') ? $('cat-edit-id').value ? $('cat-restore-official-order') : $('restore-all-official-order') : $('open-add-modal-btn'); }, onRestore:function () {
+      HeavenlyRestoreUI.configure({ data:loadBookmarkData, storage:{ getItem:function (key) { return localStorage.getItem(key); }, setItem:function (key, value) { localStorage.setItem(key, value); } }, returnFocus:function () { return $('add-modal').classList.contains('active') ? $('cat-edit-id').value ? $('cat-restore-official-order') : $('restore-all-official-order') : $('open-add-modal-btn'); }, onRestore:function () {
         renderBookmarksUI();
         var editing = loadBookmarkData().categories.find(function (entry) { return entry.id === $('cat-edit-id').value; });
         if (editing) { categorySectionDraft = (editing.subSections || []).map(function (section) { return section.id; }); renderCategorySectionOrder(); }

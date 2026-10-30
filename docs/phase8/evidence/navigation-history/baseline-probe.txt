@@ -1,0 +1,86 @@
+SAVE http://127.0.0.1:34769 {"id":"test_proxy","title":"Proxied fixture","url":"https://example.test/first","categoryId":"navigation_test","subSectionId":"user","order":0,"launchPreference":"proxy"}
+VISIBILITY http://127.0.0.1:34769 false false
+http://127.0.0.1:34769 DEBUG event pointerdown   0
+http://127.0.0.1:34769 DEBUG event mousedown   0
+http://127.0.0.1:34769 DEBUG event pointerup   0
+http://127.0.0.1:34769 DEBUG event mouseup   0
+http://127.0.0.1:34769 DEBUG event click   0
+http://127.0.0.1:34769 DEBUG event pointerdown bookmark-title  0
+http://127.0.0.1:34769 DEBUG event mousedown bookmark-title  0
+http://127.0.0.1:34769 DEBUG event pointerup bookmark-title body 0
+http://127.0.0.1:34769 DEBUG event mouseup bookmark-title body 0
+http://127.0.0.1:34769 DEBUG event click bookmark-title  0
+http://127.0.0.1:34769 DEBUG launch {"id":"test_proxy","title":"Proxied fixture","url":"https://example.test/first","categoryId":"navigation_test","subSectionId":"user","order":0,"launchPreference":"proxy"} {"id":"test_proxy","title":"Proxied fixture","url":"https://example.test/first","categoryId":"navigation_test","subSectionId":"user","order":0,"launchPreference":"proxy"}
+http://127.0.0.1:34769 DEBUG open ["about:blank","_blank"]
+RESULT http://127.0.0.1:34769 true {
+  modals: [],
+  prefs: {
+    openBookmarksInAboutBlank: true,
+    openBookmarksInNewTab: true,
+    openSearchInAboutBlank: false,
+    openSearchInNewTab: false,
+    showProxiedUrl: true,
+    autoCloak: false,
+    persistentCloak: false,
+    randomizePresetEachSession: false,
+    randomPool: [
+      'classroom',
+      'google',
+      'docs',
+      'drive',
+      'gmail',
+      'outlook',
+      'canva'
+    ],
+    selectedPreset: 'classroom',
+    customPresets: {},
+    skipBuiltinTestPrompt: false,
+    mergeGoNewTab: false,
+    decoyAutoTimer: false
+  },
+  gesture: '',
+  suppression: 0
+}
+SAVE http://127.0.0.1:8181 {"id":"test_proxy","title":"Proxied fixture","url":"https://example.test/first","categoryId":"navigation_test","subSectionId":"user","order":0,"launchPreference":"proxy"}
+VISIBILITY http://127.0.0.1:8181 false false
+http://127.0.0.1:8181 DEBUG event pointerdown   0
+http://127.0.0.1:8181 DEBUG event mousedown   0
+http://127.0.0.1:8181 DEBUG event pointerup   0
+http://127.0.0.1:8181 DEBUG event mouseup   0
+http://127.0.0.1:8181 DEBUG event click   0
+http://127.0.0.1:8181 DEBUG event pointerdown bookmark-title  0
+http://127.0.0.1:8181 DEBUG event mousedown bookmark-title  0
+http://127.0.0.1:8181 DEBUG event pointerup bookmark-title body 0
+http://127.0.0.1:8181 DEBUG event mouseup bookmark-title body 0
+http://127.0.0.1:8181 DEBUG event click bookmark-title  0
+http://127.0.0.1:8181 DEBUG launch {"id":"test_proxy","title":"Proxied fixture","url":"https://example.test/first","categoryId":"navigation_test","subSectionId":"user","order":0,"launchPreference":"proxy"} {"id":"test_proxy","title":"Proxied fixture","url":"https://example.test/first","categoryId":"navigation_test","subSectionId":"user","order":0,"launchPreference":"proxy"}
+http://127.0.0.1:8181 DEBUG open ["about:blank","_blank"]
+RESULT http://127.0.0.1:8181 true {
+  modals: [],
+  prefs: {
+    openBookmarksInAboutBlank: true,
+    openBookmarksInNewTab: true,
+    openSearchInAboutBlank: false,
+    openSearchInNewTab: false,
+    showProxiedUrl: true,
+    autoCloak: false,
+    persistentCloak: false,
+    randomizePresetEachSession: false,
+    randomPool: [
+      'classroom',
+      'google',
+      'docs',
+      'drive',
+      'gmail',
+      'outlook',
+      'canva'
+    ],
+    selectedPreset: 'classroom',
+    customPresets: {},
+    skipBuiltinTestPrompt: false,
+    mergeGoNewTab: false,
+    decoyAutoTimer: false
+  },
+  gesture: '',
+  suppression: 0
+}

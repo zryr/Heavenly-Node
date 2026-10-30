@@ -49,6 +49,14 @@
     } catch (e) { return ''; }
   }
 
+  function safePanicUrl(value) {
+    if (typeof value !== 'string' || value.length > 4096 || !/^https?:\/\//i.test(value) || /[\u0000-\u0020\u007f\\]/.test(value)) return '';
+    try {
+      var target = new URL(value);
+      return (target.protocol === 'https:' || target.protocol === 'http:') && target.hostname && !target.username && !target.password ? target.href : '';
+    } catch (error) { return ''; }
+  }
+
   function currentRemoteUrl(win, config) {
     var loc = win.location;
     var prefix = (config && config.prefix) || '/proxy/';
@@ -451,6 +459,6 @@
   return { returnHome: returnHome, readSettings: readSettings, navigationSettings: navigationSettings, updateSettings: updateSettings,
     isCoolmathUrl: isCoolmathUrl, bookmarkKey: bookmarkKey, findBookmarkByUrl: findBookmarkByUrl,
     prepareMissingBookmark: prepareMissingBookmark, migrateBookmarkIcons: migrateBookmarkIcons,
-    remoteUrl: remoteUrl, currentRemoteUrl: currentRemoteUrl, loadHistory: loadHistory, recordHistory: recordHistory,
+    safePanicUrl: safePanicUrl, remoteUrl: remoteUrl, currentRemoteUrl: currentRemoteUrl, loadHistory: loadHistory, recordHistory: recordHistory,
     launchMode: launchMode, mountWrapper: mountWrapper, openBlank: openBlank, launch: launch, restoreBrowse: restoreBrowse };
 });

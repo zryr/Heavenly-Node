@@ -1,0 +1,7 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit: independent collapse controls, central search and keyboard results retain layout
+FAIL webkit: page.reload: Target page, context or browser has been closed
+Call log:
+[2m  - waiting for navigation until "domcontentloaded"[22m
+[2m    - navigated to "http://127.0.0.1:33927/"[22m
+

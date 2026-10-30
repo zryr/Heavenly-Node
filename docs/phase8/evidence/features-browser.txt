@@ -1,0 +1,23 @@
+PASS chromium Compact Monochrome shortcut is opt-in, exact tip/link and accessible close/focus work
+PASS chromium Discreet Save Heavenly opens honest desktop bookmark instructions and a clean native drag link
+PASS chromium Show Music Shortcut and document appearance are searchable actual settings, save and survive refresh
+PASS chromium Adapted Palette preset option Arrow/Home/End keyboard navigation works
+PASS chromium Actual injected panic key opens local editable workspace; return destination, editing, formatting and user settings remain intact
+PASS chromium Workspace fits desktop, Chromebook, tablet portrait/landscape and 320/390px phone; actual emulated touch panic and return work
+PASS chromium Existing saved-website panic mode still navigates to its configured destination
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox Compact Monochrome shortcut is opt-in, exact tip/link and accessible close/focus work
+PASS firefox Discreet Save Heavenly opens honest desktop bookmark instructions and a clean native drag link
+PASS firefox Show Music Shortcut and document appearance are searchable actual settings, save and survive refresh
+PASS firefox Adapted Palette preset option Arrow/Home/End keyboard navigation works
+PASS firefox Actual injected panic key opens local editable workspace; return destination, editing, formatting and user settings remain intact
+PASS firefox Workspace fits desktop, Chromebook, tablet portrait/landscape and 320/390px phone; actual emulated touch panic and return work
+PASS firefox Existing saved-website panic mode still navigates to its configured destination
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit Compact Monochrome shortcut is opt-in, exact tip/link and accessible close/focus work
+PASS webkit Discreet Save Heavenly opens honest desktop bookmark instructions and a clean native drag link
+PASS webkit Show Music Shortcut and document appearance are searchable actual settings, save and survive refresh
+PASS webkit Adapted Palette preset option Arrow/Home/End keyboard navigation works
+PASS webkit Actual injected panic key opens local editable workspace; return destination, editing, formatting and user settings remain intact
+PASS webkit Workspace fits desktop, Chromebook, tablet portrait/landscape and 320/390px phone; actual emulated touch panic and return work
+PASS webkit Existing saved-website panic mode still navigates to its configured destination

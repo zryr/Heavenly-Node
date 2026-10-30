@@ -6,7 +6,7 @@
   'use strict';
   return {
   "schema": 1,
-  "version": "2026.10.25.1",
+  "version": "2026.10.27.1",
   "items": [
     {
       "id": "msg_homework",
@@ -48,10 +48,10 @@
       "theme": "default",
       "animation": "soft",
       "icon": "none",
-      "reducedMotionText": "All of these links getting blocked...",
+      "reducedMotionText": "All of these links are getting blocked 😭",
       "segments": [
         {
-          "text": "All of these links getting blocked..."
+          "text": "All of these links are getting blocked 😭"
         }
       ],
       "action": null
@@ -64,13 +64,17 @@
       "theme": "default",
       "animation": "soft",
       "icon": "none",
-      "reducedMotionText": "What are you still doing here? Go use the site.",
+      "reducedMotionText": "What are you doing here? Go use the site",
       "segments": [
         {
-          "text": "What are you still doing here? Go use the site."
+          "text": "What are you doing here? Go use the site"
         }
       ],
-      "action": null
+      "action": null,
+      "noteImage": {
+        "asset": "anger",
+        "imagePlacement": "inline"
+      }
     },
     {
       "id": "msg_week",
@@ -80,10 +84,10 @@
       "theme": "default",
       "animation": "soft",
       "icon": "none",
-      "reducedMotionText": "All of this just to get blocked in a week.",
+      "reducedMotionText": "All of this js to get blocked in a week 🥀",
       "segments": [
         {
-          "text": "All of this just to get blocked in a week."
+          "text": "All of this js to get blocked in a week 🥀"
         }
       ],
       "action": null
@@ -96,10 +100,10 @@
       "theme": "default",
       "animation": "soft",
       "icon": "spark",
-      "reducedMotionText": "Those who know this website...",
+      "reducedMotionText": "Those who know this website... 💀",
       "segments": [
         {
-          "text": "Those who know this website..."
+          "text": "Those who know this website... 💀"
         }
       ],
       "action": null
@@ -172,7 +176,7 @@
     {
       "id": "msg_search",
       "kind": "ordinary",
-      "enabled": true,
+      "enabled": false,
       "weight": 1,
       "theme": "default",
       "animation": "soft",
@@ -188,7 +192,7 @@
     {
       "id": "msg_bookmarks",
       "kind": "ordinary",
-      "enabled": true,
+      "enabled": false,
       "weight": 1,
       "theme": "default",
       "animation": "soft",
@@ -345,13 +349,15 @@
         "steps": [
           {
             "speaker": "You",
-            "text": "Ao Oni = Big Purple Hulk?",
-            "asset": "ao-side"
+            "text": "AO ONI = big purple Hulk",
+            "asset": "ao-side",
+            "imagePlacement": "right"
           },
           {
             "speaker": "Cloudy",
-            "text": "That’s the joke. He’s purple, he’s big, and he has opinions.",
-            "asset": "ao-side"
+            "text": "he has opinions",
+            "asset": "ao-side",
+            "imagePlacement": "right"
           }
         ]
       }
@@ -364,10 +370,10 @@
       "theme": "purple",
       "animation": "soft",
       "icon": "cloud",
-      "reducedMotionText": "Cloudy has a very important question.",
+      "reducedMotionText": "oh look its ao oni",
       "segments": [
         {
-          "text": "Cloudy has a very important question."
+          "text": "oh look its ao oni"
         }
       ],
       "action": {
@@ -376,18 +382,15 @@
         "steps": [
           {
             "speaker": "You",
-            "text": "What is an Ao Oni?",
-            "asset": "ao-side"
+            "text": "what is an ao oni",
+            "asset": "player",
+            "imagePlacement": "left"
           },
           {
             "speaker": "Cloudy",
-            "text": "You don’t know ball...",
-            "asset": "anger"
-          },
-          {
-            "speaker": "Cloudy",
-            "text": "Let me introduce you.",
-            "asset": "ao-dance"
+            "text": "you don’t know ball",
+            "asset": "cloudy",
+            "imagePlacement": "left"
           }
         ]
       }
@@ -400,10 +403,10 @@
       "theme": "cutoff",
       "animation": "soft",
       "icon": "cloud",
-      "reducedMotionText": "Khezu would like a word.",
+      "reducedMotionText": "More than a Khezu…",
       "segments": [
         {
-          "text": "Khezu would like a word."
+          "text": "More than a Khezu…"
         }
       ],
       "action": {
@@ -411,14 +414,22 @@
         "scene": "khezu",
         "steps": [
           {
+            "speaker": "Hunter",
+            "text": "So… can I use this for… something else?",
+            "asset": "hunter",
+            "imagePlacement": "left"
+          },
+          {
             "speaker": "You",
-            "text": "So, could I use it for—",
-            "asset": "khezu"
+            "text": "wait, why he looking kinda…",
+            "asset": "player",
+            "imagePlacement": "left"
           },
           {
             "speaker": "Cloudy",
-            "text": "No, you can’t use it for that.",
-            "asset": "khezu"
+            "text": "yo wth 😭",
+            "asset": "cloudy",
+            "imagePlacement": "left"
           }
         ]
       }
@@ -431,10 +442,10 @@
       "theme": "warm",
       "animation": "soft",
       "icon": "cloud",
-      "reducedMotionText": "A tiny break with Syshi’s Doggy.",
+      "reducedMotionText": "A tiny break with my Doggy",
       "segments": [
         {
-          "text": "A tiny break with Syshi’s Doggy."
+          "text": "A tiny break with my Doggy"
         }
       ],
       "action": {
@@ -458,6 +469,46 @@
           }
         ]
       }
+    },
+    {
+      "id": "msg_boundary",
+      "kind": "ordinary",
+      "enabled": true,
+      "weight": 1,
+      "theme": "default",
+      "animation": "soft",
+      "icon": "none",
+      "reducedMotionText": "no you cant use it for that.",
+      "segments": [
+        {
+          "text": "no you cant use it for that."
+        }
+      ],
+      "action": null
+    },
+    {
+      "id": "msg_naenae",
+      "kind": "ordinary",
+      "enabled": true,
+      "weight": 1,
+      "theme": "default",
+      "animation": "soft",
+      "icon": "none",
+      "reducedMotionText": "no Nae-Nae... there are no plugs here 🫩",
+      "segments": [
+        {
+          "text": "no "
+        },
+        {
+          "text": "Nae-Nae",
+          "emphasis": true,
+          "gradient": "ocean"
+        },
+        {
+          "text": "... there are no plugs here 🫩"
+        }
+      ],
+      "action": null
     }
   ]
 };

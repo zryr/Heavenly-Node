@@ -1,0 +1,28 @@
+{
+  "executed": "2026-10-27T13:23:22.499Z",
+  "physicalDevices": [],
+  "engines": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "intentional codex Go and Enter submission open the existing HQ with every registered message",
+        "saved wording is rendered as text with the real theme and gradient, without interpreting HTML",
+        "unsafe actual destinations fail save and preview while preserving form text and the stored draft",
+        "source reorder, undo and enabled controls persist only in the scoped message draft",
+        "unapplied wording survives browsing, saving another entry and Undo; keyboard save and reorder retain focus",
+        "safe preview retains the actual local link destination and blocks ordinary and middle-button navigation",
+        "edited scene dialogue and reduced-motion artwork use the contained real renderer; changing tabs destroys scene layers",
+        "adding and removing bounded dialogue lines keeps the scene editor open",
+        "playlist QA is opt-in and external navigation remains disabled in the preview",
+        "explicitly reviewed configuration downloads as complete source JSON with stable IDs and edited dialogue",
+        "import refuses to replace unapplied form edits and keeps the saved copy intact",
+        "unsafe import is refused intact and a complete valid configuration imports locally",
+        "message browser and complete form fit desktop, phone and 320px widths with visible close and scrollable controls",
+        "public data, personal bookmarks and dismissal state remain intact; invalid persisted data is preserved during recovery editing"
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    }
+  ]
+}

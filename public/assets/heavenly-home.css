@@ -202,8 +202,9 @@
   .qs-homepage .brand-logo-img { width: 48px; height: 48px; }
   .qs-homepage .search-form { flex-direction: row; }
   .qs-homepage .search-form .input-wrapper { flex-basis: 100%; }
-  .qs-homepage #search-go-btn { width: auto; flex: 1; }
+  .qs-homepage #search-go-btn { width: auto; min-width: 0; flex: 1; }
   .qs-homepage #search-newtab-btn { flex: 1; }
+  .qs-homepage #search-newtab-btn:not(.collapsed) { min-width: 44px; }
   .qs-homepage .tagline { font-size: 13px; }
   .qs-homepage .header-actions-group .settings-btn { flex: 1 1 auto; justify-content: center; font-size: 12px; padding: 10px 8px; }
   .qs-homepage .bottom-section-container .section-card { padding: 12px 10px; }

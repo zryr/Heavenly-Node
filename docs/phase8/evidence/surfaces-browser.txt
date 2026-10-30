@@ -1,0 +1,5 @@
+PASS chromium: 3 groups, 96 Academy layout observations
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox: 3 groups, 96 Academy layout observations
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit: 3 groups, 96 Academy layout observations

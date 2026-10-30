@@ -1,0 +1,17 @@
+PASS chromium Private settings backup downloads exact dialogue completion, appearance count and explicit choice
+PASS chromium Merge retains greater progress, unrelated scenes and this browser’s explicit automatic-open choice
+PASS chromium Older backups and deselected Settings leave dialogue state unchanged
+PASS chromium Explicit settings overwrite restores normalized dialogue state
+PASS chromium Unsupported state rejects before writes; failed progress write rolls back collection, preferences and layout
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox Private settings backup downloads exact dialogue completion, appearance count and explicit choice
+PASS firefox Merge retains greater progress, unrelated scenes and this browser’s explicit automatic-open choice
+PASS firefox Older backups and deselected Settings leave dialogue state unchanged
+PASS firefox Explicit settings overwrite restores normalized dialogue state
+PASS firefox Unsupported state rejects before writes; failed progress write rolls back collection, preferences and layout
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit Private settings backup downloads exact dialogue completion, appearance count and explicit choice
+PASS webkit Merge retains greater progress, unrelated scenes and this browser’s explicit automatic-open choice
+PASS webkit Older backups and deselected Settings leave dialogue state unchanged
+PASS webkit Explicit settings overwrite restores normalized dialogue state
+PASS webkit Unsupported state rejects before writes; failed progress write rolls back collection, preferences and layout

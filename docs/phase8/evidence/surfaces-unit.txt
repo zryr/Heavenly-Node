@@ -1,0 +1,102 @@
+
+
+  Academy standalone document and navigation boundary
+    ✔ removes the mounted school overlay and gates before loading Heavenly assets
+    ✔ contains literal academic content without the Heavenly app beneath it
+    ✔ commits complete documents generated from the shared source templates
+    ✔ reserves every page before upstream Referer recovery
+    ✔ every local link resolves to an existing document, file or valid section
+    ✔ planned services are honest Coming Soon content with alternatives, not 503 outages
+    ✔ returns a branded 404 for unknown documents and real 503 only after a requested file read fails
+    ✔ keeps real terms, software authorship and licensed photo attribution accessible
+
+  Academy trusted information launch preferences
+    ✔ only permits its own five trusted information documents
+    ✔ uses Search same-tab defaults even when bookmark launch is enabled
+    ✔ opens normal tabs with a severed opener using the saved Search choice
+    ✔ keeps real navigation working when popup creation or browser storage is denied
+    ✔ reuses only a shell that owns this exact trusted frame
+
+  Academy presentation session continuity
+    ✔ redirects a locked homepage before rendering, without mutating saved settings
+    ✔ keeps an unlocked session on Heavenly and preserves its URL
+    ✔ Terms unlocks only the established session flag
+    ✔ provides a one-navigation fallback if session storage is unavailable
+    ✔ only enables the existing timer for an explicit true preference
+
+  Heavenly Custom Error Page & Error Middlewares
+    renderHeavenlyErrorPage HTML generator
+      ✔ should generate valid Heavenly-themed HTML with status code and title
+      ✔ should sanitize HTML special characters in errorType, target URL and details
+    serverErrorResponseMiddleware (5xx response interceptor)
+      ✔ should replace stream with Heavenly error page for 5xx HTML responses
+      ✔ should NOT intercept non-5xx responses
+      ✔ should NOT intercept non-HTML 5xx responses (e.g. JSON API or image)
+    heavenlyErrorMiddleware (Express error handler)
+      ✔ should handle ENOTFOUND errors and return 502 with Heavenly error page
+      ✔ should handle ECONNREFUSED errors and return 502 with Heavenly error page
+      ✔ should handle ETIMEDOUT errors and return 504 with Heavenly error page
+      ✔ should handle EAI_AGAIN DNS lookup error and return 502 with Heavenly error page
+      ✔ should handle ESOCKETTIMEDOUT error and return 504 with Heavenly error page
+      ✔ should handle ECONNRESET error and return 502 with Heavenly error page
+      ✔ should handle EPIPE broken pipe error and return 502 with Heavenly error page
+      ✔ should handle err.status in range 400-599 and return custom status and message
+      ✔ should fallback to err.errno when err.code is undefined
+      ✔ uses a generic category without exposing unknown exception messages
+      ✔ should fallback to default details string when err has no message and unknown error code
+      ✔ should delegate error handling to next(err) if res.headersSent is true
+      ✔ should explain a missing server without inserting an empty target address
+    End-to-End HTTP requests to non-existent target URL
+      ✔ should return Heavenly-themed HTML error page instead of plain text Internal Server Error (5017ms)
+
+  Production-safe Advanced Details
+    ✔ renders collapsed public details in hosted production without enabling developer diagnostics
+    ✔ redacts every path, query, credential, header, body and unknown exception field before copying
+    ✔ reports only supported DNS, TLS, timeout and invalid-target distinctions
+    ✔ does not turn an upstream 404 into a proxy error page
+    ✔ has a storage-free clipboard fallback that selects only the sanitized report
+
+  Embedded and responsive resource resolution
+    ✔ honors a document base for loader, data, wasm, images and fetch URLs
+    ✔ reads a changed base on subsequent requests without changing native URL semantics
+    ✔ retains data-URL commas, image URL commas and responsive descriptors
+
+  Proxy host and native element handling regressions
+    ✔ drops the proxy development port when constructing a remote URL
+
+  Invalid targets fail before outbound proxy requests
+    ✔ returns a classified 400 for /proxy/https://
+    ✔ returns a classified 400 for /proxy/https://%
+    ✔ returns a classified 400 for /proxy/file:///private/file
+    ✔ returns a classified 400 for /proxy/javascript:alert(1)
+
+  Framework URL validation and widget helpers
+    ✔ passes the Next.js origin-validation contract for canonical and collapsed proxy paths
+    ✔ reproduces the old constructor defect independently of a missing script or a redirect
+    ✔ repairs collapsed paths at rewriting boundaries without changing canonical absolute presentation
+    ✔ renders shared presets, unknown-preset fallback and custom URL selection
+    ✔ keeps blank-load races and frame errors in the wrapper, and Home leaves for Heavenly
+
+  Local upstream redirect attribution and security
+    ✔ does not emit 308s for canonical or collapsed document/static-resource requests
+    ✔ preserves an upstream 308 status while rewriting its relative Location exactly once
+    ✔ keeps MIME blocking and third-party framing restrictions
+
+  Sanitized development diagnostics and error classification
+    ✔ classifies DNS, temporary DNS, connection, TLS, timeout, response and unknown errors distinctly
+    ✔ rejects diagnostics access unless explicitly enabled on a local development server: {"NODE_ENV":"production","HEAVENLY_DEV_DIAGNOSTICS":"1"}
+    ✔ rejects diagnostics access unless explicitly enabled on a local development server: {"NODE_ENV":"development"}
+    ✔ rejects diagnostics access unless explicitly enabled on a local development server: {"NODE_ENV":"development","HEAVENLY_DEV_DIAGNOSTICS":"1","VERCEL":"1"}
+    ✔ rejects diagnostics access unless explicitly enabled on a local development server: {"HEAVENLY_DEV_DIAGNOSTICS":"1"}
+    ✔ serves the dev asset without caching and sanitizes copied metadata with an allowlist
+    ✔ does not render arbitrary exception messages and retries only on explicit action
+    ✔ captures no events without tab opt-in, and bounds sanitized events across reloads
+
+  Heavenly route ownership and wrapper controls
+    ✔ serves Home, Settings and own assets with a proxied Referer
+    ✔ accepts Home messages only from the registered same-origin frame
+    ✔ commits an initially empty blank document once before mounting, without rewriting its address
+
+
+  69 passing (5s)
+

@@ -1,0 +1,5 @@
+PASS chromium: independent collapse controls, central search and keyboard results retain layout
+PASS chromium: separator keyboard min/max, mouse resize and local persistence work independently
+PASS chromium: seven representative viewports keep center controls usable without overflow; automatic collapse restores intent
+PASS chromium: actual mouse bookmark drag persists after reload; keyboard subsection ordering saves through dialog
+PASS chromium: dialogs and reduced-motion completion leave no page errors or accidental navigation

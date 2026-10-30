@@ -12,6 +12,8 @@
   <script src="/assets/heavenly-catalog-ui.js"></script>
   <link rel="stylesheet" href="/assets/heavenly-catalog.css">
   <script src="/assets/heavenly-drag.js"></script>
+  <script src="/assets/heavenly-layout.js"></script>
+  <script src="/assets/heavenly-messages.js"></script>
   <script src="/assets/heavenly-motion.js"></script>
   <script src="/assets/heavenly-dialogs.js"></script>
   <script src="/assets/heavenly-collection-dialog.js"></script>
@@ -324,6 +326,11 @@
             <button type="button" id="customize-quick-settings-btn" class="export-import-btn" aria-haspopup="dialog" aria-controls="qs-editor">Customize Quick Settings</button>
           </div>
 
+          <div class="hero-card">
+            <div class="hero-card-header"><label for="set-show-music-shortcut" class="hero-card-title">Show Music Shortcut</label><label class="switch-toggle"><input type="checkbox" id="set-show-music-shortcut" role="switch" checked><span class="slider-knob"></span></label></div>
+            <p class="hero-card-desc">Show a small music-note button near the homepage actions. It opens a link to Monochrome; nothing plays automatically.</p>
+          </div>
+
           <!-- Hero Card: Open Search Results in New Tab -->
           <div class="hero-card">
             <div class="hero-card-header">
@@ -442,13 +449,19 @@
                 <span class="slider-knob"></span>
               </label>
             </div>
-            <p class="hero-card-desc">Show a floating panic button on supported proxy pages. Tap it to open your chosen website.</p>
+            <p class="hero-card-desc">Show a floating panic button on supported proxy pages. Tap it to open your saved website or document workspace.</p>
+          </div>
+
+          <div class="hero-card">
+            <label for="set-panic-appearance" class="hero-card-title">Panic Button appearance</label>
+            <p class="hero-card-desc" id="panic-appearance-help">Choose your saved website, or a local schoolwork-style document with a clear return button. This keeps your saved redirect address.</p>
+            <select id="set-panic-appearance" aria-describedby="panic-appearance-help"><option value="website">Open saved website</option><option value="document">Document workspace</option></select>
           </div>
 
           <!-- Hero Card: Panic URL -->
           <div class="hero-card">
             <label for="set-panic-url" class="hero-card-title" style="margin-bottom: 2px;">Panic Redirect URL</label>
-            <p class="hero-card-desc" style="margin-bottom: 8px;">Website address to open when you use the panic key or button.</p>
+            <p class="hero-card-desc" style="margin-bottom: 8px;">Website address to open when Panic Button appearance is set to Open saved website.</p>
             <input type="text" id="set-panic-url" value="https://classroom.google.com" aria-label="Panic redirect URL" style="width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 12px; color: #f8fafc; font-family: inherit; font-size: 0.88rem;">
           </div>
 
@@ -772,6 +785,8 @@
         panicKey: typeof saved.panicKey === 'string' ? saved.panicKey : '`',
         touchPanic: saved.touchPanic !== undefined ? saved.touchPanic : true,
         panicUrl: saved.panicUrl || 'https://classroom.google.com',
+        panicAppearance: saved.panicAppearance === 'document' ? 'document' : 'website',
+        showMusicShortcut: saved.showMusicShortcut !== false,
         showScrollLock: saved.showScrollLock !== undefined ? saved.showScrollLock : true,
         showMagnifier: saved.showMagnifier !== undefined ? saved.showMagnifier : true,
         showNavBookmark: saved.showNavBookmark !== undefined ? saved.showNavBookmark : true,
@@ -1078,6 +1093,8 @@
       $('set-panic-key').value = settings.panicKey;
       $('set-touch-panic').checked = settings.touchPanic;
       $('set-panic-url').value = settings.panicUrl;
+      $('set-panic-appearance').value = settings.panicAppearance;
+      $('set-show-music-shortcut').checked = settings.showMusicShortcut;
       $('set-show-scroll-lock').checked = settings.showScrollLock;
       $('set-show-magnifier').checked = settings.showMagnifier;
       $('set-show-nav-bookmark').checked = settings.showNavBookmark;
@@ -1102,7 +1119,7 @@
         if (widgetNote) { widgetNote.hidden = !disableWidgets; widgetNote.textContent = settings.disableAllFeatures ? 'All features are turned off in Feature controls. Your individual widget choices are remembered.' : 'Widgets are turned off in Feature controls. Your individual choices are remembered.'; }
       }
       var privacyDisabled = Boolean(settings.disableAllFeatures);
-      ['set-auto-cloak','set-persistent-cloak','set-randomize-preset-session','set-bookmarks-about-blank','set-search-about-blank','set-panic-key-enable','set-touch-panic','set-panic-key','set-panic-url'].forEach(function (id) { var control = $(id); if (control) control.disabled = privacyDisabled; });
+      ['set-auto-cloak','set-persistent-cloak','set-randomize-preset-session','set-bookmarks-about-blank','set-search-about-blank','set-panic-key-enable','set-touch-panic','set-panic-key','set-panic-url','set-panic-appearance'].forEach(function (id) { var control = $(id); if (control) control.disabled = privacyDisabled; });
       document.querySelectorAll('.settings-feature-gating').forEach(function (note) { note.hidden = !privacyDisabled; });
       if ($('settings-newtab-gating')) $('settings-newtab-gating').hidden = !settings.openSearchInAboutBlank;
       if ($('settings-bookmark-newtab-gating')) $('settings-bookmark-newtab-gating').hidden = !settings.openBookmarksInAboutBlank;
@@ -1150,6 +1167,12 @@
               if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
                 e.preventDefault();
                 optItem.click();
+              } else if (['ArrowDown', 'ArrowUp', 'Home', 'End'].indexOf(e.key) !== -1) {
+                e.preventDefault();
+                var options = Array.from(menuContainer.querySelectorAll('[role="option"]'));
+                var index = options.indexOf(optItem);
+                var next = e.key === 'Home' ? 0 : e.key === 'End' ? options.length - 1 : (index + (e.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length;
+                if (options[next]) options[next].focus();
               }
             };
 
@@ -1417,8 +1440,15 @@
         }
       });
 
-      var updateHandler = function () {
+      var updateHandler = function (event) {
         var settings = loadSettings();
+        var panicDraft = $('set-panic-url').value.trim();
+        var safePanic = HeavenlyNavigation.safePanicUrl(panicDraft || 'https://classroom.google.com');
+        $('set-panic-url').setCustomValidity(safePanic ? '' : 'Use a full HTTP or HTTPS website address without a username or password.');
+        if (!safePanic && event && event.target === $('set-panic-url')) {
+          settingsSaveFeedback('Use a full HTTP or HTTPS website address without a username or password. Your saved address has been kept.', true);
+          return;
+        }
         settings.autoCloak = $('set-auto-cloak').checked;
         settings.persistentCloak = $('set-persistent-cloak').checked;
         if ($('set-randomize-preset-session')) settings.randomizePresetEachSession = $('set-randomize-preset-session').checked;
@@ -1432,7 +1462,9 @@
         settings.panicKeyEnable = $('set-panic-key-enable').checked;
         settings.panicKey = $('set-panic-key').value.trim();
         settings.touchPanic = $('set-touch-panic').checked;
-        settings.panicUrl = $('set-panic-url').value.trim() || 'https://classroom.google.com';
+        settings.panicAppearance = $('set-panic-appearance').value;
+        settings.showMusicShortcut = $('set-show-music-shortcut').checked;
+        if (safePanic) settings.panicUrl = safePanic;
         settings.showScrollLock = $('set-show-scroll-lock').checked;
         settings.showMagnifier = $('set-show-magnifier').checked;
         settings.showNavBookmark = $('set-show-nav-bookmark').checked;
@@ -1447,7 +1479,7 @@
         syncCloak();
       };
 
-      ['set-auto-cloak', 'set-persistent-cloak', 'set-bookmarks-about-blank', 'set-search-about-blank', 'set-show-proxied-url', 'set-decoy-auto-timer', 'set-randomize-preset-session', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
+      ['set-show-music-shortcut', 'set-panic-appearance', 'set-auto-cloak', 'set-persistent-cloak', 'set-bookmarks-about-blank', 'set-search-about-blank', 'set-show-proxied-url', 'set-decoy-auto-timer', 'set-randomize-preset-session', 'set-search-new-tab', 'set-merge-go-newtab', 'set-bookmarks-new-tab', 'set-panic-key-enable', 'set-touch-panic', 'set-show-scroll-lock', 'set-show-magnifier', 'set-show-nav-bookmark', 'set-show-nav-search', 'set-show-nav-home', 'set-use-widget-dock', 'set-disable-all-widgets', 'set-disable-all-features', 'preset-select', 'preview-dock-pos-select'].forEach(function (id) {
         var el = $(id);
         if (el) {
           el.onchange = function () {
@@ -1765,6 +1797,11 @@
         var setCb = document.querySelector('.export-cb[data-type="settings"]');
         if (setCb && setCb.checked) {
           exportPayload.settings = settingsData;
+          try { exportPayload.homeLayout = HeavenlyLayout.normalize(JSON.parse(localStorage.getItem(HeavenlyLayout.key))); } catch (e) {}
+          try {
+            var savedDialogue = localStorage.getItem('heavenly_dialogue_state_v1');
+            if (savedDialogue !== null) exportPayload.dialogueState = HeavenlyMessages.normalizeSceneState(JSON.parse(savedDialogue));
+          } catch (e) { alert('Saved dialogue progress could not be read. The backup was stopped so that progress is not silently lost.'); return; }
         }
 
         var selectedCatIds = [];
@@ -1937,6 +1974,8 @@
           if (parsedImportData.version === 'recovery') throw new Error('This recovery copy preserves unreadable raw data; repair that data before importing it.');
           if (parsedImportData.collectionComplete && (!Array.isArray(parsedImportData.categories) || !Array.isArray(parsedImportData.bookmarks))) throw new Error('The complete collection backup is missing its categories or bookmarks.');
           HeavenlyCatalog.validate({categories:parsedImportData.categories || [], bookmarks:parsedImportData.bookmarks || []}, true);
+          if (parsedImportData.homeLayout !== undefined && (!parsedImportData.homeLayout || typeof parsedImportData.homeLayout !== 'object' || Array.isArray(parsedImportData.homeLayout) || parsedImportData.homeLayout.version !== 1)) throw new Error('The backup homepage layout is invalid.');
+          if (parsedImportData.dialogueState !== undefined) HeavenlyMessages.normalizeSceneState(parsedImportData.dialogueState);
           if (parsedImportData.settings !== undefined && parsedImportData.settings !== null && (typeof parsedImportData.settings !== 'object' || Array.isArray(parsedImportData.settings))) throw new Error('The backup settings must be an object.');
         } catch (error) { alert('Could not import bookmarks: ' + error.message); return; }
 
@@ -1993,7 +2032,7 @@
 
         var importPrevious = {}, importTouched = [];
         try {
-          ['heavenly_bookmarks','heavenly_settings','heavenly_broken_links'].forEach(function (key) { importPrevious[key] = localStorage.getItem(key); });
+          ['heavenly_bookmarks','heavenly_settings','heavenly_broken_links',HeavenlyLayout.key,'heavenly_dialogue_state_v1'].forEach(function (key) { importPrevious[key] = localStorage.getItem(key); });
           var completeImport = mode === 'overwrite' && (fileCats.length > 0 || fileBms.length > 0 || parsedImportData.collectionComplete === true) && fileCats.length === (parsedImportData.categories || []).length && fileBms.length === (parsedImportData.bookmarks || []).length;
           currentBms = HeavenlyCatalog.imported(currentBms, parsedImportData, completeImport);
           importTouched.push('heavenly_bookmarks');
@@ -2001,6 +2040,36 @@
           if (setCb && setCb.checked && parsedImportData.settings) {
             importTouched.push('heavenly_settings');
             HeavenlyNavigation.updateSettings(localStorage, currentSettings);
+            if (parsedImportData.homeLayout) {
+              var incomingLayout = HeavenlyLayout.normalize(parsedImportData.homeLayout);
+              if (mode === 'merge') {
+                var savedLayout = HeavenlyLayout.normalize(JSON.parse(localStorage.getItem(HeavenlyLayout.key)));
+                incomingLayout = HeavenlyLayout.merge(savedLayout, incomingLayout);
+              }
+              importTouched.push(HeavenlyLayout.key);
+              localStorage.setItem(HeavenlyLayout.key, JSON.stringify(incomingLayout));
+            }
+            if (parsedImportData.dialogueState !== undefined) {
+              var incomingDialogue = HeavenlyMessages.normalizeSceneState(parsedImportData.dialogueState);
+              if (mode === 'merge') {
+                var savedDialogue = localStorage.getItem('heavenly_dialogue_state_v1');
+                if (savedDialogue !== null) {
+                  var existingDialogue = HeavenlyMessages.normalizeSceneState(JSON.parse(savedDialogue));
+                  // Merge progress without replaying first discovery. Keep this
+                  // browser's explicit auto-open choice over an imported one.
+                  Object.keys(existingDialogue.scenes).forEach(function (id) {
+                    var existing = existingDialogue.scenes[id], incoming = incomingDialogue.scenes[id];
+                    if (!incoming) { incomingDialogue.scenes[id] = existing; return; }
+                    incoming.discovered = incoming.discovered || existing.discovered;
+                    incoming.completed = incoming.completed || existing.completed;
+                    incoming.appearances = Math.max(incoming.appearances, existing.appearances);
+                    if (existing.autoChoiceMade) { incoming.autoOpen = existing.autoOpen; incoming.autoChoiceMade = true; }
+                  });
+                }
+              }
+              importTouched.push('heavenly_dialogue_state_v1');
+              localStorage.setItem('heavenly_dialogue_state_v1', JSON.stringify(incomingDialogue));
+            }
           }
           if (parsedImportData.brokenLinks && typeof parsedImportData.brokenLinks === 'object' && !Array.isArray(parsedImportData.brokenLinks)) {
             var broken = mode === 'overwrite' ? {} : JSON.parse(localStorage.getItem('heavenly_broken_links') || '{}');

@@ -1,0 +1,42 @@
+{
+  "executed": "2026-10-27T18:36:28.310Z",
+  "baseline": false,
+  "baselineCommit": "2725f32369bb609bcd0cf8c8d51e272f9a420009",
+  "input": "Chromium CDP native touch emulation",
+  "physicalDevices": [],
+  "viewports": [
+    {
+      "name": "portrait",
+      "width": 820,
+      "height": 1180,
+      "checks": [
+        "bookmark grip swipe before hold yields to native page scroll without reorder",
+        "category grip early swipe also scrolls",
+        "collapsed category tab grip early swipe scrolls",
+        "held input cancels on Escape, blur, pagehide, history navigation, touchcancel, pointercancel, multitouch and source removal",
+        "deliberate touch hold and native stroke reorder to the shown target and persist after refresh"
+      ],
+      "preHoldScrollDelta": 165,
+      "categoryScrollDelta": 167,
+      "tabScrollDelta": 148
+    },
+    {
+      "name": "landscape",
+      "width": 1180,
+      "height": 820,
+      "checks": [
+        "bookmark grip swipe before hold yields to native page scroll without reorder",
+        "category grip early swipe also scrolls",
+        "collapsed category tab grip early swipe scrolls",
+        "held input cancels on Escape, blur, pagehide, history navigation, touchcancel, pointercancel, multitouch and source removal",
+        "deliberate touch hold and native stroke reorder to the shown target and persist after refresh"
+      ],
+      "preHoldScrollDelta": 199,
+      "categoryScrollDelta": 41,
+      "tabScrollDelta": 137
+    }
+  ],
+  "errors": [],
+  "browserVersion": "154.0.8037.57",
+  "status": "passed"
+}

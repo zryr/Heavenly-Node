@@ -1,0 +1,32 @@
+{
+  "engine": "chromium",
+  "physicalDevices": [],
+  "input": [
+    "mouse",
+    "keyboard",
+    "Chromium CDP continuous touch"
+  ],
+  "groups": [
+    "Fully visible restore button, accessible collapse, host CSS/click isolation and Scroll Lock preserves input editing",
+    "Magnifier activation, persisted zoom, keyboard/mouse lens movement and resize, interrupted-gesture cleanup and close",
+    "Real mouse dock edge drag, keyboard edge placement, Escape focus return and usable phone search",
+    "Continuous touch scroll outside widgets, touch dock drag and cancellation without saved-position changes or ghosts",
+    "Long-press continuous floating touch drag, touch cancellation, saved-position commit and no accidental expansion",
+    "Live settings switch to floating, keyboard expand/move/minimize, real mouse drag, reload preference, rotation bounds and duplicate initializer guard and focus-aware auto-minimize",
+    "Cross-tab master gates and individual visibility resume correctly, preferences survive, unreadable settings remain untouched, reduced motion and no page errors"
+  ],
+  "screenshots": [
+    "after-widgets-collapsed.png",
+    "after-widgets-dock.png",
+    "after-widgets-active.png",
+    "after-widgets-mobile.png",
+    "after-widgets-gesture-during.png",
+    "after-widgets-gesture-cancelled.png",
+    "after-widgets-floating.png",
+    "after-widgets-floating-drag.png",
+    "after-widgets-floating-drag-settled.png",
+    "after-widgets-floating-expanded.png"
+  ],
+  "version": "154.0.8037.57",
+  "checks": 7
+}

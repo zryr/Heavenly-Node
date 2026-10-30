@@ -1,0 +1,95 @@
+{
+  "executed": "2026-10-27T13:24:40.707Z",
+  "physicalDevices": [],
+  "continuousTouch": "Chromium CDP emulation only; Firefox/WebKit continuous touch injection is not exposed by Playwright",
+  "browsers": [
+    {
+      "engine": "firefox",
+      "checks": [
+        "independent collapse controls, central search and keyboard results retain layout",
+        "separator keyboard min/max, mouse resize and local persistence work independently"
+      ],
+      "errors": [],
+      "viewports": [
+        {
+          "label": "narrow-phone",
+          "width": 320,
+          "height": 740,
+          "scrollWidth": 320,
+          "innerWidth": 320,
+          "center": {
+            "x": 12,
+            "right": 308,
+            "width": 296
+          },
+          "controls": [
+            {
+              "id": "bm-universal-search",
+              "x": 29,
+              "right": 291,
+              "width": 262,
+              "height": 48
+            },
+            {
+              "id": "url",
+              "x": 29,
+              "right": 291,
+              "width": 262,
+              "height": 49
+            },
+            {
+              "id": "search-go-btn",
+              "x": 29,
+              "right": 257,
+              "width": 228,
+              "height": 49
+            },
+            {
+              "id": "search-newtab-btn",
+              "x": 265,
+              "right": 291,
+              "width": 26,
+              "height": 49
+            }
+          ],
+          "state": {
+            "preferences": {
+              "version": 1,
+              "priority": "left",
+              "left": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "right": {
+                "width": 256,
+                "collapsed": false,
+                "compactOpen": false
+              },
+              "categoryCollapsed": {},
+              "categoryWidths": {}
+            },
+            "actual": {
+              "compact": true,
+              "left": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              },
+              "right": {
+                "open": false,
+                "width": 256,
+                "empty": false,
+                "categoryCompact": false
+              }
+            }
+          }
+        }
+      ],
+      "version": "153.0",
+      "status": "failed",
+      "failure": "AssertionError [ERR_ASSERTION]: narrow-phone search-newtab-btn unusable\n    at /workspace/Heavenly-Node/test/browser/homepage_cross_browser.cjs:57:42"
+    }
+  ]
+}

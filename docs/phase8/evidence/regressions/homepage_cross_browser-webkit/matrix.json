@@ -1,0 +1,18 @@
+{
+  "executed": "2026-10-27T13:25:13.214Z",
+  "physicalDevices": [],
+  "continuousTouch": "Chromium CDP emulation only; Firefox/WebKit continuous touch injection is not exposed by Playwright",
+  "browsers": [
+    {
+      "engine": "webkit",
+      "checks": [
+        "independent collapse controls, central search and keyboard results retain layout"
+      ],
+      "errors": [],
+      "viewports": [],
+      "version": "26.5",
+      "status": "failed",
+      "failure": "page.reload: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for navigation until \"domcontentloaded\"\u001b[22m\n\u001b[2m    - navigated to \"http://127.0.0.1:33927/\"\u001b[22m\n\n    at /workspace/Heavenly-Node/test/browser/homepage_cross_browser.cjs:49:57"
+    }
+  ]
+}

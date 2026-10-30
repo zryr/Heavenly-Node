@@ -1080,6 +1080,18 @@
           "title": "Imgsrc Pub Mirror",
           "url": "https://imgsrc.pub/favicon?url=https://xn--kwhenihadalife-utl6u222y.neocities.org",
           "icon": "https://www.google.com/s2/favicons?domain=imgsrc.pub&sz=64"
+        },
+        {
+          "id": "sub_arctic_myoxy",
+          "title": "MyOxyPages Mirror",
+          "url": "https://site-sgyfu5dd.myoxypages.com/",
+          "icon": "https://www.google.com/s2/favicons?domain=site-sgyfu5dd.myoxypages.com&sz=64"
+        },
+        {
+          "id": "sub_arctic_htmlput",
+          "title": "HTMLPut Mirror",
+          "url": "https://share.htmlput.com/p/7o9hcsiopd",
+          "icon": "https://www.google.com/s2/favicons?domain=share.htmlput.com&sz=64"
         }
       ]
     },
@@ -1169,6 +1181,19 @@
       "disableQuickSaveWidget": true,
       "order": 4,
       "subBookmarks": []
+    },
+    {
+      "id": "bm_budsin_games",
+      "categoryId": "cat_games",
+      "subSectionId": "builtin",
+      "title": "Budsin Games",
+      "url": "https://games.budsin.dev/#/",
+      "type": "bookmark",
+      "icon": "https://www.google.com/s2/favicons?domain=games.budsin.dev&sz=64",
+      "builtIn": true,
+      "hidden": false,
+      "order": 23,
+      "subBookmarks": []
     }
   ]
 };
@@ -1179,7 +1204,7 @@
   // The small reviewed order manifest is the editor's repository-compatible source.
   // Content stays here; generated bridge changes default layout only, never saved data.
   applyOfficialOrder(defaults, officialOrder);
-  var release = { version: officialOrder.catalogVersion, date: '2026-10-24', summary: 'History Minds and Dancing Bunny join Games. Newgrounds is consolidated safely, and reviewed official ordering is available separately from your personal layout.', data: defaults };
+  var release = { version: officialOrder.catalogVersion, date: '2026-10-27', summary: 'Budsin Games joins Games, with two additional Arctic mirrors. Your preferred links, notes and personal layout are kept.', data: defaults };
   var key = 'heavenly_bookmarks';
   var fields = ['title', 'url', 'icon', 'type', 'categoryId', 'subSectionId', 'side', 'defaultCollapsed', 'disableQuickSaveWidget', 'mirrorEligible', 'order'];
   var personal = ['categoryId', 'subSectionId', 'side', 'disableQuickSaveWidget', 'order'];
