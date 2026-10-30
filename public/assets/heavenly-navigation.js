@@ -60,6 +60,12 @@
   }
 
   function isCoolmathUrl(value) {
+    if (typeof value === 'string') {
+      var lower = value.toLowerCase();
+      if (lower.indexOf('oolmath') === -1) return false;
+    } else if (!value || typeof value !== 'object') {
+      return false;
+    }
     try {
       var url = new URL(value);
       return (url.protocol === 'http:' || url.protocol === 'https:') &&

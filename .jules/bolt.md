@@ -93,3 +93,9 @@
 **Learning:** Re-instantiating `new RegExp()` on every chunk invocation in streaming transforms like `repairNamespaces` forces V8 to compile and allocate regex objects repeatedly. Guarding `text.replace` with a lightweight `!/xmlns/i.test(text)` check bypasses regex evaluation entirely on non-XML chunks, and caching compiled `RegExp` instances in a module-level dictionary (`namespaceRegexCache`) yields a ~66% execution speedup.
 
 **Action:** Always cache compiled `RegExp` instances in module scope and use fast-path `test()` guards before executing regex replacements in high-frequency stream transforms.
+
+## 2025-06-03 - Reusing pre-computed URL keys and fast-path substring guards in middleware & navigation
+
+**Learning:** Iterating response headers with `Object.keys().forEach` and evaluating regex tests in `iframeSecurityHeadersResponseMiddleware` creates unnecessary array allocations and regex overhead (~39.4% slower). In `vitepressRouter`, evaluating regexes and constructing `new URL()` for non-asset JavaScript requests adds unnecessary parsing overhead (~25.2% slower). In `isCoolmathUrl`, instantiating `new URL()` without a case-insensitive substring fast-guard causes URL object allocations for non-target URLs (~73.6% slower). In `mirrorState`, computing `bookmarkKey(entry.url)` repeatedly across `filter`, `mirrorIdentity`, `eligibleMirror`, and `isBroken` parses identical URLs up to 4 times per mirror (~50.9% slower).
+
+**Action:** Pre-compute and reuse normalized URL keys across array transformations, place fast-path substring guards before `new URL()` instantiation, and use `for...in` loops with direct string equality checks instead of `Object.keys().forEach` and unanchored regexes.

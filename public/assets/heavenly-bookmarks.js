@@ -83,11 +83,14 @@
     return incoming;
   }
   // Local choices refer to identities, never rewrite catalog destinations or child order.
-  function mirrorIdentity(entry) {
-    return entry.source === 'main' ? 'main' : entry.id ? 'id:' + entry.id : 'url:' + navigation.bookmarkKey(entry.url);
+  function mirrorIdentity(entry, key) {
+    if (entry.source === 'main') return 'main';
+    if (entry.id) return 'id:' + entry.id;
+    if (key === undefined) key = navigation.bookmarkKey(entry.url);
+    return 'url:' + key;
   }
-  function eligibleMirror(entry) {
-    var key = navigation.bookmarkKey(entry.url);
+  function eligibleMirror(entry, key) {
+    if (key === undefined) key = navigation.bookmarkKey(entry.url);
     if (!key || entry.hidden || entry.type === 'folder' || entry.mirrorEligible === false) return false;
     // The catalog intentionally includes asset-style destinations. Eligibility is explicit, not guessed from a suffix.
     return true;
@@ -96,14 +99,22 @@
     brokenMap = brokenMap || {};
     var original = { title: bookmark ? bookmark.title : title, url: bookmark && bookmark.url || url, source: 'main', mirrorEligible: bookmark && bookmark.mirrorEligible, catalogPreviousUrls: bookmark && bookmark.catalogPreviousUrls };
     var seen = Object.create(null), brokenKeys = Object.create(null);
-    Object.keys(brokenMap).forEach(function (url) { if (brokenMap[url]) brokenKeys[navigation.bookmarkKey(url)] = true; });
-    var entries = [original].concat(bookmark && bookmark.subBookmarks || []).filter(function (entry) {
+    for (var k in brokenMap) { if (brokenMap[k]) brokenKeys[navigation.bookmarkKey(k)] = true; }
+    var raw = [original].concat(bookmark && bookmark.subBookmarks || []);
+    var entries = [];
+    for (var i = 0; i < raw.length; i++) {
+      var entry = raw[i];
       var key = navigation.bookmarkKey(entry.url);
-      if (!key || seen[key]) return false;
-      seen[key] = true; return true;
-    }).map(function (entry) {
-      return Object.assign({}, entry, { identity: mirrorIdentity(entry), eligible: eligibleMirror(entry), isBroken: !!brokenKeys[navigation.bookmarkKey(entry.url)] || (entry.catalogPreviousUrls || []).some(function(url){return !!brokenKeys[navigation.bookmarkKey(url)];}) });
-    });
+      if (!key || seen[key]) continue;
+      seen[key] = true;
+      var isBroken = !!brokenKeys[key];
+      if (!isBroken && entry.catalogPreviousUrls) {
+        for (var j = 0; j < entry.catalogPreviousUrls.length; j++) {
+          if (brokenKeys[navigation.bookmarkKey(entry.catalogPreviousUrls[j])]) { isBroken = true; break; }
+        }
+      }
+      entries.push(Object.assign({}, entry, { identity: mirrorIdentity(entry, key), eligible: eligibleMirror(entry, key), isBroken: isBroken }));
+    }
     var saved = bookmark && bookmark.mirrorPreferences || {};
     var eligible = entries.filter(function (entry) { return entry.eligible; });
     // Keep the legacy default priority for collections without an explicit order.
