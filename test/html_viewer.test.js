@@ -57,13 +57,14 @@ describe('html-viewer.html & VUS Fallback Waterfall', function() {
     assert.ok(html.includes('tabindex="-1"'), 'inactive tabs should start outside the tab order');
   });
 
-  it('should configure code textarea, action buttons, and status indicator with accessible ARIA attributes', function() {
+  it('should configure code textarea, action buttons, control bar role, and status indicators with accessible ARIA attributes', function() {
     var html = fs.readFileSync(path.join(__dirname, '../public/html-viewer.html'), 'utf8');
 
+    assert.ok(html.includes('role="toolbar"') && html.includes('aria-label="Workspace controls"'), 'control-bar should specify role="toolbar" and aria-label');
     assert.ok(html.includes('id="code-input"') && html.includes('aria-label="HTML, CSS, and JavaScript code editor"'), 'code-input textarea should specify descriptive aria-label');
     assert.ok(html.includes('id="btn-run"') && html.includes('aria-label="Run your code in the preview"'), 'btn-run should specify descriptive aria-label');
     assert.ok(html.includes('id="btn-clear"') && html.includes('aria-label="Clear all code from the editor"'), 'btn-clear should specify descriptive aria-label');
-    assert.ok(html.includes('class="status-indicator" aria-live="polite"'), 'status-indicator should specify aria-live="polite"');
+    assert.strictEqual(html.match(/class="status-indicator" aria-live="polite"/g).length, 2, 'both editor and preview status indicators should specify aria-live="polite"');
   });
 
   it('should support Ctrl/Cmd+Enter keyboard execution shortcut and dynamic updateEditorStatus announcements', function() {

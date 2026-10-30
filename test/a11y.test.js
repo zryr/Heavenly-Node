@@ -60,13 +60,35 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('e.key === \'Escape\'') || html.includes('e.keyCode === 27'), 'keydown listener should handle Escape key');
     });
 
-    it('should configure add-modal dialog with ARIA semantics, close button label, Escape key dismissal, and focus restoration', function() {
+    it('should configure add-modal dialog with ARIA semantics, contextual close button label, Escape key dismissal, and focus restoration', function() {
         assert.ok(html.includes('role="dialog"'), 'add-modal card should have role="dialog"');
         assert.ok(html.includes('aria-modal="true"'), 'add-modal card should have aria-modal="true"');
         assert.ok(html.includes('aria-labelledby="modal-title"'), 'add-modal card should specify aria-labelledby="modal-title"');
-        assert.ok(html.includes('id="close-modal-btn"') && html.includes('aria-label="Close dialog"'), 'close-modal-btn should specify aria-label="Close dialog"');
+        assert.ok(html.includes('id="close-modal-btn"') && html.includes('aria-label="Close Add Bookmark dialog"'), 'close-modal-btn should specify contextual aria-label');
         assert.ok(html.includes('lastFocusedElement'), 'index.html should track lastFocusedElement for focus restoration');
         assert.ok(html.includes('closeAddModal()'), 'Escape key handler should call closeAddModal when active');
+    });
+
+    it('should configure contextual ARIA labels on close buttons in index.html and settings.html', function() {
+        var settingsHtml = fs.readFileSync(path.join(__dirname, '../public/settings.html'), 'utf8');
+        assert.ok(html.includes('id="close-share-modal-btn"') && html.includes('aria-label="Close share bookmarks dialog"'));
+        assert.ok(html.includes('id="close-syshis-notes-modal-btn"') && html.includes('aria-label="Close Syshi\'s notes dialog"'));
+        assert.ok(html.includes('id="close-op-websites-notes-modal-btn"') && html.includes('aria-label="Close OP Websites notes dialog"'));
+        assert.ok(html.includes('id="close-distrosea-info-modal-btn"') && html.includes('aria-label="Close Distrosea info dialog"'));
+        assert.ok(settingsHtml.includes('id="close-export-modal-btn"') && settingsHtml.includes('aria-label="Close export backup dialog"'));
+        assert.ok(settingsHtml.includes('id="close-import-modal-btn"') && settingsHtml.includes('aria-label="Close import backup dialog"'));
+    });
+
+    it('should configure backdrop click dismissal for notes and info modals in index.html', function() {
+        assert.ok(html.includes('syshis-notes-modal') && html.includes('closeSyshisNotesModal()'));
+        assert.ok(html.includes('op-websites-notes-modal') && html.includes('closeOpWebsitesNotesModal()'));
+        assert.ok(html.includes('distrosea-info-modal') && html.includes('closeDistroseaInfoModal()'));
+    });
+
+    it('should configure browse.html with focus-visible styles and Return home ARIA label', function() {
+        var browseHtml = fs.readFileSync(path.join(__dirname, '../public/browse.html'), 'utf8');
+        assert.ok(browseHtml.includes('a:focus-visible'), 'browse.html should include focus-visible CSS rule');
+        assert.ok(browseHtml.includes('aria-label="Return to Heavenly home"'), 'browse.html return link should specify aria-label');
     });
 
     it('should configure focus management and restoration across share, notes, and test modals', function() {

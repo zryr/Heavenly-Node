@@ -1797,7 +1797,7 @@
           </div>
           <span class="modal-title" id="modal-title">Add Bookmark</span>
         </div>
-        <button id="close-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+        <button id="close-modal-btn" type="button" class="modal-close-btn" aria-label="Close Add Bookmark dialog">✕</button>
       </div>
 
       <!-- Tab selection between Add Bookmark, Add Category & Add Sub-Section -->
@@ -2011,7 +2011,7 @@
           </div>
           <span class="modal-title" id="share-modal-title">Share Bookmarks with Friends</span>
         </div>
-        <button id="close-share-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+        <button id="close-share-modal-btn" type="button" class="modal-close-btn" aria-label="Close share bookmarks dialog">✕</button>
       </div>
 
       <div role="tablist" aria-label="Share options" style="display: flex; gap: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 10px;">
@@ -2073,7 +2073,7 @@
           </div>
           <span class="modal-title" id="subsec-modal-title">Edit Sub-Section</span>
         </div>
-        <button id="close-subsec-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+        <button id="close-subsec-modal-btn" type="button" class="modal-close-btn" aria-label="Close edit sub-section dialog">✕</button>
       </div>
 
       <form id="form-subsec-edit" style="display: flex; flex-direction: column; gap: 14px; margin-top: 4px;">
@@ -2113,7 +2113,7 @@
           </div>
           <span class="modal-title" id="subsec-delete-modal-title" style="color: #ef4444;">Delete Sub-Section</span>
         </div>
-        <button id="close-subsec-delete-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+        <button id="close-subsec-delete-modal-btn" type="button" class="modal-close-btn" aria-label="Close delete sub-section dialog">✕</button>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 6px;">
@@ -2139,7 +2139,7 @@
           </div>
           <span class="modal-title" id="sub-bm-modal-title">Edit Sub-Bookmark</span>
         </div>
-        <button id="close-sub-bm-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+        <button id="close-sub-bm-modal-btn" type="button" class="modal-close-btn" aria-label="Close edit sub-bookmark dialog">✕</button>
       </div>
 
       <form id="form-sub-bm" style="display: flex; flex-direction: column; gap: 12px; margin-top: 4px;">
@@ -2224,7 +2224,7 @@
           </div>
           <span class="modal-title" id="syshis-notes-modal-title">Syshi’s Notes: Anime</span>
         </div>
-        <button id="close-syshis-notes-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+        <button id="close-syshis-notes-modal-btn" type="button" class="modal-close-btn" aria-label="Close Syshi's notes dialog">✕</button>
       </div>
       <ul class="heavenly-notes-list">
         <li class="heavenly-note-card">
@@ -2268,7 +2268,7 @@
           </div>
           <span class="modal-title" id="op-websites-notes-modal-title">Syshi’s Notes: OP Websites</span>
         </div>
-        <button id="close-op-websites-notes-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+        <button id="close-op-websites-notes-modal-btn" type="button" class="modal-close-btn" aria-label="Close OP Websites notes dialog">✕</button>
       </div>
       <ul class="heavenly-notes-list">
         <li class="heavenly-note-card">
@@ -2319,7 +2319,7 @@
           </div>
           <span class="modal-title" id="distrosea-info-modal-title">Distrosea</span>
         </div>
-        <button id="close-distrosea-info-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+        <button id="close-distrosea-info-modal-btn" type="button" class="modal-close-btn" aria-label="Close Distrosea info dialog">✕</button>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
@@ -5468,12 +5468,16 @@
     }
 
     function initBookmarkLaunchPopups() {
-      ['coolmath-launch-modal', 'special-links-modal', 'builtin-test-modal', 'everythingmoe-modal'].forEach(function (id) {
+      ['coolmath-launch-modal', 'special-links-modal', 'builtin-test-modal', 'everythingmoe-modal', 'syshis-notes-modal', 'op-websites-notes-modal', 'distrosea-info-modal'].forEach(function (id) {
         var modal = $(id);
+        if (!modal) return;
         modal.onclick = function (e) {
           if (e.target !== modal) return;
           if (id === 'builtin-test-modal') closeBuiltinTestModal();
           else if (id === 'everythingmoe-modal') closeEverythingMoeNoticeModal();
+          else if (id === 'syshis-notes-modal') closeSyshisNotesModal();
+          else if (id === 'op-websites-notes-modal') closeOpWebsitesNotesModal();
+          else if (id === 'distrosea-info-modal') closeDistroseaInfoModal();
           else closeBookmarkPopup(id);
         };
         modal.addEventListener('keydown', function (e) {
