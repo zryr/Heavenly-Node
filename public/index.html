@@ -2835,7 +2835,7 @@
               <input type="text" id="bm-custom-icon-url" class="form-input" placeholder="Custom Icon URL (e.g. https://example.com/icon.png)" style="font-size: 0.82rem; padding: 8px 10px; flex: 1;" />
               <div id="bm-custom-icon-preview" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;"></div>
             </div>
-            <button type="button" id="btn-launch-live-picker" style="padding: 8px 12px; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 10px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;">
+            <button type="button" id="btn-launch-live-picker" aria-label="Launch Live Page Icon Picker" title="Launch Live Page Icon Picker" style="padding: 8px 12px; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 10px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;">
               <svg style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
               <span>Launch Live Icon Picker Overlay</span>
             </button>
@@ -2863,7 +2863,7 @@
             <div style="font-size: 0.8rem; font-weight: 600; color: #38bdf8;">Add New Sub-Bookmark</div>
             <input type="text" id="sub-bm-title" class="form-input" placeholder="Sub-bookmark title (e.g. Level 1)" style="font-size: 0.82rem; padding: 6px 10px;" />
             <input type="text" id="sub-bm-url" class="form-input" placeholder="https://example.com/sub-page" style="font-size: 0.82rem; padding: 6px 10px;" />
-            <button type="button" id="btn-add-sub-bm" style="align-self: flex-end; padding: 6px 12px; background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; border-radius: 8px; font-size: 0.78rem; font-weight: 600; cursor: pointer;">+ Add Sub-Bookmark</button>
+            <button type="button" id="btn-add-sub-bm" aria-label="Add sub-bookmark mirror entry" title="Add sub-bookmark mirror entry" style="align-self: flex-end; padding: 6px 12px; background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; border-radius: 8px; font-size: 0.78rem; font-weight: 600; cursor: pointer;">+ Add Sub-Bookmark</button>
           </div>
         </div>
 
@@ -6327,7 +6327,9 @@
     }
 
     function openEverythingMoeNoticeModal(title, rawUrl, proxiedUrl) {
-      if (document.activeElement) lastFocusedElement = document.activeElement;
+      if (document.activeElement && (!document.activeElement.closest || !document.activeElement.closest('#special-links-modal'))) {
+        lastFocusedElement = document.activeElement;
+      }
       pendingEverythingMoeNotice.title = title || 'EverythingMoe';
       pendingEverythingMoeNotice.rawUrl = rawUrl || '';
       pendingEverythingMoeNotice.proxiedUrl = proxiedUrl || '';

@@ -949,7 +949,7 @@
           <div class="hero-card">
             <h3 class="hero-card-title">Quick Settings Shortcuts</h3>
             <p class="hero-card-desc" style="margin:8px 0">Choose the shortcuts shown on the homepage. Hiding a shortcut keeps its setting unchanged.</p>
-            <button type="button" id="customize-quick-settings-btn" class="export-import-btn" aria-haspopup="dialog" aria-controls="qs-editor">Customize Quick Settings</button>
+            <button type="button" id="customize-quick-settings-btn" class="export-import-btn" aria-label="Customize Quick Settings shortcut tray" aria-haspopup="dialog" aria-controls="qs-editor">Customize Quick Settings</button>
           </div>
 
           <!-- Hero Card: Open Search Results in New Tab -->
@@ -980,16 +980,16 @@
             <p class="hero-card-desc">Auto fills one readable row in bottom sections and shows 5 bookmarks in side panels. Choose Custom for a fixed count. Your existing custom counts are preserved.</p>
             <div class="bookmark-count-controls">
               <label for="set-bookmark-count-mode">Default display</label>
-              <select id="set-bookmark-count-mode"><option value="auto">Auto · one bottom row, 5 in side panels</option><option value="custom">Custom · fixed bookmark count</option></select>
+              <select id="set-bookmark-count-mode" aria-label="Default bookmark count display mode"><option value="auto">Auto · one bottom row, 5 in side panels</option><option value="custom">Custom · fixed bookmark count</option></select>
               <label for="set-bookmark-initial-limit">Default visible bookmarks (1–30)</label>
-              <input type="number" id="set-bookmark-initial-limit" min="1" max="30" step="1" inputmode="numeric" value="5">
+              <input type="number" id="set-bookmark-initial-limit" aria-label="Default visible bookmarks count" min="1" max="30" step="1" inputmode="numeric" value="5">
               <label for="set-bookmark-limit-section">Category or subsection override</label>
-              <select id="set-bookmark-limit-section"></select>
+              <select id="set-bookmark-limit-section" aria-label="Category or subsection limit override target"></select>
               <label for="set-bookmark-section-mode">Section display</label>
-              <select id="set-bookmark-section-mode" disabled><option value="inherit">Use default</option><option value="auto">Auto</option><option value="custom">Custom</option></select>
+              <select id="set-bookmark-section-mode" aria-label="Section display mode" disabled><option value="inherit">Use default</option><option value="auto">Auto</option><option value="custom">Custom</option></select>
               <label for="set-bookmark-section-limit">Custom visible bookmarks (1–30)</label>
-              <input type="number" id="set-bookmark-section-limit" min="1" max="30" step="1" inputmode="numeric" disabled>
-              <button type="button" id="reset-bookmark-section-limit" disabled>Use global default</button>
+              <input type="number" id="set-bookmark-section-limit" aria-label="Section custom visible bookmarks count" min="1" max="30" step="1" inputmode="numeric" disabled>
+              <button type="button" id="reset-bookmark-section-limit" aria-label="Reset section bookmark limit to global default" disabled>Use global default</button>
               <p id="bookmark-limit-status" role="status" aria-live="polite"></p>
             </div>
           </div>
@@ -1163,7 +1163,7 @@
               </label>
             </div>
             <p class="hero-card-desc">Docks all active widgets inside a collapsible bar on the screen edge. Drag the tab to any viewport edge (left, right, top, bottom) to snap and position it.</p>
-            <label for="set-dock-position" class="qs-context-field"><span>Dock edge</span><select id="set-dock-position"><option value="bottom">Bottom</option><option value="top">Top</option><option value="left">Left</option><option value="right">Right</option></select></label>
+            <label for="set-dock-position" class="qs-context-field"><span>Dock edge</span><select id="set-dock-position" aria-label="Widget dock edge alignment position"><option value="bottom">Bottom</option><option value="top">Top</option><option value="left">Left</option><option value="right">Right</option></select></label>
             <div style="font-size: 0.78rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 6px 10px; margin-top: 4px; display: flex; align-items: center; gap: 6px; font-weight: 500;">
               <svg style="width: 14px; height: 14px; fill: none; stroke: #38bdf8; stroke-width: 2; flex-shrink: 0;" viewBox="0 0 24 24"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"></path></svg>
               <span>Hint: You can click & drag the dock bar pull tab to any edge of your screen on proxied pages!</span>
@@ -1183,7 +1183,7 @@
               <!-- Position Selector for Preview Test -->
               <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center;">
                 <label for="preview-dock-pos-select" style="font-size: 0.82rem; color: #cbd5e1; font-weight: 500;">Preview Edge Position:</label>
-                <select id="preview-dock-pos-select" style="padding: 6px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #38bdf8; font-weight: 600; font-size: 0.82rem; cursor: pointer;">
+                <select id="preview-dock-pos-select" aria-label="Preview dock edge position" style="padding: 6px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #38bdf8; font-weight: 600; font-size: 0.82rem; cursor: pointer;">
                   <option value="bottom">Bottom Edge (Default)</option>
                   <option value="top">Top Edge</option>
                   <option value="left">Left Edge</option>
@@ -1219,7 +1219,7 @@
         </div>
       </div>
 
-      <div class="hero-card" id="bookmark-updates"><button type="button" data-bookmark-updates aria-haspopup="dialog">Bookmark Updates</button><p style="margin-top:10px;color:#94a3b8;font-size:.82rem;line-height:1.6">Review new official links while keeping your personal layout.</p><p id="catalog-update-status" role="status" aria-live="polite"></p></div>
+      <div class="hero-card" id="bookmark-updates"><button type="button" data-bookmark-updates aria-label="Review Bookmark Updates catalog" aria-haspopup="dialog">Bookmark Updates</button><p style="margin-top:10px;color:#94a3b8;font-size:.82rem;line-height:1.6">Review new official links while keeping your personal layout.</p><p id="catalog-update-status" role="status" aria-live="polite"></p></div>
 
       <!-- Section 5: Granular Backup, Export & Import -->
       <div>
@@ -1299,7 +1299,7 @@
       <!-- Step 1: File Selection -->
       <div id="import-step-1" style="display: flex; flex-direction: column; gap: 12px;">
         <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Choose a Heavenly JSON backup file to restore bookmarks or settings:</p>
-        <input type="file" id="import-file-input" accept=".json" style="padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px dashed rgba(56, 189, 248, 0.4); border-radius: 14px; color: #cbd5e1; font-size: 0.88rem; cursor: pointer; width: 100%;" />
+        <input type="file" id="import-file-input" aria-label="Select JSON file to import bookmarks or settings" accept=".json" style="padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px dashed rgba(56, 189, 248, 0.4); border-radius: 14px; color: #cbd5e1; font-size: 0.88rem; cursor: pointer; width: 100%;" />
       </div>
 
       <!-- Step 2: Granular Item Selection & Mode Selection -->
@@ -1318,7 +1318,7 @@
 
         <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px solid rgba(148,163,184,0.15); padding-top: 10px;">
           <label for="import-mode-select" style="font-size: 0.85rem; font-weight: 600; color: #e0f2fe;">Import Mode:</label>
-          <select id="import-mode-select" style="width: 100%; padding: 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #f8fafc; font-family: inherit; font-size: 0.88rem;">
+          <select id="import-mode-select" aria-label="Select import mode" style="width: 100%; padding: 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; color: #f8fafc; font-family: inherit; font-size: 0.88rem;">
             <option value="merge">🔀 Merge with Existing Data (Add/update selected, keep current items)</option>
             <option value="overwrite">⚠️ Overwrite Existing Data (Replace current categories/settings with selected items)</option>
           </select>

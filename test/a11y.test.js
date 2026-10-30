@@ -112,4 +112,11 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('btnPreset.setAttribute(\'aria-selected\', mode === \'preset\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnPreset');
         assert.ok(html.includes('btnManual.setAttribute(\'aria-selected\', mode === \'manual\' ? \'true\' : \'false\')'), 'switchIconMode should dynamically set aria-selected for btnManual');
     });
+
+    it('should configure focus management and accessible labels for special links and bookmark editor controls', function() {
+        assert.ok(html.includes('function openSpecialLinksModal(categoryId) {') && html.includes('if (document.activeElement) lastFocusedElement = document.activeElement;'), 'openSpecialLinksModal should record active trigger element');
+        assert.ok(html.includes('(!document.activeElement.closest || !document.activeElement.closest(\'#special-links-modal\'))'), 'openEverythingMoeNoticeModal should preserve lastFocusedElement when opened from special links modal');
+        assert.ok(html.includes('id="btn-launch-live-picker"') && html.includes('aria-label="Launch Live Page Icon Picker"'), 'btn-launch-live-picker should have aria-label');
+        assert.ok(html.includes('id="btn-add-sub-bm"') && html.includes('aria-label="Add sub-bookmark mirror entry"'), 'btn-add-sub-bm should have aria-label');
+    });
 });

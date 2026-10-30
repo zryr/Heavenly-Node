@@ -168,4 +168,16 @@ describe('settings.html standalone page', function() {
         assert.ok(html.includes("var closeBtn = $('close-import-modal-btn');"), 'import modal open handler should query close button');
         assert.ok(html.includes('lastFocusedElement = document.activeElement;'), 'modal open handlers should record trigger element');
     });
+
+    it('should specify accessible labels on category limits, quick settings, import, and dock controls in settings.html', function() {
+        assert.ok(html.includes('id="customize-quick-settings-btn"') && html.includes('aria-label="Customize Quick Settings shortcut tray"'), 'customize-quick-settings-btn should specify aria-label');
+        assert.ok(html.includes('data-bookmark-updates') && html.includes('aria-label="Review Bookmark Updates catalog"'), 'bookmark-updates button should specify aria-label');
+        assert.ok(html.includes('id="set-bookmark-count-mode"') && html.includes('aria-label="Default bookmark count display mode"'), 'set-bookmark-count-mode should specify aria-label');
+        assert.ok(html.includes('id="set-bookmark-initial-limit"') && html.includes('aria-label="Default visible bookmarks count"'), 'set-bookmark-initial-limit should specify aria-label');
+        assert.ok(html.includes('id="reset-bookmark-section-limit"') && html.includes('aria-label="Reset section bookmark limit to global default"'), 'reset-bookmark-section-limit should specify aria-label');
+        assert.ok(html.includes('id="import-file-input"') && html.includes('aria-label="Select JSON file to import bookmarks or settings"'), 'import-file-input should specify aria-label');
+        assert.ok(html.includes('id="import-mode-select"') && html.includes('aria-label="Select import mode"'), 'import-mode-select should specify aria-label');
+        assert.ok(html.includes('id="set-dock-position"') && html.includes('aria-label="Widget dock edge alignment position"'), 'set-dock-position should specify aria-label');
+        assert.ok(html.includes('id="preview-dock-pos-select"') && html.includes('aria-label="Preview dock edge position"'), 'preview-dock-pos-select should specify aria-label');
+    });
 });
