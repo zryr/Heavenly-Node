@@ -69,10 +69,19 @@ describe('index.html accessibility and ARIA attributes', function() {
         assert.ok(html.includes('closeAddModal()'), 'Escape key handler should call closeAddModal when active');
     });
 
-    it('should configure focus management and restoration across share, notes, and test modals', function() {
+    it('should configure focus management and restoration across share, notes, sub-section, sub-bookmark, and test modals', function() {
         assert.ok(html.includes('function restoreLastFocus()'), 'index.html should define restoreLastFocus helper');
         assert.ok(html.includes('openShareModal') && html.includes('openSyshisNotesModal') && html.includes('openBuiltinTestModal'), 'modals should exist');
         assert.ok(html.includes('closeShareModal') && html.includes('closeSyshisNotesModal') && html.includes('closeBuiltinTestModal'), 'modal close handlers should exist');
+        assert.ok(html.includes('openEditSubSectionModal') && html.includes('closeSubSecModal'), 'sub-section modal open and close handlers should exist');
+        assert.ok(html.includes('openSubSecDeleteModal') && html.includes('closeSubSecDeleteModal'), 'sub-section delete modal open and close handlers should exist');
+        assert.ok(html.includes('openSubBmModal') && html.includes('closeSubBmModal'), 'sub-bookmark modal open and close handlers should exist');
+    });
+
+    it('should configure browse.html with aria-live="polite" and focusable return link', function() {
+        var browseHtml = fs.readFileSync(path.join(__dirname, '../public/browse.html'), 'utf8');
+        assert.ok(browseHtml.includes('aria-live="polite"'), 'browse-message should specify aria-live="polite"');
+        assert.ok(browseHtml.includes('Return to Heavenly'), 'browse.html should contain Return to Heavenly link');
     });
 
     it('should configure bookmark search clear button with aria-label, title, and Escape key dismiss handling', function() {

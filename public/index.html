@@ -6724,6 +6724,7 @@
     }
 
     function openEditSubSectionModal(catId, subSecId) {
+      if (document.activeElement) lastFocusedElement = document.activeElement;
       var data = loadBookmarkData();
       var cat = data.categories.find(function (c) { return c.id === catId; });
       if (!cat || !cat.subSections) return;
@@ -6743,6 +6744,10 @@
 
       var modal = $('subsec-modal');
       if (modal) HeavenlyDialogs.open(modal);
+      setTimeout(function () {
+        var inp = $('subsec-edit-title-input');
+        if (inp) inp.focus();
+      }, 50);
     }
 
     function closeSubSecModal() {
@@ -6752,9 +6757,11 @@
       $('subsec-edit-sec-id').value = '';
       $('subsec-edit-title-input').value = '';
       selectedSubSecIconId = '';
+      restoreLastFocus();
     }
 
     function openSubSecDeleteModal(catId, subSecId) {
+      if (document.activeElement) lastFocusedElement = document.activeElement;
       var data = loadBookmarkData();
       var cat = data.categories.find(function (c) { return c.id === catId; });
       if (!cat || !cat.subSections) return;
@@ -6766,6 +6773,10 @@
       $('subsec-delete-warning-text').innerHTML = 'Are you sure you want to delete <strong style="color: #38bdf8;">' + escapeHtml(subSec.title) + '</strong>? Any bookmarks inside will be moved to <strong style="color: #38bdf8;">Your Bookmarks</strong>.';
       var deleteModal = $('subsec-delete-modal');
       if (deleteModal) HeavenlyDialogs.open(deleteModal);
+      setTimeout(function () {
+        var btn = $('cancel-subsec-delete-btn');
+        if (btn) btn.focus();
+      }, 50);
     }
 
     function closeSubSecDeleteModal() {
@@ -6773,9 +6784,11 @@
       if (deleteModal) HeavenlyDialogs.close(deleteModal);
       $('subsec-delete-cat-id').value = '';
       $('subsec-delete-sec-id').value = '';
+      restoreLastFocus();
     }
 
     function openSubBmModal(parentBmId, subIdx, subItem) {
+      if (document.activeElement) lastFocusedElement = document.activeElement;
       $('sub-bm-parent-id').value = parentBmId || '';
       $('sub-bm-idx').value = subIdx !== undefined && subIdx !== null ? subIdx : '';
       $('sub-bm-title-input').value = subItem ? (subItem.title || '') : '';
@@ -6785,6 +6798,10 @@
 
       var modal = $('sub-bm-modal');
       if (modal) HeavenlyDialogs.open(modal);
+      setTimeout(function () {
+        var inp = $('sub-bm-title-input');
+        if (inp) inp.focus();
+      }, 50);
     }
 
     function closeSubBmModal() {
@@ -6795,6 +6812,7 @@
       $('sub-bm-title-input').value = '';
       $('sub-bm-url-input').value = '';
       $('sub-bm-icon-input').value = '';
+      restoreLastFocus();
     }
 
     function closeAddModal() {
@@ -6809,12 +6827,7 @@
       $('bm-url').value = '';
       $('bm-custom-icon-url').value = '';
       $('cat-title').value = '';
-
-      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
-        try {
-          lastFocusedElement.focus();
-        } catch (e) {}
-      }
+      restoreLastFocus();
     }
 
     function setupContainerDropTarget(containerEl, sideName) {

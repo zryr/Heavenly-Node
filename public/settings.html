@@ -1188,7 +1188,7 @@
               var st = loadSettings();
               st.selectedPreset = k;
               saveSettings(st);
-              closePresetDropdown();
+              closePresetDropdown(true);
               syncSettingsToUI();
               syncCloak();
             };
@@ -1349,7 +1349,7 @@
       });
     }
 
-    function closePresetDropdown() {
+    function closePresetDropdown(restoreFocus) {
       var menu = $('custom-preset-menu');
       var arrow = $('custom-preset-arrow');
       var btn = $('custom-preset-btn');
@@ -1358,6 +1358,7 @@
       if (btn) {
         btn.setAttribute('aria-expanded', 'false');
         btn.style.borderColor = 'rgba(56, 189, 248, 0.35)';
+        if (restoreFocus) btn.focus();
       }
     }
 
@@ -1412,7 +1413,7 @@
           } else if (importModal && importModal.classList.contains('active')) {
             closeImportModal();
           } else if (presetMenu && presetMenu.style.display === 'flex') {
-            closePresetDropdown();
+            closePresetDropdown(true);
           }
         }
       });
