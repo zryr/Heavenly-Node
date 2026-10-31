@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "imagesDecoded": 43,
+  "enlargementCycles": 43,
+  "navigationLinks": 8,
+  "viewports": [
+    [
+      1440,
+      1000
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "browser": "154.0.8037.57",
+  "videoMetadata": true,
+  "pageErrors": []
+}

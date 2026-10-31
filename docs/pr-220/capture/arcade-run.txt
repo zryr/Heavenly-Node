@@ -1,0 +1,15 @@
+PASS chromium Games opens integrated hub; exact categories, real Newgrounds, Coming Soon and thumbnail-free cards
+PASS chromium Details and favorites are distinct from Play; per-ID Direct and New Tab persist
+PASS chromium Actual Direct and Proxy Play each open exactly one controlled destination tab; other games keep their choice
+PASS chromium Personal game editor saves actual record and note; Quick Save creates icon/name/membership atomically
+PASS chromium Quick Save Cancel leaves storage unchanged; destination search and Already saved prevent duplicates
+PASS chromium Collections create/edit/icon/one-level nested placement use stable identities
+PASS chromium Multi-select adds shared items, independent collection order changes through keyboard-accessible controls
+PASS chromium Collapsed items remain searchable; merge preview deduplicates memberships and retains distinct records
+PASS chromium Collection deletion keeps items and guarded Undo restores relationships
+PASS chromium Reload preserves curated/personal favorites, notes and collection order
+PASS chromium Arcade fits Chromebook, tablet portrait/landscape and 320/390 phone; small screens expose collection drawer
+PASS chromium Same memberships are discoverable from homepage unified search and bookmark Collections
+PASS chromium Ao Oni and Khezu only open on activation; all five scene portraits load with correct styles and exact final lines
+PASS chromium Reduced motion reveals the whole line and Escape exits first-time scenes
+PASS chromium Real proxy Quick Save widget opens shared searchable dialog, saves as game and keeps browsing context
