@@ -88,8 +88,12 @@
   function search(data, query) {
     var words = text(query).trim().split(/\s+/).filter(Boolean), results = [];
     if (!words.length) return results;
+    // Adapted from Bolt #216: group once rather than scanning B bookmarks C times.
+    var grouped=Object.create(null), membershipNames=Object.create(null);
+    (data.bookmarks||[]).forEach(function(b){if(!grouped[b.categoryId])grouped[b.categoryId]=[];grouped[b.categoryId].push(b);});
+    (data._collections?.collections||[]).forEach(function(c){c.itemIds.forEach(function(id){if(!membershipNames[id])membershipNames[id]=[];membershipNames[id].push(c.title);});});
     (data.categories || []).filter(function (category) { return !category.hidden; }).sort(function (a, b) { return (a.order || 0) - (b.order || 0); }).forEach(function (category) {
-      (data.bookmarks || []).filter(function (bookmark) { return !bookmark.hidden && bookmark.categoryId === category.id; }).sort(function (a, b) { return (a.order || 0) - (b.order || 0); }).forEach(function (bookmark) {
+      (grouped[category.id] || []).filter(function (bookmark) { return !bookmark.hidden; }).sort(function (a, b) { return (a.order || 0) - (b.order || 0); }).forEach(function (bookmark) {
         var subsectionId = bookmark.subSectionId || (bookmark.builtIn ? 'builtin' : 'user');
         var subsection = (category.subSections || []).find(function (section) { return section.id === subsectionId; });
         if (subsection && subsection.hidden) return;
@@ -98,7 +102,7 @@
           if (entry.hidden) return;
           var parent = ancestors[ancestors.length - 1] || null;
           var names = ancestors.map(function (ancestor) { return ancestor.title; });
-          var parts = context.concat(names, [entry.title, entry.url]);
+          var parts = context.concat(names, [entry.title, entry.url], membershipNames[entry.id]||[]);
           var haystack = text(parts.join(' '));
           if (words.every(function (word) { return haystack.indexOf(word) !== -1; })) {
             results.push({ entry: entry, parent: parent, category: category, subsectionId: subsectionId, context: context.concat(names).filter(Boolean).join(' / ') });
@@ -108,6 +112,11 @@
         visit(bookmark, []);
       });
     });
+    if(data._collections){
+      var found=new Set(results.map(function(r){return r.entry.id;}));
+      function retained(entries,parent,category){(entries||[]).forEach(function(e){var contexts=membershipNames[e.id];if(contexts&&!found.has(e.id)&&words.every(function(w){return text([e.title,e.url].concat(contexts).join(' ')).indexOf(w)!==-1;})){results.push({entry:e,parent:parent,category:category,subsectionId:e.subSectionId||'user',context:contexts.join(' / ')});found.add(e.id);}retained(e.subBookmarks,e,category);});}
+      (data.bookmarks||[]).forEach(function(e){var c=(data.categories||[]).find(function(c){return c.id===e.categoryId;})||{id:e.categoryId,title:'Saved links'};retained([e],null,c);});
+    }
     return results;
   }
   function initSearch(options) {

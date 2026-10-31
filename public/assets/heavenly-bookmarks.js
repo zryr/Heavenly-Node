@@ -72,6 +72,7 @@
     return copy;
   }
   function preserveStoredNotes(incoming, saved) {
+    if(saved._collections) incoming._collections=JSON.parse(JSON.stringify(saved._collections));
     visit(incoming, function (entry) {
       var previous = findEntry(saved, entry.id);
       if (!previous) return;
@@ -83,11 +84,11 @@
     return incoming;
   }
   // Local choices refer to identities, never rewrite catalog destinations or child order.
-  function mirrorIdentity(entry) {
-    return entry.source === 'main' ? 'main' : entry.id ? 'id:' + entry.id : 'url:' + navigation.bookmarkKey(entry.url);
+  function mirrorIdentity(entry, key) {
+    return entry.source === 'main' ? 'main' : entry.id ? 'id:' + entry.id : 'url:' + (key === undefined ? navigation.bookmarkKey(entry.url) : key);
   }
-  function eligibleMirror(entry) {
-    var key = navigation.bookmarkKey(entry.url);
+  function eligibleMirror(entry, key) {
+    if(key === undefined) key = navigation.bookmarkKey(entry.url);
     if (!key || entry.hidden || entry.type === 'folder' || entry.mirrorEligible === false) return false;
     // The catalog intentionally includes asset-style destinations. Eligibility is explicit, not guessed from a suffix.
     return true;
@@ -96,13 +97,12 @@
     brokenMap = brokenMap || {};
     var original = { title: bookmark ? bookmark.title : title, url: bookmark && bookmark.url || url, source: 'main', mirrorEligible: bookmark && bookmark.mirrorEligible, catalogPreviousUrls: bookmark && bookmark.catalogPreviousUrls };
     var seen = Object.create(null), brokenKeys = Object.create(null);
-    Object.keys(brokenMap).forEach(function (url) { if (brokenMap[url]) brokenKeys[navigation.bookmarkKey(url)] = true; });
-    var entries = [original].concat(bookmark && bookmark.subBookmarks || []).filter(function (entry) {
-      var key = navigation.bookmarkKey(entry.url);
-      if (!key || seen[key]) return false;
-      seen[key] = true; return true;
-    }).map(function (entry) {
-      return Object.assign({}, entry, { identity: mirrorIdentity(entry), eligible: eligibleMirror(entry), isBroken: !!brokenKeys[navigation.bookmarkKey(entry.url)] || (entry.catalogPreviousUrls || []).some(function(url){return !!brokenKeys[navigation.bookmarkKey(url)];}) });
+    // Adapted from Bolt #212/#215; preserve own-property security semantics.
+    for(var report in brokenMap) if(Object.prototype.hasOwnProperty.call(brokenMap,report)&&brokenMap[report]) brokenKeys[navigation.bookmarkKey(report)]=true;
+    var entries=[];
+    [original].concat(bookmark && bookmark.subBookmarks || []).forEach(function(entry){
+      var key=navigation.bookmarkKey(entry.url);if(!key||seen[key])return;seen[key]=true;
+      entries.push(Object.assign({},entry,{identity:mirrorIdentity(entry,key),eligible:eligibleMirror(entry,key),isBroken:!!brokenKeys[key]||(entry.catalogPreviousUrls||[]).some(function(url){return !!brokenKeys[navigation.bookmarkKey(url)];})}));
     });
     var saved = bookmark && bookmark.mirrorPreferences || {};
     var eligible = entries.filter(function (entry) { return entry.eligible; });
@@ -184,7 +184,7 @@
     return JSON.parse(JSON.stringify(payload, function (key, value) {
       // Private update decisions and migration recovery archives never belong in
       // public share codes, even when a caller supplies a complete backup.
-      if (key === '_catalog') return undefined;
+      if (key === '_catalog' || key === '_collections') return undefined;
       if (key === 'mirrorPreferences') return undefined;
       if (key === 'personalNote') return includeNotes === true && selected.has(this) && typeof value === 'string' ? value.slice(0, 4000) : undefined;
       return value;
@@ -198,6 +198,6 @@
     });
     return data;
   }
-  return { eligibleMirror: eligibleMirror, saveMirrorPreferences: saveMirrorPreferences, chooseMirror: chooseMirror, reorderMirrors: reorderMirrors, shareableData: shareableData, mirrorState: mirrorState, mergeSharedNotes: mergeSharedNotes, supportsQuickSave: supportsQuickSave, findQuickSaveBookmark: findQuickSaveBookmark, setQuickSavePreference: setQuickSavePreference,
+  return { visit:visit, eligibleMirror: eligibleMirror, saveMirrorPreferences: saveMirrorPreferences, chooseMirror: chooseMirror, reorderMirrors: reorderMirrors, shareableData: shareableData, mirrorState: mirrorState, mergeSharedNotes: mergeSharedNotes, supportsQuickSave: supportsQuickSave, findQuickSaveBookmark: findQuickSaveBookmark, setQuickSavePreference: setQuickSavePreference,
     preserveStoredNotes: preserveStoredNotes, findEntry: findEntry, noteFor: noteFor, saveNote: saveNote, importBookmark: importBookmark, publicSharePayload: publicSharePayload };
 });

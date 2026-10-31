@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "catalogVersion": "2026.10.27.1",
+  "catalogVersion": "2026.10.31.1",
   "categories": [
     {
       "id": "cat_movies",
@@ -238,21 +238,21 @@
       "parentId": null,
       "categoryId": "cat_games",
       "subSectionId": "builtin",
-      "order": 2
+      "order": 3
     },
     {
       "id": "bm_grind1",
       "parentId": null,
       "categoryId": "cat_games",
       "subSectionId": "builtin",
-      "order": 3
+      "order": 4
     },
     {
       "id": "bm_gn_math",
       "parentId": null,
       "categoryId": "cat_games",
       "subSectionId": "builtin",
-      "order": 4
+      "order": 2
     },
     {
       "id": "bm_history_minds",

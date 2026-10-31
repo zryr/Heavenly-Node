@@ -2233,6 +2233,7 @@
           var dx = currentX - startX;
           var dy = currentY - startY;
 
+          if(!saveHeld){if(Math.hypot(dx,dy)>8)onSaveEnd();return;}
           if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
             hasMoved = true;
             widgetElement.classList.add('dragging');
@@ -4026,17 +4027,18 @@
         bar.className = 'save-bar';
 
         // Make quick-save widget draggable across screen with movement threshold
-        var isDraggingSave = false;
+        var isDraggingSave = false, saveHoldTimer=null, saveHeld=false;
         var hasMovedSave = false;
         var startX = 0, startY = 0;
         var startLeft = 0, startTop = 0;
 
         var onSaveStart = function (e) {
-          if (e.target && e.target.classList && e.target.classList.contains('close-btn')) return;
+          if (!e.target.closest || !e.target.closest('.save-grip')) return;
           var touch = e.touches ? e.touches[0] : e;
           if (!touch) return;
 
           isDraggingSave = true;
+          saveHeld=!e.touches;if(e.touches)saveHoldTimer=setTimeout(function(){saveHeld=true;},420);
           hasMovedSave = false;
           startX = touch.clientX;
           startY = touch.clientY;
@@ -4049,6 +4051,7 @@
           window.addEventListener('mouseup', onSaveEnd, { capture: true });
           window.addEventListener('touchmove', onSaveMove, { passive: false, capture: true });
           window.addEventListener('touchend', onSaveEnd, { capture: true });
+          window.addEventListener('touchcancel',onSaveEnd,true);window.addEventListener('pointercancel',onSaveEnd,true);window.addEventListener('blur',onSaveEnd);window.addEventListener('keydown',onSaveKey,true);
         };
 
         var onSaveMove = function (e) {
@@ -4059,6 +4062,7 @@
           var dx = touch.clientX - startX;
           var dy = touch.clientY - startY;
 
+          if(!saveHeld){if(Math.hypot(dx,dy)>8)onSaveEnd();return;}
           if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
             hasMovedSave = true;
             if (e.cancelable) e.preventDefault();
@@ -4076,7 +4080,9 @@
           }
         };
 
+        var onSaveKey=function(e){if(e.key==='Escape')onSaveEnd();};
         var onSaveEnd = function () {
+          clearTimeout(saveHoldTimer);saveHeld=false;
           if (isDraggingSave && hasMovedSave) {
             try {
               var rect = saveContainer.getBoundingClientRect();
@@ -4088,6 +4094,7 @@
           window.removeEventListener('mouseup', onSaveEnd, { capture: true });
           window.removeEventListener('touchmove', onSaveMove, { capture: true });
           window.removeEventListener('touchend', onSaveEnd, { capture: true });
+          window.removeEventListener('touchcancel',onSaveEnd,true);window.removeEventListener('pointercancel',onSaveEnd,true);window.removeEventListener('blur',onSaveEnd);window.removeEventListener('keydown',onSaveKey,true);
         };
 
         saveContainer.__heavenlyCleanup = onSaveEnd;
@@ -4107,24 +4114,8 @@
           var activeSettings = loadHeavenlySettings(window);
           if (activeSettings.disableAllWidgets || activeSettings.disableAllFeatures) { removeWidget(); return; }
           var title = window.__heavenlyOriginalTitle || window.document.title || targetUrl;
-          var customTitle = prompt("Save page to folder '" + matchedFolder.title + "':", title);
-          if (customTitle === null) return;
+          if (window.HeavenlySaveUI) window.HeavenlySaveUI.open({url:targetUrl,title:title,kind:matchedFolder.categoryId==='cat_games'?'game':'bookmark',collectionId:'legacy_folder_'+matchedFolder.id});
 
-          var freshRaw = storage.getItem('heavenly_bookmarks');
-          var freshData = freshRaw ? JSON.parse(freshRaw) : data;
-          var targetBm = freshData.bookmarks.find(function (b) { return b.id === matchedFolder.id; });
-          if (targetBm && targetBm.disableQuickSaveWidget !== true) {
-            if (navigation.findBookmarkByUrl(freshData, targetUrl)) { window.alert('This page is already saved in your bookmarks.'); return; }
-            if (!targetBm.subBookmarks) targetBm.subBookmarks = [];
-            targetBm.subBookmarks.push({
-              id: 'sub_' + Date.now(),
-              title: customTitle.trim() || title,
-              url: targetUrl,
-              icon: ''
-            });
-            storage.setItem('heavenly_bookmarks', JSON.stringify(freshData));
-            goHeavenlyHome(window, config);
-          }
         };
 
         var closeBtn = window.document.createElement('button');
@@ -4136,7 +4127,8 @@
           removeWidget();
         };
 
-        bar.appendChild(btn);
+        var saveGrip=window.document.createElement('button');saveGrip.type='button';saveGrip.className='save-grip';saveGrip.textContent='⠶';saveGrip.setAttribute('aria-label','Hold and drag Quick Save');saveGrip.style.cssText='touch-action:pan-y;background:none;border:0;color:#b5c5dd;min-width:32px;min-height:36px;font-size:20px;cursor:grab';
+        bar.appendChild(saveGrip);bar.appendChild(btn);
         bar.appendChild(closeBtn);
 
         shadow.appendChild(style);

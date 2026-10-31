@@ -1,8 +1,8 @@
 /* One canonical built-in catalog and review engine for all bookmark readers. */
 (function(root,factory){
-  if(typeof module==='object' && module.exports) module.exports=factory(require('./heavenly-navigation'),require('./heavenly-official-order'));
-  else root.HeavenlyCatalog=factory(root.HeavenlyNavigation,root.HeavenlyOfficialOrder);
-}(typeof self!=='undefined'?self:this,function(navigation,officialOrder){
+  if(typeof module==='object' && module.exports) module.exports=factory(require('./heavenly-navigation'),require('./heavenly-official-order'),require('./heavenly-collections'));
+  else root.HeavenlyCatalog=factory(root.HeavenlyNavigation,root.HeavenlyOfficialOrder,root.HeavenlyCollections);
+}(typeof self!=='undefined'?self:this,function(navigation,officialOrder,collections){
   'use strict';
   var defaults = {
   "categories": [
@@ -1204,7 +1204,7 @@
   // The small reviewed order manifest is the editor's repository-compatible source.
   // Content stays here; generated bridge changes default layout only, never saved data.
   applyOfficialOrder(defaults, officialOrder);
-  var release = { version: officialOrder.catalogVersion, date: '2026-10-27', summary: 'Budsin Games joins Games, with two additional Arctic mirrors. Your preferred links, notes and personal layout are kept.', data: defaults };
+  var release = { version: officialOrder.catalogVersion, date: '2026-10-31', summary: 'Heavenly Arcade and shared Collections keep your personal games, favorites and launch choices. GN Math appears above SitesDotCom in official order.', data: defaults };
   var key = 'heavenly_bookmarks';
   var fields = ['title', 'url', 'icon', 'type', 'categoryId', 'subSectionId', 'side', 'defaultCollapsed', 'disableQuickSaveWidget', 'mirrorEligible', 'order'];
   var personal = ['categoryId', 'subSectionId', 'side', 'disableQuickSaveWidget', 'order'];
@@ -1579,6 +1579,7 @@
   function load(storage, bundled) {
     bundled = bundled || release;
     var raw = storage.getItem(key), data = raw === null ? fresh(bundled) : prepare(JSON.parse(raw), bundled);
+    if(collections) data=collections.prepare(data);
     var serialized = JSON.stringify(data);
     if (raw !== serialized) storage.setItem(key, serialized);
     return data;

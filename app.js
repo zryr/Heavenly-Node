@@ -293,7 +293,7 @@ var unblockerConfig = {
 
 // Bundle the shared browser helpers before the proxy client (no build tool required).
 var fs = require('fs');
-var unblockerClientBundle = fs.readFileSync(__dirname + '/public/assets/heavenly-icons.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-navigation.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-bookmarks.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-official-order.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-catalog.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/custom-client/unblocker-client.js', 'utf8');
+var unblockerClientBundle = fs.readFileSync(__dirname + '/public/assets/heavenly-icons.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-navigation.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-bookmarks.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-official-order.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-collections.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-catalog.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/public/assets/heavenly-save-ui.js', 'utf8') + '\n' + fs.readFileSync(__dirname + '/custom-client/unblocker-client.js', 'utf8');
 app.get('/proxy/client/unblocker-client.js', function(req, res) {
     res.type('application/javascript').send(unblockerClientBundle);
 });

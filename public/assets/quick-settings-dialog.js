@@ -7,6 +7,7 @@
     function close() {
       if (modal.hidden) return;
       modal.hidden = true;
+      if(previous&&previous.setAttribute)previous.setAttribute('aria-expanded','false');
       doc.body.style.overflow = overflow;
       background.forEach(function (saved) {
         saved.node.inert = saved.inert;
@@ -21,6 +22,7 @@
     function open(trigger) {
       if (!modal.hidden) return;
       previous = trigger || doc.activeElement; previousId = previous && previous.id;
+      if(previous&&previous.setAttribute)previous.setAttribute('aria-expanded','true');
       overflow = doc.body.style.overflow;
       modal.hidden = false; doc.body.style.overflow = 'hidden';
       background = Array.from(doc.body.children).filter(function (node) { return node !== modal && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE'; }).map(function (node) {
