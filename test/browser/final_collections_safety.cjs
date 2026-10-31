@@ -152,13 +152,11 @@ const pass = (s) => {
   );
   const importFile = async (data, mode = "merge") => {
     await p.locator("#open-import-modal-btn").click();
-    await p
-      .locator("#import-file-input")
-      .setInputFiles({
-        name: "collections.json",
-        mimeType: "application/json",
-        buffer: Buffer.from(JSON.stringify(data)),
-      });
+    await p.locator("#import-file-input").setInputFiles({
+      name: "collections.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(JSON.stringify(data)),
+    });
     await p.locator("#import-mode-select").selectOption(mode);
     if (mode === "overwrite") p.once("dialog", (d) => d.accept());
     await p.locator("#apply-import-btn").click();
@@ -269,6 +267,53 @@ const pass = (s) => {
   );
   pass(
     "Concurrent item edits preserve the open unsaved draft and refuse to overwrite newer saved content",
+  );
+  await p.keyboard.press("Escape");
+  await p.evaluate(() => {
+    HeavenlyCollections.transact(localStorage, (d) => {
+      const e = HeavenlyCollections.entry(d, "bm_gn_math");
+      e.title = "My math name";
+      e.url = "https://personal.heavenly.test/math";
+      e.icon = "☁";
+      e.personalNote = "My retained note";
+      HeavenlyCollections.setPreference(d, e.id, {
+        mode: "direct",
+        favorite: true,
+      });
+      d._catalog.decisions["audit-retained-choice"] = "skipped";
+    });
+  });
+  await p.goto(origin + "/settings.html");
+  await p.locator("#heavenly-loading-screen").waitFor({ state: "hidden" });
+  await revealSettingsControl(p, "#reset-builtin-bookmarks-btn");
+  p.once("dialog", (d) => d.accept());
+  await p.locator("#reset-builtin-bookmarks-btn").click();
+  assert.deepEqual(
+    await p.evaluate(() => {
+      const d = HeavenlySaveUI.load(),
+        e = HeavenlyCollections.entry(d, "bm_gn_math");
+      return {
+        title: e.title,
+        url: e.url,
+        icon: e.icon,
+        note: e.personalNote,
+        mode: HeavenlyCollections.preference(d, e.id).mode,
+        favorite: HeavenlyCollections.preference(d, e.id).favorite,
+        decision: d._catalog.decisions["audit-retained-choice"],
+      };
+    }),
+    {
+      title: "My math name",
+      url: "https://personal.heavenly.test/math",
+      icon: "☁",
+      note: "My retained note",
+      mode: "direct",
+      favorite: true,
+      decision: "skipped",
+    },
+  );
+  pass(
+    "Actual Reset built-ins retains user title, URL, icon, note, favorite, launch choice and catalog decision",
   );
   assert.deepEqual(result.errors, []);
   result.status = "passed";

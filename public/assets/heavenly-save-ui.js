@@ -107,6 +107,40 @@
     // Escape belongs to the top dialog, before homepage shortcut handlers.
     function key(e) {
       if (
+        e.key === "Tab" &&
+        d.open &&
+        host === Array.from(doc.querySelectorAll(".hn-dialog-host")).pop()
+      ) {
+        var controls = Array.from(
+          d.querySelectorAll(
+            'button,a[href],input,select,textarea,summary,[tabindex="0"]',
+          ),
+        ).filter(function (n) {
+          return (
+            !n.disabled &&
+            !n.hidden &&
+            !n.closest("[hidden],[inert]") &&
+            n.getClientRects().length
+          );
+        });
+        var first = controls[0],
+          last = controls[controls.length - 1],
+          current = shadow.activeElement;
+        if (
+          !first ||
+          (e.shiftKey && (current === first || !d.contains(current))) ||
+          (!e.shiftKey && (current === last || !d.contains(current)))
+        ) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          if (first) (e.shiftKey ? last : first).focus();
+          else {
+            d.tabIndex = -1;
+            d.focus();
+          }
+        }
+      }
+      if (
         e.key === "Escape" &&
         d.open &&
         host === Array.from(doc.querySelectorAll(".hn-dialog-host")).pop()
@@ -196,6 +230,11 @@
             selected = c.id;
             createDraft = false;
             fresh.open = false;
+            if (editExisting) {
+              editName.value = c.title;
+              editIcon.value = c.icon || "✦";
+              editExisting.hidden = false;
+            }
           };
           var text = el("span", (c.icon || "✦") + " " + c.title);
           if (e && c.itemIds.includes(e.id))
@@ -229,10 +268,37 @@
     fresh.ontoggle = function () {
       if (fresh.open) {
         createDraft = true;
+        editExisting.open = false;
         destinations();
       }
     };
     body.append(fresh);
+    var selectedCollection = data._collections.collections.find(function (c) {
+      return c.id === selected;
+    });
+    var editExisting = el("details");
+    editExisting.append(el("summary", "Edit selected collection"));
+    var editName = field(
+        editExisting,
+        "Destination name",
+        "text",
+        selectedCollection?.title || "",
+      ),
+      editIcon = field(
+        editExisting,
+        "Destination icon",
+        "text",
+        selectedCollection?.icon || "✦",
+      );
+    editExisting.hidden = !selectedCollection;
+    editExisting.ontoggle = function () {
+      if (editExisting.open) {
+        fresh.open = false;
+        createDraft = false;
+        destinations();
+      }
+    };
+    body.append(editExisting);
     var status = el("p", "", "status");
     status.setAttribute("role", "status");
     body.append(status);
@@ -250,6 +316,18 @@
                 url: url.value,
                 kind: kind.value,
                 collectionId: selected,
+                collectionEdit:
+                  editExisting.open && !fresh.open
+                    ? {
+                        title: editName.value,
+                        icon: editIcon.value,
+                        expected: JSON.stringify(
+                          data._collections.collections.find(function (c) {
+                            return c.id === selected;
+                          }),
+                        ),
+                      }
+                    : null,
                 newCollection: fresh.open
                   ? {
                       title: newName.value,
@@ -281,7 +359,12 @@
             var message = el("span", savedText);
             message.setAttribute("role", "status");
             isolated.append(message);
-            doc.body.append(notice);
+            var parentHost = Array.from(
+              doc.querySelectorAll(".hn-dialog-host"),
+            ).pop();
+            var parentDialog =
+              parentHost && parentHost.shadowRoot.querySelector("dialog[open]");
+            (parentDialog || doc.body).append(notice);
             root.setTimeout(function () {
               notice.remove();
             }, 3000);

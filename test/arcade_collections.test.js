@@ -400,3 +400,115 @@ describe("Shared Arcade Collections data and safe migration", function () {
     );
   });
 });
+
+describe("Collection recovery and shared controls", function () {
+  it("keeps moved curated games discoverable and inherits legacy folder launch mode", function () {
+    const d = fixtures();
+    d.bookmarks.find((e) => e.id === "bm_gamebois").categoryId = "study";
+    const folder = d.bookmarks.find((e) => e.id === "legacy_b");
+    folder.launchPreference = "direct";
+    const saved = M.prepare(d);
+    assert(M.items(saved, "game").some((e) => e.id === "bm_gamebois"));
+    assert.equal(M.preference(saved, "different").mode, "direct");
+  });
+  it("lets a user separate an exact-URL legacy version without losing its original note", function () {
+    const d = M.prepare(fixtures());
+    assert.equal(M.entry(d, "game_b").id, "game_a");
+    const e = M.separateAlias(d, "game_b");
+    assert.equal(e.personalNote, "Other note");
+    assert.equal(M.entry(d, "game_b").id, "game_b");
+    assert(M.items(d, "game").some((e) => e.id === "game_b"));
+    assert(
+      M.memberships(d, "game_b").some((c) => c.id === "legacy_folder_legacy_b"),
+    );
+    assert.deepEqual(M.prepare(d), d);
+  });
+  it("syncs mode and favorite choices made through existing bookmark controls", function () {
+    const d = fresh();
+    M.setPreference(d, "bm_gamebois", { mode: "proxy", favorite: true });
+    const e = M.entry(d, "bm_gamebois");
+    e.launchPreference = "direct";
+    e.favorite = false;
+    assert.equal(M.preference(d, e.id).mode, "direct");
+    assert.equal(M.preference(d, e.id).favorite, false);
+  });
+  it("rejects duplicate collection names only in the same parent", function () {
+    const d = fresh(),
+      p = M.create(d, { title: "Parent" });
+    M.create(d, { title: "Unique" });
+    assert.throws(() => M.create(d, { title: "UNIQUE" }), /already exists/);
+    assert(M.create(d, { title: "Unique", parentId: p.id }));
+  });
+  it("atomically saves collection name/icon edits with Quick Save and rejects stale destination edits", function () {
+    const s = storage(fresh());
+    const tx = M.transact(s, (d) => {
+      const c = M.create(d, { title: "Before" });
+      return M.quickSave(d, {
+        title: "Page",
+        url: "https://personal.test/atomic",
+        collectionId: c.id,
+        collectionEdit: {
+          title: "After",
+          icon: "☁",
+          expected: JSON.stringify(c),
+        },
+      });
+    });
+    assert.equal(tx.result.collection.title, "After");
+    assert.equal(tx.result.collection.icon, "☁");
+    const before = s.getItem();
+    assert.throws(
+      () =>
+        M.transact(s, (d) =>
+          M.quickSave(d, {
+            id: tx.result.item.id,
+            collectionId: tx.result.collection.id,
+            collectionEdit: { title: "Stale", icon: "x", expected: "old" },
+          }),
+        ),
+      /changed/,
+    );
+    assert.equal(s.getItem(), before);
+  });
+});
+
+describe("Explicit default layout restoration", function () {
+  it("keeps personal names, links, icons, descendants, collections and catalog decisions", function () {
+    const d = fresh(),
+      e = M.entry(d, "bm_gn_math");
+    e.title = "My math";
+    e.url = "https://custom-math.test/";
+    e.icon = "☁";
+    e.personalNote = "Keep my note";
+    M.setPreference(d, e.id, { mode: "direct", favorite: true });
+    const c = M.create(d, { title: "My custom shelf" });
+    M.add(d, c.id, [e.id]);
+    d.categories[0].subSections.push({
+      id: "custom_section",
+      title: "My section",
+    });
+    const parent = M.entry(d, "bm_individual_games");
+    parent.subBookmarks.push({
+      id: "my_nested",
+      title: "Nested personal game",
+      url: "https://personal.test/nested",
+    });
+    d._catalog.decisions.kept = "skipped";
+    const restored = M.restoreDefaults(d, C.fresh());
+    assert.equal(M.entry(restored, e.id).title, e.title);
+    assert.equal(M.entry(restored, e.id).url, e.url);
+    assert.equal(M.entry(restored, e.id).icon, e.icon);
+    assert.equal(M.entry(restored, e.id).personalNote, e.personalNote);
+    assert.equal(M.preference(restored, e.id).mode, "direct");
+    assert(M.preference(restored, e.id).favorite);
+    assert(M.entry(restored, "my_nested"));
+    assert(
+      restored.categories[0].subSections.some((s) => s.id === "custom_section"),
+    );
+    assert.deepEqual(
+      restored._collections.collections.find((x) => x.id === c.id),
+      c,
+    );
+    assert.equal(restored._catalog.decisions.kept, "skipped");
+  });
+});

@@ -320,7 +320,13 @@
       })
       .filter(function (e) {
         var id = canonical(data, e.id);
-        if (seen.has(id) || id !== e.id || !safeUrl(e.url)) return false;
+        if (
+          seen.has(id) ||
+          id !== e.id ||
+          e.type === "folder" ||
+          (!safeUrl(e.url) && !games.has(id))
+        )
+          return false;
         seen.add(id);
         return kind !== "game" || games.has(id);
       });
@@ -553,7 +559,12 @@
     e.title = title(values.title);
     e.url = url;
     e.description = String(values.description || "").slice(0, 2000);
-    e.icon = icon(values.icon);
+    if (values.icon !== e.icon) {
+      var itemIcon = String(values.icon || "").trim();
+      if (itemIcon.length > 2048)
+        throw new Error("Choose a shorter icon URL or an emoji.");
+      e.icon = itemIcon || "✦";
+    }
     e.kind = values.kind === "game" ? "game" : "bookmark";
     if (e.kind === "game" && !data._collections.gameIds.includes(e.id))
       data._collections.gameIds.push(e.id);
@@ -563,6 +574,10 @@
     return e;
   }
   function quickSave(data, values) {
+    if (!values.id && !safeUrl(values.url))
+      throw new Error(
+        "Enter a complete http or https URL without credentials.",
+      );
     var e = values.id && entry(data, values.id),
       match =
         !e &&
@@ -574,6 +589,20 @@
     var c = values.newCollection
       ? create(data, values.newCollection)
       : collection(data, values.collectionId);
+    if (!values.newCollection && values.collectionEdit) {
+      if (
+        values.collectionEdit.expected &&
+        JSON.stringify(c) !== values.collectionEdit.expected
+      )
+        throw new Error(
+          "The destination changed. Cancel and reopen Quick Save to review it.",
+        );
+      c = edit(data, c.id, {
+        title: values.collectionEdit.title,
+        icon: values.collectionEdit.icon,
+        parentId: c.parentId,
+      });
+    }
     var already = c.itemIds.includes(e.id);
     add(data, c.id, [e.id], values.moveFrom);
     return { item: e, collection: c, already: already };
@@ -601,6 +630,82 @@
       favorite: original.favorite === true,
     });
     return original;
+  }
+  // Explicit layout restoration still keeps the personal layer and review history.
+  function restoreDefaults(current, defaults) {
+    var result = clone(defaults),
+      accepted = current._catalog?.accepted || {};
+    current.categories.forEach(function (old) {
+      var next = result.categories.find(function (c) {
+        return c.id === old.id;
+      });
+      if (!next) {
+        result.categories.push(clone(old));
+        return;
+      }
+      (old.subSections || []).forEach(function (s) {
+        if (
+          !(next.subSections || []).some(function (n) {
+            return n.id === s.id;
+          })
+        ) {
+          next.subSections = next.subSections || [];
+          next.subSections.push(clone(s));
+        }
+      });
+      var base = accepted["category:" + old.id]?.value;
+      ["title", "icon"].forEach(function (field) {
+        if (
+          old[field] !== undefined &&
+          (!base || JSON.stringify(old[field]) !== JSON.stringify(base[field]))
+        )
+          next[field] = clone(old[field]);
+      });
+    });
+    var present = index(result);
+    function visit(items, parent) {
+      (items || []).forEach(function (old) {
+        var next = present[old.id];
+        if (!next) {
+          var copy = clone(old),
+            target = parent && present[parent];
+          if (target) {
+            target.subBookmarks = target.subBookmarks || [];
+            target.subBookmarks.push(copy);
+          } else result.bookmarks.push(copy);
+          bookmarks.visit({ bookmarks: [copy] }, function (e) {
+            present[e.id] = e;
+          });
+          return;
+        }
+        var base = accepted["bookmark:" + old.id]?.value;
+        Object.keys(old).forEach(function (field) {
+          if (
+            [
+              "order",
+              "categoryId",
+              "subSectionId",
+              "hidden",
+              "subBookmarks",
+              "builtIn",
+            ].includes(field)
+          )
+            return;
+          if (
+            ["title", "url", "icon", "type"].includes(field) &&
+            base &&
+            JSON.stringify(old[field]) === JSON.stringify(base[field])
+          )
+            return;
+          next[field] = clone(old[field]);
+        });
+        visit(old.subBookmarks, old.id);
+      });
+    }
+    visit(current.bookmarks, null);
+    if (current._catalog) result._catalog = clone(current._catalog);
+    if (current._collections) result._collections = clone(current._collections);
+    return prepare(result);
   }
   function importState(data, source, complete) {
     if (!source?._collections) return prepare(data);
@@ -670,6 +775,7 @@
     saveItem: saveItem,
     quickSave: quickSave,
     separateAlias: separateAlias,
+    restoreDefaults: restoreDefaults,
     importState: importState,
     transact: transact,
     undo: undo,

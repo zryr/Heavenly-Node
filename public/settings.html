@@ -1625,32 +1625,7 @@
         resetBmBtn.onclick = function () {
           if (!window.confirm('Reset built-in bookmarks to the current defaults? This restores their categories, order, and visibility. Custom bookmarks and sections, personal notes, and other settings are preserved. Export a backup first if you want to keep the current arrangement.')) return;
           var current = loadBookmarkData();
-          var customCats = (current.categories || []).filter(function (c) { return !c.builtIn; });
-          var customBms = (current.bookmarks || []).filter(function (b) { return !b.builtIn; });
-
-          var freshData = HeavenlyCatalog.fresh();
-          freshData.bookmarks = freshData.bookmarks.map(function (bookmark) {
-            return HeavenlyBookmarks.importBookmark(bookmark, HeavenlyBookmarks.findEntry(current, bookmark.id));
-          });
-
-          customCats.forEach(function (c) {
-            if (!freshData.categories.some(function (fc) { return fc.id === c.id; })) {
-              freshData.categories.push(c);
-            }
-          });
-
-          customBms.forEach(function (b) {
-            if (!freshData.bookmarks.some(function (fb) { return fb.id === b.id; })) {
-              freshData.bookmarks.push(b);
-            }
-          });
-
-          // Reset official defaults without discarding personal fields, retired
-          // entries, saved children, memberships or item launch choices.
-          HeavenlyBookmarks.visit(current,function(old){var next=HeavenlyBookmarks.findEntry(freshData,old.id);if(next){['favorite','launchPreference','disableQuickSaveWidget','personalNote','mirrorPreferences'].forEach(function(k){if(old[k]!==undefined)next[k]=JSON.parse(JSON.stringify(old[k]));});if(old.subBookmarks){next.subBookmarks=next.subBookmarks||[];old.subBookmarks.forEach(function(child){if(!HeavenlyBookmarks.findEntry(freshData,child.id))next.subBookmarks.push(JSON.parse(JSON.stringify(child)));});}}});
-          (current.bookmarks||[]).forEach(function(old){if(!HeavenlyBookmarks.findEntry(freshData,old.id))freshData.bookmarks.push(JSON.parse(JSON.stringify(old)));});
-          if(current._collections)freshData._collections=JSON.parse(JSON.stringify(current._collections));
-          freshData=HeavenlyCollections.prepare(freshData);
+          var freshData=HeavenlyCollections.restoreDefaults(current,HeavenlyCatalog.fresh());
           if (!saveBookmarkData(freshData)) return;
           renderBookmarkManager();
           var msgEl = $('bookmark-reset-msg');

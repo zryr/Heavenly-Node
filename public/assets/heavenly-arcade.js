@@ -14,6 +14,8 @@
     lastCollection = "",
     undoTx = null;
   var css = `dialog.arcade{width:min(1120px,calc(100vw - 24px));padding:26px}.eyebrow{font-size:.73rem;letter-spacing:.14em;text-transform:uppercase;color:#a7c5eb}.arcade-intro{display:flex;gap:18px;justify-content:space-between;flex-wrap:wrap}.tabs{display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid #344969;padding:12px 0 18px}.tabs button{flex:0 0 auto}.workspace{display:grid;grid-template-columns:var(--collection-width,225px) minmax(0,1fr);gap:22px;margin-top:20px;align-items:start}.sidebar{min-width:0;position:sticky;top:0}.sidebar nav{display:grid;gap:5px;max-height:40vh;overflow:auto;padding:4px}.sidebar nav button{text-align:left;justify-content:start;overflow-wrap:anywhere;min-width:0}.sidebar nav .child{margin-left:14px;font-size:.88rem}.content{min-width:0;container-type:inline-size}.cards{display:grid;grid-template-columns:1fr;gap:12px}.game{border:1px solid #3b5272;border-radius:16px;background:linear-gradient(130deg,#1b2c47,#192238);padding:14px;min-width:0;display:flex;flex-direction:column;gap:8px}.game .info{justify-content:start;text-align:left;border:0;background:none;padding:0;color:#f3f7ff;display:block;min-width:0}.game h3{font-size:1rem;margin-bottom:4px;overflow-wrap:anywhere}.game small{display:block;font-size:.77rem}.game .row{gap:7px;margin-top:auto}.game .play{flex:1}.game .select-item{margin:0}.game.selected{border-color:#b4a2f4;background:#283251}.spotlight{padding:20px;border:1px solid #6c6497;border-radius:18px;background:radial-gradient(ellipse at 100% 0,#4e3a763b,transparent 65%),linear-gradient(110deg,#203b57,#242641);margin-bottom:20px}.spotlight h3{font-size:1.25rem}.spotlight p{margin-bottom:0}.spotlight img{max-width:180px;max-height:100px;object-fit:contain;float:right}.heading{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin:0 0 15px}.heading h3{margin:0}.collection-tools{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.collection-tools button{font-size:.8rem;padding:7px 10px}.batch{padding:12px;border:1px solid #7973a5;border-radius:12px;background:#252b48;margin-bottom:14px}.batch .row{margin-top:8px}.drag{font-size:18px;padding:4px;min-width:38px;touch-action:pan-y;cursor:grab;user-select:none}.picked{outline:2px solid #b7a4ff}.drop-target{box-shadow:inset 0 -3px #9de8fa}.grip{letter-spacing:2px}.url{font-size:.8rem;word-break:break-all}.choice{display:flex;align-items:center;gap:10px}.choice input{margin:0}.details-grid{display:grid;gap:12px}.conflict{padding:12px;border:1px solid #4c6285;border-radius:10px;margin:8px 0;font-size:.85rem}.mobile-collections{display:none}.panel-width{font-size:.8rem}.panel-width input{width:100%}@container(min-width:530px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}@container(min-width:850px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:700px){dialog.arcade{padding:18px}.workspace{grid-template-columns:minmax(0,1fr)}.sidebar{position:static}.sidebar nav{max-height:28vh}.mobile-collections{display:inline-flex}.sidebar[aria-hidden=true]{display:none}.panel-width{display:none}.tabs{gap:6px}.tabs button{font-size:.85rem;padding:8px 10px}}`;
+  css +=
+    "@media(max-width:540px){.arcade-intro p,.arcade-intro .eyebrow{display:none}.arcade-intro{gap:8px}.tabs{padding:10px 0}.spotlight{padding:14px;margin-bottom:14px}.spotlight .eyebrow{display:none}.spotlight h3{font-size:1.08rem}.spotlight p{font-size:.84rem}.workspace{margin-top:12px}.search-field{font-size:0}.search-field input{font-size:15px!important}}";
   function curated(data, e) {
     return !!(e.builtIn || data._catalog?.accepted?.["bookmark:" + e.id]);
   }
@@ -144,7 +146,11 @@
                 item.title = name.value.trim().slice(0, 160);
                 item.url = M.safeUrl(url.value);
                 item.description = description.value.slice(0, 2000);
-                item.icon = image.value.slice(0, 2048);
+                if (image.value !== item.icon) {
+                  if (image.value.length > 2048)
+                    throw new Error("Choose a shorter icon URL or an emoji.");
+                  item.icon = image.value;
+                }
               } else
                 item = M.saveItem(latest, {
                   id: id,
@@ -195,8 +201,12 @@
       ),
     );
     if (e.description) body.append(el("p", e.description));
-    var url = el("a", e.url, "url");
-    url.href = M.safeUrl(e.url);
+    var url = el(
+      M.safeUrl(e.url) ? "a" : "p",
+      e.url || "No URL saved. Edit this item to add one.",
+      "url",
+    );
+    if (M.safeUrl(e.url)) url.href = M.safeUrl(e.url);
     url.target = "_blank";
     url.rel = "noopener noreferrer";
     body.append(url);
@@ -922,6 +932,8 @@
       "search",
       lastQuery,
     );
+    search.closest("label").classList.add("search-field");
+    search.placeholder = "Find a game or collection…";
     search.dataset.focusKey = "search";
     search.oninput = function () {
       lastQuery = search.value;
@@ -1291,6 +1303,17 @@
         "primary play",
       );
       play.dataset.focusKey = "play:" + e.id;
+      if (!M.safeUrl(e.url)) {
+        play.disabled = true;
+        play.textContent = "Unsupported URL";
+        row.append(
+          el(
+            "p",
+            "Edit this item to use a complete http or https URL.",
+            "muted",
+          ),
+        );
+      }
       play.setAttribute("aria-label", "Play " + e.title + " with " + p.mode);
       actions.append(
         play,
