@@ -1,1 +1,13 @@
-{}
+{
+  "player": "you-neutral.webp",
+  "cloudy": "cloudy-main.webp",
+  "cloudy-angry": "cloudy-speed-meme.webp",
+  "hunter": "hunter-smug.webp",
+  "you-neutral": "you-neutral.webp",
+  "you-suspicious": "you-suspicious.webp",
+  "you-retro": "you-retro.webp",
+  "cloudy-main": "cloudy-main.webp",
+  "cloudy-speed-meme": "cloudy-speed-meme.webp",
+  "cloudy-retro": "cloudy-retro.webp",
+  "hunter-smug": "hunter-smug.webp"
+}

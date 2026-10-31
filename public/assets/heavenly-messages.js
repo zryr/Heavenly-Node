@@ -8,7 +8,7 @@
     themes:['default','purple','music','gold','warm','cutoff'], animations:['none','soft','sheen'],
     icons:['none','spark','headphones','cloud','paw'], gradients:['none','heavenly','monochrome','gold','ocean'],
     playlists:['aura','hardstyle','hardtekk','favorites'], scenes:['purple-hulk','ao-oni','khezu','doggy'],
-    speakers:['You','Cloudy','Heavenly','Hunter'], assets:['none','ao-side','ao-dance','khezu','doggy','anger','player','cloudy','cloudy-angry','hunter'], imagePlacements:['left','right','inline']
+    speakers:['You','Cloudy','Heavenly','Hunter'], assets:['none','ao-side','ao-dance','khezu','doggy','anger','player','cloudy','cloudy-angry','hunter','you-neutral','you-suspicious','you-retro','cloudy-main','cloudy-speed-meme','cloudy-retro','hunter-smug'], imagePlacements:['left','right','inline']
   };
   var playlists = {
     aura:{title:'Aura Phonk',url:'https://open.spotify.com/playlist/5h7adrSdyEOPJJN0PljioK'},
@@ -19,8 +19,9 @@
   var assets = {'ao-side':'ao-side.webp','ao-dance':'ao-dance.gif',khezu:'khezu.webp',doggy:'doggy.webp',anger:'anger.webp'};
   // Reversible catalog visibility; retained playlists remain editable in HQ.
   var config = {musicNotes:false};
-  var portraitSlots = {player:'player-neutral.png',cloudy:'cloudy-neutral.png','cloudy-angry':'cloudy-angry.png',hunter:'hunter-smug.png'};
+  var portraitSlots = {"player": "you-neutral.webp", "cloudy": "cloudy-main.webp", "cloudy-angry": "cloudy-speed-meme.webp", "hunter": "hunter-smug.webp", "you-neutral": "you-neutral.webp", "you-suspicious": "you-suspicious.webp", "you-retro": "you-retro.webp", "cloudy-main": "cloudy-main.webp", "cloudy-speed-meme": "cloudy-speed-meme.webp", "cloudy-retro": "cloudy-retro.webp", "hunter-smug": "hunter-smug.webp"};
   var approvedPortraits = Object.create(null);
+  Object.keys(portraitSlots).forEach(function (key) { approvedPortraits[key] = true; });
   function fail(message) { throw new Error(message); }
   function clone(value) { return JSON.parse(JSON.stringify(value)); }
   function exact(value, keys, label) {
@@ -169,7 +170,7 @@
     if (portraitSlots[asset]) src = approvedPortraits[asset] ? 'portraits/'+portraitSlots[asset] : null;
     if (asset === 'ao-dance') src = reduced ? 'ao-still.webp' : assets[asset];
     if (!src) { var fallback = element(doc,'span',className+' hm-portrait-fallback',label); fallback.setAttribute('role','img'); fallback.setAttribute('aria-label',label+' portrait pending artwork'); return fallback; }
-    var image = element(doc,'img',className); image.src = '/assets/messages/'+src; image.alt = {anger:'angry reaction','ao-side':'Ao Oni giving a side-eye',doggy:'Syshi’s orange and white Doggy plush',khezu:'Khezu plush','ao-dance':'Ao Oni dance'}[asset] || label; image.width = 192; image.height = 192; image.decoding = 'async';
+    var image = element(doc,'img',className); image.src = '/assets/messages/'+src; image.alt = {anger:'angry reaction','ao-side':'Ao Oni giving a side-eye',doggy:'Syshi’s orange and white Doggy plush',khezu:'Khezu plush','ao-dance':'Ao Oni dance'}[asset] || label; if (/retro/.test(asset)) image.classList.add('hm-pixel-portrait'); image.width = 192; image.height = 192; image.decoding = 'async';
     image.addEventListener('error',function () { var fallback = element(doc,'span',className+' hm-portrait-fallback',label); fallback.setAttribute('role','img'); fallback.setAttribute('aria-label',label+' portrait unavailable'); image.replaceWith(fallback); },{once:true});
     return image;
   }
@@ -202,7 +203,7 @@
   function openExperience(host,item,options) {
     options = options || {}; validateItem(item); var doc = host.ownerDocument, isPreview = !!options.preview, reduced = motionReduced(options), isScene = item.action.type === 'scene';
     var focusBefore = doc.activeElement, dialog = element(doc,isPreview?'section':'dialog','hm-dialog'), closed = false, finishing = false, timer = null, typingTimer = null, fadeTimer = null, burst = null, stepIndex = 0, burstMode = false, typing = false, line = null, typedCopy = null, box = null, fullText = '', headphonesDismissed = options.headphoneAdvice === false;
-    var replay = !!options.completed, presentation = isScene && ['ao-oni','khezu'].indexOf(item.action.scene) >= 0 ? 'retro' : 'novel';
+    var replay = !!options.completed, presentation = isScene && item.action.scene === 'ao-oni' ? 'retro' : 'novel';
     dialog.dataset.messageTheme = item.theme; dialog.id = isPreview ? '' : 'heavenly-message-dialog';
     if (isScene) { dialog.dataset.presentation = presentation; dialog.dataset.sceneName = item.action.scene; dialog.dataset.sceneReplay = String(replay); }
     dialog.setAttribute('aria-label',isScene ? 'Heavenly character scene' : 'Playlist suggestion');
@@ -296,7 +297,7 @@
       var arrow = element(doc,'span','hm-advance-arrow'); arrow.setAttribute('aria-hidden','true'); box.appendChild(arrow);
       box.addEventListener('click',advance); content.appendChild(box);
       var hint = element(doc,'p','hm-scene-hint','Tap to reveal or continue · Esc to return'); content.appendChild(hint);
-      typeLine();
+      if(item.action.scene==='khezu'&&stepIndex===2&&!reduced){typing=true;dialog.dataset.typing='true';typingTimer=setTimeout(typeLine,180);}else typeLine();
       if (image && placement === 'inline') { var reserveImage = element(doc,'span','hm-inline-reaction'); reserve.appendChild(reserveImage); }
     }
     if (!isScene) renderPlaylist(item.action.playlist); else renderStep();
