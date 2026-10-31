@@ -1,0 +1,45 @@
+PASS chromium Games opens integrated hub; exact categories, real Newgrounds, Coming Soon and thumbnail-free cards
+PASS chromium Details and favorites are distinct from Play; per-ID Direct and New Tab persist
+PASS chromium Actual Direct and Proxy Play each open exactly one controlled destination tab; other games keep their choice
+PASS chromium Personal game editor saves actual record and note; Quick Save creates icon/name/membership atomically
+PASS chromium Quick Save Cancel leaves storage unchanged; destination search and Already saved prevent duplicates
+PASS chromium Collections create/edit/icon/one-level nested placement use stable identities
+PASS chromium Multi-select adds shared items, independent collection order changes through keyboard-accessible controls
+PASS chromium Collapsed items remain searchable; merge preview deduplicates memberships and retains distinct records
+PASS chromium Collection deletion keeps items and guarded Undo restores relationships
+PASS chromium Reload preserves curated/personal favorites, notes and collection order
+PASS chromium Arcade fits Chromebook, tablet portrait/landscape and 320/390 phone; small screens expose collection drawer
+PASS chromium Same memberships are discoverable from homepage unified search and bookmark Collections
+PASS chromium Ao Oni and Khezu only open on activation; all five scene portraits load with correct styles and exact final lines
+PASS chromium Reduced motion reveals the whole line and Escape exits first-time scenes
+PASS chromium Real proxy Quick Save widget opens shared searchable dialog, saves as game and keeps browsing context
+PASS firefox Games opens integrated hub; exact categories, real Newgrounds, Coming Soon and thumbnail-free cards
+PASS firefox Details and favorites are distinct from Play; per-ID Direct and New Tab persist
+PASS firefox Actual Direct and Proxy Play each open exactly one controlled destination tab; other games keep their choice
+PASS firefox Personal game editor saves actual record and note; Quick Save creates icon/name/membership atomically
+PASS firefox Quick Save Cancel leaves storage unchanged; destination search and Already saved prevent duplicates
+PASS firefox Collections create/edit/icon/one-level nested placement use stable identities
+PASS firefox Multi-select adds shared items, independent collection order changes through keyboard-accessible controls
+PASS firefox Collapsed items remain searchable; merge preview deduplicates memberships and retains distinct records
+PASS firefox Collection deletion keeps items and guarded Undo restores relationships
+PASS firefox Reload preserves curated/personal favorites, notes and collection order
+PASS firefox Arcade fits Chromebook, tablet portrait/landscape and 320/390 phone; small screens expose collection drawer
+PASS firefox Same memberships are discoverable from homepage unified search and bookmark Collections
+PASS firefox Ao Oni and Khezu only open on activation; all five scene portraits load with correct styles and exact final lines
+PASS firefox Reduced motion reveals the whole line and Escape exits first-time scenes
+PASS firefox Real proxy Quick Save widget opens shared searchable dialog, saves as game and keeps browsing context
+PASS webkit Games opens integrated hub; exact categories, real Newgrounds, Coming Soon and thumbnail-free cards
+PASS webkit Details and favorites are distinct from Play; per-ID Direct and New Tab persist
+PASS webkit Actual Direct and Proxy Play each open exactly one controlled destination tab; other games keep their choice
+PASS webkit Personal game editor saves actual record and note; Quick Save creates icon/name/membership atomically
+PASS webkit Quick Save Cancel leaves storage unchanged; destination search and Already saved prevent duplicates
+PASS webkit Collections create/edit/icon/one-level nested placement use stable identities
+PASS webkit Multi-select adds shared items, independent collection order changes through keyboard-accessible controls
+PASS webkit Collapsed items remain searchable; merge preview deduplicates memberships and retains distinct records
+PASS webkit Collection deletion keeps items and guarded Undo restores relationships
+PASS webkit Reload preserves curated/personal favorites, notes and collection order
+PASS webkit Arcade fits Chromebook, tablet portrait/landscape and 320/390 phone; small screens expose collection drawer
+PASS webkit Same memberships are discoverable from homepage unified search and bookmark Collections
+PASS webkit Ao Oni and Khezu only open on activation; all five scene portraits load with correct styles and exact final lines
+PASS webkit Reduced motion reveals the whole line and Escape exits first-time scenes
+PASS webkit Real proxy Quick Save widget opens shared searchable dialog, saves as game and keeps browsing context

@@ -8,7 +8,10 @@
   <script src="/assets/heavenly-bookmark-view.js"></script>
   <link rel="stylesheet" href="/assets/heavenly-bookmark-view.css">
   <script src="/assets/heavenly-official-order.js"></script>
+  <script src="/assets/heavenly-collections.js"></script>
+  <script src="/assets/heavenly-picks.js"></script>
   <script src="/assets/heavenly-catalog.js"></script>
+  <script src="/assets/heavenly-save-ui.js"></script>
   <script src="/assets/heavenly-catalog-ui.js"></script>
   <link rel="stylesheet" href="/assets/heavenly-catalog.css">
   <script src="/assets/heavenly-drag.js"></script>
@@ -323,7 +326,7 @@
           <div class="hero-card">
             <h3 class="hero-card-title">Quick Settings Shortcuts</h3>
             <p class="hero-card-desc" style="margin:8px 0">Choose the shortcuts shown on the homepage. Hiding a shortcut keeps its setting unchanged.</p>
-            <button type="button" id="customize-quick-settings-btn" class="export-import-btn" aria-haspopup="dialog" aria-controls="qs-editor">Customize Quick Settings</button>
+            <button type="button" id="customize-quick-settings-btn" class="export-import-btn" aria-haspopup="dialog" aria-controls="qs-editor" aria-label="Customize Quick Settings shortcut tray">Customize Quick Settings</button>
           </div>
 
           <div class="hero-card">
@@ -652,7 +655,7 @@
           </div>
           <span class="modal-title" id="export-modal-title">Download a backup</span>
         </div>
-        <button id="close-export-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+        <button id="close-export-modal-btn" type="button" class="modal-close-btn" aria-label="Close export backup dialog">✕</button>
       </div>
 
       <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Choose what to include in the backup file. It uses the JSON file format.</p>
@@ -683,13 +686,13 @@
           </div>
           <span class="modal-title" id="import-modal-title">Restore from a backup</span>
         </div>
-        <button id="close-import-modal-btn" type="button" class="modal-close-btn" aria-label="Close dialog">✕</button>
+        <button id="close-import-modal-btn" type="button" class="modal-close-btn" aria-label="Close import backup dialog">✕</button>
       </div>
 
       <!-- Step 1: File Selection -->
       <div id="import-step-1" style="display: flex; flex-direction: column; gap: 12px;">
         <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Choose a Heavenly backup file (.json) from your device.</p>
-        <input type="file" id="import-file-input" accept=".json" style="padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px dashed rgba(56, 189, 248, 0.4); border-radius: 14px; color: #cbd5e1; font-size: 0.88rem; cursor: pointer; width: 100%;" />
+        <input type="file" id="import-file-input" accept=".json" style="padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px dashed rgba(56, 189, 248, 0.4); border-radius: 14px; color: #cbd5e1; font-size: 0.88rem; cursor: pointer; width: 100%;" / aria-label="Select JSON file to import bookmarks or settings">
       </div>
 
       <!-- Step 2: Granular Item Selection & Mode Selection -->
@@ -1402,7 +1405,7 @@
         }
         var selectedOpt = menu.querySelector('[aria-selected="true"]') || menu.querySelector('[role="option"]');
         if (selectedOpt) {
-          setTimeout(function () { selectedOpt.focus(); }, 50);
+          selectedOpt.focus({preventScroll:true});
         }
       }
     }
@@ -1623,26 +1626,7 @@
         resetBmBtn.onclick = function () {
           if (!window.confirm('Reset built-in bookmarks to the current defaults? This restores their categories, order, and visibility. Custom bookmarks and sections, personal notes, and other settings are preserved. Export a backup first if you want to keep the current arrangement.')) return;
           var current = loadBookmarkData();
-          var customCats = (current.categories || []).filter(function (c) { return !c.builtIn; });
-          var customBms = (current.bookmarks || []).filter(function (b) { return !b.builtIn; });
-
-          var freshData = HeavenlyCatalog.fresh();
-          freshData.bookmarks = freshData.bookmarks.map(function (bookmark) {
-            return HeavenlyBookmarks.importBookmark(bookmark, HeavenlyBookmarks.findEntry(current, bookmark.id));
-          });
-
-          customCats.forEach(function (c) {
-            if (!freshData.categories.some(function (fc) { return fc.id === c.id; })) {
-              freshData.categories.push(c);
-            }
-          });
-
-          customBms.forEach(function (b) {
-            if (!freshData.bookmarks.some(function (fb) { return fb.id === b.id; })) {
-              freshData.bookmarks.push(b);
-            }
-          });
-
+          var freshData=HeavenlyCollections.restoreDefaults(current,HeavenlyCatalog.fresh());
           if (!saveBookmarkData(freshData)) return;
           renderBookmarkManager();
           var msgEl = $('bookmark-reset-msg');
@@ -1816,7 +1800,12 @@
 
         exportPayload.categories = bmsData.categories.filter(function (c) { return selectedCatIds.includes(c.id); });
         exportPayload.bookmarks = bmsData.bookmarks.filter(function (b) { return selectedBmIds.includes(b.id); });
-        if (exportPayload.categories.length === bmsData.categories.length && exportPayload.bookmarks.length === bmsData.bookmarks.length) { exportPayload._catalog = bmsData._catalog; exportPayload.collectionComplete = true; }
+        if (exportPayload.categories.length === bmsData.categories.length && exportPayload.bookmarks.length === bmsData.bookmarks.length) { exportPayload._catalog = bmsData._catalog; exportPayload._collections = bmsData._collections; exportPayload.collectionComplete = true; }
+        if (bmsData._collections && !exportPayload._collections) {
+          var selectedIds=new Set(); HeavenlyBookmarks.visit(exportPayload,function(e){selectedIds.add(e.id);});
+          exportPayload._collections=JSON.parse(JSON.stringify(bmsData._collections));
+          exportPayload._collections.collections.forEach(function(c){c.itemIds=c.itemIds.filter(function(id){return selectedIds.has(id);});});
+        }
         try { exportPayload.brokenLinks = JSON.parse(localStorage.getItem("heavenly_broken_links") || "{}"); } catch (e) {}
 
         if (bookmarkStorageError || settingsStorageError) exportPayload = { version:'recovery', timestamp:new Date().toISOString(), recoveryRaw:localStorage.getItem('heavenly_bookmarks'), recoverySettingsRaw:localStorage.getItem('heavenly_settings') };
@@ -1974,6 +1963,7 @@
           if (parsedImportData.version === 'recovery') throw new Error('This recovery copy preserves unreadable raw data; repair that data before importing it.');
           if (parsedImportData.collectionComplete && (!Array.isArray(parsedImportData.categories) || !Array.isArray(parsedImportData.bookmarks))) throw new Error('The complete collection backup is missing its categories or bookmarks.');
           HeavenlyCatalog.validate({categories:parsedImportData.categories || [], bookmarks:parsedImportData.bookmarks || []}, true);
+          if (parsedImportData._collections) HeavenlyCollections.validate(parsedImportData);
           if (parsedImportData.homeLayout !== undefined && (!parsedImportData.homeLayout || typeof parsedImportData.homeLayout !== 'object' || Array.isArray(parsedImportData.homeLayout) || parsedImportData.homeLayout.version !== 1)) throw new Error('The backup homepage layout is invalid.');
           if (parsedImportData.dialogueState !== undefined) HeavenlyMessages.normalizeSceneState(parsedImportData.dialogueState);
           if (parsedImportData.settings !== undefined && parsedImportData.settings !== null && (typeof parsedImportData.settings !== 'object' || Array.isArray(parsedImportData.settings))) throw new Error('The backup settings must be an object.');
@@ -2035,6 +2025,7 @@
           ['heavenly_bookmarks','heavenly_settings','heavenly_broken_links',HeavenlyLayout.key,'heavenly_dialogue_state_v1'].forEach(function (key) { importPrevious[key] = localStorage.getItem(key); });
           var completeImport = mode === 'overwrite' && (fileCats.length > 0 || fileBms.length > 0 || parsedImportData.collectionComplete === true) && fileCats.length === (parsedImportData.categories || []).length && fileBms.length === (parsedImportData.bookmarks || []).length;
           currentBms = HeavenlyCatalog.imported(currentBms, parsedImportData, completeImport);
+          currentBms = HeavenlyCollections.importState(currentBms, parsedImportData, completeImport);
           importTouched.push('heavenly_bookmarks');
           localStorage.setItem('heavenly_bookmarks', JSON.stringify(currentBms));
           if (setCb && setCb.checked && parsedImportData.settings) {

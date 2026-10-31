@@ -1,0 +1,35 @@
+{
+  "engines": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "Published recommendation appears in canonical All/Featured/details with one identity, favorite and per-game launch mode",
+        "Existing visitor can Skip a new Pick; Arcade explains pending curation without silently installing it",
+        "Real catalog Apply installs a reviewed recommendation into the shared Arcade records"
+      ],
+      "errors": [],
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "Published recommendation appears in canonical All/Featured/details with one identity, favorite and per-game launch mode",
+        "Existing visitor can Skip a new Pick; Arcade explains pending curation without silently installing it",
+        "Real catalog Apply installs a reviewed recommendation into the shared Arcade records"
+      ],
+      "errors": [],
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "Published recommendation appears in canonical All/Featured/details with one identity, favorite and per-game launch mode",
+        "Existing visitor can Skip a new Pick; Arcade explains pending curation without silently installing it",
+        "Real catalog Apply installs a reviewed recommendation into the shared Arcade records"
+      ],
+      "errors": [],
+      "status": "passed"
+    }
+  ],
+  "physicalDevices": []
+}

@@ -1,0 +1,85 @@
+{
+  "project": "Heavenly Node",
+  "version": "post207-approved-7-2026-10-31",
+  "approval": "seven final user-approved portraits",
+  "format": "webp",
+  "files": [
+    {
+      "filename": "cloudy-main.webp",
+      "sha256": "9ed1093d2be5deb6a4c18249330fe0d78aa9501122013daf5161fe71d05047a8",
+      "size_bytes": 207424,
+      "dimensions": [
+        900,
+        822
+      ],
+      "has_transparency": true
+    },
+    {
+      "filename": "cloudy-speed-meme.webp",
+      "sha256": "707807d785513abfb1ad361e05a61c5aedc7188929329f28e9f68ad0a776742b",
+      "size_bytes": 430742,
+      "dimensions": [
+        1100,
+        1375
+      ],
+      "has_transparency": true
+    },
+    {
+      "filename": "cloudy-retro.webp",
+      "sha256": "2cad937a676fa6c84f26086f896ce37230ab87ef99a501936c2ff491641c10a9",
+      "size_bytes": 925418,
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "has_transparency": true
+    },
+    {
+      "filename": "you-neutral.webp",
+      "sha256": "eb57b8ec73c1eb11e2792bfd2ed11a07891a829049d2e2a5e0ed52c0af7d8605",
+      "size_bytes": 145614,
+      "dimensions": [
+        900,
+        822
+      ],
+      "has_transparency": true
+    },
+    {
+      "filename": "you-suspicious.webp",
+      "sha256": "bd5dcd4d1e9df0b1d81f7846143fd63efd3da7cf893d1bdc863d8cfeffd92b4a",
+      "size_bytes": 145840,
+      "dimensions": [
+        900,
+        822
+      ],
+      "has_transparency": true
+    },
+    {
+      "filename": "you-retro.webp",
+      "sha256": "35056cf9a043c4dc92296da2d42d095e439cb7d1f4c3112e01b5ce42fbad73fc",
+      "size_bytes": 213744,
+      "dimensions": [
+        900,
+        822
+      ],
+      "has_transparency": true
+    },
+    {
+      "filename": "hunter-smug.webp",
+      "sha256": "f6a382570e88a7c6f9e2aa3193988f38eff9cea8a39543d2830a4b2837b9e9bd",
+      "size_bytes": 177002,
+      "dimensions": [
+        900,
+        822
+      ],
+      "has_transparency": true
+    }
+  ],
+  "excluded": [
+    "hunter-serious",
+    "hunter-base",
+    "older-cloudy-speed-meme",
+    "hunter-retro-study"
+  ],
+  "source_notes": "New Speed Meme and Retro Cloudy PNGs have been converted to WebP; all others are from previously approved original artwork."
+}

@@ -1,0 +1,29 @@
+{
+  "checks": [
+    "Card density follows containing panel width at unchanged viewport",
+    "msg_ao_oni uses approved individual assets with contain scaling and no text/portrait overlap",
+    "msg_khezu uses approved individual assets with contain scaling and no text/portrait overlap",
+    "msg_doggy uses approved individual assets with contain scaling and no text/portrait overlap"
+  ],
+  "errors": [],
+  "captures": [
+    "home-after.png",
+    "arcade-desktop.png",
+    "arcade-820.png",
+    "arcade-1180.png",
+    "arcade-390.png",
+    "msg_ao_oni-0.png",
+    "msg_ao_oni-1.png",
+    "ao-dance-burst.png",
+    "msg_khezu-0.png",
+    "msg_khezu-1.png",
+    "msg_khezu-2.png",
+    "msg_khezu-phone.png",
+    "msg_doggy-0.png",
+    "msg_doggy-1.png",
+    "msg_doggy-2.png",
+    "msg_doggy-phone.png"
+  ],
+  "physicalDevices": [],
+  "status": "passed"
+}

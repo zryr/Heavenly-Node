@@ -24,7 +24,7 @@
     var preview = options.preview === true;
     var content = preview ? options : root.HeavenlyPicks || { items:[] };
     var items = publicItems(content.items);
-    return root.HeavenlyCollectionDialog.open({ id:'heavenly-picks-modal', title:'Heavenly Picks', render:function (card, close) {
+    return root.HeavenlyCollectionDialog.open({ id:'heavenly-picks-modal', title:'Syshi’s Picks', render:function (card, close) {
       card.classList.add('heavenly-picks-card');
       if (preview) card.appendChild(element('p', 'heavenly-picks-preview', 'Local draft preview · Public recommendations are unchanged.'));
       var introduction = element('p', 'heavenly-collection-intro', 'A little corner of Newgrounds, chosen for Heavenly.'); card.appendChild(introduction);
@@ -35,7 +35,7 @@
         empty.appendChild(constellation);
         empty.appendChild(element('span', 'heavenly-picks-eyebrow', 'A collection in the making'));
         empty.appendChild(element('h3', '', 'Good games are worth finding.'));
-        empty.appendChild(element('p', '', 'Heavenly Picks is coming soon. Our Newgrounds recommendations will appear here once they’re ready.'));
+        empty.appendChild(element('p', '', 'Syshi’s Picks is coming soon. Our Newgrounds recommendations will appear here once they’re ready.'));
         var badge = element('span', 'heavenly-picks-soon', 'Coming Soon'); empty.appendChild(badge); card.appendChild(empty);
       } else {
         var list = element('div', 'heavenly-picks-list'); list.setAttribute('role', 'list');

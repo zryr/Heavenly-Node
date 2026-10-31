@@ -1,0 +1,21 @@
+PASS chromium: unsafe live candidate refused intact; literal HTML and inline registered image render in the actual homepage without writes; Cancel restores note, form and focus
+PASS chromium: left/right/inline placement uses actual note layout; Restore is temporary and Save touches only local HQ draft
+PASS chromium: actual homepage preview retains safe link destination while blocking click and auxiliary navigation
+PASS chromium: real homepage scene uses shared typing/arrow/right-portrait UI; focused Enter advances and Escape exits without writing visitor completion
+PASS chromium: explicit Restore published version restores the saved local draft with undo available
+PASS chromium: keyboard return and live preview controls fit iPad-like portrait/landscape, Chromebook and 390/320px widths with reduced-motion support
+PASS chromium: refresh abandons the unsaved live override while keeping published content, preferences, bookmarks and visitor scene state
+PASS firefox: unsafe live candidate refused intact; literal HTML and inline registered image render in the actual homepage without writes; Cancel restores note, form and focus
+PASS firefox: left/right/inline placement uses actual note layout; Restore is temporary and Save touches only local HQ draft
+PASS firefox: actual homepage preview retains safe link destination while blocking click and auxiliary navigation
+PASS firefox: real homepage scene uses shared typing/arrow/right-portrait UI; focused Enter advances and Escape exits without writing visitor completion
+PASS firefox: explicit Restore published version restores the saved local draft with undo available
+PASS firefox: keyboard return and live preview controls fit iPad-like portrait/landscape, Chromebook and 390/320px widths with reduced-motion support
+PASS firefox: refresh abandons the unsaved live override while keeping published content, preferences, bookmarks and visitor scene state
+PASS webkit: unsafe live candidate refused intact; literal HTML and inline registered image render in the actual homepage without writes; Cancel restores note, form and focus
+PASS webkit: left/right/inline placement uses actual note layout; Restore is temporary and Save touches only local HQ draft
+PASS webkit: actual homepage preview retains safe link destination while blocking click and auxiliary navigation
+PASS webkit: real homepage scene uses shared typing/arrow/right-portrait UI; focused Enter advances and Escape exits without writing visitor completion
+PASS webkit: explicit Restore published version restores the saved local draft with undo available
+PASS webkit: keyboard return and live preview controls fit iPad-like portrait/landscape, Chromebook and 390/320px widths with reduced-motion support
+PASS webkit: refresh abandons the unsaved live override while keeping published content, preferences, bookmarks and visitor scene state

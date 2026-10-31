@@ -119,9 +119,14 @@ describe('settings.html standalone page', function() {
         assert(html.includes('HeavenlyCatalog.defaults'));
     });
 
-    it('should deduplicate bookmarks and categories on reset in settings.html', function() {
-        assert.ok(html.includes('if (!freshData.bookmarks.some(function (fb) { return fb.id === b.id; }))'), 'reset action should deduplicate bookmarks by ID');
-        assert.ok(html.includes('if (!freshData.categories.some(function (fc) { return fc.id === c.id; }))'), 'reset action should deduplicate categories by ID');
+    it('deduplicates shared identities during the actual reset model', function() {
+        const catalog=require('../public/assets/heavenly-catalog'),collections=require('../public/assets/heavenly-collections');
+        const saved=catalog.fresh();saved.categories[0].builtIn=false;saved.bookmarks[0].builtIn=false;
+        const restored=collections.restoreDefaults(saved,catalog.fresh());
+        assert.equal(new Set(restored.categories.map(c=>c.id)).size,restored.categories.length);
+        const ids=[];require('../public/assets/heavenly-bookmarks').visit(restored,e=>ids.push(e.id));
+        assert.equal(new Set(ids).size,ids.length);
+        assert.ok(html.includes('HeavenlyCollections.restoreDefaults'));
     });
 
     it('should attach keydown Escape key listener to close export/import modals and custom preset dropdown menu', function() {

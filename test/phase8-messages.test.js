@@ -13,7 +13,7 @@ describe('Phase 8 exact notes and defensive scene state',function(){
   assert.equal(byId('msg_search').enabled,false);assert.equal(byId('msg_bookmarks').enabled,false);
  });
  it('uses confirmed scene lines and puts reactions on the intended note and side',function(){
-  assert.deepEqual(byId('msg_ao_oni').action.steps.map(({speaker,text})=>({speaker,text})),[{speaker:'You',text:'what is an ao oni'},{speaker:'Cloudy',text:'you don’t know ball'}]);
+  assert.deepEqual(byId('msg_ao_oni').action.steps.map(({speaker,text})=>({speaker,text})),[{speaker:'You',text:'what is an ao oni'},{speaker:'Cloudy',text:"you don't know ball"}]);
   assert.deepEqual(byId('msg_khezu').action.steps.map(({speaker,text})=>({speaker,text})),[{speaker:'Hunter',text:'So… can I use this for… something else?'},{speaker:'You',text:'wait, why he looking kinda…'},{speaker:'Cloudy',text:'yo wth 😭'}]);
   assert(byId('msg_ao_oni').action.steps.every(step=>step.asset!=='anger'));
   assert.deepEqual(byId('msg_go').noteImage,{asset:'anger',imagePlacement:'inline'});

@@ -1,0 +1,24 @@
+PASS chromium Every published ordinary note fits its real message well above controls and Quick Settings across six viewport sizes
+PASS chromium Angry reaction remains inline on the final go-use-the-site text; ocean emphasis and right-side Ao Oni reaction use real rendered placement
+PASS chromium Ao Oni/Khezu/Doggy give a local discovery cue without autoplay/scroll/zoom; click-1 reveals, click-2 advances, first completion persists, replay offers Close
+PASS chromium Enter/Space activate only the focused dialogue button; Escape works on first play and returns focus; unrelated input keeps typing
+PASS chromium Retro and soft scenes fit phone bounds; Chromium/WebKit real touch-emulated taps reveal then advance
+PASS chromium Five existing GIF dancers stay local, pointer transparent and bounded; actual fade removes them; reduced motion uses a brief still with no typing animation
+PASS chromium Actual-homepage temporary preview keeps authored HTML literal, blocks primary/middle external launches and restores original note/pause without scene-state writes
+PASS chromium Rapid activation opens one scene; page lifecycle preserves explicit pause; owner removal cleans typing/burst/fade timers, observers and owned listeners
+PASS firefox Every published ordinary note fits its real message well above controls and Quick Settings across six viewport sizes
+PASS firefox Angry reaction remains inline on the final go-use-the-site text; ocean emphasis and right-side Ao Oni reaction use real rendered placement
+PASS firefox Ao Oni/Khezu/Doggy give a local discovery cue without autoplay/scroll/zoom; click-1 reveals, click-2 advances, first completion persists, replay offers Close
+PASS firefox Enter/Space activate only the focused dialogue button; Escape works on first play and returns focus; unrelated input keeps typing
+PASS firefox Retro and soft scenes fit phone bounds; Chromium/WebKit real touch-emulated taps reveal then advance
+PASS firefox Five existing GIF dancers stay local, pointer transparent and bounded; actual fade removes them; reduced motion uses a brief still with no typing animation
+PASS firefox Actual-homepage temporary preview keeps authored HTML literal, blocks primary/middle external launches and restores original note/pause without scene-state writes
+PASS firefox Rapid activation opens one scene; page lifecycle preserves explicit pause; owner removal cleans typing/burst/fade timers, observers and owned listeners
+PASS webkit Every published ordinary note fits its real message well above controls and Quick Settings across six viewport sizes
+PASS webkit Angry reaction remains inline on the final go-use-the-site text; ocean emphasis and right-side Ao Oni reaction use real rendered placement
+PASS webkit Ao Oni/Khezu/Doggy give a local discovery cue without autoplay/scroll/zoom; click-1 reveals, click-2 advances, first completion persists, replay offers Close
+PASS webkit Enter/Space activate only the focused dialogue button; Escape works on first play and returns focus; unrelated input keeps typing
+PASS webkit Retro and soft scenes fit phone bounds; Chromium/WebKit real touch-emulated taps reveal then advance
+PASS webkit Five existing GIF dancers stay local, pointer transparent and bounded; actual fade removes them; reduced motion uses a brief still with no typing animation
+PASS webkit Actual-homepage temporary preview keeps authored HTML literal, blocks primary/middle external launches and restores original note/pause without scene-state writes
+PASS webkit Rapid activation opens one scene; page lifecycle preserves explicit pause; owner removal cleans typing/burst/fade timers, observers and owned listeners

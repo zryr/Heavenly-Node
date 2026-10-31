@@ -1,0 +1,51 @@
+{
+  "executed": "2026-10-31T17:01:40.747Z",
+  "scope": "Linux browser automation. No physical iPad, Chromebook or Apple Safari was tested.",
+  "engines": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "unsafe live candidate refused intact; literal HTML and inline registered image render in the actual homepage without writes; Cancel restores note, form and focus",
+        "left/right/inline placement uses actual note layout; Restore is temporary and Save touches only local HQ draft",
+        "actual homepage preview retains safe link destination while blocking click and auxiliary navigation",
+        "real homepage scene uses shared typing/arrow/right-portrait UI; focused Enter advances and Escape exits without writing visitor completion",
+        "explicit Restore published version restores the saved local draft with undo available",
+        "keyboard return and live preview controls fit iPad-like portrait/landscape, Chromebook and 390/320px widths with reduced-motion support",
+        "refresh abandons the unsaved live override while keeping published content, preferences, bookmarks and visitor scene state"
+      ],
+      "errors": [],
+      "version": "154.0.8037.57",
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "unsafe live candidate refused intact; literal HTML and inline registered image render in the actual homepage without writes; Cancel restores note, form and focus",
+        "left/right/inline placement uses actual note layout; Restore is temporary and Save touches only local HQ draft",
+        "actual homepage preview retains safe link destination while blocking click and auxiliary navigation",
+        "real homepage scene uses shared typing/arrow/right-portrait UI; focused Enter advances and Escape exits without writing visitor completion",
+        "explicit Restore published version restores the saved local draft with undo available",
+        "keyboard return and live preview controls fit iPad-like portrait/landscape, Chromebook and 390/320px widths with reduced-motion support",
+        "refresh abandons the unsaved live override while keeping published content, preferences, bookmarks and visitor scene state"
+      ],
+      "errors": [],
+      "version": "153.0",
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "unsafe live candidate refused intact; literal HTML and inline registered image render in the actual homepage without writes; Cancel restores note, form and focus",
+        "left/right/inline placement uses actual note layout; Restore is temporary and Save touches only local HQ draft",
+        "actual homepage preview retains safe link destination while blocking click and auxiliary navigation",
+        "real homepage scene uses shared typing/arrow/right-portrait UI; focused Enter advances and Escape exits without writing visitor completion",
+        "explicit Restore published version restores the saved local draft with undo available",
+        "keyboard return and live preview controls fit iPad-like portrait/landscape, Chromebook and 390/320px widths with reduced-motion support",
+        "refresh abandons the unsaved live override while keeping published content, preferences, bookmarks and visitor scene state"
+      ],
+      "errors": [],
+      "version": "26.5",
+      "status": "passed"
+    }
+  ]
+}

@@ -6,3 +6,6 @@ thumbs.db
 .vscode/
 # Browser network captures can contain credentials and browsing data.
 *.har
+
+# Local browser-test scratch recordings.
+work/

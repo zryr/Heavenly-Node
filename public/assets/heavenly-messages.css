@@ -96,3 +96,9 @@ button.hm-copy:hover{color:#e0edff;background:rgba(148,163,184,.07)}
 @media(max-width:480px){.hm-host{font-size:.86rem;grid-template-rows:minmax(6rem,auto) 2rem}.hm-controls button{min-height:32px;padding:.35rem .7rem}.hm-dialog{padding:1rem;max-height:calc(100dvh - 24px)}.hm-dialog-actions .hm-button{flex:1 1 auto}.hm-scene-image{width:140px;height:140px}}
 @media(prefers-reduced-motion:reduce){.hm-host *,.hm-dialog *,.hm-dialog[open]{animation:none!important;transition:none!important;scroll-behavior:auto!important}.hm-dancer{animation:none!important}}
 @media(forced-colors:active){.hm-segment[data-gradient],.hm-message[data-message-kind=ordinary] .hm-segment:not([href]):not([data-gradient]){background:none;color:CanvasText;-webkit-text-fill-color:CanvasText}.hm-dialog,.hm-speech,.hm-tooltip{border:1px solid CanvasText}}
+
+/* Approved illustrations retain their complete silhouettes and real alpha. */
+.hm-scene-box>.hm-scene-image{object-position:center bottom}
+.hm-scene-box>.hm-pixel-portrait{image-rendering:pixelated}
+.hm-dialog[data-scene-name=khezu] .hm-scene-box>.hm-scene-image{height:clamp(180px,26vh,280px);width:clamp(132px,20vw,220px);flex-basis:clamp(132px,20vw,220px)}
+@media(max-width:540px){.hm-dialog[data-scene-name=khezu] .hm-scene-box>.hm-scene-image{width:140px;height:175px;flex-basis:175px}}

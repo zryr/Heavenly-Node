@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "Native emulated handle swipe scrolls and cancels pickup without opening a game or mutating order",
+    "Deliberate hold picks up; pointer/touch cancellation clears gesture state and leaves storage intact",
+    "A second touch cancels collection pickup without committing a reorder",
+    "Native touch hold/drop changes only the selected collection’s persisted order",
+    "Actual private JSON download includes full memberships, stable IDs and independent collection order",
+    "Actual overwrite and merge import restore relationships and order without duplicate collections",
+    "Imported grandchildren are rejected with a recovery message and original collection bytes restored",
+    "Concurrent item edits preserve the open unsaved draft and refuse to overwrite newer saved content",
+    "Actual Reset built-ins retains user title, URL, icon, note, favorite, launch choice and catalog decision"
+  ],
+  "errors": [],
+  "physicalDevices": [],
+  "status": "passed"
+}

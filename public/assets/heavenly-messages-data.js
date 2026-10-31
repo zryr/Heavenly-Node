@@ -6,7 +6,7 @@
   'use strict';
   return {
   "schema": 1,
-  "version": "2026.10.27.1",
+  "version": "2026.10.31.1",
   "items": [
     {
       "id": "msg_homework",
@@ -383,13 +383,13 @@
           {
             "speaker": "You",
             "text": "what is an ao oni",
-            "asset": "player",
+            "asset": "you-retro",
             "imagePlacement": "left"
           },
           {
             "speaker": "Cloudy",
-            "text": "you don’t know ball",
-            "asset": "cloudy",
+            "text": "you don't know ball",
+            "asset": "cloudy-retro",
             "imagePlacement": "left"
           }
         ]
@@ -416,19 +416,19 @@
           {
             "speaker": "Hunter",
             "text": "So… can I use this for… something else?",
-            "asset": "hunter",
+            "asset": "hunter-smug",
             "imagePlacement": "left"
           },
           {
             "speaker": "You",
             "text": "wait, why he looking kinda…",
-            "asset": "player",
+            "asset": "you-suspicious",
             "imagePlacement": "left"
           },
           {
             "speaker": "Cloudy",
             "text": "yo wth 😭",
-            "asset": "cloudy",
+            "asset": "cloudy-speed-meme",
             "imagePlacement": "left"
           }
         ]
@@ -460,12 +460,12 @@
           {
             "speaker": "You",
             "text": "Okay. One tiny break.",
-            "asset": "doggy"
+            "asset": "you-neutral"
           },
           {
             "speaker": "Cloudy",
             "text": "Take your time. Your bookmarks will be here.",
-            "asset": "doggy"
+            "asset": "cloudy-main"
           }
         ]
       }

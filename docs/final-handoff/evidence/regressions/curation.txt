@@ -1,0 +1,9 @@
+PASS chromium Published recommendation appears in canonical All/Featured/details with one identity, favorite and per-game launch mode
+PASS chromium Existing visitor can Skip a new Pick; Arcade explains pending curation without silently installing it
+PASS chromium Real catalog Apply installs a reviewed recommendation into the shared Arcade records
+PASS firefox Published recommendation appears in canonical All/Featured/details with one identity, favorite and per-game launch mode
+PASS firefox Existing visitor can Skip a new Pick; Arcade explains pending curation without silently installing it
+PASS firefox Real catalog Apply installs a reviewed recommendation into the shared Arcade records
+PASS webkit Published recommendation appears in canonical All/Featured/details with one identity, favorite and per-game launch mode
+PASS webkit Existing visitor can Skip a new Pick; Arcade explains pending curation without silently installing it
+PASS webkit Real catalog Apply installs a reviewed recommendation into the shared Arcade records

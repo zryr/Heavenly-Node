@@ -1,0 +1,5 @@
+PASS actual private backup download includes normalized side and bottom widths with settings selected
+PASS merge restores imported widths while preserving unrelated personal widths
+PASS overwrite restores the selected layout; older backups without layout leave existing widths untouched
+PASS unsupported layout backup is rejected before any saved collection or setting changes
+PASS layout storage failure rolls back bookmarks, settings and width intent as one import

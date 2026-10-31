@@ -1,0 +1,9 @@
+PASS side sections default to five; bottom Auto shows one measured row with readable card widths
+PASS Show More and Show Less preserve state across reload and keep the same button
+PASS rapid expansion reversal reaches the last requested state and preserves focus
+PASS all four sidebar combinations return the same central results and retain their state after clearing
+PASS central search includes all column and subsection content, respects hidden bookmarks and preserves source DOM/order
+PASS folder context, keyboard selection and saved direct navigation work; clearing leaves columns intact
+PASS global, category and subsection count preferences apply with subsection precedence
+PASS resetting a subsection override restores the global default without changing bookmark data
+8 homepage search/count browser checks passed in webkit

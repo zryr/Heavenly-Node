@@ -1,0 +1,9 @@
+PASS chromium Quick Save edits existing destination name and icon while adding membership in one save
+PASS chromium Cancel discards destination edits; native dialog keeps keyboard focus within the save flow
+PASS chromium Unsupported legacy game stays visible and repairable with disabled Play and no unsafe link
+PASS firefox Quick Save edits existing destination name and icon while adding membership in one save
+PASS firefox Cancel discards destination edits; native dialog keeps keyboard focus within the save flow
+PASS firefox Unsupported legacy game stays visible and repairable with disabled Play and no unsafe link
+PASS webkit Quick Save edits existing destination name and icon while adding membership in one save
+PASS webkit Cancel discards destination edits; native dialog keeps keyboard focus within the save flow
+PASS webkit Unsupported legacy game stays visible and repairable with disabled Play and no unsafe link
