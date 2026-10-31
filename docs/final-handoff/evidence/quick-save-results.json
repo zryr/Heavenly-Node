@@ -1,0 +1,35 @@
+{
+  "engines": [
+    {
+      "engine": "chromium",
+      "checks": [
+        "Quick Save edits existing destination name and icon while adding membership in one save",
+        "Cancel discards destination edits; native dialog keeps keyboard focus within the save flow",
+        "Unsupported legacy game stays visible and repairable with disabled Play and no unsafe link"
+      ],
+      "errors": [],
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "checks": [
+        "Quick Save edits existing destination name and icon while adding membership in one save",
+        "Cancel discards destination edits; native dialog keeps keyboard focus within the save flow",
+        "Unsupported legacy game stays visible and repairable with disabled Play and no unsafe link"
+      ],
+      "errors": [],
+      "status": "passed"
+    },
+    {
+      "engine": "webkit",
+      "checks": [
+        "Quick Save edits existing destination name and icon while adding membership in one save",
+        "Cancel discards destination edits; native dialog keeps keyboard focus within the save flow",
+        "Unsupported legacy game stays visible and repairable with disabled Play and no unsafe link"
+      ],
+      "errors": [],
+      "status": "passed"
+    }
+  ],
+  "physicalDevices": []
+}

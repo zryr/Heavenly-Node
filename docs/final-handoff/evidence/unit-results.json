@@ -1,0 +1,7 @@
+{
+  "command": "npm test",
+  "status": "passed",
+  "tests": 602,
+  "baselineTests": 571,
+  "node": "v24.19.0"
+}

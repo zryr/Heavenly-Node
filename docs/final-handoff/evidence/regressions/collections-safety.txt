@@ -1,0 +1,9 @@
+PASS Native emulated handle swipe scrolls and cancels pickup without opening a game or mutating order
+PASS Deliberate hold picks up; pointer/touch cancellation clears gesture state and leaves storage intact
+PASS A second touch cancels collection pickup without committing a reorder
+PASS Native touch hold/drop changes only the selected collection’s persisted order
+PASS Actual private JSON download includes full memberships, stable IDs and independent collection order
+PASS Actual overwrite and merge import restore relationships and order without duplicate collections
+PASS Imported grandchildren are rejected with a recovery message and original collection bytes restored
+PASS Concurrent item edits preserve the open unsaved draft and refuse to overwrite newer saved content
+PASS Actual Reset built-ins retains user title, URL, icon, note, favorite, launch choice and catalog decision

@@ -1,0 +1,16 @@
+PASS chromium: executed authored JS cannot read parent/top/own app storage, mutate parent DOM, or open an automatic popup
+PASS chromium: before registration, real wrong-source/sibling messages and synthetic wrong-origin/token channels are rejected
+PASS chromium: re-running replaces the browsing context and old timers/diagnostics do not leak into the next session
+PASS chromium: a real malformed script produces useful diagnostics while parent state remains intact
+PASS chromium: explicit new-tab execution severs opener and keeps authored code isolated from shell DOM and shared storage
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS firefox: executed authored JS cannot read parent/top/own app storage, mutate parent DOM, or open an automatic popup
+PASS firefox: before registration, real wrong-source/sibling messages and synthetic wrong-origin/token channels are rejected
+PASS firefox: re-running replaces the browsing context and old timers/diagnostics do not leak into the next session
+PASS firefox: a real malformed script produces useful diagnostics while parent state remains intact
+PASS firefox: explicit new-tab execution severs opener and keeps authored code isolated from shell DOM and shared storage
+PASS webkit: executed authored JS cannot read parent/top/own app storage, mutate parent DOM, or open an automatic popup
+PASS webkit: before registration, real wrong-source/sibling messages and synthetic wrong-origin/token channels are rejected
+PASS webkit: re-running replaces the browsing context and old timers/diagnostics do not leak into the next session
+PASS webkit: a real malformed script produces useful diagnostics while parent state remains intact
+PASS webkit: explicit new-tab execution severs opener and keeps authored code isolated from shell DOM and shared storage

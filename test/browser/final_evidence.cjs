@@ -5,7 +5,9 @@ const assert = require("node:assert/strict"),
   { chromium } = require("playwright"),
   app = require("../../app");
 const out = path.resolve("docs/final-handoff/evidence"),
-  intermediate = path.resolve("/workspace/work/final-capture-video");
+  intermediate = path.resolve(
+    process.env.HEAVENLY_VIDEO_WORK_DIR || "work/final-capture-video",
+  );
 fs.mkdirSync(intermediate, { recursive: true });
 const report = { checks: [], errors: [], captures: [], physicalDevices: [] };
 let server, browser, context, page;

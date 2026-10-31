@@ -1405,7 +1405,7 @@
         }
         var selectedOpt = menu.querySelector('[aria-selected="true"]') || menu.querySelector('[role="option"]');
         if (selectedOpt) {
-          setTimeout(function () { selectedOpt.focus(); }, 50);
+          selectedOpt.focus({preventScroll:true});
         }
       }
     }

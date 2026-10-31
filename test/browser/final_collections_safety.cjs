@@ -114,6 +114,23 @@ const pass = (s) => {
   y = rect.y + rect.height / 2;
   await touch("touchStart", [point(x, y)]);
   await p.waitForTimeout(450);
+  await touch("touchStart", [
+    { ...point(x, y), id: 0 },
+    { ...point(x + 90, y + 5), id: 1 },
+  ]);
+  assert.equal(await arcade.locator(".picked").count(), 0);
+  await touch("touchEnd");
+  assert.equal(
+    await p.evaluate(() => localStorage.getItem("heavenly_bookmarks")),
+    before,
+  );
+  pass("A second touch cancels collection pickup without committing a reorder");
+  await handle.scrollIntoViewIfNeeded();
+  rect = await handle.boundingBox();
+  x = rect.x + rect.width / 2;
+  y = rect.y + rect.height / 2;
+  await touch("touchStart", [point(x, y)]);
+  await p.waitForTimeout(450);
   let target = await cards.nth(2).boundingBox();
   await touch("touchMove", [
     point(target.x + target.width / 2, target.y + target.height / 2),

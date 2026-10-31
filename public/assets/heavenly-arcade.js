@@ -717,7 +717,12 @@
         "; use Move up/down buttons for keyboard",
     );
     handle.addEventListener("pointerdown", function (start) {
-      if (start.button !== 0) return;
+      if (start.button !== 0 || start.isPrimary === false) return;
+      if (active && active.currentGesture) {
+        active.currentGesture();
+        return;
+      }
+      var owner = active;
       var activeDrag = false,
         timer,
         target = null,
@@ -727,6 +732,11 @@
       function cleanup() {
         if (done) return;
         done = true;
+        if (owner) {
+          if (owner.currentGesture === cleanup) owner.currentGesture = null;
+          var at = owner.cleanupGestures.indexOf(cleanup);
+          if (at !== -1) owner.cleanupGestures.splice(at, 1);
+        }
         clearTimeout(timer);
         row.classList.remove("picked");
         if (target) target.classList.remove("drop-target");
@@ -734,6 +744,7 @@
         root.removeEventListener("touchmove", touchMove, true);
         root.removeEventListener("pointerup", end, true);
         root.removeEventListener("pointercancel", cancel, true);
+        root.removeEventListener("pointerdown", additional, true);
         root.removeEventListener("blur", cancel);
         root.document.removeEventListener("keydown", key, true);
         observer.disconnect();
@@ -743,6 +754,9 @@
       }
       function cancel() {
         cleanup();
+      }
+      function additional(e) {
+        if (e.pointerId !== start.pointerId) cancel();
       }
       function key(e) {
         if (e.key === "Escape") {
@@ -802,6 +816,7 @@
       });
       root.addEventListener("pointerup", end, true);
       root.addEventListener("pointercancel", cancel, true);
+      root.addEventListener("pointerdown", additional, true);
       root.addEventListener("blur", cancel);
       root.document.addEventListener("keydown", key, true);
       timer = setTimeout(
@@ -812,7 +827,10 @@
         },
         start.pointerType === "mouse" ? 90 : 420,
       );
-      if (active) active.cleanupGestures.push(cleanup);
+      if (owner) {
+        owner.cleanupGestures.push(cleanup);
+        owner.currentGesture = cleanup;
+      }
     });
   }
   function render() {
@@ -1069,7 +1087,7 @@
           });
           if (found)
             spot.append(
-              button(p.title, function () {
+              button(found.title, function () {
                 details(found.id);
               }),
             );
