@@ -57,7 +57,7 @@ describe('Codex Developer HQ official content model',function(){
     const dir=fs.mkdtempSync(path.join(os.tmpdir(),'heavenly-hq-export-'));
     try {
       fs.mkdirSync(path.join(dir,'public/assets'),{recursive:true});fs.mkdirSync(path.join(dir,'scripts'));
-      for(const name of ['heavenly-collections.js','heavenly-bookmarks.js','heavenly-catalog.js','heavenly-navigation.js','heavenly-official-order.js','heavenly-dev-hq-model.js'])fs.copyFileSync(path.join(__dirname,'../public/assets',name),path.join(dir,'public/assets',name));
+      for(const name of ['heavenly-picks.js','heavenly-collections.js','heavenly-bookmarks.js','heavenly-catalog.js','heavenly-navigation.js','heavenly-official-order.js','heavenly-dev-hq-model.js'])fs.copyFileSync(path.join(__dirname,'../public/assets',name),path.join(dir,'public/assets',name));
       fs.copyFileSync(path.join(__dirname,'../scripts/build-official-order.cjs'),path.join(dir,'scripts/build-official-order.cjs'));
       const next=model.move(draft,'bookmark:bm_gamebois',{index:0},catalog.release);const parts=catalog.release.version.split('.');parts[3]=Number(parts[3])+1;const version=parts.join('.');
       fs.writeFileSync(path.join(dir,'public/assets/heavenly-official-order.json'),model.exportOrder(next,catalog.release,version));

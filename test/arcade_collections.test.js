@@ -512,3 +512,84 @@ describe("Explicit default layout restoration", function () {
     assert.equal(restored._catalog.decisions.kept, "skipped");
   });
 });
+
+describe("Unified search identity", function () {
+  it("returns one effective item for an exact-URL game saved in two old folders", function () {
+    const d = M.prepare(fixtures());
+    const matches = V.search(d, "games.test/play/1");
+    assert.equal(matches.length, 1);
+    assert.equal(matches[0].entry.id, "game_a");
+    assert.equal(V.search(d, "Same game")[0].entry.title, "My renamed game");
+  });
+});
+
+describe("Reviewed Picks join the canonical catalog", function () {
+  const pick = {
+    id: "pick_reviewed_fixture",
+    title: "Reviewed test recommendation",
+    url: "https://www.newgrounds.com/portal/view/1",
+    description: "Controlled curation fixture",
+    enabled: true,
+    order: 0,
+  };
+  it("adds a new recommendation to the official seed and order without creating a second store", function () {
+    const seeded = C.seedPicks(clone(C.defaults), { items: [pick] });
+    C.applyOfficialOrder(
+      seeded,
+      require("../public/assets/heavenly-official-order"),
+    );
+    const d = M.prepare(C.fresh({ ...C.release, data: seeded }));
+    assert.equal(M.items(d, "game").filter((e) => e.id === pick.id).length, 1);
+    assert.equal(M.entry(d, pick.id).description, pick.description);
+    assert.equal(
+      C.seedPicks(seeded, { items: [pick] }).bookmarks.filter(
+        (e) => e.id === pick.id,
+      ).length,
+      1,
+    );
+  });
+  it("references existing canonical destinations instead of duplicating their identities", function () {
+    const e = C.defaults.bookmarks.find((e) => e.id === "bm_history_minds");
+    const d = C.seedPicks(clone(C.defaults), {
+      items: [{ ...pick, url: e.url }],
+    });
+    assert(!d.bookmarks.some((e) => e.id === pick.id));
+  });
+  it("offers new picks through Apply/Skip while preserving personal choices", function () {
+    const seed = C.seedPicks(clone(C.defaults), { items: [pick] });
+    C.applyOfficialOrder(
+      seed,
+      require("../public/assets/heavenly-official-order"),
+    );
+    const release = { ...C.release, data: seed },
+      old = fresh();
+    M.setPreference(old, "bm_gn_math", { mode: "direct", favorite: true });
+    assert(
+      C.pending(old, release).changes.some(
+        (c) => c.after?.value.id === pick.id,
+      ),
+    );
+    const skipped = C.merge(old, release, "skipped");
+    assert.equal(C.pending(skipped, release).changes.length, 0);
+    assert(!M.entry(skipped, pick.id));
+    const applied = M.prepare(C.merge(old, release, "applied"));
+    assert(M.entry(applied, pick.id));
+    assert.equal(M.preference(applied, "bm_gn_math").mode, "direct");
+  });
+  it("rejects conflicting stable IDs and unsafe published destinations", function () {
+    assert.throws(
+      () =>
+        C.seedPicks(clone(C.defaults), {
+          items: [{ ...pick, id: "bm_gn_math" }],
+        }),
+      /conflicts/,
+    );
+    assert.throws(
+      () =>
+        C.seedPicks(clone(C.defaults), {
+          items: [{ ...pick, url: "javascript:alert(1)" }],
+        }),
+      /safe URL/,
+    );
+  });
+});

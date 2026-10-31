@@ -116,6 +116,14 @@
       var found=new Set(results.map(function(r){return r.entry.id;}));
       function retained(entries,parent,category){(entries||[]).forEach(function(e){var contexts=membershipNames[e.id];if(contexts&&!found.has(e.id)&&words.every(function(w){return text([e.title,e.url].concat(contexts).join(' ')).indexOf(w)!==-1;})){results.push({entry:e,parent:parent,category:category,subsectionId:e.subSectionId||'user',context:contexts.join(' / ')});found.add(e.id);}retained(e.subBookmarks,e,category);});}
       (data.bookmarks||[]).forEach(function(e){var c=(data.categories||[]).find(function(c){return c.id===e.categoryId;})||{id:e.categoryId,title:'Saved links'};retained([e],null,c);});
+      var allEntries=Object.create(null), identities=new Set(), aliases=data._collections.aliases||{};
+      function collect(entries){(entries||[]).forEach(function(e){allEntries[e.id]=e;collect(e.subBookmarks);});}collect(data.bookmarks);
+      results=results.filter(function(result){
+        var id=Object.prototype.hasOwnProperty.call(aliases,result.entry.id)?aliases[result.entry.id]:result.entry.id;
+        if(!allEntries[id])id=result.entry.id;
+        if(identities.has(id))return false;
+        identities.add(id);result.entry=allEntries[id];return true;
+      });
     }
     return results;
   }

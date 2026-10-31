@@ -1074,6 +1074,17 @@
               }),
             );
         });
+      if (picks.length && !pickIds.size) {
+        spot.append(
+          el(
+            "p",
+            "New recommendations are ready. Review Bookmark Updates to add them while keeping your saved choices.",
+          ),
+        );
+        var review = el("a", "Review Bookmark Updates", "button");
+        review.href = "/settings.html#bookmark-updates";
+        spot.append(review);
+      }
       content.append(spot);
     }
     var heading = el("div", undefined, "heading");

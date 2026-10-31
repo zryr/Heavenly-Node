@@ -14,7 +14,7 @@ if (manifest.catalogVersion !== previous.catalogVersion && !model.newer(manifest
 if (manifest.catalogVersion === previous.catalogVersion && JSON.stringify(manifest) !== JSON.stringify(previous)) throw new Error('Bump catalogVersion when changing official defaults.');
 // Validate against the candidate bridge, so adding a canonical content definition
 // and its manifest entry does not require a valid *old* bridge to bootstrap.
-const context = {HeavenlyNavigation:require('../public/assets/heavenly-navigation'), HeavenlyOfficialOrder:manifest};
+const context = {HeavenlyNavigation:require('../public/assets/heavenly-navigation'), HeavenlyOfficialOrder:manifest, HeavenlyPicks:require('../public/assets/heavenly-picks')};
 context.self = context;
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../public/assets/heavenly-catalog.js'), 'utf8'), context);
 const catalog = context.HeavenlyCatalog;

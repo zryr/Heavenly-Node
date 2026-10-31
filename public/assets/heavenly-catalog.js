@@ -1,8 +1,8 @@
 /* One canonical built-in catalog and review engine for all bookmark readers. */
 (function(root,factory){
-  if(typeof module==='object' && module.exports) module.exports=factory(require('./heavenly-navigation'),require('./heavenly-official-order'),require('./heavenly-collections'));
-  else root.HeavenlyCatalog=factory(root.HeavenlyNavigation,root.HeavenlyOfficialOrder,root.HeavenlyCollections);
-}(typeof self!=='undefined'?self:this,function(navigation,officialOrder,collections){
+  if(typeof module==='object' && module.exports) module.exports=factory(require('./heavenly-navigation'),require('./heavenly-official-order'),require('./heavenly-collections'),require('./heavenly-picks'));
+  else root.HeavenlyCatalog=factory(root.HeavenlyNavigation,root.HeavenlyOfficialOrder,root.HeavenlyCollections,root.HeavenlyPicks);
+}(typeof self!=='undefined'?self:this,function(navigation,officialOrder,collections,publishedPicks){
   'use strict';
   var defaults = {
   "categories": [
@@ -1203,13 +1203,30 @@
 
   // The small reviewed order manifest is the editor's repository-compatible source.
   // Content stays here; generated bridge changes default layout only, never saved data.
+  seedPicks(defaults,publishedPicks);
   applyOfficialOrder(defaults, officialOrder);
   var release = { version: officialOrder.catalogVersion, date: '2026-10-31', summary: 'Heavenly Arcade and shared Collections keep your personal games, favorites and launch choices. GN Math appears above SitesDotCom in official order.', data: defaults };
   var key = 'heavenly_bookmarks';
-  var fields = ['title', 'url', 'icon', 'type', 'categoryId', 'subSectionId', 'side', 'defaultCollapsed', 'disableQuickSaveWidget', 'mirrorEligible', 'order'];
+  var fields = ['title', 'description', 'url', 'icon', 'type', 'categoryId', 'subSectionId', 'side', 'defaultCollapsed', 'disableQuickSaveWidget', 'mirrorEligible', 'order'];
   var personal = ['categoryId', 'subSectionId', 'side', 'disableQuickSaveWidget', 'order'];
   function clone(value) { return JSON.parse(JSON.stringify(value)); }
   function equal(a, b) { return JSON.stringify(a) === JSON.stringify(b); }
+  // Reviewed Picks feed the same official release and review machinery. Existing
+  // destinations are references; new recommendations become stable official items.
+  function seedPicks(data,picks){
+    var existing=Object.create(null),urls=Object.create(null),seen=new Set();
+    function scan(items){(items||[]).forEach(function(e){existing[e.id]=e;var k=navigation.bookmarkKey(e.url);if(k)urls[k]=e;scan(e.subBookmarks);});}scan(data.bookmarks);
+    (picks&&picks.items||[]).forEach(function(p){
+      if(!p||p.enabled!==true)return;
+      var url;try{url=new URL(p.url);}catch(_){throw new Error('A published Pick has an invalid destination.');}
+      if(!/^https?:$/.test(url.protocol)||url.username||url.password||typeof p.id!=='string'||!/^[a-z][a-z0-9_:-]{0,119}$/i.test(p.id)||['constructor','prototype'].includes(p.id)||typeof p.title!=='string'||!p.title.trim()||seen.has(p.id))throw new Error('A published Pick needs a safe URL and a unique stable identity.');
+      seen.add(p.id);var key=navigation.bookmarkKey(url.href);
+      if(existing[p.id]&&navigation.bookmarkKey(existing[p.id].url)!==key)throw new Error('A published Pick conflicts with an existing catalog identity.');
+      if(existing[p.id]||urls[key])return;
+      var item={id:p.id,title:p.title,url:url.href,description:typeof p.description==='string'?p.description:'',icon:p.icon||'preset:gamepad',categoryId:'cat_games',subSectionId:'builtin',type:'bookmark',builtIn:true,hidden:false,order:10000+(Number(p.order)||0),catalogSource:'picks'};
+      data.bookmarks.push(item);existing[item.id]=item;urls[key]=item;
+    });return data;
+  }
   function applyOfficialOrder(data, manifest) {
     function fail() { throw new Error('The reviewed official ordering is invalid. Rebuild its bridge before publishing.'); }
     if (!manifest || manifest.schema !== 1 || typeof manifest.catalogVersion !== 'string' || !manifest.catalogVersion || !Array.isArray(manifest.categories) || !Array.isArray(manifest.bookmarks)) fail();
@@ -1240,7 +1257,8 @@
       order(item.order, item.parentId ? 'children:' + item.parentId : 'bookmarks:' + item.categoryId + ':' + item.subSectionId);
       layout[item.id] = item;
     });
-    if (Object.keys(seen).length !== Object.keys(original).length) fail();
+    var extraPicks=Object.keys(original).filter(function(key){return !seen[key]&&original[key].kind==='bookmark'&&!original[key].parent&&original[key].value.catalogSource==='picks';}).map(function(key){return entries[original[key].value.id];});
+    if (Object.keys(seen).length+extraPicks.length !== Object.keys(original).length) fail();
     manifest.bookmarks.forEach(function (item) {
       var visited = {}, current = item;
       while (current.parentId) {
@@ -1269,6 +1287,7 @@
         data.bookmarks.push(target);
       }
     });
+    extraPicks.forEach(function(item){item.order=Math.max(-1,...data.bookmarks.filter(function(e){return e.categoryId==='cat_games'&&e.subSectionId==='builtin';}).map(function(e){return Number(e.order)||0;}))+1;data.bookmarks.push(item);});
     return data;
   }
   function validate(data, allowLegacy) {
@@ -1692,6 +1711,6 @@
     return result.data;
   }
 
-  return { defaults:defaults, release:release, fresh:fresh, load:load, prepare:prepare, pending:pending, merge:merge, commit:commit, validate:validate, imported:imported, records:records,
+  return { seedPicks:seedPicks, defaults:defaults, release:release, fresh:fresh, load:load, prepare:prepare, pending:pending, merge:merge, commit:commit, validate:validate, imported:imported, records:records,
     previewRestore:previewRestore, restoreOrder:restoreOrder, commitRestore:commitRestore, applyOfficialOrder:applyOfficialOrder };
 }));
